@@ -12,6 +12,7 @@ class CryptoPriceFetcher:
         "PUMP": "PUMP36507-USD",
         "JLP": "JLP-USD",
         "VIRTUAL": "VIRTUAL-USD",
+        "AERO": "AERO29270-USD",
     }
 
     def __init__(self, token1: str, token2: str):
