@@ -5,7 +5,6 @@ from pycoingecko import CoinGeckoAPI
 import time
 
 class CryptoPriceFetcher:
-    # CoinGecko coin IDs mapping – expand this as needed!
     # Use cg.get_coins_list() or https://www.coingecko.com/en/api to find exact IDs
     COIN_ID_MAPPING = {
         "BTC": "bitcoin",
@@ -14,7 +13,7 @@ class CryptoPriceFetcher:
     }
 
     def __init__(self, token1: str, token2: str):
-        self.cg = CoinGeckoAPI()  # For paid/demo key: CoinGeckoAPI(demo_api_key="CG-XXXX...")
+        self.cg = CoinGeckoAPI()
         self.token1 = token1.upper()
         self.token2 = token2.upper()
         
@@ -27,7 +26,7 @@ class CryptoPriceFetcher:
 
     def fetch_and_save(self):
         end_dt = datetime.now(timezone.utc)
-        start_dt = end_dt - timedelta(days=360)  # 1 year + 2-week buffer for full coverage
+        start_dt = end_dt - timedelta(days=360)
 
         print(f"Fetching 1-year daily prices (UTC) for {self.name1} and {self.name2} vs USD...")
         print(f"Period: {start_dt.date()} → {end_dt.date()}")
