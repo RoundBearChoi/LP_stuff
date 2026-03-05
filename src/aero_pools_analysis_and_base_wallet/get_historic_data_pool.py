@@ -49,7 +49,7 @@ class AerodromeSlipstreamFetcher:
         return []
 
     def fetch_full_history(self, aggregate: int = 15, save_csv: bool = True, 
-                           filename: Optional[str] = None, max_years: Optional[float] = 1.0) -> pd.DataFrame:
+                           filename: Optional[str] = None, max_years: Optional[float] = 0.5) -> pd.DataFrame:
         """Fetch full history OR incrementally update existing CSV"""
         
         # === DETERMINE FILENAME ===
@@ -188,7 +188,7 @@ class AerodromeSlipstreamFetcher:
 if __name__ == "__main__":
     fetcher = AerodromeSlipstreamFetcher("0x22aee3699b6a0fed71490c103bd4e5f3309891d5")
     
-    df = fetcher.fetch_full_history(max_years=1.0)  # first run = full; next runs = auto-update
+    df = fetcher.fetch_full_history(max_years=0.5)  # first run = full; next runs = auto-update
 
     print("\nLast 3 rows preview:")
     print(df[['close_usd', 'close_ratio', 'close_cbbtc_usd', 'volume_usd']].tail(3))
