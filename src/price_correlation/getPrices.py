@@ -11,6 +11,7 @@ class CryptoPriceFetcher:
         "FART": "FARTCOIN-USD", # ← The popular Solana Fartcoin (not the tiny Base one)
         "PUMP": "PUMP36507-USD",
         "JLP": "JLP-USD",
+        "VIRTUAL": "VIRTUAL-USD",
     }
 
     def __init__(self, token1: str, token2: str):
