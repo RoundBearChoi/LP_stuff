@@ -17,7 +17,7 @@ class WethCbBtcVolatilityAnalyzer:
 
     def __init__(self):
         # ====================== CONFIG ======================
-        self.CSV_FILE = 'aerodrome_0x22aee3699b6a0fed71490c103bd4e5f3309891d5_15min_max2.0y.csv'
+        self.CSV_FILE = 'aerodrome_0x22aee3699b6a0fed71490c103bd4e5f3309891d5_15min.csv'
         self.ASSET = 'WETH-cbBTC Pool (USD)'
 
         # Will be populated during run()

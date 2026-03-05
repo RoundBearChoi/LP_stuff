@@ -49,13 +49,13 @@ class AerodromeSlipstreamFetcher:
         return []
 
     def fetch_full_history(self, aggregate: int = 15, save_csv: bool = True, 
-                           filename: Optional[str] = None, max_years: Optional[float] = 2.0) -> pd.DataFrame:
+                           filename: Optional[str] = None, max_years: Optional[float] = 1.0) -> pd.DataFrame:
         """Fetch full history OR incrementally update existing CSV"""
         
         # === DETERMINE FILENAME ===
         if filename is None:
-            max_part = f"max{max_years}y" if max_years is not None else "full"
-            filename = f"aerodrome_{self.pool_address}_{aggregate}min_{max_part}.csv"
+            #max_part = f"max{max_years}y" if max_years is not None else "full"
+            filename = f"aerodrome_{self.pool_address}_{aggregate}min.csv"
 
         # === LOAD EXISTING DATA IF PRESENT (incremental mode) ===
         existing_df = None
