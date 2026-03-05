@@ -123,7 +123,7 @@ class PriceAnalyzer:
         plt.tight_layout(rect=[0.02, 0.02, 0.98, 0.80])
 
         plot_file = f"{col1}_{col2}_LP_analysis.png"
-        plt.savefig(plot_file, dpi=160, bbox_inches='tight')
+        plt.savefig(plot_file, dpi=130, bbox_inches='tight')
         print(f"\n💾 Charts saved → {plot_file}")
 
         # Save full data
