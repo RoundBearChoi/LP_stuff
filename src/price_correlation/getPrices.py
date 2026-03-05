@@ -5,11 +5,15 @@ from pycoingecko import CoinGeckoAPI
 import time
 
 class CryptoPriceFetcher:
-    # Use cg.get_coins_list() or https://www.coingecko.com/en/api to find exact IDs
+    # check https://api.coingecko.com/api/v3/coins/list
     COIN_ID_MAPPING = {
-        "BTC": "bitcoin",
-        "ETH": "ethereum",
-        "JLP": "jupiter-perpetuals-liquidity-provider-token",
+        'BTC': 'bitcoin',
+        'ETH': 'ethereum',
+        'JLP': 'jupiter-perpetuals-liquidity-provider-token',
+        'SOL': 'solana',
+        'RAY': 'raydium',
+        'PUMP': 'pump-fun', 
+        'FART': 'fartcoin',
     }
 
     def __init__(self, token1: str, token2: str):
