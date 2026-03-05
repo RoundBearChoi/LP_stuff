@@ -14,15 +14,14 @@ class PriceAnalyzer:
     def __init__(self, token1: str, token2: str):
         self.name1 = token1.upper()
         self.name2 = token2.upper()
-        self.filename = f"{self.name1}_{self.name2}_daily_closing_prices_2y.csv"
+        self.filename = f"{self.name1}_{self.name2}_coingecko_daily_1y.csv"
 
     def load_data(self):
         if not os.path.exists(self.filename):
             print(f"❌ CSV not found: {self.filename}")
-            print("   First run: python getPrices.py btc eth")
             sys.exit(1)
         
-        df = pd.read_csv(self.filename, index_col='Date', parse_dates=True)
+        df = pd.read_csv(self.filename, index_col='date', parse_dates=True)
         self.df = df[[self.name1, self.name2]].dropna()
         print(f"✅ Loaded {len(self.df):,} days from {self.df.index[0].date()} to {self.df.index[-1].date()}")
 
