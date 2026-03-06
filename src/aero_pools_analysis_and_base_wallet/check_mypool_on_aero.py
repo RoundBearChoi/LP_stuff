@@ -113,13 +113,13 @@ class AerodromePositionChecker:
             return
 
         print(f"\n✅ Found {len(staked_positions)} staked position(s). Starting LIVE monitor...")
-        print("   Price vs Range + Fees + Emissions updates every 60 seconds • Ctrl+C to stop\n")
+        print("   Price vs Range + Fees + Emissions updates every 30 seconds • Ctrl+C to stop\n")
         time.sleep(2)
 
         try:
             while True:
                 self._live_update(staked_positions)
-                self._countdown(60)
+                self._countdown(30)          # ← changed to 30
         except KeyboardInterrupt:
             print("\n\n👋 Monitor stopped. Goodbye!")
 
@@ -136,7 +136,6 @@ class AerodromePositionChecker:
                     sym1, dec1 = self._get_token_info(pos[3])
                     f0 = pos[10] / (10 ** dec0)
                     f1 = pos[11] / (10 ** dec1)
-                    # Liquidity line removed for cleaner output
                     print(f"   NFT {token_id}: Range {pos[5]:,} → {pos[6]}, Fees {f0:.6f} {sym0} / {f1:.6f} {sym1}")
             else:
                 print("   (none found — all may be staked)")
@@ -174,7 +173,7 @@ class AerodromePositionChecker:
     def _live_update(self, staked_positions):
         os.system('cls' if os.name == 'nt' else 'clear')
         print(f"=== Aerodrome SlipStream LIVE MONITOR — {datetime.now().strftime('%Y-%m-%d %H:%M:%S')} ===\n")
-        print(f"Monitoring {len(staked_positions)} staked position(s) • Refresh every 60s\n")
+        print(f"Monitoring {len(staked_positions)} staked position(s) • Refresh every 30s\n")   # ← updated
 
         for pos_data in staked_positions:
             token_id = pos_data["token_id"]
@@ -224,7 +223,6 @@ class AerodromePositionChecker:
         print(f"      Range ticks: {tick_lower:,} → {tick_upper:,}")
         print(f"      Uncollected fees: {f0:.6f} {sym0} / {f1:.6f} {sym1}")
 
-        # 🌱 Emissions display
         if pending_emissions > 0:
             aero_formatted = pending_emissions / 1e18
             print(f"      🌱 Pending emissions: {aero_formatted:,.4f} AERO")
@@ -265,7 +263,6 @@ class AerodromePositionChecker:
         print(f"         Range:     1 {sym0} = {p_lower:.8g} → {p_upper:.8g} {sym1}")
         print(f"         Center:    1 {sym0} = {p_center:.8g} {sym1} (tick {(tick_lower + tick_upper)//2:,})")
 
-        # COLORED STATUS
         if current_tick < tick_lower:
             diff = tick_lower - current_tick
             print(f"         {self.RED}↓ BELOW range by {diff:,} ticks{self.RESET}")
@@ -275,7 +272,6 @@ class AerodromePositionChecker:
         else:
             print(f"         {self.GREEN}INSIDE range{self.RESET}")
 
-        # Edge usage %
         if p_center > 0:
             dev = (p_current / p_center) - 1
             if dev >= 0:
