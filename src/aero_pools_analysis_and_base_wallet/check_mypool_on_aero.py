@@ -1,6 +1,5 @@
 from web3 import Web3
 from web3.exceptions import ContractLogicError
-import math
 
 # ================= CONFIG =================
 BASE_RPC = "https://mainnet.base.org"  # Consider Alchemy/Infura for reliability
@@ -41,7 +40,8 @@ MANAGER_ABI = [
 ]
 
 ERC20_ABI = [
-    {"constant": True, "inputs": [], "name": "symbol", "outputs": [{"name": "", "type": "string"}], "type": "function"}
+    {"constant": True, "inputs": [], "name": "symbol", "outputs": [{"name": "", "type": "string"}], "type": "function"},
+    {"constant": True, "inputs": [], "name": "decimals", "outputs": [{"name": "", "type": "uint8"}], "type": "function"}
 ]
 
 GAUGE_ABI = [
@@ -58,7 +58,7 @@ POOL_ABI = [
 
 manager = w3.eth.contract(address=POSITION_MANAGER_ADDR, abi=MANAGER_ABI)
 
-# ── Helper: safe tick → price with fallback to 0 ──
+# ── Helper: safe tick → raw price ──
 def tick_to_price(tick):
     try:
         return 1.0001 ** tick
@@ -74,8 +74,6 @@ try:
         for i in range(unstaked_count):
             token_id = manager.functions.tokenOfOwnerByIndex(WALLET, i).call()
             pos = manager.functions.positions(token_id).call()
-            token0 = pos[2]
-            token1 = pos[3]
             print(f"   NFT {token_id}: Liquidity {pos[7]:,}, Range {pos[5]:,} → {pos[6]}, Fees {pos[10]:,}/{pos[11]:,}")
     else:
         print("   (none found — all may be staked)")
@@ -107,7 +105,6 @@ if gauge_input:
                 # ── Get current tick ──
                 pool = w3.eth.contract(address=pool_addr, abi=POOL_ABI)
                 current_tick = None
-
                 try:
                     slot0 = pool.functions.slot0().call()
                     current_tick = slot0[1]
@@ -134,15 +131,21 @@ if gauge_input:
                     fees0 = pos[10]
                     fees1 = pos[11]
 
-                    # Get symbols
+                    # Get symbols + decimals (required for correct human price)
                     try:
-                        sym0 = w3.eth.contract(t0_addr, abi=ERC20_ABI).functions.symbol().call()
+                        token0_contract = w3.eth.contract(t0_addr, abi=ERC20_ABI)
+                        sym0 = token0_contract.functions.symbol().call()
+                        dec0 = token0_contract.functions.decimals().call()
                     except:
                         sym0 = t0_addr[:8] + "..."
+                        dec0 = 18
                     try:
-                        sym1 = w3.eth.contract(t1_addr, abi=ERC20_ABI).functions.symbol().call()
+                        token1_contract = w3.eth.contract(t1_addr, abi=ERC20_ABI)
+                        sym1 = token1_contract.functions.symbol().call()
+                        dec1 = token1_contract.functions.decimals().call()
                     except:
                         sym1 = t1_addr[:8] + "..."
+                        dec1 = 18
 
                     print(f"\n   NFT {token_id}: {sym0} ↔ {sym1}")
                     print(f"      Liquidity: {liquidity:,}")
@@ -150,19 +153,34 @@ if gauge_input:
                     print(f"      Uncollected fees: {fees0:,} / {fees1:,}")
 
                     if current_tick is not None:
-                        p_current = tick_to_price(current_tick)
-                        p_lower   = tick_to_price(tick_lower)
-                        p_upper   = tick_to_price(tick_upper)
+                        # Raw prices from ticks
+                        p_raw = tick_to_price(current_tick)
+                        p_lower_raw = tick_to_price(tick_lower)
+                        p_upper_raw = tick_to_price(tick_upper)
+                        center_raw = tick_to_price((tick_lower + tick_upper) // 2)
 
-                        quote = f"{sym1} per {sym0}"
+                        # Convert to human-readable price (this is the magic line)
+                        adjust = 10 ** (dec0 - dec1)
+                        p_current = p_raw * adjust
+                        p_lower   = p_lower_raw * adjust
+                        p_upper   = p_upper_raw * adjust
+                        p_center  = center_raw * adjust
 
-                        center_tick = (tick_lower + tick_upper) // 2
-                        center_price = tick_to_price(center_tick)
+                        print("\n      === Price vs Range (1 WETH style) ===")
+                        print(f"         Current:")
+                        print(f"            1.0 {sym0}")
+                        print(f"            =")
+                        print(f"            {p_current:.8g} {sym1}")
 
-                        print("\n      === Price vs Range (raw tick price - no inversion) ===")
-                        print(f"         Current: {p_current:.8e} {quote}")
-                        print(f"         Range:   {p_lower:.8e} → {p_upper:.8e} {quote}")
-                        print(f"         Center:  {center_price:.8e} {quote} (tick {center_tick:,})")
+                        print(f"\n         Range:")
+                        print(f"            1.0 {sym0}")
+                        print(f"            =")
+                        print(f"            {p_lower:.8g} {sym1} → {p_upper:.8g} {sym1}")
+
+                        print(f"\n         Center:")
+                        print(f"            1.0 {sym0}")
+                        print(f"            =")
+                        print(f"            {p_center:.8g} {sym1} (tick {(tick_lower + tick_upper)//2:,})")
 
                         if current_tick < tick_lower:
                             print(f"         ⚠️ BELOW range by {tick_lower - current_tick:,} ticks")
@@ -171,9 +189,8 @@ if gauge_input:
                         else:
                             print("         ✅ INSIDE range – earning fees")
 
-                        # Relative position
-                        if center_price > 0:
-                            distance_pct = ((p_current / center_price) - 1) * 100
+                        if p_center > 0:
+                            distance_pct = ((p_current / p_center) - 1) * 100
                             print(f"         Price distance from center: {distance_pct:+.2f}%")
                         print("      ---")
 
@@ -194,4 +211,3 @@ else:
     print("Tip: find gauges via")
     print("  • Aerodrome app → My Positions → view contract")
     print("  • Basescan wallet → ERC-721 transfers to gauge addresses")
-    print("  • Voter contract events for your NFTs")
