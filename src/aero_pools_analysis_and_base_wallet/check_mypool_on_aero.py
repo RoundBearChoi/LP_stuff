@@ -106,9 +106,3 @@ else:
     print("  • Aerodrome UI → My Positions → click position → view tx / contract details")
     print("  • Basescan → your wallet → ERC-721 transfers → look for outgoing to gauge-like addresses")
     print("  • Common Voter: 0x16613524e02ad97eDfeF371bC883F2F5d6C480A5 (can list gauges if you have pool addr)")
-
-print("\nTips & Next Steps:")
-print("- For pending AERO rewards: add `earned(address)` function to GAUGE_ABI and call it.")
-print("- Want symbols? Add IERC20 minimal ABI and call `symbol()` on token0/token1.")
-print("- Full automation hard without subgraph or known pool list.")
-print("- UI (aerodrome.finance) or DeBank/Zapper still easiest for complete view.")
