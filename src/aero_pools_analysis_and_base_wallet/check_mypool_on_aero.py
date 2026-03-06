@@ -154,30 +154,14 @@ if gauge_input:
                         p_lower   = tick_to_price(tick_lower)
                         p_upper   = tick_to_price(tick_upper)
 
-                        # Decide display direction
-                        if p_current > 0:
-                            if p_current >= 1:
-                                display_price = p_current
-                                quote = f"{sym1} per {sym0}"
-                                range_low  = p_lower
-                                range_high = p_upper
-                            else:
-                                display_price = 1 / p_current if p_current != 0 else float('inf')
-                                quote = f"{sym0} per {sym1}"
-                                range_low  = 1 / p_upper if p_upper != 0 else 0
-                                range_high = 1 / p_lower if p_lower != 0 else float('inf')
-                        else:
-                            display_price = 0.0
-                            quote = "???"
-                            range_low = range_high = 0.0
+                        quote = f"{sym1} per {sym0}"
 
                         center_tick = (tick_lower + tick_upper) // 2
-                        center_price_raw = tick_to_price(center_tick)
-                        center_price = center_price_raw if center_price_raw >= 1 else (1 / center_price_raw if center_price_raw > 0 else 0)
+                        center_price = tick_to_price(center_tick)
 
-                        print("\n      === Price vs Range (inverted if < 1) ===")
-                        print(f"         Current: {display_price:.8e} {quote}")
-                        print(f"         Range:   {range_low:.8e} → {range_high:.8e} {quote}")
+                        print("\n      === Price vs Range (raw tick price - no inversion) ===")
+                        print(f"         Current: {p_current:.8e} {quote}")
+                        print(f"         Range:   {p_lower:.8e} → {p_upper:.8e} {quote}")
                         print(f"         Center:  {center_price:.8e} {quote} (tick {center_tick:,})")
 
                         if current_tick < tick_lower:
@@ -188,8 +172,8 @@ if gauge_input:
                             print("         ✅ INSIDE range – earning fees")
 
                         # Relative position
-                        if center_price_raw > 0:
-                            distance_pct = ((p_current / center_price_raw) - 1) * 100
+                        if center_price > 0:
+                            distance_pct = ((p_current / center_price) - 1) * 100
                             print(f"         Price distance from center: {distance_pct:+.2f}%")
                         print("      ---")
 
