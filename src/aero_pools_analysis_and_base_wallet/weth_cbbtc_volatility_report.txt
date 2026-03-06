@@ -1,12 +1,12 @@
 WETH-cbBTC Pool Volatility Report (KST)
 ============================================================
 
-Period: 2025-09-07 → 2026-03-05
+Period: 2025-09-08 → 2026-03-06
 
-Most volatile 3h bucket: 00-03 (1.88%)
-Calmest 3h bucket:   18-21 (0.97%)
+Most volatile 3h bucket: 00-03 (1.91%)
+Calmest 3h bucket:   18-21 (0.98%)
 
-Hottest hour (1h):    00:00 – 01:00
+Hottest hour (1h):    23:00 – 00:00
 Calmest hour (1h):    19:00 – 20:00
 
 See weth_cbbtc_hourly_recommendations.txt for detailed hourly ranges & suggested widths.
