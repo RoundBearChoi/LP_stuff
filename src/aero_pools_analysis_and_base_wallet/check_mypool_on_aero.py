@@ -131,7 +131,7 @@ if gauge_input:
                     fees0 = pos[10]
                     fees1 = pos[11]
 
-                    # Get symbols + decimals (required for correct human price)
+                    # Get symbols + decimals
                     try:
                         token0_contract = w3.eth.contract(t0_addr, abi=ERC20_ABI)
                         sym0 = token0_contract.functions.symbol().call()
@@ -159,28 +159,17 @@ if gauge_input:
                         p_upper_raw = tick_to_price(tick_upper)
                         center_raw = tick_to_price((tick_lower + tick_upper) // 2)
 
-                        # Convert to human-readable price (this is the magic line)
+                        # Convert to human-readable price (decimals handled)
                         adjust = 10 ** (dec0 - dec1)
                         p_current = p_raw * adjust
                         p_lower   = p_lower_raw * adjust
                         p_upper   = p_upper_raw * adjust
                         p_center  = center_raw * adjust
 
-                        print("\n      === Price vs Range (1 WETH style) ===")
-                        print(f"         Current:")
-                        print(f"            1.0 {sym0}")
-                        print(f"            =")
-                        print(f"            {p_current:.8g} {sym1}")
-
-                        print(f"\n         Range:")
-                        print(f"            1.0 {sym0}")
-                        print(f"            =")
-                        print(f"            {p_lower:.8g} {sym1} → {p_upper:.8g} {sym1}")
-
-                        print(f"\n         Center:")
-                        print(f"            1.0 {sym0}")
-                        print(f"            =")
-                        print(f"            {p_center:.8g} {sym1} (tick {(tick_lower + tick_upper)//2:,})")
+                        print("\n      === Price vs Range (1 WETH = ? cbBTC) ===")
+                        print(f"         Current:   1 {sym0} = {p_current:.10g} {sym1}")
+                        print(f"         Range:     1 {sym0} = {p_lower:.10g} → {p_upper:.10g} {sym1}")
+                        print(f"         Center:    1 {sym0} = {p_center:.10g} {sym1} (tick {(tick_lower + tick_upper)//2:,})")
 
                         if current_tick < tick_lower:
                             print(f"         ⚠️ BELOW range by {tick_lower - current_tick:,} ticks")
@@ -211,3 +200,4 @@ else:
     print("Tip: find gauges via")
     print("  • Aerodrome app → My Positions → view contract")
     print("  • Basescan wallet → ERC-721 transfers to gauge addresses")
+    print("  • Voter contract events for your NFTs")
