@@ -274,7 +274,7 @@ class AerodromePositionChecker:
             diff = current_tick - tick_upper
             print(f"         {self.RED}↑ ABOVE range by {diff:,} ticks{self.RESET}")
         else:
-            print(f"         {self.GREEN}INSIDE range – earning fees{self.RESET}")
+            print(f"         {self.GREEN}INSIDE range{self.RESET}")
 
         # NEW: Edge usage % (100% = at edge / out of range)
         if p_center > 0:
