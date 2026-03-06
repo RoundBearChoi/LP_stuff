@@ -1,188 +1,114 @@
 from web3 import Web3
+from web3.exceptions import ContractLogicError
 
-# ────────────────────────────────────────────────
-# CONFIGURATION
-# ────────────────────────────────────────────────
+# ================= CONFIG =================
+BASE_RPC = "https://mainnet.base.org"  # Use Alchemy/Infura for better speed/reliability
+w3 = Web3(Web3.HTTPProvider(BASE_RPC))
 
-# Use a reliable RPC – public one often fails silently
-# Sign up free at https://www.alchemy.com → Base Mainnet → copy HTTPS URL
-# Example: "https://base-mainnet.g.alchemy.com/v2/YOUR_API_KEY"
-RPC_URL = "https://mainnet.base.org"  # ← CHANGE THIS for better results!
+if not w3.is_connected():
+    raise Exception("Failed to connect to Base RPC. Check URL or use private endpoint.")
 
-w3 = Web3(Web3.HTTPProvider(RPC_URL))
+POSITION_MANAGER_ADDR = Web3.to_checksum_address("0x827922686190790b37229fd06084350e74485b72")
+VOTER_ADDR = Web3.to_checksum_address("0x16613524e02ad97eDfeF371bC883F2F5d6C480A5")  # Voter – for reference
 
-# Confirmed Aerodrome LP Sugar v3 contract (checksummed)
-SUGAR_ADDRESS = Web3.to_checksum_address("0x68c19e13618c41158fe4baba1b8fb3a9c74bdb0a")
+WALLET_LOWER = input("Enter your Base wallet address (0x...): ").strip().lower()
+try:
+    WALLET = Web3.to_checksum_address(WALLET_LOWER)
+except ValueError:
+    print("Invalid wallet address format.")
+    exit(1)
 
-# Expanded ABI – covers classic (v2) unstaked/staked + concentrated (Slipstream)
-SUGAR_ABI = [
-    {
-        "inputs": [
-            {"internalType": "uint256", "name": "_limit", "type": "uint256"},
-            {"internalType": "uint256", "name": "_offset", "type": "uint256"},
-            {"internalType": "address", "name": "_account", "type": "address"}
-        ],
-        "name": "positions",
-        "outputs": [
-            {
-                "components": [
-                    {"internalType": "uint256", "name": "id", "type": "uint256"},                # 0 = classic, >0 = NFT ID
-                    {"internalType": "address", "name": "lp", "type": "address"},                # Pool address
-                    {"internalType": "uint256", "name": "liquidity", "type": "uint256"},         # Total liquidity / deposited LP
-                    {"internalType": "uint256", "name": "staked", "type": "uint256"},            # Staked in gauge
-                    {"internalType": "uint256", "name": "amount0", "type": "uint256"},           # Unstaked token0
-                    {"internalType": "uint256", "name": "amount1", "type": "uint256"},           # Unstaked token1
-                    {"internalType": "uint256", "name": "staked0", "type": "uint256"},           # Staked token0
-                    {"internalType": "uint256", "name": "staked1", "type": "uint256"},           # Staked token1
-                    {"internalType": "int24", "name": "tick_lower", "type": "int24"},
-                    {"internalType": "int24", "name": "tick_upper", "type": "int24"},
-                    # You can add more fields like earned rewards, fees, etc. from Basescan ABI
-                ],
-                "internalType": "struct LpSugar.Position[]",
-                "name": "",
-                "type": "tuple[]"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    }
+print(f"\n=== Aerodrome SlipStream Positions (Unstaked + Staked) for {WALLET} ===\n")
+
+# ── ABI for Position Manager ──
+MANAGER_ABI = [
+    {"constant": True, "inputs": [{"name": "owner", "type": "address"}], "name": "balanceOf", "outputs": [{"name": "", "type": "uint256"}], "type": "function"},
+    {"constant": True, "inputs": [{"name": "owner", "type": "address"}, {"name": "index", "type": "uint256"}], "name": "tokenOfOwnerByIndex", "outputs": [{"name": "", "type": "uint256"}], "type": "function"},
+    {"constant": True, "inputs": [{"name": "tokenId", "type": "uint256"}], "name": "positions", "outputs": [
+        {"name": "nonce", "type": "uint96"},
+        {"name": "operator", "type": "address"},
+        {"name": "token0", "type": "address"},
+        {"name": "token1", "type": "address"},
+        {"name": "tickSpacing", "type": "int24"},
+        {"name": "tickLower", "type": "int24"},
+        {"name": "tickUpper", "type": "int24"},
+        {"name": "liquidity", "type": "uint128"},
+        {"name": "feeGrowthInside0LastX128", "type": "uint256"},
+        {"name": "feeGrowthInside1LastX128", "type": "uint256"},
+        {"name": "tokensOwed0", "type": "uint128"},
+        {"name": "tokensOwed1", "type": "uint128"}
+    ], "type": "function"}
 ]
 
-contract = w3.eth.contract(address=SUGAR_ADDRESS, abi=SUGAR_ABI)
+manager = w3.eth.contract(address=POSITION_MANAGER_ADDR, abi=MANAGER_ABI)
 
-# Slipstream NFT Manager (for concentrated positions fallback)
-NFT_MANAGER_ADDRESS = Web3.to_checksum_address("0x827922686190790b37229fd06084350e74485b72")
-NFT_ABI = [
-    {
-        "constant": True,
-        "inputs": [{"name": "owner", "type": "address"}],
-        "name": "balanceOf",
-        "outputs": [{"name": "", "type": "uint256"}],
-        "type": "function"
-    }
+# ── ABI snippet for Gauge (CLGauge for SlipStream) ──
+GAUGE_ABI = [
+    {"constant": True, "inputs": [{"name": "depositor", "type": "address"}], "name": "stakedValues", "outputs": [{"name": "", "type": "uint256[]"}], "type": "function"}
+    # If your gauge uses different name (rare), try adding:
+    # {"constant": True, "inputs": [{"name": "account", "type": "address"}], "name": "balanceOfNFT", "outputs": [{"name": "", "type": "uint256"}], "type": "function"},
 ]
-nft_contract = w3.eth.contract(address=NFT_MANAGER_ADDRESS, abi=NFT_ABI)
 
-
-def check_aerodrome_lp_positions(raw_address: str):
-    raw_address = raw_address.strip()
-    if not raw_address:
-        print("No address entered.")
-        return False, []
-
-    if not raw_address.startswith("0x"):
-        raw_address = "0x" + raw_address
-
-    try:
-        user_address = Web3.to_checksum_address(raw_address)
-    except ValueError:
-        print("Invalid address format. Must be a valid Ethereum/Base address (0x + 40 hex chars).")
-        return False, []
-
-    print(f"→ Checking: {user_address}")
-    print(f"→ Using RPC: {RPC_URL}")
-    print("Querying LP Sugar v3...")
-
-    LIMIT = 100
-    OFFSET = 0
-    all_active = []
-
-    while True:
-        try:
-            raw_positions = contract.functions.positions(LIMIT, OFFSET, user_address).call()
-        except Exception as e:
-            print(f"Error calling positions(): {e}")
-            print("Try switching to Alchemy/Infura RPC – public endpoint may be rate-limited.")
-            break
-
-        if not raw_positions:
-            break
-
-        for pos in raw_positions:
-            try:
-                pos_id, pool, liquidity, staked, amt0, amt1, staked0, staked1, tick_lower, tick_upper = pos[:10]
-            except ValueError:
-                print("ABI unpacking error – struct fields may have changed. Check Basescan ABI.")
-                continue
-
-            is_active = (liquidity > 0) or (staked > 0) or (amt0 > 0) or (amt1 > 0) or (staked0 > 0) or (staked1 > 0)
-
-            if is_active:
-                is_concentrated = (pos_id > 0) or (tick_lower != tick_upper)
-                position_type = "Concentrated (Slipstream)" if is_concentrated else "Classic (v2-style)"
-                status = "Staked in gauge" if staked > 0 else "Unstaked / Deposited"
-
-                all_active.append({
-                    "id": pos_id,
-                    "pool": pool,
-                    "liquidity": liquidity,
-                    "staked": staked,
-                    "unstaked_0": amt0,
-                    "unstaked_1": amt1,
-                    "staked_0": staked0,
-                    "staked_1": staked1,
-                    "ticks": f"{tick_lower} → {tick_upper}" if is_concentrated else "Full range",
-                    "type": position_type,
-                    "status": status
-                })
-
-        OFFSET += LIMIT
-
-    # Fallback: Check NFT ownership for concentrated positions
-    try:
-        nft_balance = nft_contract.functions.balanceOf(user_address).call()
-        if nft_balance > 0:
-            print(f"→ You own {nft_balance} Slipstream NFT position(s) (concentrated liquidity).")
-            if nft_balance > 0 and not any(p["type"] == "Concentrated (Slipstream)" for p in all_active):
-                print("  → Sugar didn't list them – possible legacy/unstaked concentrated positions.")
-    except Exception as e:
-        print(f"Could not check NFT balance: {e}")
-
-    has_positions = len(all_active) > 0
-
-    print(f"\nResults for {user_address}:")
-    if has_positions:
-        print(f"Found {len(all_active)} active position(s):")
-        for idx, p in enumerate(all_active, 1):
-            print(f"  Position #{idx}:")
-            print(f"    • Pool:            {p['pool']}")
-            print(f"    • Type:            {p['type']}")
-            print(f"    • Status:          {p['status']}")
-            print(f"    • Liquidity:       {p['liquidity']:,}")
-            print(f"    • Staked LP:       {p['staked']:,}")
-            print(f"    • Staked tokens:   {p['staked_0']:,} / {p['staked_1']:,}")
-            print(f"    • Unstaked tokens: {p['unstaked_0']:,} / {p['unstaked_1']:,}")
-            print(f"    • Range:           {p['ticks']}")
-            print(f"    • Position ID:     {p['id']}")
-            print("    ────────────────────────────────────────")
+# ── 1. Check unstaked positions ──
+print("Unstaked positions (direct ownership):")
+try:
+    unstaked_count = manager.functions.balanceOf(WALLET).call()
+    print(f" → {unstaked_count}")
+    if unstaked_count > 0:
+        for i in range(unstaked_count):
+            token_id = manager.functions.tokenOfOwnerByIndex(WALLET, i).call()
+            pos = manager.functions.positions(token_id).call()
+            print(f"   NFT {token_id}: Liquidity {pos[7]:,}, Range {pos[5]} → {pos[6]}, Fees owed {pos[10]}/{pos[11]}")
     else:
-        print("  No active positions detected via Sugar v3.")
-        print("  Possible reasons:")
-        print("    - Only unstaked classic LP tokens (not deposited/staked)")
-        print("    - Positions too small (dust)")
-        print("    - RPC returned empty (try Alchemy RPC)")
-        print("    - Concentrated position not aggregated (check NFT balance above)")
+        print("   (expected if all positions are staked)")
+except Exception as e:
+    print(f"   Error: {e}")
 
-    return has_positions, all_active
+# ── 2. Check staked positions ──
+print("\nStaked positions (in gauges):")
+print("Paste gauge address(es) from Aerodrome UI / Basescan (comma-separated, or press Enter to skip):")
+gauge_input = input("> ").strip()
 
+if gauge_input:
+    gauges = [g.strip() for g in gauge_input.split(',')]
+    found_any = False
 
-if __name__ == "__main__":
-    print("=== Aerodrome LP Positions Checker (Staked + Unstaked) ===")
-    print("Supports classic (v2) unstaked/staked + Slipstream concentrated.")
-    print("Tip: Use Alchemy RPC for reliable results!\n")
+    for gauge_str in gauges:
+        try:
+            gauge_addr = Web3.to_checksum_address(gauge_str)
+            gauge = w3.eth.contract(address=gauge_addr, abi=GAUGE_ABI)
 
-    while True:
-        addr_input = input("Enter Base address (0x...): ").strip()
-        if not addr_input:
-            print("No input – exiting.")
-            break
+            staked_ids = gauge.functions.stakedValues(WALLET).call()
+            if staked_ids:
+                found_any = True
+                print(f"\nGauge {gauge_addr[:8]}...{gauge_addr[-6:]} has {len(staked_ids)} staked position(s):")
+                for token_id in staked_ids:
+                    pos = manager.functions.positions(token_id).call()
+                    token0, token1 = pos[2][:10] + "...", pos[3][:10] + "..."
+                    print(f"   NFT {token_id}: {token0} ↔ {token1}")
+                    print(f"      Liquidity: {pos[7]:,}")
+                    print(f"      Range ticks: {pos[5]} → {pos[6]}")
+                    print(f"      Uncollected fees: {pos[10]:,} / {pos[11]:,}")
+                    print("      ---")
+            else:
+                print(f"   Gauge {gauge_addr[:8]}... → no staked positions found for you")
+        except ContractLogicError:
+            print(f"   Gauge {gauge_str} → function 'stakedValues' not found or reverted (wrong ABI/gauge type?)")
+        except ValueError:
+            print(f"   Invalid gauge address: {gauge_str}")
+        except Exception as e:
+            print(f"   Error querying gauge {gauge_str}: {e}")
+    
+    if not found_any:
+        print("\nNo staked positions detected in provided gauges.")
+else:
+    print("Skipped. To find gauges:")
+    print("  • Aerodrome UI → My Positions → click position → view tx / contract details")
+    print("  • Basescan → your wallet → ERC-721 transfers → look for outgoing to gauge-like addresses")
+    print("  • Common Voter: 0x16613524e02ad97eDfeF371bC883F2F5d6C480A5 (can list gauges if you have pool addr)")
 
-        has_any, _ = check_aerodrome_lp_positions(addr_input)
-
-        print("\nHas positions on Aerodrome? →", "YES" if has_any else "NO")
-        print("=" * 70)
-
-        again = input("Check another? (y/n): ").strip().lower()
-        if again != 'y':
-            print("Done.")
-            break
+print("\nTips & Next Steps:")
+print("- For pending AERO rewards: add `earned(address)` function to GAUGE_ABI and call it.")
+print("- Want symbols? Add IERC20 minimal ABI and call `symbol()` on token0/token1.")
+print("- Full automation hard without subgraph or known pool list.")
+print("- UI (aerodrome.finance) or DeBank/Zapper still easiest for complete view.")
