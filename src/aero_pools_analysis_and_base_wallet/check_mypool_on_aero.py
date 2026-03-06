@@ -1,5 +1,4 @@
 from web3 import Web3
-from web3.exceptions import ContractLogicError
 import time
 import os
 from datetime import datetime
@@ -37,7 +36,6 @@ class AerodromePositionChecker:
     GAUGE_ABI = [
         {"constant": True, "inputs": [{"name": "depositor", "type": "address"}], "name": "stakedValues", "outputs": [{"name": "", "type": "uint256[]"}], "type": "function"},
         {"constant": True, "inputs": [], "name": "pool", "outputs": [{"name": "", "type": "address"}], "type": "function"},
-        # NEW: CLGauge support for emissions (SlipStream)
         {"constant": True, "inputs": [{"name": "account", "type": "address"}, {"name": "tokenId", "type": "uint256"}], "name": "earned", "outputs": [{"name": "", "type": "uint256"}], "type": "function"},
     ]
 
@@ -48,12 +46,17 @@ class AerodromePositionChecker:
         ], "stateMutability": "view", "type": "function"}
     ]
 
-    # ── Known tokens (added AERO) ──
+    # ── Known tokens ──
     KNOWN_TOKENS = {
         "0x4200000000000000000000000000000000000006".lower(): ("WETH", 18),
         "0xcbb7c0000ab88b473b1f5afd9ef808440eed33bf".lower(): ("cbBTC", 8),
-        "0x940181a94a35a4569e4529a3cdfb74e38fd98631".lower(): ("AERO", 18),  # ← NEW
+        "0x940181a94a35a4569e4529a3cdfb74e38fd98631".lower(): ("AERO", 18),
     }
+
+    # 🌱 ANSI Terminal Colors for range status
+    GREEN = "\033[92m"   # Bright Green
+    RED   = "\033[91m"   # Bright Red
+    RESET = "\033[0m"    # Reset
 
     def __init__(self, rpc_url=None):
         rpc = rpc_url or self.BASE_RPC
@@ -90,7 +93,7 @@ class AerodromePositionChecker:
         WALLET_LOWER = input("Enter your Base wallet address (0x...): ").strip().lower()
         try:
             WALLET = Web3.to_checksum_address(WALLET_LOWER)
-            self.wallet = WALLET  # store for later use
+            self.wallet = WALLET
         except ValueError:
             print("Invalid wallet address format.")
             return
@@ -156,7 +159,6 @@ class AerodromePositionChecker:
                     print(f"   Linked pool: {pool_addr}")
                     for token_id in staked_ids:
                         pos = self._call_with_retry(lambda: self.manager.functions.positions(token_id).call())
-                        # NEW: fetch pending AERO emissions per position
                         pending = self._call_with_retry(lambda: gauge.functions.earned(wallet, token_id).call())
                         all_staked.append({
                             "token_id": token_id,
@@ -184,7 +186,6 @@ class AerodromePositionChecker:
 
         print("\n" + "="*80)
 
-    # ================= LIVE COUNTDOWN =================
     def _countdown(self, seconds):
         for remaining in range(seconds, 0, -1):
             print(f"\rNext refresh in {remaining:2d} seconds... (Ctrl+C to stop)", end="", flush=True)
@@ -217,7 +218,6 @@ class AerodromePositionChecker:
         sym0, dec0 = self._get_token_info(t0_addr)
         sym1, dec1 = self._get_token_info(t1_addr)
 
-        # Nicely formatted fees
         f0 = fees0 / (10 ** dec0)
         f1 = fees1 / (10 ** dec1)
 
@@ -226,12 +226,12 @@ class AerodromePositionChecker:
         print(f"      Range ticks: {tick_lower:,} → {tick_upper:,}")
         print(f"      Uncollected fees: {f0:.6f} {sym0} / {f1:.6f} {sym1}")
 
-        # NEW: Emissions display
+        # 🌱 Emissions display
         if pending_emissions > 0:
             aero_formatted = pending_emissions / 1e18
-            print(f"      🏆 Pending emissions: {aero_formatted:,.4f} AERO")
+            print(f"      🌱 Pending emissions: {aero_formatted:,.4f} AERO")
         else:
-            print("      🏆 Pending emissions: 0 AERO")
+            print("      🌱 Pending emissions: 0 AERO")
 
         if current_tick is not None:
             self._print_price_analysis(sym0, sym1, dec0, dec1, tick_lower, tick_upper, current_tick)
@@ -267,12 +267,15 @@ class AerodromePositionChecker:
         print(f"         Range:     1 {sym0} = {p_lower:.8g} → {p_upper:.8g} {sym1}")
         print(f"         Center:    1 {sym0} = {p_center:.8g} {sym1} (tick {(tick_lower + tick_upper)//2:,})")
 
+        # COLORED STATUS (green = inside, red = outside)
         if current_tick < tick_lower:
-            print(f"         ⚠️  BELOW range by {tick_lower - current_tick:,} ticks")
+            diff = tick_lower - current_tick
+            print(f"         {self.RED}↓ BELOW range by {diff:,} ticks{self.RESET}")
         elif current_tick > tick_upper:
-            print(f"         ⚠️  ABOVE range by {current_tick - tick_upper:,} ticks")
+            diff = current_tick - tick_upper
+            print(f"         {self.RED}↑ ABOVE range by {diff:,} ticks{self.RESET}")
         else:
-            print("         ✅ INSIDE range – earning fees")
+            print(f"         {self.GREEN}INSIDE range{self.RESET}")
 
         if p_center > 0:
             distance_pct = ((p_current / p_center) - 1) * 100
