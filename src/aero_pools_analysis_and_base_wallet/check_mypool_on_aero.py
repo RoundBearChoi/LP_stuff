@@ -58,6 +58,14 @@ POOL_ABI = [
 
 manager = w3.eth.contract(address=POSITION_MANAGER_ADDR, abi=MANAGER_ABI)
 
+# ── Known tokens on Base (this permanently fixes cbBTC decimals) ──
+KNOWN_TOKENS = {
+    "0x4200000000000000000000000000000000000006".lower(): ("WETH", 18),
+    "0xcbb7c0000ab88b473b1f5afd9ef808440eed33bf".lower(): ("cbBTC", 8),
+    # Add more pairs here anytime (example):
+    # "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913".lower(): ("USDC", 6),
+}
+
 # ── Helper: safe tick → raw price ──
 def tick_to_price(tick):
     try:
@@ -114,8 +122,7 @@ if gauge_input:
                         slot0_selector = Web3.keccak(text="slot0()")[:4].hex()
                         raw = w3.eth.call({"to": pool_addr, "data": slot0_selector})
                         if len(raw) >= 64:
-                            tick_bytes = raw[32:64]
-                            current_tick = int.from_bytes(tick_bytes, "big", signed=True)
+                            current_tick = int.from_bytes(raw[32:64], "big", signed=True)
                             print("   → fallback raw decode OK")
                     except Exception as e:
                         print(f"   → could not get current tick: {e}")
@@ -131,21 +138,30 @@ if gauge_input:
                     fees0 = pos[10]
                     fees1 = pos[11]
 
-                    # Get symbols + decimals
-                    try:
-                        token0_contract = w3.eth.contract(t0_addr, abi=ERC20_ABI)
-                        sym0 = token0_contract.functions.symbol().call()
-                        dec0 = token0_contract.functions.decimals().call()
-                    except:
-                        sym0 = t0_addr[:8] + "..."
-                        dec0 = 18
-                    try:
-                        token1_contract = w3.eth.contract(t1_addr, abi=ERC20_ABI)
-                        sym1 = token1_contract.functions.symbol().call()
-                        dec1 = token1_contract.functions.decimals().call()
-                    except:
-                        sym1 = t1_addr[:8] + "..."
-                        dec1 = 18
+                    # === Robust symbol + decimals (known tokens fallback) ===
+                    t0_lower = t0_addr.lower()
+                    if t0_lower in KNOWN_TOKENS:
+                        sym0, dec0 = KNOWN_TOKENS[t0_lower]
+                    else:
+                        try:
+                            c = w3.eth.contract(t0_addr, abi=ERC20_ABI)
+                            sym0 = c.functions.symbol().call()
+                            dec0 = c.functions.decimals().call()
+                        except:
+                            sym0 = t0_addr[:8] + "..."
+                            dec0 = 18
+
+                    t1_lower = t1_addr.lower()
+                    if t1_lower in KNOWN_TOKENS:
+                        sym1, dec1 = KNOWN_TOKENS[t1_lower]
+                    else:
+                        try:
+                            c = w3.eth.contract(t1_addr, abi=ERC20_ABI)
+                            sym1 = c.functions.symbol().call()
+                            dec1 = c.functions.decimals().call()
+                        except:
+                            sym1 = t1_addr[:8] + "..."
+                            dec1 = 18
 
                     print(f"\n   NFT {token_id}: {sym0} ↔ {sym1}")
                     print(f"      Liquidity: {liquidity:,}")
@@ -153,23 +169,21 @@ if gauge_input:
                     print(f"      Uncollected fees: {fees0:,} / {fees1:,}")
 
                     if current_tick is not None:
-                        # Raw prices from ticks
                         p_raw = tick_to_price(current_tick)
                         p_lower_raw = tick_to_price(tick_lower)
                         p_upper_raw = tick_to_price(tick_upper)
                         center_raw = tick_to_price((tick_lower + tick_upper) // 2)
 
-                        # Convert to human-readable price (decimals handled)
                         adjust = 10 ** (dec0 - dec1)
                         p_current = p_raw * adjust
                         p_lower   = p_lower_raw * adjust
                         p_upper   = p_upper_raw * adjust
                         p_center  = center_raw * adjust
 
-                        print("\n      === Price vs Range (1 WETH = ? cbBTC) ===")
-                        print(f"         Current:   1 {sym0} = {p_current:.10g} {sym1}")
-                        print(f"         Range:     1 {sym0} = {p_lower:.10g} → {p_upper:.10g} {sym1}")
-                        print(f"         Center:    1 {sym0} = {p_center:.10g} {sym1} (tick {(tick_lower + tick_upper)//2:,})")
+                        print("\n      === Price vs Range ===")
+                        print(f"         Current:   1 {sym0} = {p_current:.8g} {sym1}")
+                        print(f"         Range:     1 {sym0} = {p_lower:.8g} → {p_upper:.8g} {sym1}")
+                        print(f"         Center:    1 {sym0} = {p_center:.8g} {sym1} (tick {(tick_lower + tick_upper)//2:,})")
 
                         if current_tick < tick_lower:
                             print(f"         ⚠️ BELOW range by {tick_lower - current_tick:,} ticks")
@@ -200,4 +214,3 @@ else:
     print("Tip: find gauges via")
     print("  • Aerodrome app → My Positions → view contract")
     print("  • Basescan wallet → ERC-721 transfers to gauge addresses")
-    print("  • Voter contract events for your NFTs")
