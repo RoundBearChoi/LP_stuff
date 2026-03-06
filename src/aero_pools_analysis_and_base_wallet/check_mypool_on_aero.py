@@ -9,7 +9,7 @@ class AerodromePositionChecker:
     BASE_RPC = "https://mainnet.base.org"
     POSITION_MANAGER_ADDR = Web3.to_checksum_address("0x827922686190790b37229fd06084350e74485b72")
 
-    # ── ABIs (exactly as in your original file) ──
+    # ── ABIs (exactly as in your original) ──
     MANAGER_ABI = [
         {"constant": True, "inputs": [{"name": "owner", "type": "address"}], "name": "balanceOf", "outputs": [{"name": "", "type": "uint256"}], "type": "function"},
         {"constant": True, "inputs": [{"name": "owner", "type": "address"}, {"name": "index", "type": "uint256"}], "name": "tokenOfOwnerByIndex", "outputs": [{"name": "", "type": "uint256"}], "type": "function"},
@@ -58,10 +58,7 @@ class AerodromePositionChecker:
         if not self.w3.is_connected():
             raise Exception("Failed to connect to Base RPC.")
 
-        self.manager = self.w3.eth.contract(
-            address=self.POSITION_MANAGER_ADDR, 
-            abi=self.MANAGER_ABI
-        )
+        self.manager = self.w3.eth.contract(address=self.POSITION_MANAGER_ADDR, abi=self.MANAGER_ABI)
 
     @staticmethod
     def tick_to_price(tick):
@@ -70,7 +67,7 @@ class AerodromePositionChecker:
         except (OverflowError, ValueError):
             return 0.0
 
-    # ================= RATE-LIMIT RETRY WRAPPER =================
+    # ================= RATE-LIMIT RETRY =================
     def _call_with_retry(self, func, max_retries=6, base_delay=3):
         for attempt in range(max_retries):
             try:
@@ -117,13 +114,9 @@ class AerodromePositionChecker:
         try:
             while True:
                 self._live_update(staked_positions)
-                time.sleep(60)
+                self._countdown(60)          # ← NEW: live countdown
         except KeyboardInterrupt:
             print("\n\n👋 Monitor stopped. Goodbye!")
-
-    # (the rest of the methods are exactly the same as before — _check_unstaked_positions,
-    #  _get_all_staked_positions, _live_update, _get_current_tick, _print_live_position,
-    #  _get_token_info, _print_price_analysis — I kept them unchanged from my previous version)
 
     def _check_unstaked_positions(self, wallet):
         print("Unstaked positions (direct ownership):")
@@ -179,7 +172,14 @@ class AerodromePositionChecker:
             self._print_live_position(token_id, pos, current_tick)
 
         print("\n" + "="*70)
-        print("Next refresh in 60 seconds... (Ctrl+C to stop)")
+
+    # ================= NEW: LIVE COUNTDOWN =================
+    def _countdown(self, seconds):
+        """Updates the same line every second with a live countdown"""
+        for remaining in range(seconds, 0, -1):
+            print(f"\rNext refresh in {remaining:2d} seconds... (Ctrl+C to stop)", end="", flush=True)
+            time.sleep(1)
+        print("\r" + " " * 60)  # clear the countdown line before next refresh
 
     def _get_current_tick(self, pool_addr):
         pool = self.w3.eth.contract(address=pool_addr, abi=self.POOL_ABI)
