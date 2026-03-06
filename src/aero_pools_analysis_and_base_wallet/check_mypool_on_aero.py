@@ -9,7 +9,7 @@ class AerodromePositionChecker:
     BASE_RPC = "https://mainnet.base.org"
     POSITION_MANAGER_ADDR = Web3.to_checksum_address("0x827922686190790b37229fd06084350e74485b72")
 
-    # ── ABIs (exactly as in your original) ──
+    # ── ABIs ──
     MANAGER_ABI = [
         {"constant": True, "inputs": [{"name": "owner", "type": "address"}], "name": "balanceOf", "outputs": [{"name": "", "type": "uint256"}], "type": "function"},
         {"constant": True, "inputs": [{"name": "owner", "type": "address"}, {"name": "index", "type": "uint256"}], "name": "tokenOfOwnerByIndex", "outputs": [{"name": "", "type": "uint256"}], "type": "function"},
@@ -37,6 +37,8 @@ class AerodromePositionChecker:
     GAUGE_ABI = [
         {"constant": True, "inputs": [{"name": "depositor", "type": "address"}], "name": "stakedValues", "outputs": [{"name": "", "type": "uint256[]"}], "type": "function"},
         {"constant": True, "inputs": [], "name": "pool", "outputs": [{"name": "", "type": "address"}], "type": "function"},
+        # NEW: CLGauge support for emissions (SlipStream)
+        {"constant": True, "inputs": [{"name": "account", "type": "address"}, {"name": "tokenId", "type": "uint256"}], "name": "earned", "outputs": [{"name": "", "type": "uint256"}], "type": "function"},
     ]
 
     POOL_ABI = [
@@ -46,10 +48,11 @@ class AerodromePositionChecker:
         ], "stateMutability": "view", "type": "function"}
     ]
 
-    # ── Known tokens ──
+    # ── Known tokens (added AERO) ──
     KNOWN_TOKENS = {
         "0x4200000000000000000000000000000000000006".lower(): ("WETH", 18),
         "0xcbb7c0000ab88b473b1f5afd9ef808440eed33bf".lower(): ("cbBTC", 8),
+        "0x940181a94a35a4569e4529a3cdfb74e38fd98631".lower(): ("AERO", 18),  # ← NEW
     }
 
     def __init__(self, rpc_url=None):
@@ -57,7 +60,6 @@ class AerodromePositionChecker:
         self.w3 = Web3(Web3.HTTPProvider(rpc))
         if not self.w3.is_connected():
             raise Exception("Failed to connect to Base RPC.")
-
         self.manager = self.w3.eth.contract(address=self.POSITION_MANAGER_ADDR, abi=self.MANAGER_ABI)
 
     @staticmethod
@@ -82,12 +84,13 @@ class AerodromePositionChecker:
                     if attempt == max_retries - 1:
                         raise
                     time.sleep(base_delay)
-        return None
+        return 0
 
     def run(self):
         WALLET_LOWER = input("Enter your Base wallet address (0x...): ").strip().lower()
         try:
             WALLET = Web3.to_checksum_address(WALLET_LOWER)
+            self.wallet = WALLET  # store for later use
         except ValueError:
             print("Invalid wallet address format.")
             return
@@ -108,13 +111,13 @@ class AerodromePositionChecker:
             return
 
         print(f"\n✅ Found {len(staked_positions)} staked position(s). Starting LIVE monitor...")
-        print("   Price vs Range updates every 60 seconds • Ctrl+C to stop\n")
+        print("   Price vs Range + Fees + Emissions updates every 60 seconds • Ctrl+C to stop\n")
         time.sleep(2)
 
         try:
             while True:
                 self._live_update(staked_positions)
-                self._countdown(60)          # ← NEW: live countdown
+                self._countdown(60)
         except KeyboardInterrupt:
             print("\n\n👋 Monitor stopped. Goodbye!")
 
@@ -127,7 +130,11 @@ class AerodromePositionChecker:
                 for i in range(count):
                     token_id = self._call_with_retry(lambda: self.manager.functions.tokenOfOwnerByIndex(wallet, i).call())
                     pos = self._call_with_retry(lambda: self.manager.functions.positions(token_id).call())
-                    print(f"   NFT {token_id}: Liquidity {pos[7]:,}, Range {pos[5]:,} → {pos[6]}, Fees {pos[10]:,}/{pos[11]:,}")
+                    sym0, dec0 = self._get_token_info(pos[2])
+                    sym1, dec1 = self._get_token_info(pos[3])
+                    f0 = pos[10] / (10 ** dec0)
+                    f1 = pos[11] / (10 ** dec1)
+                    print(f"   NFT {token_id}: Liquidity {pos[7]:,}, Range {pos[5]:,} → {pos[6]}, Fees {f0:.6f} {sym0} / {f1:.6f} {sym1}")
             else:
                 print("   (none found — all may be staked)")
         except Exception as e:
@@ -149,11 +156,14 @@ class AerodromePositionChecker:
                     print(f"   Linked pool: {pool_addr}")
                     for token_id in staked_ids:
                         pos = self._call_with_retry(lambda: self.manager.functions.positions(token_id).call())
+                        # NEW: fetch pending AERO emissions per position
+                        pending = self._call_with_retry(lambda: gauge.functions.earned(wallet, token_id).call())
                         all_staked.append({
                             "token_id": token_id,
                             "pool_addr": pool_addr,
                             "pos": pos,
-                            "gauge": gauge_addr
+                            "gauge": gauge_addr,
+                            "pending_emissions": pending
                         })
             except Exception as e:
                 print(f"   Error with gauge {gauge_str}: {e}")
@@ -168,18 +178,18 @@ class AerodromePositionChecker:
             token_id = pos_data["token_id"]
             pool_addr = pos_data["pool_addr"]
             pos = pos_data["pos"]
+            pending = pos_data.get("pending_emissions", 0)
             current_tick = self._get_current_tick(pool_addr)
-            self._print_live_position(token_id, pos, current_tick)
+            self._print_live_position(token_id, pos, current_tick, pending)
 
-        print("\n" + "="*70)
+        print("\n" + "="*80)
 
-    # ================= NEW: LIVE COUNTDOWN =================
+    # ================= LIVE COUNTDOWN =================
     def _countdown(self, seconds):
-        """Updates the same line every second with a live countdown"""
         for remaining in range(seconds, 0, -1):
             print(f"\rNext refresh in {remaining:2d} seconds... (Ctrl+C to stop)", end="", flush=True)
             time.sleep(1)
-        print("\r" + " " * 60)  # clear the countdown line before next refresh
+        print("\r" + " " * 70)
 
     def _get_current_tick(self, pool_addr):
         pool = self.w3.eth.contract(address=pool_addr, abi=self.POOL_ABI)
@@ -195,7 +205,7 @@ class AerodromePositionChecker:
                 raise
         return self._call_with_retry(fetch)
 
-    def _print_live_position(self, token_id, pos, current_tick):
+    def _print_live_position(self, token_id, pos, current_tick, pending_emissions):
         t0_addr = pos[2]
         t1_addr = pos[3]
         tick_lower = pos[5]
@@ -207,10 +217,21 @@ class AerodromePositionChecker:
         sym0, dec0 = self._get_token_info(t0_addr)
         sym1, dec1 = self._get_token_info(t1_addr)
 
+        # Nicely formatted fees
+        f0 = fees0 / (10 ** dec0)
+        f1 = fees1 / (10 ** dec1)
+
         print(f"\n   NFT {token_id}: {sym0} ↔ {sym1}")
         print(f"      Liquidity: {liquidity:,}")
         print(f"      Range ticks: {tick_lower:,} → {tick_upper:,}")
-        print(f"      Uncollected fees: {fees0:,} / {fees1:,}")
+        print(f"      Uncollected fees: {f0:.6f} {sym0} / {f1:.6f} {sym1}")
+
+        # NEW: Emissions display
+        if pending_emissions > 0:
+            aero_formatted = pending_emissions / 1e18
+            print(f"      🏆 Pending emissions: {aero_formatted:,.4f} AERO")
+        else:
+            print("      🏆 Pending emissions: 0 AERO")
 
         if current_tick is not None:
             self._print_price_analysis(sym0, sym1, dec0, dec1, tick_lower, tick_upper, current_tick)
