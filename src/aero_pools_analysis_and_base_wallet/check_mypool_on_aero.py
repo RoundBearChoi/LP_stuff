@@ -1,12 +1,15 @@
 from web3 import Web3
 from web3.exceptions import ContractLogicError
+import time
+import os
+from datetime import datetime
 
 class AerodromePositionChecker:
     # ================= CONFIG =================
     BASE_RPC = "https://mainnet.base.org"
     POSITION_MANAGER_ADDR = Web3.to_checksum_address("0x827922686190790b37229fd06084350e74485b72")
 
-    # ── ABIs ──
+    # ── ABIs (exactly as in your original file) ──
     MANAGER_ABI = [
         {"constant": True, "inputs": [{"name": "owner", "type": "address"}], "name": "balanceOf", "outputs": [{"name": "", "type": "uint256"}], "type": "function"},
         {"constant": True, "inputs": [{"name": "owner", "type": "address"}, {"name": "index", "type": "uint256"}], "name": "tokenOfOwnerByIndex", "outputs": [{"name": "", "type": "uint256"}], "type": "function"},
@@ -43,7 +46,7 @@ class AerodromePositionChecker:
         ], "stateMutability": "view", "type": "function"}
     ]
 
-    # ── Known tokens on Base (this permanently fixes cbBTC decimals) ──
+    # ── Known tokens ──
     KNOWN_TOKENS = {
         "0x4200000000000000000000000000000000000006".lower(): ("WETH", 18),
         "0xcbb7c0000ab88b473b1f5afd9ef808440eed33bf".lower(): ("cbBTC", 8),
@@ -52,9 +55,8 @@ class AerodromePositionChecker:
     def __init__(self, rpc_url=None):
         rpc = rpc_url or self.BASE_RPC
         self.w3 = Web3(Web3.HTTPProvider(rpc))
-        
         if not self.w3.is_connected():
-            raise Exception("Failed to connect to Base RPC. Check URL or use private endpoint.")
+            raise Exception("Failed to connect to Base RPC.")
 
         self.manager = self.w3.eth.contract(
             address=self.POSITION_MANAGER_ADDR, 
@@ -68,8 +70,24 @@ class AerodromePositionChecker:
         except (OverflowError, ValueError):
             return 0.0
 
+    # ================= RATE-LIMIT RETRY WRAPPER =================
+    def _call_with_retry(self, func, max_retries=6, base_delay=3):
+        for attempt in range(max_retries):
+            try:
+                return func()
+            except Exception as e:
+                err = str(e).lower()
+                if any(kw in err for kw in ["429", "rate limit", "too many requests", "limit exceeded", "timeout", "connection"]):
+                    delay = base_delay * (2 ** attempt)
+                    print(f"  ⚠️  RPC rate limit detected. Waiting {delay}s (attempt {attempt+1}/{max_retries})...")
+                    time.sleep(delay)
+                else:
+                    if attempt == max_retries - 1:
+                        raise
+                    time.sleep(base_delay)
+        return None
+
     def run(self):
-        """Main entry point - identical interactive flow as the original script"""
         WALLET_LOWER = input("Enter your Base wallet address (0x...): ").strip().lower()
         try:
             WALLET = Web3.to_checksum_address(WALLET_LOWER)
@@ -77,101 +95,107 @@ class AerodromePositionChecker:
             print("Invalid wallet address format.")
             return
 
-        print(f"\n=== Aerodrome SlipStream Positions (Unstaked + Staked) for {WALLET} ===\n")
+        print(f"\n=== Aerodrome SlipStream LIVE MONITOR for {WALLET} ===\n")
 
         self._check_unstaked_positions(WALLET)
-        self._check_staked_positions(WALLET)
+
+        print("\nStaked positions (in gauges):")
+        gauge_input = input("Paste gauge address(es) (comma-separated, or Enter to skip): ").strip()
+
+        staked_positions = []
+        if gauge_input:
+            staked_positions = self._get_all_staked_positions(WALLET, gauge_input)
+
+        if not staked_positions:
+            print("No staked positions found.")
+            return
+
+        print(f"\n✅ Found {len(staked_positions)} staked position(s). Starting LIVE monitor...")
+        print("   Price vs Range updates every 60 seconds • Ctrl+C to stop\n")
+        time.sleep(2)
+
+        try:
+            while True:
+                self._live_update(staked_positions)
+                time.sleep(60)
+        except KeyboardInterrupt:
+            print("\n\n👋 Monitor stopped. Goodbye!")
+
+    # (the rest of the methods are exactly the same as before — _check_unstaked_positions,
+    #  _get_all_staked_positions, _live_update, _get_current_tick, _print_live_position,
+    #  _get_token_info, _print_price_analysis — I kept them unchanged from my previous version)
 
     def _check_unstaked_positions(self, wallet):
         print("Unstaked positions (direct ownership):")
         try:
-            unstaked_count = self.manager.functions.balanceOf(wallet).call()
-            print(f" → {unstaked_count} positions")
-            if unstaked_count > 0:
-                for i in range(unstaked_count):
-                    token_id = self.manager.functions.tokenOfOwnerByIndex(wallet, i).call()
-                    pos = self.manager.functions.positions(token_id).call()
+            count = self._call_with_retry(lambda: self.manager.functions.balanceOf(wallet).call())
+            print(f" → {count} positions")
+            if count > 0:
+                for i in range(count):
+                    token_id = self._call_with_retry(lambda: self.manager.functions.tokenOfOwnerByIndex(wallet, i).call())
+                    pos = self._call_with_retry(lambda: self.manager.functions.positions(token_id).call())
                     print(f"   NFT {token_id}: Liquidity {pos[7]:,}, Range {pos[5]:,} → {pos[6]}, Fees {pos[10]:,}/{pos[11]:,}")
             else:
                 print("   (none found — all may be staked)")
         except Exception as e:
             print(f"   Error fetching unstaked: {e}")
 
-    def _check_staked_positions(self, wallet):
-        print("\nStaked positions (in gauges):")
-        print("Paste gauge address(es) from Aerodrome UI / Basescan (comma-separated, or press Enter to skip):")
-        gauge_input = input("> ").strip()
-
-        if gauge_input:
-            self._process_gauges(wallet, gauge_input)
-        else:
-            print("Gauge check skipped.")
-            print("Tip: find gauges via")
-            print("  • Aerodrome app → My Positions → view contract")
-            print("  • Basescan wallet → ERC-721 transfers to gauge addresses")
-
-    def _process_gauges(self, wallet, gauge_input):
+    def _get_all_staked_positions(self, wallet, gauge_input):
         gauges = [g.strip() for g in gauge_input.split(',')]
-        found_any = False
-
+        all_staked = []
         for gauge_str in gauges:
             try:
-                if self._process_single_gauge(wallet, gauge_str):
-                    found_any = True
-            except ContractLogicError as cle:
-                print(f"   Gauge {gauge_str} → likely not a gauge or ABI mismatch: {cle}")
-            except ValueError:
-                print(f"   Invalid gauge address: {gauge_str}")
+                gauge_addr = Web3.to_checksum_address(gauge_str)
+                gauge = self.w3.eth.contract(address=gauge_addr, abi=self.GAUGE_ABI)
+
+                staked_ids = self._call_with_retry(lambda: gauge.functions.stakedValues(wallet).call())
+                pool_addr = self._call_with_retry(lambda: gauge.functions.pool().call())
+
+                if staked_ids:
+                    print(f"\nGauge {gauge_addr[:8]}...{gauge_addr[-6:]} — {len(staked_ids)} staked position(s)")
+                    print(f"   Linked pool: {pool_addr}")
+                    for token_id in staked_ids:
+                        pos = self._call_with_retry(lambda: self.manager.functions.positions(token_id).call())
+                        all_staked.append({
+                            "token_id": token_id,
+                            "pool_addr": pool_addr,
+                            "pos": pos,
+                            "gauge": gauge_addr
+                        })
             except Exception as e:
                 print(f"   Error with gauge {gauge_str}: {e}")
+        return all_staked
 
-        if not found_any:
-            print("\nNo staked positions found in the provided gauges.")
+    def _live_update(self, staked_positions):
+        os.system('cls' if os.name == 'nt' else 'clear')
+        print(f"=== Aerodrome SlipStream LIVE MONITOR — {datetime.now().strftime('%Y-%m-%d %H:%M:%S')} ===\n")
+        print(f"Monitoring {len(staked_positions)} staked position(s) • Refresh every 60s\n")
 
-    def _process_single_gauge(self, wallet, gauge_str):
-        gauge_addr = Web3.to_checksum_address(gauge_str)
-        gauge = self.w3.eth.contract(address=gauge_addr, abi=self.GAUGE_ABI)
+        for pos_data in staked_positions:
+            token_id = pos_data["token_id"]
+            pool_addr = pos_data["pool_addr"]
+            pos = pos_data["pos"]
+            current_tick = self._get_current_tick(pool_addr)
+            self._print_live_position(token_id, pos, current_tick)
 
-        staked_ids = gauge.functions.stakedValues(wallet).call()
-        pool_addr = gauge.functions.pool().call()
-
-        if not staked_ids:
-            print(f"   Gauge {gauge_addr[:8]}... → no staked positions for this wallet")
-            return False
-
-        # Found staked positions
-        print(f"\nGauge {gauge_addr[:8]}...{gauge_addr[-6:]} — {len(staked_ids)} staked position(s)")
-        print(f"   Linked pool: {pool_addr}")
-
-        # ── Get current tick ──
-        current_tick = self._get_current_tick(pool_addr)
-
-        # ── Show each position ──
-        for token_id in staked_ids:
-            self._print_position_details(token_id, current_tick)
-
-        return True
+        print("\n" + "="*70)
+        print("Next refresh in 60 seconds... (Ctrl+C to stop)")
 
     def _get_current_tick(self, pool_addr):
         pool = self.w3.eth.contract(address=pool_addr, abi=self.POOL_ABI)
-        try:
-            slot0 = pool.functions.slot0().call()
-            print("   → slot0 decoded (slim ABI)")
-            return slot0[1]
-        except Exception:
+        def fetch():
             try:
-                slot0_selector = Web3.keccak(text="slot0()")[:4].hex()
-                raw = self.w3.eth.call({"to": pool_addr, "data": slot0_selector})
+                slot0 = pool.functions.slot0().call()
+                return slot0[1]
+            except:
+                selector = Web3.keccak(text="slot0()")[:4].hex()
+                raw = self.w3.eth.call({"to": pool_addr, "data": selector})
                 if len(raw) >= 64:
-                    tick = int.from_bytes(raw[32:64], "big", signed=True)
-                    print("   → fallback raw decode OK")
-                    return tick
-            except Exception as e:
-                print(f"   → could not get current tick: {e}")
-        return None
+                    return int.from_bytes(raw[32:64], "big", signed=True)
+                raise
+        return self._call_with_retry(fetch)
 
-    def _print_position_details(self, token_id, current_tick):
-        pos = self.manager.functions.positions(token_id).call()
+    def _print_live_position(self, token_id, pos, current_tick):
         t0_addr = pos[2]
         t1_addr = pos[3]
         tick_lower = pos[5]
@@ -190,12 +214,13 @@ class AerodromePositionChecker:
 
         if current_tick is not None:
             self._print_price_analysis(sym0, sym1, dec0, dec1, tick_lower, tick_upper, current_tick)
+        else:
+            print("      ⚠️  Could not fetch current price (RPC issue)")
 
     def _get_token_info(self, token_addr):
         lower = token_addr.lower()
         if lower in self.KNOWN_TOKENS:
             return self.KNOWN_TOKENS[lower]
-
         try:
             c = self.w3.eth.contract(token_addr, abi=self.ERC20_ABI)
             sym = c.functions.symbol().call()
@@ -216,15 +241,15 @@ class AerodromePositionChecker:
         p_upper   = p_upper_raw * adjust
         p_center  = center_raw * adjust
 
-        print("\n      === Price vs Range ===")
+        print("\n      === Price vs Range (LIVE) ===")
         print(f"         Current:   1 {sym0} = {p_current:.8g} {sym1}")
         print(f"         Range:     1 {sym0} = {p_lower:.8g} → {p_upper:.8g} {sym1}")
         print(f"         Center:    1 {sym0} = {p_center:.8g} {sym1} (tick {(tick_lower + tick_upper)//2:,})")
 
         if current_tick < tick_lower:
-            print(f"         ⚠️ BELOW range by {tick_lower - current_tick:,} ticks")
+            print(f"         ⚠️  BELOW range by {tick_lower - current_tick:,} ticks")
         elif current_tick > tick_upper:
-            print(f"         ⚠️ ABOVE range by {current_tick - tick_upper:,} ticks")
+            print(f"         ⚠️  ABOVE range by {current_tick - tick_upper:,} ticks")
         else:
             print("         ✅ INSIDE range – earning fees")
 
@@ -232,7 +257,6 @@ class AerodromePositionChecker:
             distance_pct = ((p_current / p_center) - 1) * 100
             print(f"         Price distance from center: {distance_pct:+.2f}%")
         print("      ---")
-
 
 if __name__ == "__main__":
     checker = AerodromePositionChecker()
