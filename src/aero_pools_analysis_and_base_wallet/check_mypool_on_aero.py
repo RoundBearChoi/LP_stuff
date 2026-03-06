@@ -136,7 +136,8 @@ class AerodromePositionChecker:
                     sym1, dec1 = self._get_token_info(pos[3])
                     f0 = pos[10] / (10 ** dec0)
                     f1 = pos[11] / (10 ** dec1)
-                    print(f"   NFT {token_id}: Liquidity {pos[7]:,}, Range {pos[5]:,} → {pos[6]}, Fees {f0:.6f} {sym0} / {f1:.6f} {sym1}")
+                    # Liquidity line removed for cleaner output
+                    print(f"   NFT {token_id}: Range {pos[5]:,} → {pos[6]}, Fees {f0:.6f} {sym0} / {f1:.6f} {sym1}")
             else:
                 print("   (none found — all may be staked)")
         except Exception as e:
@@ -210,7 +211,6 @@ class AerodromePositionChecker:
         t1_addr = pos[3]
         tick_lower = pos[5]
         tick_upper = pos[6]
-        liquidity = pos[7]
         fees0 = pos[10]
         fees1 = pos[11]
 
@@ -221,7 +221,6 @@ class AerodromePositionChecker:
         f1 = fees1 / (10 ** dec1)
 
         print(f"\n   NFT {token_id}: {sym0} ↔ {sym1}")
-        print(f"      Liquidity: {liquidity:,}")
         print(f"      Range ticks: {tick_lower:,} → {tick_upper:,}")
         print(f"      Uncollected fees: {f0:.6f} {sym0} / {f1:.6f} {sym1}")
 
@@ -276,17 +275,15 @@ class AerodromePositionChecker:
         else:
             print(f"         {self.GREEN}INSIDE range{self.RESET}")
 
-        # NEW: Edge usage % (100% = at edge / out of range)
+        # Edge usage %
         if p_center > 0:
             dev = (p_current / p_center) - 1
             if dev >= 0:
-                # drifting toward upper
                 half = (p_upper / p_center) - 1
                 progress = (dev / half * 100) if half > 0 else 0
                 arrow = "↑"
                 edge = "upper"
             else:
-                # drifting toward lower
                 half = 1 - (p_lower / p_center)
                 progress = ((-dev) / half * 100) if half > 0 else 0
                 arrow = "↓"
