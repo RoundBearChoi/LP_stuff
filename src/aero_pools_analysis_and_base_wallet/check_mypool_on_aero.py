@@ -276,29 +276,24 @@ class AerodromePositionChecker:
         else:
             print(f"         {self.GREEN}INSIDE range – earning fees{self.RESET}")
 
-        # NEW: Distance to nearest edge (upper or lower)
+        # NEW: Edge usage % (100% = at edge / out of range)
         if p_center > 0:
-            if current_tick < tick_lower:
-                # outside below
-                pct_past = (p_lower / p_current - 1) * 100
-                print(f"         Distance to lower edge: {pct_past:.2f}% past ↓")
-            elif current_tick > tick_upper:
-                # outside above
-                pct_past = (p_current / p_upper - 1) * 100
-                print(f"         Distance to upper edge: {pct_past:.2f}% past ↑")
+            dev = (p_current / p_center) - 1
+            if dev >= 0:
+                # drifting toward upper
+                half = (p_upper / p_center) - 1
+                progress = (dev / half * 100) if half > 0 else 0
+                arrow = "↑"
+                edge = "upper"
             else:
-                # inside → show distance to nearest edge
-                pct_to_upper = (p_upper / p_current - 1) * 100
-                pct_to_lower = (1 - p_lower / p_current) * 100
-                if pct_to_upper < pct_to_lower:
-                    nearest_pct = pct_to_upper
-                    edge = "upper"
-                    arrow = "↑"
-                else:
-                    nearest_pct = pct_to_lower
-                    edge = "lower"
-                    arrow = "↓"
-                print(f"         Distance to nearest edge: {arrow} {nearest_pct:.2f}% to {edge}")
+                # drifting toward lower
+                half = 1 - (p_lower / p_center)
+                progress = ((-dev) / half * 100) if half > 0 else 0
+                arrow = "↓"
+                edge = "lower"
+
+            extra = " (out of range)" if progress >= 100 else ""
+            print(f"         Edge usage: {arrow} {progress:.2f}% toward {edge} edge{extra}")
         print("      ---")
 
 if __name__ == "__main__":
