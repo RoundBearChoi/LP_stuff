@@ -18,6 +18,7 @@ class CryptoPriceFetcher:
         'VIRTUAL': 'virtual-protocol',
         'AERO' : 'aerodrome-finance',
         'DOGE': 'dogecoin',
+        'LTC': 'litecoin',
     }
 
     def __init__(self, token1: str, token2: str):
