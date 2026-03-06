@@ -1,15 +1,15 @@
 from web3 import Web3
 from web3.exceptions import ContractLogicError
+import math
 
 # ================= CONFIG =================
-BASE_RPC = "https://mainnet.base.org"  # Use Alchemy/Infura for better speed/reliability
+BASE_RPC = "https://mainnet.base.org"  # Consider Alchemy/Infura for reliability
 w3 = Web3(Web3.HTTPProvider(BASE_RPC))
 
 if not w3.is_connected():
     raise Exception("Failed to connect to Base RPC. Check URL or use private endpoint.")
 
 POSITION_MANAGER_ADDR = Web3.to_checksum_address("0x827922686190790b37229fd06084350e74485b72")
-VOTER_ADDR = Web3.to_checksum_address("0x16613524e02ad97eDfeF371bC883F2F5d6C480A5")  # Voter – for reference
 
 WALLET_LOWER = input("Enter your Base wallet address (0x...): ").strip().lower()
 try:
@@ -20,7 +20,7 @@ except ValueError:
 
 print(f"\n=== Aerodrome SlipStream Positions (Unstaked + Staked) for {WALLET} ===\n")
 
-# ── ABI for NonfungiblePositionManager ──
+# ── ABIs ──
 MANAGER_ABI = [
     {"constant": True, "inputs": [{"name": "owner", "type": "address"}], "name": "balanceOf", "outputs": [{"name": "", "type": "uint256"}], "type": "function"},
     {"constant": True, "inputs": [{"name": "owner", "type": "address"}, {"name": "index", "type": "uint256"}], "name": "tokenOfOwnerByIndex", "outputs": [{"name": "", "type": "uint256"}], "type": "function"},
@@ -40,39 +40,49 @@ MANAGER_ABI = [
     ], "type": "function"}
 ]
 
-manager = w3.eth.contract(address=POSITION_MANAGER_ADDR, abi=MANAGER_ABI)
+ERC20_ABI = [
+    {"constant": True, "inputs": [], "name": "symbol", "outputs": [{"name": "", "type": "string"}], "type": "function"}
+]
 
-# ── ABI for CLGauge (SlipStream gauges) ──
 GAUGE_ABI = [
     {"constant": True, "inputs": [{"name": "depositor", "type": "address"}], "name": "stakedValues", "outputs": [{"name": "", "type": "uint256[]"}], "type": "function"},
     {"constant": True, "inputs": [], "name": "pool", "outputs": [{"name": "", "type": "address"}], "type": "function"},
 ]
 
-# ── Slimmed-down ABI for SlipStream CLPool slot0 (Aerodrome omits feeProtocol → shorter return tuple)
 POOL_ABI = [
     {"inputs": [], "name": "slot0", "outputs": [
         {"internalType": "uint160", "name": "sqrtPriceX96", "type": "uint160"},
         {"internalType": "int24", "name": "tick", "type": "int24"},
-        # We stop here — ignores any extra fields/packing differences
     ], "stateMutability": "view", "type": "function"}
 ]
 
-# ── 1. Check unstaked positions ──
+manager = w3.eth.contract(address=POSITION_MANAGER_ADDR, abi=MANAGER_ABI)
+
+# ── Helper: safe tick → price with fallback to 0 ──
+def tick_to_price(tick):
+    try:
+        return 1.0001 ** tick
+    except (OverflowError, ValueError):
+        return 0.0
+
+# ── 1. Unstaked positions ──
 print("Unstaked positions (direct ownership):")
 try:
     unstaked_count = manager.functions.balanceOf(WALLET).call()
-    print(f" → {unstaked_count}")
+    print(f" → {unstaked_count} positions")
     if unstaked_count > 0:
         for i in range(unstaked_count):
             token_id = manager.functions.tokenOfOwnerByIndex(WALLET, i).call()
             pos = manager.functions.positions(token_id).call()
-            print(f"   NFT {token_id}: Liquidity {pos[7]:,}, Range {pos[5]} → {pos[6]}, Fees owed {pos[10]}/{pos[11]}")
+            token0 = pos[2]
+            token1 = pos[3]
+            print(f"   NFT {token_id}: Liquidity {pos[7]:,}, Range {pos[5]:,} → {pos[6]}, Fees {pos[10]:,}/{pos[11]:,}")
     else:
-        print("   (expected if all positions are staked)")
+        print("   (none found — all may be staked)")
 except Exception as e:
-    print(f"   Error: {e}")
+    print(f"   Error fetching unstaked: {e}")
 
-# ── 2. Check staked positions ──
+# ── 2. Staked positions ──
 print("\nStaked positions (in gauges):")
 print("Paste gauge address(es) from Aerodrome UI / Basescan (comma-separated, or press Enter to skip):")
 gauge_input = input("> ").strip()
@@ -87,106 +97,117 @@ if gauge_input:
             gauge = w3.eth.contract(address=gauge_addr, abi=GAUGE_ABI)
 
             staked_ids = gauge.functions.stakedValues(WALLET).call()
-            pool_addr = gauge.functions.pool().call()  # Get the linked pool once per gauge
+            pool_addr = gauge.functions.pool().call()
 
             if staked_ids:
                 found_any = True
-                print(f"\nGauge {gauge_addr[:8]}...{gauge_addr[-6:]} has {len(staked_ids)} staked position(s):")
+                print(f"\nGauge {gauge_addr[:8]}...{gauge_addr[-6:]} — {len(staked_ids)} staked position(s)")
                 print(f"   Linked pool: {pool_addr}")
 
-                # Prepare pool contract
+                # ── Get current tick ──
                 pool = w3.eth.contract(address=pool_addr, abi=POOL_ABI)
-
                 current_tick = None
-                current_price = None
 
                 try:
-                    # Try slim ABI call first
                     slot0 = pool.functions.slot0().call()
-                    sqrt_price_x96 = slot0[0]
                     current_tick = slot0[1]
-                    current_price = (1.0001 ** current_tick) if current_tick is not None else None
-                    print("   → slot0() decoded successfully (slim ABI)")
-                except Exception as abi_err:
-                    print(f"   → ABI slot0() failed: {abi_err}")
-                    # Fallback: raw call + manual decode of first two fields
+                    print("   → slot0 decoded (slim ABI)")
+                except Exception:
                     try:
                         slot0_selector = Web3.keccak(text="slot0()")[:4].hex()
                         raw = w3.eth.call({"to": pool_addr, "data": slot0_selector})
                         if len(raw) >= 64:
-                            sqrt_price_x96 = int.from_bytes(raw[0:32], "big")
-                            # tick is signed int24 → use signed=True on the relevant bytes
                             tick_bytes = raw[32:64]
                             current_tick = int.from_bytes(tick_bytes, "big", signed=True)
-                            current_price = (1.0001 ** current_tick) if current_tick is not None else None
-                            print("   → Fallback raw decode succeeded")
-                        else:
-                            print("   → Raw slot0 return too short")
-                    except Exception as raw_err:
-                        print(f"   → Raw slot0 call failed: {raw_err}")
-                        current_tick = None
+                            print("   → fallback raw decode OK")
+                    except Exception as e:
+                        print(f"   → could not get current tick: {e}")
 
+                # ── Show each position ──
                 for token_id in staked_ids:
                     pos = manager.functions.positions(token_id).call()
-                    token0_short = pos[2][:10] + "..."
-                    token1_short = pos[3][:10] + "..."
+                    t0_addr = pos[2]
+                    t1_addr = pos[3]
                     tick_lower = pos[5]
                     tick_upper = pos[6]
+                    liquidity = pos[7]
+                    fees0 = pos[10]
+                    fees1 = pos[11]
 
-                    print(f"\n   NFT {token_id}: {token0_short} ↔ {token1_short}")
-                    print(f"      Liquidity: {pos[7]:,}")
+                    # Get symbols
+                    try:
+                        sym0 = w3.eth.contract(t0_addr, abi=ERC20_ABI).functions.symbol().call()
+                    except:
+                        sym0 = t0_addr[:8] + "..."
+                    try:
+                        sym1 = w3.eth.contract(t1_addr, abi=ERC20_ABI).functions.symbol().call()
+                    except:
+                        sym1 = t1_addr[:8] + "..."
+
+                    print(f"\n   NFT {token_id}: {sym0} ↔ {sym1}")
+                    print(f"      Liquidity: {liquidity:,}")
                     print(f"      Range ticks: {tick_lower:,} → {tick_upper:,}")
-                    print(f"      Uncollected fees: {pos[10]:,} / {pos[11]:,}")
+                    print(f"      Uncollected fees: {fees0:,} / {fees1:,}")
 
-                    # ── Price range analysis ──
                     if current_tick is not None:
-                        center_tick = (tick_lower + tick_upper) // 2
-                        lower_price = 1.0001 ** tick_lower
-                        upper_price = 1.0001 ** tick_upper
-                        center_price = 1.0001 ** center_tick
+                        p_current = tick_to_price(current_tick)
+                        p_lower   = tick_to_price(tick_lower)
+                        p_upper   = tick_to_price(tick_upper)
 
-                        print("\n      === Current Pool Price vs Your Range ===")
-                        print(f"         Current tick       : {current_tick:,}")
-                        print(f"         Current price      : ≈ {current_price:,.8f} token1 per token0")
-                        print(f"         Your range (price) : {lower_price:,.8f} → {upper_price:,.8f}")
-                        print(f"         Center of range    : ≈ {center_price:,.8f} (tick {center_tick:,})")
+                        # Decide display direction
+                        if p_current > 0:
+                            if p_current >= 1:
+                                display_price = p_current
+                                quote = f"{sym1} per {sym0}"
+                                range_low  = p_lower
+                                range_high = p_upper
+                            else:
+                                display_price = 1 / p_current if p_current != 0 else float('inf')
+                                quote = f"{sym0} per {sym1}"
+                                range_low  = 1 / p_upper if p_upper != 0 else 0
+                                range_high = 1 / p_lower if p_lower != 0 else float('inf')
+                        else:
+                            display_price = 0.0
+                            quote = "???"
+                            range_low = range_high = 0.0
+
+                        center_tick = (tick_lower + tick_upper) // 2
+                        center_price_raw = tick_to_price(center_tick)
+                        center_price = center_price_raw if center_price_raw >= 1 else (1 / center_price_raw if center_price_raw > 0 else 0)
+
+                        print("\n      === Price vs Range (inverted if < 1) ===")
+                        print(f"         Current: {display_price:.8e} {quote}")
+                        print(f"         Range:   {range_low:.8e} → {range_high:.8e} {quote}")
+                        print(f"         Center:  {center_price:.8e} {quote} (tick {center_tick:,})")
 
                         if current_tick < tick_lower:
-                            ticks_off = tick_lower - current_tick
-                            ratio = current_price / lower_price if lower_price > 0 else float('inf')
-                            print(f"         ⚠️ BELOW range by {ticks_off:,} ticks "
-                                  f"({ratio:.2%} of lower bound)")
+                            print(f"         ⚠️ BELOW range by {tick_lower - current_tick:,} ticks")
                         elif current_tick > tick_upper:
-                            ticks_off = current_tick - tick_upper
-                            ratio = upper_price / current_price if current_price > 0 else float('inf')
-                            print(f"         ⚠️ ABOVE range by {ticks_off:,} ticks "
-                                  f"({ratio:.2%} of upper bound)")
+                            print(f"         ⚠️ ABOVE range by {current_tick - tick_upper:,} ticks")
                         else:
-                            print("         ✅ INSIDE range – actively earning fees")
+                            print("         ✅ INSIDE range – earning fees")
 
-                        distance_pct = ((current_price / center_price) - 1) * 100 if center_price != 0 else 0
-                        print(f"         Distance from center: {distance_pct:+.2f}% (price space)")
-                        print("         (~6930 ticks ≈ 100% price move)")
-                    else:
-                        print("      (price data unavailable — pool may have custom slot0 layout)")
-
-                    print("      ---")
+                        # Relative position
+                        if center_price_raw > 0:
+                            distance_pct = ((p_current / center_price_raw) - 1) * 100
+                            print(f"         Price distance from center: {distance_pct:+.2f}%")
+                        print("      ---")
 
             else:
-                print(f"   Gauge {gauge_addr[:8]}... → no staked positions found for you")
+                print(f"   Gauge {gauge_addr[:8]}... → no staked positions for this wallet")
 
         except ContractLogicError as cle:
-            print(f"   Gauge {gauge_str} → contract error (wrong ABI or not a gauge?): {cle}")
+            print(f"   Gauge {gauge_str} → likely not a gauge or ABI mismatch: {cle}")
         except ValueError:
             print(f"   Invalid gauge address: {gauge_str}")
         except Exception as e:
-            print(f"   Error querying gauge {gauge_str}: {e}")
+            print(f"   Error with gauge {gauge_str}: {e}")
 
     if not found_any:
-        print("\nNo staked positions detected in provided gauges.")
+        print("\nNo staked positions found in the provided gauges.")
 else:
-    print("Skipped gauge check.")
-    print("To find gauges:")
-    print("  • Aerodrome UI → My Positions → click → view contract/tx")
-    print("  • Basescan → wallet → ERC-721 transfers → outgoing to gauge addresses")
-    print("  • Voter contract can help enumerate if you know pools")
+    print("Gauge check skipped.")
+    print("Tip: find gauges via")
+    print("  • Aerodrome app → My Positions → view contract")
+    print("  • Basescan wallet → ERC-721 transfers to gauge addresses")
+    print("  • Voter contract events for your NFTs")
