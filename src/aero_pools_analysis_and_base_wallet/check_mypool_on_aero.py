@@ -53,10 +53,10 @@ class AerodromePositionChecker:
         "0x940181a94a35a4569e4529a3cdfb74e38fd98631".lower(): ("AERO", 18),
     }
 
-    # 🌱 ANSI Terminal Colors for range status
-    GREEN = "\033[92m"   # Bright Green
-    RED   = "\033[91m"   # Bright Red
-    RESET = "\033[0m"    # Reset
+    # 🌱 ANSI Terminal Colors
+    GREEN = "\033[92m"
+    RED   = "\033[91m"
+    RESET = "\033[0m"
 
     def __init__(self, rpc_url=None):
         rpc = rpc_url or self.BASE_RPC
@@ -72,7 +72,6 @@ class AerodromePositionChecker:
         except (OverflowError, ValueError):
             return 0.0
 
-    # ================= RATE-LIMIT RETRY =================
     def _call_with_retry(self, func, max_retries=6, base_delay=3):
         for attempt in range(max_retries):
             try:
@@ -267,7 +266,7 @@ class AerodromePositionChecker:
         print(f"         Range:     1 {sym0} = {p_lower:.8g} → {p_upper:.8g} {sym1}")
         print(f"         Center:    1 {sym0} = {p_center:.8g} {sym1} (tick {(tick_lower + tick_upper)//2:,})")
 
-        # COLORED STATUS (green = inside, red = outside)
+        # COLORED STATUS
         if current_tick < tick_lower:
             diff = tick_lower - current_tick
             print(f"         {self.RED}↓ BELOW range by {diff:,} ticks{self.RESET}")
@@ -275,11 +274,31 @@ class AerodromePositionChecker:
             diff = current_tick - tick_upper
             print(f"         {self.RED}↑ ABOVE range by {diff:,} ticks{self.RESET}")
         else:
-            print(f"         {self.GREEN}INSIDE range{self.RESET}")
+            print(f"         {self.GREEN}INSIDE range – earning fees{self.RESET}")
 
+        # NEW: Distance to nearest edge (upper or lower)
         if p_center > 0:
-            distance_pct = ((p_current / p_center) - 1) * 100
-            print(f"         Price distance from center: {distance_pct:+.2f}%")
+            if current_tick < tick_lower:
+                # outside below
+                pct_past = (p_lower / p_current - 1) * 100
+                print(f"         Distance to lower edge: {pct_past:.2f}% past ↓")
+            elif current_tick > tick_upper:
+                # outside above
+                pct_past = (p_current / p_upper - 1) * 100
+                print(f"         Distance to upper edge: {pct_past:.2f}% past ↑")
+            else:
+                # inside → show distance to nearest edge
+                pct_to_upper = (p_upper / p_current - 1) * 100
+                pct_to_lower = (1 - p_lower / p_current) * 100
+                if pct_to_upper < pct_to_lower:
+                    nearest_pct = pct_to_upper
+                    edge = "upper"
+                    arrow = "↑"
+                else:
+                    nearest_pct = pct_to_lower
+                    edge = "lower"
+                    arrow = "↓"
+                print(f"         Distance to nearest edge: {arrow} {nearest_pct:.2f}% to {edge}")
         print("      ---")
 
 if __name__ == "__main__":
