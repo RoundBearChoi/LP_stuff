@@ -1,7 +1,7 @@
 import requests
 import pandas as pd
 import time
-import os  # ← NEW
+import os  # for existing file detection
 from datetime import datetime, timezone, timedelta
 from typing import Optional, List
 
@@ -21,9 +21,10 @@ class AerodromeSlipstreamFetcher:
     """
     Fetcher for Aerodrome Slipstream pools (Geckoterminal API).
     Features:
-      • Auto-detects base/quote symbols + TVL
-      • Auto-generates clean PNG chart
-      • NEW: Existing CSV detection + y/n prompt to skip download
+      • Auto-detects symbols + TVL
+      • Smart resume (y/n prompt)
+      • Clean PNG chart with TVL: $864,690 format (no "Latest" or candle count)
+      • DPI=150 for small file sizes
     """
 
     def __init__(self, pool_address: str, network: str = "base"):
@@ -63,7 +64,7 @@ class AerodromeSlipstreamFetcher:
             self.tvl_usd = float(data.get("reserve_in_usd", 0) or 0)
 
             print(f"✅ Pool detected: {self.base_symbol} / {self.quote_symbol}")
-            print(f"   TVL: ${self.tvl_usd:,.0f} USD")
+            print(f"   TVL: ${self.tvl_usd:,.0f}")
             print(f"   (name: {data.get('name', 'N/A')})\n")
 
         except Exception as e:
@@ -73,7 +74,6 @@ class AerodromeSlipstreamFetcher:
             self.tvl_usd = 0.0
 
     def _fetch_batch(self, currency: str, before_ts: Optional[int] = None, aggregate: int = 15, limit: int = 500, retries: int = 5) -> List[list]:
-        # (unchanged from previous version — full rate-limit handling kept)
         for attempt in range(retries + 1):
             params = {"aggregate": aggregate, "limit": limit, "currency": currency}
             if before_ts is not None:
@@ -101,7 +101,7 @@ class AerodromeSlipstreamFetcher:
         return []
 
     def _create_price_chart(self, df: pd.DataFrame, aggregate: int):
-        """Clean PNG chart (price line + volume bars)"""
+        """Clean PNG chart — DPI 150 + ultra-simple title (TVL: $864,690 only)"""
         if df.empty or not MATPLOTLIB_AVAILABLE:
             return
 
@@ -122,15 +122,16 @@ class AerodromeSlipstreamFetcher:
         ax2.bar(df.index, df['volume_usd'], color=color, alpha=0.4, width=width)
         ax2.tick_params(axis='y', labelcolor=color)
 
+        # UPDATED TITLE: exactly what you asked for (super clean)
         plt.title(
             f"{self.base_symbol} / {self.quote_symbol} — {aggregate}-min Candles\n"
-            f"TVL: ${self.tvl_usd:,.0f} | Latest: ${df[base_col].iloc[-1]:,.2f} | {len(df):,} candles"
+            f"TVL: ${self.tvl_usd:,.0f}"
         )
         fig.tight_layout()
         plt.grid(True, alpha=0.3)
-        plt.savefig(chart_filename, dpi=300, bbox_inches='tight')
+        plt.savefig(chart_filename, dpi=150, bbox_inches='tight')
         plt.close()
-        print(f"📊 Chart saved → {chart_filename}")
+        print(f"📊 Chart saved → {chart_filename}  (small file size)")
 
     def fetch_recent(
         self,
@@ -147,10 +148,8 @@ class AerodromeSlipstreamFetcher:
         if filename is None:
             filename = f"aerodrome_{self.base_symbol}_{self.quote_symbol}_{aggregate}min_recent.csv".lower()
 
-        # ────────────────────────────────────────────────
-        # NEW: Existing CSV detection + user prompt
-        # ────────────────────────────────────────────────
-        kst_tz = timezone(timedelta(hours=9))  # your local timezone
+        # Smart resume: Existing CSV detection + y/n prompt
+        kst_tz = timezone(timedelta(hours=9))
 
         if os.path.exists(filename):
             mod_ts = os.path.getmtime(filename)
@@ -161,6 +160,7 @@ class AerodromeSlipstreamFetcher:
             print(f"\n📁 Existing data found: {filename}")
             print(f"   Last modified: {mod_dt_kst:%Y-%m-%d %H:%M KST}")
             print(f"   Size: {file_size_mb:.1f} MB")
+            print(f"   Current TVL (refreshed): ${self.tvl_usd:,.0f}")
 
             choice = input("   Use existing data and skip download? (y/n) → ").strip().lower()
             if choice in ("y", "yes"):
@@ -168,19 +168,15 @@ class AerodromeSlipstreamFetcher:
                 try:
                     df = pd.read_csv(filename, index_col="datetime", parse_dates=True)
                     print(f"   Loaded {len(df):,} candles (range: {df.index[0]} → {df.index[-1]})")
-                    print(f"   Current TVL (refreshed): ${self.tvl_usd:,.0f}")
                     
                     self._create_price_chart(df, aggregate)
                     return df
                 except Exception as e:
                     print(f"⚠️  Could not load CSV ({e}) — falling back to fresh download.")
 
-        # If no file OR user chose "n" → normal fresh download
+        # Fresh download logic
         print("📥 Fetching fresh data from GeckoTerminal API...\n")
 
-        # ────────────────────────────────────────────────
-        # Original download logic (unchanged)
-        # ────────────────────────────────────────────────
         now_ts = int(time.time())
         cutoff_ts = now_ts - int(days_back * 86400)
         cutoff_date_str = datetime.fromtimestamp(cutoff_ts, tz=timezone.utc).strftime("%Y-%m-%d")
@@ -256,7 +252,7 @@ class AerodromeSlipstreamFetcher:
             print(f"           = {df['close_ratio'].iloc[-1]:.6f} {self.quote_symbol}")
             print(f"           ({self.quote_symbol} ≈ ${df[quote_col].iloc[-1]:,.0f})")
             print(f"Candles:   {len(df):,}")
-            print(f"TVL:       ${self.tvl_usd:,.0f} USD")
+            print(f"TVL:       ${self.tvl_usd:,.0f}")
             print(f"File size: ~{len(df) * 0.00035:.1f} MB")
 
         if save_csv and not df.empty:
@@ -271,9 +267,9 @@ class AerodromeSlipstreamFetcher:
 if __name__ == "__main__":
     DEFAULT_POOL = "0x22aee3699b6a0fed71490c103bd4e5f3309891d5"   # WETH–cbBTC
 
-    print("\n" + "="*80)
+    print("\n" + "="*85)
     print("🚀 Aerodrome Slipstream Historic Price Fetcher + Chart + TVL + Smart Resume")
-    print("="*80)
+    print("="*85)
     print(f"Default pool: {DEFAULT_POOL} (WETH / cbBTC)\n")
 
     user_input = input("Enter Aerodrome pool contract address (0x...) or press Enter for default\n→ ").strip()
