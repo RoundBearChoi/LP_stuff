@@ -1,15 +1,29 @@
 import requests
 import pandas as pd
 import time
+import os  # ← NEW
 from datetime import datetime, timezone, timedelta
 from typing import Optional, List
+
+# ────────────────────────────────────────────────
+# Matplotlib with graceful fallback (chart feature)
+# ────────────────────────────────────────────────
+try:
+    import matplotlib.pyplot as plt
+    MATPLOTLIB_AVAILABLE = True
+except ImportError:
+    MATPLOTLIB_AVAILABLE = False
+    print("⚠️  matplotlib not installed. Charts will be skipped.")
+    print("   Run: pip install matplotlib\n")
 
 
 class AerodromeSlipstreamFetcher:
     """
     Fetcher for Aerodrome Slipstream pools (Geckoterminal API).
-    Now dynamically detects base/quote token symbols from the pool contract info.
-    Works for ANY 2-token pool — no hardcoding needed.
+    Features:
+      • Auto-detects base/quote symbols + TVL
+      • Auto-generates clean PNG chart
+      • NEW: Existing CSV detection + y/n prompt to skip download
     """
 
     def __init__(self, pool_address: str, network: str = "base"):
@@ -22,12 +36,12 @@ class AerodromeSlipstreamFetcher:
         self.session = requests.Session()
         self.session.headers.update({"Accept": "application/json"})
 
-        # Populated automatically
         self.base_symbol: str = "UNKNOWN"
         self.quote_symbol: str = "UNKNOWN"
+        self.tvl_usd: float = 0.0
 
     def _fetch_pool_info(self):
-        """One-time fetch of pool metadata to extract real token symbols"""
+        """One-time fetch of pool metadata (symbols + TVL)"""
         url = (
             f"https://api.geckoterminal.com/api/v2/networks/{self.network}/"
             f"pools/{self.pool_address}"
@@ -46,29 +60,22 @@ class AerodromeSlipstreamFetcher:
                 self.base_symbol = "BASE"
                 self.quote_symbol = "QUOTE"
 
+            self.tvl_usd = float(data.get("reserve_in_usd", 0) or 0)
+
             print(f"✅ Pool detected: {self.base_symbol} / {self.quote_symbol}")
+            print(f"   TVL: ${self.tvl_usd:,.0f} USD")
             print(f"   (name: {data.get('name', 'N/A')})\n")
 
         except Exception as e:
             print(f"⚠️  Could not fetch pool metadata: {e}")
-            print("   Falling back to generic names (script will still work)\n")
             self.base_symbol = "BASE"
             self.quote_symbol = "QUOTE"
+            self.tvl_usd = 0.0
 
-    def _fetch_batch(
-        self,
-        currency: str,
-        before_ts: Optional[int] = None,
-        aggregate: int = 15,
-        limit: int = 500,
-        retries: int = 5
-    ) -> List[list]:
+    def _fetch_batch(self, currency: str, before_ts: Optional[int] = None, aggregate: int = 15, limit: int = 500, retries: int = 5) -> List[list]:
+        # (unchanged from previous version — full rate-limit handling kept)
         for attempt in range(retries + 1):
-            params = {
-                "aggregate": aggregate,
-                "limit": limit,
-                "currency": currency,
-            }
+            params = {"aggregate": aggregate, "limit": limit, "currency": currency}
             if before_ts is not None:
                 params["before_timestamp"] = before_ts
 
@@ -91,8 +98,39 @@ class AerodromeSlipstreamFetcher:
                 print(f"Request failed ({currency}): {str(e)}")
                 return []
 
-        print(f"Failed after {retries} retries — currency={currency}")
         return []
+
+    def _create_price_chart(self, df: pd.DataFrame, aggregate: int):
+        """Clean PNG chart (price line + volume bars)"""
+        if df.empty or not MATPLOTLIB_AVAILABLE:
+            return
+
+        base_col = f"close_{self.base_symbol.lower()}_usd"
+        chart_filename = f"aerodrome_{self.base_symbol}_{self.quote_symbol}_{aggregate}min_chart.png".lower()
+
+        fig, ax1 = plt.subplots(figsize=(14, 7))
+        color = 'tab:blue'
+        ax1.set_xlabel('Date (UTC)')
+        ax1.set_ylabel(f'{self.base_symbol} Price (USD)', color=color)
+        ax1.plot(df.index, df[base_col], color=color, linewidth=2)
+        ax1.tick_params(axis='y', labelcolor=color)
+
+        ax2 = ax1.twinx()
+        color = 'tab:gray'
+        ax2.set_ylabel('Volume (USD)', color=color)
+        width = pd.Timedelta(minutes=aggregate * 0.9)
+        ax2.bar(df.index, df['volume_usd'], color=color, alpha=0.4, width=width)
+        ax2.tick_params(axis='y', labelcolor=color)
+
+        plt.title(
+            f"{self.base_symbol} / {self.quote_symbol} — {aggregate}-min Candles\n"
+            f"TVL: ${self.tvl_usd:,.0f} | Latest: ${df[base_col].iloc[-1]:,.2f} | {len(df):,} candles"
+        )
+        fig.tight_layout()
+        plt.grid(True, alpha=0.3)
+        plt.savefig(chart_filename, dpi=300, bbox_inches='tight')
+        plt.close()
+        print(f"📊 Chart saved → {chart_filename}")
 
     def fetch_recent(
         self,
@@ -102,12 +140,47 @@ class AerodromeSlipstreamFetcher:
         filename: Optional[str] = None,
         max_pages: int = 400
     ) -> pd.DataFrame:
+
         if self.base_symbol == "UNKNOWN":
             self._fetch_pool_info()
 
         if filename is None:
             filename = f"aerodrome_{self.base_symbol}_{self.quote_symbol}_{aggregate}min_recent.csv".lower()
 
+        # ────────────────────────────────────────────────
+        # NEW: Existing CSV detection + user prompt
+        # ────────────────────────────────────────────────
+        kst_tz = timezone(timedelta(hours=9))  # your local timezone
+
+        if os.path.exists(filename):
+            mod_ts = os.path.getmtime(filename)
+            mod_dt_utc = datetime.fromtimestamp(mod_ts, tz=timezone.utc)
+            mod_dt_kst = mod_dt_utc.astimezone(kst_tz)
+            file_size_mb = os.path.getsize(filename) / (1024 * 1024)
+
+            print(f"\n📁 Existing data found: {filename}")
+            print(f"   Last modified: {mod_dt_kst:%Y-%m-%d %H:%M KST}")
+            print(f"   Size: {file_size_mb:.1f} MB")
+
+            choice = input("   Use existing data and skip download? (y/n) → ").strip().lower()
+            if choice in ("y", "yes"):
+                print("✅ Loading existing CSV...")
+                try:
+                    df = pd.read_csv(filename, index_col="datetime", parse_dates=True)
+                    print(f"   Loaded {len(df):,} candles (range: {df.index[0]} → {df.index[-1]})")
+                    print(f"   Current TVL (refreshed): ${self.tvl_usd:,.0f}")
+                    
+                    self._create_price_chart(df, aggregate)
+                    return df
+                except Exception as e:
+                    print(f"⚠️  Could not load CSV ({e}) — falling back to fresh download.")
+
+        # If no file OR user chose "n" → normal fresh download
+        print("📥 Fetching fresh data from GeckoTerminal API...\n")
+
+        # ────────────────────────────────────────────────
+        # Original download logic (unchanged)
+        # ────────────────────────────────────────────────
         now_ts = int(time.time())
         cutoff_ts = now_ts - int(days_back * 86400)
         cutoff_date_str = datetime.fromtimestamp(cutoff_ts, tz=timezone.utc).strftime("%Y-%m-%d")
@@ -120,8 +193,6 @@ class AerodromeSlipstreamFetcher:
         all_ratio: List[list] = []
         before_ts: Optional[int] = None
         page = 0
-
-        kst_tz = timezone(timedelta(hours=9))
 
         while page < max_pages:
             batch_usd = self._fetch_batch("usd", before_ts, aggregate)
@@ -137,10 +208,7 @@ class AerodromeSlipstreamFetcher:
             dt_latest = datetime.fromtimestamp(ts_latest, tz=timezone.utc)
             dt_oldest = datetime.fromtimestamp(ts_oldest, tz=timezone.utc)
 
-            print(
-                f"Page {page+1:3d} | "
-                f"{dt_latest:%Y-%m-%d %H:%M} → {dt_oldest:%Y-%m-%d}"
-            )
+            print(f"Page {page+1:3d} | {dt_latest:%Y-%m-%d %H:%M} → {dt_oldest:%Y-%m-%d}")
 
             batch_usd = [c for c in batch_usd if c[0] >= cutoff_ts]
             batch_ratio = [c for c in batch_ratio if c[0] >= cutoff_ts]
@@ -164,14 +232,8 @@ class AerodromeSlipstreamFetcher:
             print("\nNo data was retrieved.")
             return pd.DataFrame()
 
-        df_usd = pd.DataFrame(
-            all_usd,
-            columns=["timestamp", "open_usd", "high_usd", "low_usd", "close_usd", "volume_usd"]
-        )
-        df_ratio = pd.DataFrame(
-            all_ratio,
-            columns=["timestamp", "open_ratio", "high_ratio", "low_ratio", "close_ratio", "volume_ratio"]
-        )
+        df_usd = pd.DataFrame(all_usd, columns=["timestamp", "open_usd", "high_usd", "low_usd", "close_usd", "volume_usd"])
+        df_ratio = pd.DataFrame(all_ratio, columns=["timestamp", "open_ratio", "high_ratio", "low_ratio", "close_ratio", "volume_ratio"])
 
         df = pd.merge(df_usd, df_ratio, on="timestamp", how="inner")
         df["datetime"] = pd.to_datetime(df["timestamp"], unit="s", utc=True)
@@ -183,6 +245,7 @@ class AerodromeSlipstreamFetcher:
         df[base_col] = df["close_usd"]
         df[quote_col] = df["close_usd"] / df["close_ratio"]
 
+        # Final summary
         if not df.empty:
             latest_utc = df.index[-1]
             latest_kst = latest_utc.astimezone(kst_tz)
@@ -193,11 +256,13 @@ class AerodromeSlipstreamFetcher:
             print(f"           = {df['close_ratio'].iloc[-1]:.6f} {self.quote_symbol}")
             print(f"           ({self.quote_symbol} ≈ ${df[quote_col].iloc[-1]:,.0f})")
             print(f"Candles:   {len(df):,}")
-            print(f"File size: ~{len(df) * 0.00035:.1f} MB (rough estimate)")
+            print(f"TVL:       ${self.tvl_usd:,.0f} USD")
+            print(f"File size: ~{len(df) * 0.00035:.1f} MB")
 
-        if save_csv:
+        if save_csv and not df.empty:
             df.to_csv(filename)
-            print(f"\nSaved → {filename}")
+            print(f"\n💾 Saved → {filename}")
+            self._create_price_chart(df, aggregate)
 
         return df
 
@@ -206,28 +271,13 @@ class AerodromeSlipstreamFetcher:
 if __name__ == "__main__":
     DEFAULT_POOL = "0x22aee3699b6a0fed71490c103bd4e5f3309891d5"   # WETH–cbBTC
 
-    print("\n" + "="*70)
-    print("🚀 Aerodrome Slipstream Historic Price Fetcher")
-    print("="*70)
+    print("\n" + "="*80)
+    print("🚀 Aerodrome Slipstream Historic Price Fetcher + Chart + TVL + Smart Resume")
+    print("="*80)
     print(f"Default pool: {DEFAULT_POOL} (WETH / cbBTC)\n")
 
-    user_input = input(
-        "Enter Aerodrome pool contract address (0x...)\n"
-        "   (or just press Enter to use default)\n"
-        "→ "
-    ).strip()
-
-    if user_input:
-        POOL = user_input
-        print(f"✅ Using provided pool: {POOL}\n")
-    else:
-        POOL = DEFAULT_POOL
-        print(f"✅ Using default pool: {DEFAULT_POOL} (WETH / cbBTC)\n")
-
-    # Quick validation (helps catch typos)
-    if not POOL.startswith("0x") or len(POOL) != 42:
-        print("⚠️  Warning: Address doesn't look like a valid 0x address.")
-        print("   Continuing anyway...\n")
+    user_input = input("Enter Aerodrome pool contract address (0x...) or press Enter for default\n→ ").strip()
+    POOL = user_input if user_input else DEFAULT_POOL
 
     fetcher = AerodromeSlipstreamFetcher(POOL)
 
@@ -239,6 +289,5 @@ if __name__ == "__main__":
 
     if not df.empty:
         base_col = f"close_{fetcher.base_symbol.lower()}_usd"
-        quote_col = f"close_{fetcher.quote_symbol.lower()}_usd"
         print("\nLast 5 candles:")
-        print(df[[base_col, "close_ratio", quote_col, "volume_usd"]].tail(5))
+        print(df[[base_col, "close_ratio", f"close_{fetcher.quote_symbol.lower()}_usd", "volume_usd"]].tail(5))
