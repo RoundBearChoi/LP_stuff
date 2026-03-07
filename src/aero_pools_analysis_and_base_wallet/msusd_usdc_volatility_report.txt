@@ -1,0 +1,12 @@
+MSUSD-USDC Pool Volatility Report (KST)
+============================================================
+
+Period: 2026-01-17 → 2026-03-07
+
+Most volatile 3h bucket: 21-24 (1.06%)
+Calmest 3h bucket:   18-21 (0.94%)
+
+Hottest hour (1h):    01:00 – 02:00
+Calmest hour (1h):    14:00 – 15:00
+
+See msusd_usdc_hourly_recommendations.txt for detailed hourly ranges & suggested widths.

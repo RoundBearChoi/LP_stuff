@@ -43,7 +43,6 @@ class AerodromeSlipstreamFetcher:
                 self.base_symbol = parts[0]
                 self.quote_symbol = parts[1]
             else:
-                # Extremely rare fallback
                 self.base_symbol = "BASE"
                 self.quote_symbol = "QUOTE"
 
@@ -64,7 +63,6 @@ class AerodromeSlipstreamFetcher:
         limit: int = 500,
         retries: int = 5
     ) -> List[list]:
-        """(unchanged — exact same as your original)"""
         for attempt in range(retries + 1):
             params = {
                 "aggregate": aggregate,
@@ -104,14 +102,9 @@ class AerodromeSlipstreamFetcher:
         filename: Optional[str] = None,
         max_pages: int = 400
     ) -> pd.DataFrame:
-        """
-        Fetch recent OHLCV data — now fully generic with dynamic symbols.
-        """
-        # ── Detect symbols once ─────────────────────────────────────
         if self.base_symbol == "UNKNOWN":
             self._fetch_pool_info()
 
-        # Dynamic filename
         if filename is None:
             filename = f"aerodrome_{self.base_symbol}_{self.quote_symbol}_{aggregate}min_recent.csv".lower()
 
@@ -171,7 +164,6 @@ class AerodromeSlipstreamFetcher:
             print("\nNo data was retrieved.")
             return pd.DataFrame()
 
-        # ── Build DataFrame with dynamic column names ─────────────────
         df_usd = pd.DataFrame(
             all_usd,
             columns=["timestamp", "open_usd", "high_usd", "low_usd", "close_usd", "volume_usd"]
@@ -185,14 +177,12 @@ class AerodromeSlipstreamFetcher:
         df["datetime"] = pd.to_datetime(df["timestamp"], unit="s", utc=True)
         df = df.set_index("datetime").sort_index()
 
-        # Dynamic columns (replaces the old hardcoded close_cbbtc_usd)
         base_col = f"close_{self.base_symbol.lower()}_usd"
         quote_col = f"close_{self.quote_symbol.lower()}_usd"
 
         df[base_col] = df["close_usd"]
         df[quote_col] = df["close_usd"] / df["close_ratio"]
 
-        # ── Summary (now generic) ─────────────────────────────────────
         if not df.empty:
             latest_utc = df.index[-1]
             latest_kst = latest_utc.astimezone(kst_tz)
@@ -214,8 +204,30 @@ class AerodromeSlipstreamFetcher:
 
 # ────────────────────────────────────────────────
 if __name__ == "__main__":
-    # Example — works for ANY pool now
-    POOL = "0x22aee3699b6a0fed71490c103bd4e5f3309891d5"   # WETH–cbBTC (or change it!)
+    DEFAULT_POOL = "0x22aee3699b6a0fed71490c103bd4e5f3309891d5"   # WETH–cbBTC
+
+    print("\n" + "="*70)
+    print("🚀 Aerodrome Slipstream Historic Price Fetcher")
+    print("="*70)
+    print(f"Default pool: {DEFAULT_POOL} (WETH / cbBTC)\n")
+
+    user_input = input(
+        "Enter Aerodrome pool contract address (0x...)\n"
+        "   (or just press Enter to use default)\n"
+        "→ "
+    ).strip()
+
+    if user_input:
+        POOL = user_input
+        print(f"✅ Using provided pool: {POOL}\n")
+    else:
+        POOL = DEFAULT_POOL
+        print(f"✅ Using default pool: {DEFAULT_POOL} (WETH / cbBTC)\n")
+
+    # Quick validation (helps catch typos)
+    if not POOL.startswith("0x") or len(POOL) != 42:
+        print("⚠️  Warning: Address doesn't look like a valid 0x address.")
+        print("   Continuing anyway...\n")
 
     fetcher = AerodromeSlipstreamFetcher(POOL)
 
