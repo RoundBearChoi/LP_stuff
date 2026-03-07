@@ -6,7 +6,7 @@ import time
 
 
 class VeAeroSupplyAnalyzer:
-    """Clean, reusable class for fetching & charting Aerodrome veAero historic supply."""
+    """Fixed version — crash fixed + better early stopping."""
 
     AERO_ADDRESS = "0x940181a94A35A4569E4529A3CDfB74e38FD98631"
     VE_ADDRESS = "0xeBf418Fe2512e7E6bd9b87a8F0f294aCDC67e6B4"
@@ -42,9 +42,9 @@ class VeAeroSupplyAnalyzer:
 
     def prompt_granularity(self):
         print("📅 Choose data granularity:")
-        print("   d = Daily   (fine detail, ~950 points)")
-        print("   w = Weekly  (recommended — clean long-term trends, ~135 points)")
-        print("   m = Monthly (ultra clean overview)")
+        print("   d = Daily   (fine detail)")
+        print("   w = Weekly  (recommended)")
+        print("   m = Monthly (clean overview)")
         choice = input("Enter d/w/m [default = w]: ").strip().lower() or "w"
 
         if choice == "d":
@@ -61,8 +61,12 @@ class VeAeroSupplyAnalyzer:
         self.w3 = Web3(Web3.HTTPProvider(self.RPC_URL))
         print("✅ Connected to Base:", self.w3.is_connected())
 
-        erc20_abi = [{"constant": True, "inputs": [{"name": "_owner", "type": "address"}],
-                      "name": "balanceOf", "outputs": [{"name": "balance", "type": "uint256"}], "type": "function"}]
+        erc20_abi = [
+            {"constant": True, "inputs": [{"name": "_owner", "type": "address"}],
+             "name": "balanceOf", "outputs": [{"name": "balance", "type": "uint256"}], "type": "function"},
+            {"constant": True, "inputs": [], "name": "totalSupply",
+             "outputs": [{"name": "supply", "type": "uint256"}], "type": "function"}
+        ]
         ve_abi = [{"inputs": [], "name": "totalSupply", "outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],
                    "stateMutability": "view", "type": "function"}]
 
@@ -96,15 +100,18 @@ class VeAeroSupplyAnalyzer:
 
         for i in range(self.NUM_POINTS):
             block = current_block - (i * BLOCK_STEP)
-            if block < 2_000_000:
+            if block < 5_000_000:   # Safe early stop (before contracts existed)
                 break
 
             try:
                 locked_raw = self.call_with_retry(self.aero_contract.functions.balanceOf(self.VE_ADDRESS), block)
+                total_raw = self.call_with_retry(self.aero_contract.functions.totalSupply(), block)
                 ve_raw = self.call_with_retry(self.ve_contract.functions.totalSupply(), block)
                 block_info = self.w3.eth.get_block(block)
 
                 locked_aero = locked_raw / 1e18
+                total_aero = total_raw / 1e18
+                percent_locked = (locked_aero / total_aero * 100) if total_aero > 0 else 0
                 ve_supply = ve_raw / 1e18
                 date = datetime.fromtimestamp(block_info['timestamp'])
 
@@ -112,17 +119,20 @@ class VeAeroSupplyAnalyzer:
                     'date': date,
                     'block': block,
                     'total_locked_aero': round(locked_aero, 2),
+                    'total_aero_supply': round(total_aero, 2),
+                    'percent_locked': round(percent_locked, 2),
                     've_voting_supply': round(ve_supply, 2)
                 })
 
-                if i % 25 == 0 or i == self.NUM_POINTS - 1:
+                if i % 20 == 0 or i == self.NUM_POINTS - 1:
                     print(f"✅ {i+1:3d} points | {date.strftime('%Y-%m-%d')} | "
-                          f"Locked AERO: {locked_aero:,.0f} | veSupply: {ve_supply:,.0f}")
+                          f"Locked: {locked_aero:,.0f} | Total: {total_aero:,.0f} | "
+                          f"% Locked: {percent_locked:.1f}%")
 
                 time.sleep(self.BASE_SLEEP)
 
             except Exception as e:
-                print(f"⚠️ Error at block {block}: {e}")
+                print(f"⚠️ Error at block {block}: {str(e)[:80]}...")
                 time.sleep(2)
                 continue
 
@@ -138,21 +148,25 @@ class VeAeroSupplyAnalyzer:
         filename_base = f"veaero_historic_supply_{self.days}day"
 
         fig, ax1 = plt.subplots(figsize=(15, 8))
-        color1 = '#1f77b4'
+        color_locked = '#1f77b4'
+        color_total = '#2ca02c'
+        color_percent = '#d62728'
+
         ax1.set_xlabel('Date')
-        ax1.set_ylabel('Total Locked AERO', color=color1)
-        ax1.plot(self.df['date'], self.df['total_locked_aero'], color=color1, linewidth=3.5, label='Total Locked AERO')
-        ax1.tick_params(axis='y', labelcolor=color1)
+        ax1.set_ylabel('AERO Supply', color='black')
+        ax1.plot(self.df['date'], self.df['total_locked_aero'], color=color_locked, linewidth=3.5, label='Total Locked AERO')
+        ax1.plot(self.df['date'], self.df['total_aero_supply'], color=color_total, linewidth=3.0, label='Total AERO Supply')
+        ax1.tick_params(axis='y', labelcolor='black')
 
         ax2 = ax1.twinx()
-        color2 = '#ff7f0e'
-        ax2.set_ylabel('veAERO Voting Power', color=color2)
-        ax2.plot(self.df['date'], self.df['ve_voting_supply'], color=color2, linewidth=3, linestyle='--',
-                 label='veAERO Voting Power')
-        ax2.tick_params(axis='y', labelcolor=color2)
+        ax2.set_ylabel('% of Supply Locked', color=color_percent)
+        ax2.plot(self.df['date'], self.df['percent_locked'], color=color_percent, linewidth=3, linestyle='--',
+                 label='% of Supply Locked')
+        ax2.tick_params(axis='y', labelcolor=color_percent)
+        ax2.set_ylim(0, 100)
 
-        plt.title(f'Aerodrome Finance — Historic veAero Supply ({self.days}-day intervals)\n'
-                  f'Total Locked AERO vs Voting Power', fontsize=18, pad=20)
+        plt.title(f'Aerodrome Finance — Historic Supply ({self.days}-day intervals)\n'
+                  f'Total AERO Supply vs Locked AERO vs % Locked', fontsize=18, pad=20)
         fig.tight_layout()
         ax1.grid(True, alpha=0.3)
 
@@ -160,17 +174,22 @@ class VeAeroSupplyAnalyzer:
         lines2, labels2 = ax2.get_legend_handles_labels()
         ax1.legend(lines1 + lines2, labels1 + labels2, loc='upper left')
 
-        # SAVE TO PNG (no window popup)
         plt.savefig(f"{filename_base}.png", dpi=150, bbox_inches='tight')
         plt.close()
         print(f"📊 Chart saved → {filename_base}.png")
 
     def print_stats(self):
         latest = self.df.iloc[-1]
+        ve = latest['ve_voting_supply']
+        locked = latest['total_locked_aero']
+        ratio = (ve / locked * 100) if locked > 0 else 0
+
         print(f"\n📊 CURRENT STATS:")
-        print(f"   Total Locked AERO  : {latest['total_locked_aero']:,.0f}")
-        print(f"   veAERO Voting Power: {latest['ve_voting_supply']:,.0f}")
-        print(f"   Ratio (ve/locked)   : {latest['ve_voting_supply']/latest['total_locked_aero']:.1%}")
+        print(f"   Total AERO Supply      : {latest['total_aero_supply']:,.0f}")
+        print(f"   Total Locked AERO      : {locked:,.0f}")
+        print(f"   % of supply locked     : {latest['percent_locked']:.1f}%")
+        print(f"   veAERO Voting Power    : {ve:,.0f}")
+        print(f"   ve/locked ratio        : {ratio:.1f}%")
         print(f"   Granularity: {self.days} days | Files saved! 📈")
 
     def run(self):
