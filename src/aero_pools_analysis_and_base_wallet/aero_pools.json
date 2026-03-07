@@ -6,7 +6,7 @@
       "gauge_address": "0x83e2E9493996651ed63033d81f5052cBE2fEB6A1"
     },
     {
-      "name": "msusd-usdc",
+      "name": "msusd-usdc cl1",
       "pool_address": "0x054b67943ba17b2cd8c420544c88bde71a81ef9f",
       "gauge_address": "0xA0B1Db34fa530B9A001965C8A212c1a54Dab8510"
     }

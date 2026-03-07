@@ -4,7 +4,7 @@ MSUSD-USDC Pool Volatility Report (KST)
 Period: 2025-11-05 → 2026-03-07
 
 Most volatile 3h bucket: 00-03 (0.78%)
-Calmest 3h bucket:   18-21 (0.44%)
+Calmest 3h bucket:   18-21 (0.45%)
 
 Hottest hour (1h):    00:00 – 01:00
 Calmest hour (1h):    20:00 – 21:00
