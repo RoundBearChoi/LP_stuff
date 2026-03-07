@@ -7,9 +7,9 @@ from typing import Optional, List
 
 class AerodromeSlipstreamFetcher:
     """
-    Simplified fetcher for Aerodrome Slipstream pools (Geckoterminal API).
-    Always fetches the most recent ~180 days of data.
-    Overwrites the CSV file on every run — no incremental merging logic.
+    Fetcher for Aerodrome Slipstream pools (Geckoterminal API).
+    Now dynamically detects base/quote token symbols from the pool contract info.
+    Works for ANY 2-token pool — no hardcoding needed.
     """
 
     def __init__(self, pool_address: str, network: str = "base"):
@@ -22,6 +22,40 @@ class AerodromeSlipstreamFetcher:
         self.session = requests.Session()
         self.session.headers.update({"Accept": "application/json"})
 
+        # Populated automatically
+        self.base_symbol: str = "UNKNOWN"
+        self.quote_symbol: str = "UNKNOWN"
+
+    def _fetch_pool_info(self):
+        """One-time fetch of pool metadata to extract real token symbols"""
+        url = (
+            f"https://api.geckoterminal.com/api/v2/networks/{self.network}/"
+            f"pools/{self.pool_address}"
+        )
+        try:
+            resp = self.session.get(url, timeout=12)
+            resp.raise_for_status()
+            data = resp.json()["data"]["attributes"]
+            pool_name = data.get("pool_name") or data.get("name", "")
+
+            if " / " in pool_name:
+                parts = [p.strip() for p in pool_name.split(" / ", 1)]
+                self.base_symbol = parts[0]
+                self.quote_symbol = parts[1]
+            else:
+                # Extremely rare fallback
+                self.base_symbol = "BASE"
+                self.quote_symbol = "QUOTE"
+
+            print(f"✅ Pool detected: {self.base_symbol} / {self.quote_symbol}")
+            print(f"   (name: {data.get('name', 'N/A')})\n")
+
+        except Exception as e:
+            print(f"⚠️  Could not fetch pool metadata: {e}")
+            print("   Falling back to generic names (script will still work)\n")
+            self.base_symbol = "BASE"
+            self.quote_symbol = "QUOTE"
+
     def _fetch_batch(
         self,
         currency: str,
@@ -30,7 +64,7 @@ class AerodromeSlipstreamFetcher:
         limit: int = 500,
         retries: int = 5
     ) -> List[list]:
-        """Fetch one page (batch) of OHLCV data with retry on rate limit"""
+        """(unchanged — exact same as your original)"""
         for attempt in range(retries + 1):
             params = {
                 "aggregate": aggregate,
@@ -44,16 +78,15 @@ class AerodromeSlipstreamFetcher:
                 resp = self.session.get(self.base_url, params=params, timeout=15)
                 resp.raise_for_status()
                 data = resp.json()
-                ohlcv = data.get("data", {}).get("attributes", {}).get("ohlcv_list", [])
-                return ohlcv
+                return data.get("data", {}).get("attributes", {}).get("ohlcv_list", [])
 
             except requests.exceptions.HTTPError as e:
-                if resp.status_code == 429:
-                    wait = (2 ** attempt) * 5 + 2  # 7s → 12s → 22s → 42s → ...
-                    print(f"Rate limit (429). Sleeping {wait}s  (attempt {attempt+1}/{retries})")
+                if getattr(resp, "status_code", 0) == 429:
+                    wait = (2 ** attempt) * 5 + 2
+                    print(f"Rate limit (429). Sleeping {wait}s (attempt {attempt+1}/{retries})")
                     time.sleep(wait)
                     continue
-                print(f"HTTP {resp.status_code} ({currency}): {resp.text[:180]}")
+                print(f"HTTP {getattr(resp, 'status_code', '???')} ({currency}): {resp.text[:180]}")
                 return []
 
             except Exception as e:
@@ -72,12 +105,15 @@ class AerodromeSlipstreamFetcher:
         max_pages: int = 400
     ) -> pd.DataFrame:
         """
-        Fetch the most recent N days of OHLCV data (15-min candles by default).
-        Always starts from now and paginates backwards until time window or data ends.
-        Overwrites the CSV file each run.
+        Fetch recent OHLCV data — now fully generic with dynamic symbols.
         """
+        # ── Detect symbols once ─────────────────────────────────────
+        if self.base_symbol == "UNKNOWN":
+            self._fetch_pool_info()
+
+        # Dynamic filename
         if filename is None:
-            filename = f"aerodrome_{self.pool_address}_{aggregate}min_recent.csv"
+            filename = f"aerodrome_{self.base_symbol}_{self.quote_symbol}_{aggregate}min_recent.csv".lower()
 
         now_ts = int(time.time())
         cutoff_ts = now_ts - int(days_back * 86400)
@@ -113,14 +149,12 @@ class AerodromeSlipstreamFetcher:
                 f"{dt_latest:%Y-%m-%d %H:%M} → {dt_oldest:%Y-%m-%d}"
             )
 
-            # Keep only candles inside our desired window
             batch_usd = [c for c in batch_usd if c[0] >= cutoff_ts]
             batch_ratio = [c for c in batch_ratio if c[0] >= cutoff_ts]
 
             all_usd.extend(batch_usd)
             all_ratio.extend(batch_ratio)
 
-            # Early stop if we've already gone far enough back
             if ts_oldest < cutoff_ts:
                 print("Reached desired time range → stopping early.")
                 break
@@ -128,16 +162,16 @@ class AerodromeSlipstreamFetcher:
             before_ts = ts_oldest - 1
             page += 1
 
-            if len(batch_usd) < 450:  # API usually returns < limit near the beginning
+            if len(batch_usd) < 450:
                 break
 
-            time.sleep(2.3)  # conservative rate-limit padding
+            time.sleep(2.3)
 
         if not all_usd:
             print("\nNo data was retrieved.")
             return pd.DataFrame()
 
-        # ── Build DataFrame ────────────────────────────────────────────────
+        # ── Build DataFrame with dynamic column names ─────────────────
         df_usd = pd.DataFrame(
             all_usd,
             columns=["timestamp", "open_usd", "high_usd", "low_usd", "close_usd", "volume_usd"]
@@ -150,18 +184,24 @@ class AerodromeSlipstreamFetcher:
         df = pd.merge(df_usd, df_ratio, on="timestamp", how="inner")
         df["datetime"] = pd.to_datetime(df["timestamp"], unit="s", utc=True)
         df = df.set_index("datetime").sort_index()
-        df["close_cbbtc_usd"] = df["close_usd"] / df["close_ratio"]
 
-        # ── Summary ────────────────────────────────────────────────────────
+        # Dynamic columns (replaces the old hardcoded close_cbbtc_usd)
+        base_col = f"close_{self.base_symbol.lower()}_usd"
+        quote_col = f"close_{self.quote_symbol.lower()}_usd"
+
+        df[base_col] = df["close_usd"]
+        df[quote_col] = df["close_usd"] / df["close_ratio"]
+
+        # ── Summary (now generic) ─────────────────────────────────────
         if not df.empty:
             latest_utc = df.index[-1]
             latest_kst = latest_utc.astimezone(kst_tz)
 
             print(f"\nRange:     {df.index[0]} → {latest_utc} UTC")
-            print(  f"           ({latest_kst.strftime('%Y-%m-%d %H:%M KST')})")
-            print(f"Latest:    1 WETH ≈ ${df['close_usd'].iloc[-1]:,.2f}")
-            print(f"           = {df['close_ratio'].iloc[-1]:.6f} cbBTC")
-            print(f"           (cbBTC ≈ ${df['close_cbbtc_usd'].iloc[-1]:,.0f})")
+            print(f"           ({latest_kst.strftime('%Y-%m-%d %H:%M KST')})")
+            print(f"Latest:    1 {self.base_symbol} ≈ ${df['close_usd'].iloc[-1]:,.2f}")
+            print(f"           = {df['close_ratio'].iloc[-1]:.6f} {self.quote_symbol}")
+            print(f"           ({self.quote_symbol} ≈ ${df[quote_col].iloc[-1]:,.0f})")
             print(f"Candles:   {len(df):,}")
             print(f"File size: ~{len(df) * 0.00035:.1f} MB (rough estimate)")
 
@@ -174,12 +214,11 @@ class AerodromeSlipstreamFetcher:
 
 # ────────────────────────────────────────────────
 if __name__ == "__main__":
-    # Example usage — replace with your pool if needed
-    POOL = "0x22aee3699b6a0fed71490c103bd4e5f3309891d5"   # WETH–cbBTC example
+    # Example — works for ANY pool now
+    POOL = "0x22aee3699b6a0fed71490c103bd4e5f3309891d5"   # WETH–cbBTC (or change it!)
 
     fetcher = AerodromeSlipstreamFetcher(POOL)
 
-    # 179 days is usually safe; 180–185 often works too
     df = fetcher.fetch_recent(
         days_back=179,
         aggregate=15,
@@ -187,5 +226,7 @@ if __name__ == "__main__":
     )
 
     if not df.empty:
+        base_col = f"close_{fetcher.base_symbol.lower()}_usd"
+        quote_col = f"close_{fetcher.quote_symbol.lower()}_usd"
         print("\nLast 5 candles:")
-        print(df[["close_usd", "close_ratio", "close_cbbtc_usd", "volume_usd"]].tail(5))
+        print(df[[base_col, "close_ratio", quote_col, "volume_usd"]].tail(5))

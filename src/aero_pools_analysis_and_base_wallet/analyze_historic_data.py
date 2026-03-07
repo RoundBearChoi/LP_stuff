@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from datetime import timedelta
 import warnings
+import sys
+from pathlib import Path
 
 warnings.filterwarnings('ignore')
 
@@ -12,13 +14,18 @@ plt.rcParams['figure.figsize'] = (22, 15)
 plt.rcParams['font.size'] = 13
 
 
-class WethCbBtcVolatilityAnalyzer:
-    """Analyzer for WETH-cbBTC pool volatility patterns (15-minute candles)."""
+class AerodromeVolatilityAnalyzer:
+    """Analyzer for ANY Aerodrome Slipstream pool volatility patterns (15-minute candles).
+    Fully dynamic — works with any base/quote pair from the fetcher."""
 
-    def __init__(self):
-        # ====================== CONFIG ======================
-        self.CSV_FILE = 'aerodrome_0x22aee3699b6a0fed71490c103bd4e5f3309891d5_15min_recent.csv'
-        self.ASSET = 'WETH-cbBTC Pool (USD)'
+    def __init__(self, base_symbol: str = "weth", quote_symbol: str = "cbbtc"):
+        # ====================== CONFIG (now dynamic) ======================
+        self.base = base_symbol.lower()
+        self.quote = quote_symbol.lower()
+        self.pair_name = f"{self.base.upper()}-{self.quote.upper()}"
+        self.pair_slug = f"{self.base}_{self.quote}"
+
+        self.CSV_FILE = f"aerodrome_{self.pair_slug}_15min_recent.csv"
 
         # Will be populated during run()
         self.df = None
@@ -29,8 +36,11 @@ class WethCbBtcVolatilityAnalyzer:
         self.stats_hourly = None
         self.final_df = None
 
+        print(f"🔍 Analyzing pool: {self.pair_name}")
+        print(f"📂 Looking for: {self.CSV_FILE}\n")
+
     def run(self):
-        """Main execution - produces the same outputs + new TXT hourly recommendations."""
+        """Main execution — produces CSV + TXT recommendations + dashboard + report."""
         self._load_data()
         self._analyze_3h_buckets()
         self._analyze_rolling_3h()
@@ -40,6 +50,12 @@ class WethCbBtcVolatilityAnalyzer:
         print("\n🎉 ALL DONE! CSV + TXT recommendations + dashboard + report generated 🔥")
 
     def _load_data(self):
+        csv_path = Path(self.CSV_FILE)
+        if not csv_path.exists():
+            print(f"❌ CSV not found: {self.CSV_FILE}")
+            print("   Make sure you ran the fetcher first with the same pair.")
+            sys.exit(1)
+
         self.df = pd.read_csv(self.CSV_FILE)
         self.df['datetime_utc'] = pd.to_datetime(self.df['datetime'])
         self.df['datetime_kst'] = self.df['datetime_utc'] + timedelta(hours=9)
@@ -48,7 +64,6 @@ class WethCbBtcVolatilityAnalyzer:
         print(f"✅ Loaded {len(self.df):,} candles | {self.df.index[0].date()} → {self.df.index[-1].date()} KST")
 
     def _analyze_3h_buckets(self):
-        # ====================== 3H BUCKETS ======================
         self.df['date'] = self.df.index.date
         self.df['hour_kst'] = self.df.index.hour
         self.df['bucket_start'] = (self.df['hour_kst'] // 3) * 3
@@ -65,8 +80,7 @@ class WethCbBtcVolatilityAnalyzer:
         ]).round(3).reindex(self.bucket_order).reset_index()
 
     def _analyze_rolling_3h(self):
-        # ====================== ROLLING 3H ======================
-        window = 12  # 12 × 15min = 3 hours
+        window = 12
         self.df['rolling_high'] = self.df['high_usd'].rolling(window=window, min_periods=8).max()
         self.df['rolling_low'] = self.df['low_usd'].rolling(window=window, min_periods=8).min()
         self.df['rolling_range_pct'] = (self.df['rolling_high'] - self.df['rolling_low']) / self.df['rolling_low'] * 100
@@ -76,16 +90,13 @@ class WethCbBtcVolatilityAnalyzer:
         ).reindex(range(24))
 
     def _generate_hourly_recommendations(self):
-        # ====================== HOURLY RECOMMENDATIONS ======================
         print("\n📊 Generating hourly recommendations...")
 
         self.df['hour_start'] = self.df.index.floor('h')
-
         hourly = self.df.groupby(['date', 'hour_start']).agg({
             'high_usd': 'max', 'low_usd': 'min'
         }).reset_index()
         hourly['range_pct'] = (hourly['high_usd'] - hourly['low_usd']) / hourly['low_usd'] * 100
-
         hourly['hour_kst'] = hourly['hour_start'].dt.hour
 
         self.stats_hourly = hourly.groupby('hour_kst')['range_pct'].agg([
@@ -126,15 +137,16 @@ class WethCbBtcVolatilityAnalyzer:
         cols_order = ['Bucket', 'Median', 'P75', 'P90', 'Balanced', 'Safe', 'Aggressive', 'Samples']
         self.final_df = self.final_df[cols_order]
 
-        # ────────────────────────────────────────────────
-        # 1. Save as CSV
-        self.final_df.to_csv('weth_cbbtc_hourly_recommendations.csv', index=False)
-        print("✅ CSV saved → weth_cbbtc_hourly_recommendations.csv")
+        # Dynamic output names
+        csv_out = f"{self.pair_slug}_hourly_recommendations.csv"
+        txt_out = f"{self.pair_slug}_hourly_recommendations.txt"
 
-        # ────────────────────────────────────────────────
-        # 2. Save as nicely formatted TXT
-        with open('weth_cbbtc_hourly_recommendations.txt', 'w', encoding='utf-8') as f:
-            f.write("WETH-cbBTC Pool – Hourly Volatility Recommendations (KST)\n")
+        self.final_df.to_csv(csv_out, index=False)
+        print(f"✅ CSV saved → {csv_out}")
+
+        # Nicely formatted TXT
+        with open(txt_out, 'w', encoding='utf-8') as f:
+            f.write(f"{self.pair_name} Pool – Hourly Volatility Recommendations (KST)\n")
             f.write("=" * 80 + "\n\n")
             f.write(f"Data period:  {self.df.index.min().date()}  →  {self.df.index.max().date()}\n")
             f.write(f"Total hourly samples: {len(hourly):,}\n\n")
@@ -161,14 +173,12 @@ class WethCbBtcVolatilityAnalyzer:
             f.write("• Safe       = Median × 1.80\n")
             f.write("• Aggressive = Median × 1.30\n")
 
-        print("📄 TXT report saved → weth_cbbtc_hourly_recommendations.txt")
+        print(f"📄 TXT report saved → {txt_out}")
 
-        # Optional: still show preview in console
         print("\nHourly recommendations preview:\n")
         print(self.final_df.to_string(index=False))
 
     def _generate_dashboard(self):
-        # ====================== BIG DASHBOARD PNG ======================
         print("\n🎨 Generating full dashboard PNG...")
 
         fig, axes = plt.subplots(2, 3, figsize=(22, 15))
@@ -188,17 +198,21 @@ class WethCbBtcVolatilityAnalyzer:
         ax.set_xticks(x)
         ax.set_xticklabels(self.bucket_order, rotation=45)
         ax.set_ylabel('% 3h Range')
-        ax.set_title('3h Range by Time Bucket (KST)')
+        ax.set_title(f'3h Range by Time Bucket (KST) — {self.pair_name}')
         ax.legend()
 
         sns.boxplot(data=self.grouped, x='time_bucket', y='range_pct', ax=axes[0, 1], order=self.bucket_order, showfliers=False)
         axes[0, 1].set_xticklabels(axes[0, 1].get_xticklabels(), rotation=45)
         axes[0, 1].set_title('Full History Distribution')
 
+        # Dynamic lines using your actual calculated values
+        overall_balanced = self.final_df.iloc[0]['Balanced']
+        overall_aggressive = self.final_df.iloc[0]['Aggressive']
+
         sns.histplot(self.grouped['range_pct'], bins=150, kde=True, ax=axes[0, 2], color='skyblue')
-        axes[0, 2].axvline(2.4, color='lime', ls='--', lw=2, label='Balanced ±2.4%')
-        axes[0, 2].axvline(1.9, color='purple', ls='--', lw=2, label='Aggressive ±1.9%')
-        axes[0, 2].set_title('Overall 3h Range Distribution')
+        axes[0, 2].axvline(overall_balanced, color='lime', ls='--', lw=2, label=f'Balanced ±{overall_balanced}%')
+        axes[0, 2].axvline(overall_aggressive, color='purple', ls='--', lw=2, label=f'Aggressive ±{overall_aggressive}%')
+        axes[0, 2].set_title(f'Overall 3h Range Distribution — {self.pair_name}')
         axes[0, 2].legend()
 
         ax = axes[1, 0]
@@ -206,13 +220,13 @@ class WethCbBtcVolatilityAnalyzer:
         ax.plot(self.hourly_trend.index, self.hourly_trend['p90'], '^-', label='90th', color='#d62728')
         ax.set_xticks(range(24))
         ax.set_xlabel('Hour (KST)')
-        ax.set_title('Hourly 3h Range Trend (rolling)')
+        ax.set_title(f'Hourly 3h Range Trend (rolling) — {self.pair_name}')
         ax.legend()
 
         self.df['dow'] = self.df.index.dayofweek
         dow_hour = self.df.pivot_table(values='rolling_range_pct', index='dow', columns='hour_kst', aggfunc='median')
         sns.heatmap(dow_hour, cmap='YlOrRd', annot=True, fmt='.2f', ax=axes[1, 1])
-        axes[1, 1].set_title('Median 3h Range by Day & Hour (KST)\n0=Mon … 6=Sun')
+        axes[1, 1].set_title(f'Median 3h Range by Day & Hour (KST)\n0=Mon … 6=Sun — {self.pair_name}')
         axes[1, 1].set_xlabel('Hour (KST)')
         axes[1, 1].set_ylabel('Day of Week')
 
@@ -225,21 +239,18 @@ class WethCbBtcVolatilityAnalyzer:
         ax.set_theta_direction(-1)
         ax.set_xticks(theta)
         ax.set_xticklabels([f'{h:02d}' for h in range(24)])
-        ax.set_title('24h Volatility Clock (KST)')
+        ax.set_title(f'24h Volatility Clock (KST) — {self.pair_name}')
 
         plt.tight_layout()
 
-        plt.savefig('weth_cbbtc_3h_analysis_full.png',
-                    dpi=180,
-                    bbox_inches='tight',
-                    pil_kwargs={'optimize': True, 'compress_level': 9})
-
-        print("✅ Dashboard saved → weth_cbbtc_3h_analysis_full.png")
+        png_out = f"{self.pair_slug}_3h_analysis_full.png"
+        plt.savefig(png_out, dpi=180, bbox_inches='tight', pil_kwargs={'optimize': True, 'compress_level': 9})
+        print(f"✅ Dashboard saved → {png_out}")
 
     def _write_report(self):
-        # ====================== SIMPLE TEXT REPORT ======================
-        with open('weth_cbbtc_volatility_report.txt', 'w', encoding='utf-8') as f:
-            f.write("WETH-cbBTC Pool Volatility Report (KST)\n")
+        report_out = f"{self.pair_slug}_volatility_report.txt"
+        with open(report_out, 'w', encoding='utf-8') as f:
+            f.write(f"{self.pair_name} Pool Volatility Report (KST)\n")
             f.write("=" * 60 + "\n\n")
             f.write(f"Period: {self.df.index[0].date()} → {self.df.index[-1].date()}\n\n")
             f.write(f"Most volatile 3h bucket: {self.bucket_stats.loc[self.bucket_stats['median'].idxmax(), 'time_bucket']} "
@@ -248,9 +259,21 @@ class WethCbBtcVolatilityAnalyzer:
                     f"({self.bucket_stats['median'].min():.2f}%)\n\n")
             f.write(f"Hottest hour (1h):    {self.stats_hourly.loc[self.stats_hourly['Median'].idxmax(), 'Bucket']}\n")
             f.write(f"Calmest hour (1h):    {self.stats_hourly.loc[self.stats_hourly['Median'].idxmin(), 'Bucket']}\n\n")
-            f.write("See weth_cbbtc_hourly_recommendations.txt for detailed hourly ranges & suggested widths.\n")
+            f.write(f"See {self.pair_slug}_hourly_recommendations.txt for detailed hourly ranges & suggested widths.\n")
+
+        print(f"📋 Text report saved → {report_out}")
 
 
+# ────────────────────────────────────────────────
 if __name__ == "__main__":
-    analyzer = WethCbBtcVolatilityAnalyzer()
+    if len(sys.argv) > 2:
+        base = sys.argv[1]
+        quote = sys.argv[2]
+        print(f"📥 Received command-line pair: {base.upper()}-{quote.upper()}")
+    else:
+        base = "weth"
+        quote = "cbbtc"
+        print("📥 Using default pair: WETH-cbBTC")
+
+    analyzer = AerodromeVolatilityAnalyzer(base, quote)
     analyzer.run()
