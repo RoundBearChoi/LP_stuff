@@ -2,9 +2,6 @@ import getpass
 import os
 import pandas as pd
 from dune_client.client import DuneClient
-import matplotlib.pyplot as plt
-import seaborn as sns
-from datetime import datetime
 
 print("=== Base DEX Historic Data Fetcher (Top 5 Market Share) ===\n")
 
@@ -21,21 +18,20 @@ try:
     days = int(input("How many days of historic data? (default 180, max ~730): ") or "180")
 except ValueError:
     days = 180
-days = min(max(days, 7), 730)  # sane bounds
+days = min(max(days, 7), 730)
 
 print(f"Fetching last {days} days of Base DEX data...\n")
 
-# ==================== 3. SQL Query (ad-hoc via Dune API) ====================
-# This uses the official dex.trades table + CTEs for clean daily market share
+# ==================== 3. FIXED SQL Query (100% Trino-compatible) ====================
 sql = f"""
 WITH daily_volumes AS (
     SELECT 
-        DATE_TRUNC('day', block_time) AS day,
+        CAST(DATE_TRUNC('day', block_time) AS DATE) AS day,
         project,
         SUM(COALESCE(amount_usd, 0)) AS volume_usd
     FROM dex.trades 
     WHERE blockchain = 'base'
-      AND block_time >= NOW() - INTERVAL '{days} days'
+      AND block_time >= CURRENT_TIMESTAMP - INTERVAL '{days}' DAY   -- ← THIS WAS THE FIX
     GROUP BY 1, 2
 ),
 total_daily AS (
@@ -46,23 +42,37 @@ total_daily AS (
     GROUP BY day
 )
 SELECT 
-    dv.day::date AS day,
+    dv.day,
     dv.project,
     ROUND(dv.volume_usd, 0) AS volume_usd,
     ROUND(td.total_volume, 0) AS total_volume,
     ROUND(100.0 * dv.volume_usd / NULLIF(td.total_volume, 0), 2) AS market_share_pct
 FROM daily_volumes dv
 JOIN total_daily td ON dv.day = td.day
-WHERE dv.volume_usd > 1000  -- filter noise
+WHERE dv.volume_usd > 1000
 ORDER BY dv.day DESC, dv.volume_usd DESC;
 """
 
 # ==================== 4. Execute on Dune ====================
 dune = DuneClient(api_key=api_key)
-print("🚀 Executing query on Dune Analytics (this usually takes 5-20 seconds)...")
-results = dune.run_sql(query_sql=sql, performance="medium")  # 'medium' is fast & free-tier friendly
+print("🚀 Executing query on Dune Analytics (usually 5-20 seconds)...")
+
+results = dune.run_sql(query_sql=sql, performance="medium")
 
 # Convert to pandas DataFrame
 df = pd.DataFrame(results.result.rows)
-df['day'] = pd.to_datetime(df['day'])
+df['day'] = pd.to_datetime(df['day']).dt.date
 
+# ==================== 5. Success output & quick preview ====================
+print(f"\n✅ SUCCESS! Fetched {len(df):,} rows ({days} days of data).")
+print("\nPreview (most recent day first):")
+print(df.head(10).to_string(index=False))
+
+# Latest day summary
+latest = df[df['day'] == df['day'].max()]
+print("\n=== Top projects on the most recent day ===")
+print(latest[['project', 'volume_usd', 'market_share_pct']].head(10).to_string(index=False))
+
+# Optional: save to CSV
+df.to_csv(f"base_dex_{days}d.csv", index=False)
+print(f"\n💾 Saved to base_dex_{days}d.csv")
