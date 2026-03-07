@@ -160,6 +160,7 @@ class VeAeroSupplyAnalyzer:
                  color=color_locked, linewidth=3.6, label='Total Locked AERO')
         ax1.plot(self.df['date'], self.df['total_aero_supply'],
                  color=color_total, linewidth=3.1, label='Total AERO Supply')
+        ax1.set_ylim(bottom=0)
         ax1.grid(True, alpha=0.3)
         ax1.legend(loc='upper left', fontsize=11)
 
