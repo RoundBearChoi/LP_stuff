@@ -147,36 +147,52 @@ class VeAeroSupplyAnalyzer:
     def create_and_save_chart(self):
         filename_base = f"veaero_historic_supply_{self.days}day"
 
-        fig, ax1 = plt.subplots(figsize=(15, 8))
+        # Two vertically stacked subplots (supply on top, % at bottom)
+        fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(15, 10.5),
+                                      height_ratios=[3.2, 1.1],  # top gets more space
+                                      sharex=True)               # dates stay perfectly aligned
+
         color_locked = '#1f77b4'
         color_total = '#2ca02c'
         color_percent = '#d62728'
 
-        ax1.set_xlabel('Date')
-        ax1.set_ylabel('AERO Supply', color='black')
-        ax1.plot(self.df['date'], self.df['total_locked_aero'], color=color_locked, linewidth=3.5, label='Total Locked AERO')
-        ax1.plot(self.df['date'], self.df['total_aero_supply'], color=color_total, linewidth=3.0, label='Total AERO Supply')
-        ax1.tick_params(axis='y', labelcolor='black')
-
-        ax2 = ax1.twinx()
-        ax2.set_ylabel('% of Supply Locked', color=color_percent)
-        ax2.plot(self.df['date'], self.df['percent_locked'], color=color_percent, linewidth=3, linestyle='--',
-                 label='% of Supply Locked')
-        ax2.tick_params(axis='y', labelcolor=color_percent)
-        ax2.set_ylim(0, 100)
-
-        plt.title(f'Aerodrome Finance — Historic Supply ({self.days}-day intervals)\n'
-                  f'Total AERO Supply vs Locked AERO vs % Locked', fontsize=18, pad=20)
-        fig.tight_layout()
+        # ==================== TOP CHART: Supply ====================
+        ax1.set_ylabel('AERO Supply', fontsize=13)
+        ax1.plot(self.df['date'], self.df['total_locked_aero'],
+                 color=color_locked, linewidth=3.6, label='Total Locked AERO')
+        ax1.plot(self.df['date'], self.df['total_aero_supply'],
+                 color=color_total, linewidth=3.1, label='Total AERO Supply')
+        
         ax1.grid(True, alpha=0.3)
+        ax1.legend(loc='upper left', fontsize=11)
 
-        lines1, labels1 = ax1.get_legend_handles_labels()
-        lines2, labels2 = ax2.get_legend_handles_labels()
-        ax1.legend(lines1 + lines2, labels1 + labels2, loc='upper left')
+        # ==================== BOTTOM CHART: % Locked ====================
+        ax2.set_ylabel('% of Supply Locked', color=color_percent, fontsize=13)
+        ax2.plot(self.df['date'], self.df['percent_locked'],
+                 color=color_percent, linewidth=3.2, linestyle='--')
+        
+        # Light fill under the line makes the trend pop
+        ax2.fill_between(self.df['date'], self.df['percent_locked'],
+                        color=color_percent, alpha=0.18)
+        
+        ax2.tick_params(axis='y', labelcolor=color_percent)
+        ax2.set_ylim(0, 100)                    # full historical context
+        ax2.grid(True, alpha=0.3)
 
-        plt.savefig(f"{filename_base}.png", dpi=150, bbox_inches='tight')
+        # ==================== Titles & Formatting ====================
+        fig.suptitle(f'Aerodrome Finance — Historic Supply ({self.days}-day intervals)\n'
+                     'Total AERO Supply vs Locked AERO + % Locked',
+                     fontsize=18, y=0.96)
+        
+        ax2.set_xlabel('Date', fontsize=12)
+        fig.autofmt_xdate(rotation=30)          # nice date tilt
+
+        plt.tight_layout()
+        plt.savefig(f"{filename_base}.png", dpi=165, bbox_inches='tight')
         plt.close()
-        print(f"📊 Chart saved → {filename_base}.png")
+        
+        print(f"📊 Dual-panel chart saved → {filename_base}.png "
+              f"(supply on top | % locked at bottom)")
 
     def print_stats(self):
         latest = self.df.iloc[-1]
