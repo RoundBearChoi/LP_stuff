@@ -27,7 +27,7 @@ plt.ylabel('Market Share (%)', fontsize=14)
 plt.legend(title='DEX Project', bbox_to_anchor=(1.02, 1), loc='upper left')
 plt.grid(True, alpha=0.3)
 plt.tight_layout()
-plt.savefig('base_dex_stacked_market_share.png', dpi=300, bbox_inches='tight')
+plt.savefig('base_dex_stacked_market_share.png', dpi=200, bbox_inches='tight')
 print("✅ Saved: base_dex_stacked_market_share.png")
 
 # 2. Top 5 Line Chart
@@ -42,15 +42,22 @@ plt.ylabel('Market Share (%)', fontsize=13)
 plt.legend(title='DEX', fontsize=11)
 plt.grid(True, alpha=0.3)
 plt.tight_layout()
-plt.savefig('base_dex_top5_lines.png', dpi=300)
+plt.savefig('base_dex_top5_lines.png', dpi=150)
 print("✅ Saved: base_dex_top5_lines.png")
 
-# 3. Latest Day Bar Chart WITH % VALUES ON BARS (top 3 bold)
+# 3. Latest Day Bar Chart — WARNING FIXED + % on bars
 latest_day = df['day'].max()
 latest = df[df['day'] == latest_day].nlargest(10, 'market_share_pct').copy()
 
 plt.figure(figsize=(13, 8))
-ax = sns.barplot(data=latest, x='market_share_pct', y='project', palette='viridis')
+ax = sns.barplot(
+    data=latest, 
+    x='market_share_pct', 
+    y='project', 
+    hue='project',      # ← This eliminates the FutureWarning
+    palette='viridis',
+    legend=False
+)
 
 # Add percentage labels directly on the bars
 for i, p in enumerate(ax.patches):
@@ -66,9 +73,9 @@ for i, p in enumerate(ax.patches):
 plt.title(f'Top DEXes on Base — {latest_day.date()}', fontsize=17, pad=20)
 plt.xlabel('Market Share (%)')
 plt.ylabel('')
-plt.xlim(right=latest['market_share_pct'].max() * 1.22)  # extra space for labels
+plt.xlim(right=latest['market_share_pct'].max() * 1.22)
 plt.tight_layout()
-plt.savefig('base_dex_latest_bar.png', dpi=300, bbox_inches='tight')
+plt.savefig('base_dex_latest_bar.png', dpi=200, bbox_inches='tight')
 print("✅ Saved: base_dex_latest_bar.png (with % values on bars)")
 
 # ==================== 4. CURRENT TOP 3 SNAPSHOT ====================
@@ -86,4 +93,4 @@ total_vol = top3['total_volume'].iloc[0]
 print(f"\nTotal Base DEX Volume today: ${total_vol:,.0f}")
 print("="*72)
 
-print("\n🎉 All done! The latest bar chart now shows exact % values (top 3 highlighted).")
+print("\n🎉 All done! The FutureWarning is gone forever.")
