@@ -7,7 +7,7 @@ import os
 
 
 class VeAeroSupplyAnalyzer:
-    """Updated flow: Granularity first → check cache → API key only when downloading."""
+    """Updated: locked area shaded on top panel only. Bottom % panel now clean line only (no fill)."""
 
     AERO_ADDRESS = "0x940181a94A35A4569E4529A3CDfB74e38FD98631"
     VE_ADDRESS = "0xeBf418Fe2512e7E6bd9b87a8F0f294aCDC67e6B4"
@@ -154,22 +154,26 @@ class VeAeroSupplyAnalyzer:
         color_total = '#2ca02c'
         color_percent = '#d62728'
 
-        # Top chart - Supply
+        # Top chart - Supply with locked area shaded
         ax1.set_ylabel('AERO Supply', fontsize=13)
         ax1.plot(self.df['date'], self.df['total_locked_aero'],
                  color=color_locked, linewidth=3.6, label='Total Locked AERO')
         ax1.plot(self.df['date'], self.df['total_aero_supply'],
                  color=color_total, linewidth=3.1, label='Total AERO Supply')
+
+        # Shade only the locked area (top panel)
+        ax1.fill_between(self.df['date'], 0, self.df['total_locked_aero'],
+                         color=color_locked, alpha=0.18)
+
         ax1.set_ylim(bottom=0)
         ax1.grid(True, alpha=0.3)
         ax1.legend(loc='upper left', fontsize=11)
 
-        # Bottom chart - % Locked with current highlight
+        # Bottom chart - % Locked (clean - no shading)
         ax2.set_ylabel('% of Supply Locked', color=color_percent, fontsize=13)
         ax2.plot(self.df['date'], self.df['percent_locked'],
                  color=color_percent, linewidth=3.2, linestyle='--')
-        ax2.fill_between(self.df['date'], self.df['percent_locked'],
-                        color=color_percent, alpha=0.18)
+        # fill_between removed as requested
 
         # Highlight current percentage
         last_date = self.df['date'].iloc[-1]
@@ -210,7 +214,7 @@ class VeAeroSupplyAnalyzer:
         plt.close()
         
         print(f"📊 Dual-panel chart saved → {filename_base}.png "
-              f"(current % highlighted on bottom chart)")
+              f"(top locked shaded + clean % line + zero baseline)")
 
     def print_stats(self):
         latest = self.df.iloc[-1]
@@ -230,10 +234,8 @@ class VeAeroSupplyAnalyzer:
         print("🔑 Aerodrome veAero Historic Supply Chart")
         print("========================================\n")
         
-        # 1. Granularity FIRST
         self.prompt_granularity()
         
-        # 2. Check for existing data
         filename = f"veaero_historic_supply_{self.days}day.csv"
         
         if os.path.exists(filename):
@@ -252,7 +254,6 @@ class VeAeroSupplyAnalyzer:
                     print(f"⚠️ Could not load CSV: {e}")
                     print("Falling back to fresh download...\n")
         
-        # 3. Need fresh data → ask for API key RIGHT BEFORE download
         self.prompt_alchemy_key()
         self.setup_web3()
         self.fetch_data()
