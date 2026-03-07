@@ -1,0 +1,9 @@
+{
+  "pools": [
+    {
+      "name": "weth-cbbtc cl1",
+      "pool_address": "0x22aee3699b6a0fed71490c103bd4e5f3309891d5",
+      "gauge_address": "0x83e2E9493996651ed63033d81f5052cBE2fEB6A1"
+    }
+  ]
+}

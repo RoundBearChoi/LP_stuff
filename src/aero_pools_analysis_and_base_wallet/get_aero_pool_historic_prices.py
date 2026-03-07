@@ -5,6 +5,7 @@ import os
 from datetime import datetime, timezone, timedelta
 from typing import Optional, List
 import numpy as np
+import json   # ← for JSON pool selection
 
 # Matplotlib fallback
 try:
@@ -20,7 +21,7 @@ class AerodromeSlipstreamFetcher:
     """
     FIXED VERSION - Now fully compatible with analyze_aero_pool_historic_prices.py
     • Saves high_usd / low_usd / open_usd (required by analyzer)
-    • Full-depth USD fetching (no more artificial page limit)
+    • Full-depth USD fetching
     • Proper datetime index name for CSV
     """
 
@@ -102,7 +103,7 @@ class AerodromeSlipstreamFetcher:
         return []
 
     def _create_price_chart(self, df: pd.DataFrame, aggregate: int):
-        """Clean PNG chart (unchanged logic, just uses close_ratio)"""
+        """Clean PNG chart"""
         if df.empty or not MATPLOTLIB_AVAILABLE:
             return
 
@@ -148,7 +149,7 @@ class AerodromeSlipstreamFetcher:
         if filename is None:
             filename = f"aerodrome_{self.base_symbol.lower()}_{self.quote_symbol.lower()}_{aggregate}min_recent.csv"
 
-        # ====================== SMART RESUME ======================
+        # SMART RESUME
         if os.path.exists(filename):
             mod_ts = os.path.getmtime(filename)
             mod_dt_utc = datetime.fromtimestamp(mod_ts, tz=timezone.utc)
@@ -171,7 +172,7 @@ class AerodromeSlipstreamFetcher:
                 except Exception as e:
                     print(f"⚠️  Could not load CSV ({e}) — falling back to download.")
 
-        # ====================== FRESH DOWNLOAD ======================
+        # FRESH DOWNLOAD
         print(f"\n🔄 Starting fresh download ({aggregate}min candles, {days_back:.0f} days)...")
         cutoff = datetime.now(timezone.utc) - timedelta(days=days_back)
 
@@ -203,7 +204,7 @@ class AerodromeSlipstreamFetcher:
                 break
             time.sleep(0.35)
 
-        # 2. Fetch FULL USD OHLC (this was the main bug)
+        # 2. Fetch FULL USD OHLC
         print("   Fetching full USD OHLC + volume...")
         usd_batches = []
         before_ts = None
@@ -242,10 +243,9 @@ class AerodromeSlipstreamFetcher:
         quote_col = f"close_{self.quote_symbol.lower()}_usd"
         df[quote_col] = df["close_usd"] / df["close_ratio"].replace(0, np.nan)
 
-        # CRITICAL for analyzer
         df.index.name = "datetime"
 
-        # ====================== FINAL OUTPUT ======================
+        # FINAL OUTPUT
         if not df.empty:
             latest_utc = df.index[-1]
             latest_kst = latest_utc.astimezone(timezone(timedelta(hours=9)))
@@ -267,16 +267,70 @@ class AerodromeSlipstreamFetcher:
 
 # ────────────────────────────────────────────────
 if __name__ == "__main__":
-    DEFAULT_POOL = "0x22aee3699b6a0fed71490c103bd4e5f3309891d5"   # WETH–cbBTC
+    JSON_FILE = "aero_pools.json"
 
     print("\n" + "="*90)
-    print("🚀 Aerodrome Slipstream Historic Price Fetcher (FIXED + Analyzer Ready)")
+    print("🚀 Aerodrome Slipstream Historic Price Fetcher (Simplified JSON)")
     print("="*90)
-    print(f"Default pool: {DEFAULT_POOL} (WETH / cbBTC)\n")
 
-    user_input = input("Enter Aerodrome pool contract address (0x...) or press Enter for default\n→ ").strip()
-    POOL = user_input if user_input else DEFAULT_POOL
+    # CREATE / LOAD JSON
+    if not os.path.exists(JSON_FILE):
+        default_data = {
+            "pools": [
+                {
+                    "name": "weth-cbbtc cl1",
+                    "pool_address": "0x22aee3699b6a0fed71490c103bd4e5f3309891d5",
+                    "gauge_address": "0x83e2E9493996651ed63033d81f5052cBE2fEB6A1"
+                }
+            ]
+        }
+        with open(JSON_FILE, 'w', encoding='utf-8') as f:
+            json.dump(default_data, f, indent=2, ensure_ascii=False)
+        print(f"✅ Created simplified pool list → {JSON_FILE}")
+        print("   (Add more pools by editing this file)\n")
 
+    # Load pools
+    try:
+        with open(JSON_FILE, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+            pools = data.get("pools", [])
+    except Exception as e:
+        print(f"❌ Error reading {JSON_FILE}: {e}")
+        pools = []
+
+    if not pools:
+        print("⚠️  No pools found → using fallback default.")
+        pools = [{"name": "weth-cbbtc cl1", "pool_address": "0x22aee3699b6a0fed71490c103bd4e5f3309891d5"}]
+
+    # SELECTION MENU
+    print(f"\n📋 Available Aerodrome pools ({len(pools)}):")
+    for i, p in enumerate(pools):
+        name = p.get("name", "Unnamed")
+        addr_short = p.get("pool_address", "")[:10] + "..." + p.get("pool_address", "")[-8:]
+        print(f"  [{i}] {name:25} → {addr_short}")
+
+    print("  [m] Manual entry")
+
+    choice = input("\nSelect pool (number or m) → ").strip().lower()
+
+    if choice == "m":
+        POOL = input("Enter pool address (0x...) → ").strip()
+        if not POOL:
+            POOL = pools[0]["pool_address"]
+    else:
+        try:
+            idx = int(choice)
+            if 0 <= idx < len(pools):
+                POOL = pools[idx]["pool_address"]
+                selected_name = pools[idx].get("name", "Selected Pool")
+                print(f"✅ Selected: {selected_name}")
+            else:
+                raise ValueError
+        except:
+            print("Invalid input → using pool 0")
+            POOL = pools[0]["pool_address"]
+
+    # RUN FETCHER
     fetcher = AerodromeSlipstreamFetcher(POOL)
 
     df = fetcher.fetch_recent(
