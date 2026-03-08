@@ -161,6 +161,7 @@ class AerodromePositionChecker:
             print(f"   Error fetching unstaked: {e}")
 
     # ================= UPDATED: AUTO-CHECK ALL GAUGES FROM JSON =================
+    # ── This version only grabs static info at startup (no stale snapshots) ──
     def _get_all_staked_positions(self, wallet):
         pools = self._load_pools()
         all_staked = []
@@ -188,15 +189,11 @@ class AerodromePositionChecker:
                     print(f"   Gauge: {gauge_addr[:8]}...{gauge_addr[-6:]} — {len(staked_ids)} staked position(s)")
                     print(f"   Linked pool: {pool_addr}")
                     for token_id in staked_ids:
-                        pos = self._call_with_retry(lambda: self.manager.functions.positions(token_id).call())
-                        pending = self._call_with_retry(lambda: gauge.functions.earned(wallet, token_id).call())
                         all_staked.append({
                             "token_id": token_id,
                             "pool_addr": pool_addr,
-                            "pos": pos,
                             "gauge": gauge_addr,
-                            "pending_emissions": pending,
-                            "pool_name": name   # ← used in live monitor
+                            "pool_name": name
                         })
             except Exception as e:
                 print(f"   Error checking {name}: {str(e)[:100]}")
@@ -208,19 +205,29 @@ class AerodromePositionChecker:
         
         return all_staked
 
+    # ================= UPDATED: LIVE UPDATE (CLEAN HEADER — NO MONITORING LINE) =================
     def _live_update(self, staked_positions):
         os.system('cls' if os.name == 'nt' else 'clear')
         print(f"=== Aerodrome SlipStream LIVE MONITOR — {datetime.now().strftime('%Y-%m-%d %H:%M:%S')} ===\n")
-        print(f"Monitoring {len(staked_positions)} staked position(s) • Refresh every 30s\n")
 
         for pos_data in staked_positions:
             token_id = pos_data["token_id"]
             pool_addr = pos_data["pool_addr"]
-            pos = pos_data["pos"]
-            pending = pos_data.get("pending_emissions", 0)
+            gauge_addr = pos_data["gauge"]
             pool_name = pos_data.get("pool_name", "")
-            current_tick = self._get_current_tick(pool_addr)
-            self._print_live_position(token_id, pos, current_tick, pending, pool_name)
+
+            try:
+                # === Fresh data every 30-second cycle ===
+                pos = self._call_with_retry(lambda: self.manager.functions.positions(token_id).call())
+                
+                gauge_contract = self.w3.eth.contract(address=gauge_addr, abi=self.GAUGE_ABI)
+                pending = self._call_with_retry(lambda: gauge_contract.functions.earned(self.wallet, token_id).call())
+                
+                current_tick = self._get_current_tick(pool_addr)
+                
+                self._print_live_position(token_id, pos, current_tick, pending, pool_name)
+            except Exception as e:
+                print(f"   ⚠️  Error updating NFT {token_id}: {str(e)[:100]} (skipping this cycle)")
 
         print("\n" + "="*80)
 
@@ -231,7 +238,6 @@ class AerodromePositionChecker:
         print("\r" + " " * 70)
 
     def _get_current_tick(self, pool_addr):
-        # (unchanged)
         pool = self.w3.eth.contract(address=pool_addr, abi=self.POOL_ABI)
         def fetch():
             try:
@@ -246,7 +252,6 @@ class AerodromePositionChecker:
         return self._call_with_retry(fetch)
 
     def _print_live_position(self, token_id, pos, current_tick, pending_emissions, pool_name=""):
-        # (updated to show pool name for clarity)
         t0_addr = pos[2]
         t1_addr = pos[3]
         tick_lower = pos[5]
@@ -277,7 +282,6 @@ class AerodromePositionChecker:
             print("      ⚠️  Could not fetch current price (RPC issue)")
 
     def _get_token_info(self, token_addr):
-        # (unchanged)
         lower = token_addr.lower()
         if lower in self.KNOWN_TOKENS:
             return self.KNOWN_TOKENS[lower]
@@ -290,7 +294,6 @@ class AerodromePositionChecker:
             return token_addr[:8] + "...", 18
 
     def _print_price_analysis(self, sym0, sym1, dec0, dec1, tick_lower, tick_upper, current_tick):
-        # (unchanged)
         p_raw = self.tick_to_price(current_tick)
         p_lower_raw = self.tick_to_price(tick_lower)
         p_upper_raw = self.tick_to_price(tick_upper)
