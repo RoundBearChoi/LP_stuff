@@ -273,7 +273,7 @@ class AerodromePositionChecker:
                 raise
         return self._call_with_retry(fetch)
 
-    # ================= PENDING EMISSIONS WITH USD VALUE =================
+    # ================= PENDING EMISSIONS WITH USD VALUE (6 decimal places) =================
     def _print_live_position(self, token_id, pos, current_tick, pending_emissions, pool_name="", aero_price=0.0):
         t0_addr = pos[2]
         t1_addr = pos[3]
@@ -297,9 +297,9 @@ class AerodromePositionChecker:
             aero_amount = pending_emissions / 1e18
             if aero_price > 0:
                 usd_value = aero_amount * aero_price
-                print(f"      🌱 Pending emissions: {aero_amount:,.4f} AERO (${usd_value:,.2f})")
+                print(f"      🌱 Pending emissions: {aero_amount:,.6f} AERO (${usd_value:,.6f})")
             else:
-                print(f"      🌱 Pending emissions: {aero_amount:,.4f} AERO")
+                print(f"      🌱 Pending emissions: {aero_amount:,.6f} AERO")
         else:
             print("      🌱 Pending emissions: 0 AERO")
 
