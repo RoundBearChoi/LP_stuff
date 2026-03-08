@@ -47,6 +47,7 @@ class AerodromeVolatilityAnalyzer:
         self._generate_hourly_recommendations()
         self._generate_dashboard()
         self._write_report()
+        self._print_next_3h_recommendation()          # ← NEW: dynamic live recommendation
         print("\n🎉 ALL DONE! CSV + TXT recommendations + dashboard + report generated 🔥")
 
     def _load_data(self):
@@ -262,6 +263,42 @@ class AerodromeVolatilityAnalyzer:
             f.write(f"See {self.pair_slug}_hourly_recommendations.txt for detailed hourly ranges & suggested widths.\n")
 
         print(f"📋 Text report saved → {report_out}")
+
+    # ====================== NEW FEATURE: Dynamic Next 3 Hours ======================
+    def _print_next_3h_recommendation(self):
+        """Dynamic recommendation for the next 3 hours based on current KST time and day."""
+        print("\n" + "=" * 65)
+        print("🔮 DYNAMIC 3H RECOMMENDATION — RIGHT NOW (KST)")
+        print("=" * 65)
+
+        now_kst = pd.Timestamp.now(tz='Asia/Seoul')
+        current_hour = now_kst.hour
+        dow_name = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'][now_kst.dayofweek]
+
+        # Forward-looking bucket (so it really is the *next* 3 hours)
+        bucket_start = ((current_hour + 1) // 3) * 3 % 24
+        bucket_name = f"{bucket_start:02d}-{(bucket_start + 3):02d}"
+
+        # Lookup from your existing 3h bucket stats
+        row = self.bucket_stats[self.bucket_stats['time_bucket'] == bucket_name]
+        if row.empty:
+            print("⚠️ Could not determine bucket (very rare edge case).")
+            return
+
+        median = row['median'].iloc[0]
+        balanced   = round(median * 1.60, 1)
+        safe       = round(median * 1.80, 1)
+        aggressive = round(median * 1.30, 1)
+
+        print(f"Time now     : {now_kst.strftime('%Y-%m-%d %H:%M')} KST")
+        print(f"Day          : {dow_name}")
+        print(f"Next bucket  : {bucket_name}")
+        print(f"Hist. median : {median:.3f}%")
+        print(f"\nSuggested range width (±):")
+        print(f"   Aggressive → ±{aggressive}%")
+        print(f"   Balanced   → ±{balanced}%   ← recommended")
+        print(f"   Safe       → ±{safe}%")
+        print("=" * 65)
 
 
 # ────────────────────────────────────────────────
