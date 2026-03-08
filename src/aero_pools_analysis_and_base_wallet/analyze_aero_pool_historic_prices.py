@@ -19,7 +19,6 @@ class AerodromeVolatilityAnalyzer:
     Fully dynamic — works with any base/quote pair from the fetcher."""
 
     def __init__(self, base_symbol: str = "weth", quote_symbol: str = "cbbtc"):
-        # ====================== CONFIG (now dynamic) ======================
         self.base = base_symbol.lower()
         self.quote = quote_symbol.lower()
         self.pair_name = f"{self.base.upper()}-{self.quote.upper()}"
@@ -27,7 +26,6 @@ class AerodromeVolatilityAnalyzer:
 
         self.CSV_FILE = f"aerodrome_{self.pair_slug}_15min_recent.csv"
 
-        # Will be populated during run()
         self.df = None
         self.grouped = None
         self.bucket_stats = None
@@ -40,15 +38,15 @@ class AerodromeVolatilityAnalyzer:
         print(f"📂 Looking for: {self.CSV_FILE}\n")
 
     def run(self):
-        """Main execution — produces CSV + TXT recommendations + dashboard + report."""
+        """Main execution — produces CSV + TXT recommendations + dashboard + report + LIVE recommendation."""
         self._load_data()
         self._analyze_3h_buckets()
         self._analyze_rolling_3h()
         self._generate_hourly_recommendations()
         self._generate_dashboard()
         self._write_report()
-        self._print_next_3h_recommendation()          # ← NEW: dynamic live recommendation
-        print("\n🎉 ALL DONE! CSV + TXT recommendations + dashboard + report generated 🔥")
+        self._print_next_3h_recommendation()          # ← now also saves to TXT
+        print("\n🎉 ALL DONE! CSV + TXT recommendations + dashboard + report + LIVE 3H TXT generated 🔥")
 
     def _load_data(self):
         csv_path = Path(self.CSV_FILE)
@@ -138,14 +136,12 @@ class AerodromeVolatilityAnalyzer:
         cols_order = ['Bucket', 'Median', 'P75', 'P90', 'Balanced', 'Safe', 'Aggressive', 'Samples']
         self.final_df = self.final_df[cols_order]
 
-        # Dynamic output names
         csv_out = f"{self.pair_slug}_hourly_recommendations.csv"
         txt_out = f"{self.pair_slug}_hourly_recommendations.txt"
 
         self.final_df.to_csv(csv_out, index=False)
         print(f"✅ CSV saved → {csv_out}")
 
-        # Nicely formatted TXT
         with open(txt_out, 'w', encoding='utf-8') as f:
             f.write(f"{self.pair_name} Pool – Hourly Volatility Recommendations (KST)\n")
             f.write("=" * 80 + "\n\n")
@@ -206,7 +202,6 @@ class AerodromeVolatilityAnalyzer:
         axes[0, 1].set_xticklabels(axes[0, 1].get_xticklabels(), rotation=45)
         axes[0, 1].set_title('Full History Distribution')
 
-        # Dynamic lines using your actual calculated values
         overall_balanced = self.final_df.iloc[0]['Balanced']
         overall_aggressive = self.final_df.iloc[0]['Aggressive']
 
@@ -264,9 +259,9 @@ class AerodromeVolatilityAnalyzer:
 
         print(f"📋 Text report saved → {report_out}")
 
-    # ====================== NEW FEATURE: Dynamic Next 3 Hours ======================
+    # ====================== LIVE 3H RECOMMENDATION (now also saved to TXT) ======================
     def _print_next_3h_recommendation(self):
-        """Dynamic recommendation for the next 3 hours based on current KST time and day."""
+        """Prints + saves dynamic recommendation for the next 3 hours (KST)."""
         print("\n" + "=" * 65)
         print("🔮 DYNAMIC 3H RECOMMENDATION — RIGHT NOW (KST)")
         print("=" * 65)
@@ -275,14 +270,12 @@ class AerodromeVolatilityAnalyzer:
         current_hour = now_kst.hour
         dow_name = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'][now_kst.dayofweek]
 
-        # Forward-looking bucket (so it really is the *next* 3 hours)
         bucket_start = ((current_hour + 1) // 3) * 3 % 24
         bucket_name = f"{bucket_start:02d}-{(bucket_start + 3):02d}"
 
-        # Lookup from your existing 3h bucket stats
         row = self.bucket_stats[self.bucket_stats['time_bucket'] == bucket_name]
         if row.empty:
-            print("⚠️ Could not determine bucket (very rare edge case).")
+            print("⚠️ Could not determine bucket (very rare).")
             return
 
         median = row['median'].iloc[0]
@@ -290,6 +283,7 @@ class AerodromeVolatilityAnalyzer:
         safe       = round(median * 1.80, 1)
         aggressive = round(median * 1.30, 1)
 
+        # Console output
         print(f"Time now     : {now_kst.strftime('%Y-%m-%d %H:%M')} KST")
         print(f"Day          : {dow_name}")
         print(f"Next bucket  : {bucket_name}")
@@ -299,6 +293,26 @@ class AerodromeVolatilityAnalyzer:
         print(f"   Balanced   → ±{balanced}%   ← recommended")
         print(f"   Safe       → ±{safe}%")
         print("=" * 65)
+
+        # ====================== NEW: Save to TXT ======================
+        txt_out = f"{self.pair_slug}_next_3h_recommendation.txt"
+        with open(txt_out, 'w', encoding='utf-8') as f:
+            f.write(f"{self.pair_name} Pool – Dynamic Next 3H Recommendation (KST)\n")
+            f.write("=" * 65 + "\n\n")
+            f.write(f"Generated : {now_kst.strftime('%Y-%m-%d %H:%M:%S')} KST\n")
+            f.write(f"Day       : {dow_name}\n")
+            f.write(f"Next 3h   : {bucket_name}\n")
+            f.write(f"Median    : {median:.3f}%\n\n")
+            f.write("Suggested range width (±):\n")
+            f.write(f"   Aggressive → ±{aggressive}%\n")
+            f.write(f"   Balanced   → ±{balanced}%   ← recommended\n")
+            f.write(f"   Safe       → ±{safe}%\n\n")
+            f.write("Multiplier explanation:\n")
+            f.write("• Balanced   = Median × 1.60\n")
+            f.write("• Safe       = Median × 1.80\n")
+            f.write("• Aggressive = Median × 1.30\n")
+
+        print(f"✅ Live 3H recommendation saved → {txt_out}")
 
 
 # ────────────────────────────────────────────────

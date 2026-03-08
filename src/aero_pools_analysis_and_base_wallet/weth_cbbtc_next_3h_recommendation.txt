@@ -1,0 +1,17 @@
+WETH-CBBTC Pool – Dynamic Next 3H Recommendation (KST)
+=================================================================
+
+Generated : 2026-03-08 11:03:35 KST
+Day       : Sunday
+Next 3h   : 12-15
+Median    : 1.113%
+
+Suggested range width (±):
+   Aggressive → ±1.4%
+   Balanced   → ±1.8%   ← recommended
+   Safe       → ±2.0%
+
+Multiplier explanation:
+• Balanced   = Median × 1.60
+• Safe       = Median × 1.80
+• Aggressive = Median × 1.30
