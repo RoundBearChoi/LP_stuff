@@ -2,14 +2,15 @@ from web3 import Web3
 import time
 import os
 from datetime import datetime
-import json   # ← NEW: for automatic JSON loading
+import json
+import urllib.request   # ← for CoinGecko (no pip install)
 
 class AerodromePositionChecker:
     # ================= CONFIG =================
     BASE_RPC = "https://mainnet.base.org"
     POSITION_MANAGER_ADDR = Web3.to_checksum_address("0x827922686190790b37229fd06084350e74485b72")
 
-    # ── ABIs ── (unchanged)
+    # ── ABIs ── (FULL original ABIs)
     MANAGER_ABI = [
         {"constant": True, "inputs": [{"name": "owner", "type": "address"}], "name": "balanceOf", "outputs": [{"name": "", "type": "uint256"}], "type": "function"},
         {"constant": True, "inputs": [{"name": "owner", "type": "address"}, {"name": "index", "type": "uint256"}], "name": "tokenOfOwnerByIndex", "outputs": [{"name": "", "type": "uint256"}], "type": "function"},
@@ -47,14 +48,14 @@ class AerodromePositionChecker:
         ], "stateMutability": "view", "type": "function"}
     ]
 
-    # ── Known tokens ── (unchanged)
+    # ── Known tokens ──
     KNOWN_TOKENS = {
         "0x4200000000000000000000000000000000000006".lower(): ("WETH", 18),
         "0xcbb7c0000ab88b473b1f5afd9ef808440eed33bf".lower(): ("cbBTC", 8),
         "0x940181a94a35a4569e4529a3cdfb74e38fd98631".lower(): ("AERO", 18),
     }
 
-    # 🌱 ANSI Terminal Colors (unchanged)
+    # 🌱 ANSI Colors
     GREEN = "\033[92m"
     RED   = "\033[91m"
     RESET = "\033[0m"
@@ -65,7 +66,12 @@ class AerodromePositionChecker:
         if not self.w3.is_connected():
             raise Exception("Failed to connect to Base RPC.")
         self.manager = self.w3.eth.contract(address=self.POSITION_MANAGER_ADDR, abi=self.MANAGER_ABI)
-        self.pools_file = "aero_pools.json"   # ← NEW: config file name
+        self.pools_file = "aero_pools.json"
+
+        # 🌟 5-MINUTE AERO PRICE CACHE (still active in background)
+        self.last_price_fetch = 0
+        self.cached_aero_price = 0.0
+        self.PRICE_CACHE_SECONDS = 300  # 5 minutes
 
     @staticmethod
     def tick_to_price(tick):
@@ -90,9 +96,7 @@ class AerodromePositionChecker:
                     time.sleep(base_delay)
         return 0
 
-    # ================= NEW: AUTOMATIC JSON LOADING =================
     def _load_pools(self):
-        """Load all pools/gauges from aero_pools.json (same folder as script)"""
         try:
             with open(self.pools_file, "r", encoding="utf-8") as f:
                 data = json.load(f)
@@ -141,7 +145,6 @@ class AerodromePositionChecker:
             print("\n\n👋 Monitor stopped. Goodbye!")
 
     def _check_unstaked_positions(self, wallet):
-        # (unchanged from original)
         print("Unstaked positions (direct ownership):")
         try:
             count = self._call_with_retry(lambda: self.manager.functions.balanceOf(wallet).call())
@@ -160,12 +163,9 @@ class AerodromePositionChecker:
         except Exception as e:
             print(f"   Error fetching unstaked: {e}")
 
-    # ================= UPDATED: AUTO-CHECK ALL GAUGES FROM JSON =================
-    # ── This version only grabs static info at startup (no stale snapshots) ──
     def _get_all_staked_positions(self, wallet):
         pools = self._load_pools()
         all_staked = []
-        
         if not pools:
             return []
 
@@ -180,7 +180,6 @@ class AerodromePositionChecker:
             try:
                 gauge_addr = Web3.to_checksum_address(gauge_str)
                 gauge = self.w3.eth.contract(address=gauge_addr, abi=self.GAUGE_ABI)
-
                 staked_ids = self._call_with_retry(lambda: gauge.functions.stakedValues(wallet).call())
 
                 if staked_ids:
@@ -205,10 +204,36 @@ class AerodromePositionChecker:
         
         return all_staked
 
-    # ================= UPDATED: LIVE UPDATE (CLEAN HEADER — NO MONITORING LINE) =================
+    # ================= 5-MINUTE AERO PRICE FROM COINGECKO =================
+    def _get_aero_price(self):
+        """CoinGecko simple price — cached every 5 minutes (rate-limit safe)"""
+        now = time.time()
+        if now - self.last_price_fetch < self.PRICE_CACHE_SECONDS and self.cached_aero_price > 0:
+            return self.cached_aero_price
+
+        try:
+            url = "https://api.coingecko.com/api/v3/simple/price?ids=aerodrome-finance&vs_currencies=usd"
+            with urllib.request.urlopen(url, timeout=8) as response:
+                data = json.loads(response.read().decode("utf-8"))
+            price = data.get("aerodrome-finance", {}).get("usd", 0.0)
+
+            if price > 0:
+                self.cached_aero_price = price
+                self.last_price_fetch = now
+            return price
+        except Exception:
+            return self.cached_aero_price  # silent fallback
+
+    # ================= LIVE UPDATE (clean AERO price display) =================
     def _live_update(self, staked_positions):
         os.system('cls' if os.name == 'nt' else 'clear')
         print(f"=== Aerodrome SlipStream LIVE MONITOR — {datetime.now().strftime('%Y-%m-%d %H:%M:%S')} ===\n")
+
+        aero_price = self._get_aero_price()
+        if aero_price > 0:
+            print(f"   AERO Price: ${aero_price:.4f} USD\n")
+        else:
+            print("   AERO price temporarily unavailable\n")
 
         for pos_data in staked_positions:
             token_id = pos_data["token_id"]
@@ -217,15 +242,12 @@ class AerodromePositionChecker:
             pool_name = pos_data.get("pool_name", "")
 
             try:
-                # === Fresh data every 30-second cycle ===
                 pos = self._call_with_retry(lambda: self.manager.functions.positions(token_id).call())
-                
                 gauge_contract = self.w3.eth.contract(address=gauge_addr, abi=self.GAUGE_ABI)
                 pending = self._call_with_retry(lambda: gauge_contract.functions.earned(self.wallet, token_id).call())
-                
                 current_tick = self._get_current_tick(pool_addr)
                 
-                self._print_live_position(token_id, pos, current_tick, pending, pool_name)
+                self._print_live_position(token_id, pos, current_tick, pending, pool_name, aero_price)
             except Exception as e:
                 print(f"   ⚠️  Error updating NFT {token_id}: {str(e)[:100]} (skipping this cycle)")
 
@@ -251,7 +273,8 @@ class AerodromePositionChecker:
                 raise
         return self._call_with_retry(fetch)
 
-    def _print_live_position(self, token_id, pos, current_tick, pending_emissions, pool_name=""):
+    # ================= PENDING EMISSIONS WITH USD VALUE =================
+    def _print_live_position(self, token_id, pos, current_tick, pending_emissions, pool_name="", aero_price=0.0):
         t0_addr = pos[2]
         t1_addr = pos[3]
         tick_lower = pos[5]
@@ -271,8 +294,12 @@ class AerodromePositionChecker:
         print(f"      Uncollected fees: {f0:.6f} {sym0} / {f1:.6f} {sym1}")
 
         if pending_emissions > 0:
-            aero_formatted = pending_emissions / 1e18
-            print(f"      🌱 Pending emissions: {aero_formatted:,.4f} AERO")
+            aero_amount = pending_emissions / 1e18
+            if aero_price > 0:
+                usd_value = aero_amount * aero_price
+                print(f"      🌱 Pending emissions: {aero_amount:,.4f} AERO (${usd_value:,.2f})")
+            else:
+                print(f"      🌱 Pending emissions: {aero_amount:,.4f} AERO")
         else:
             print("      🌱 Pending emissions: 0 AERO")
 
