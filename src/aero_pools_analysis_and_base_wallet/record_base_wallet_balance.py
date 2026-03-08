@@ -2,7 +2,7 @@ from web3 import Web3
 import time
 import os
 from datetime import datetime
-import json   # ← for automatic JSON loading
+import json
 
 class AerodromePositionChecker:
     # ================= CONFIG =================
@@ -34,33 +34,30 @@ class AerodromePositionChecker:
         {"constant": True, "inputs": [], "name": "decimals", "outputs": [{"name": "", "type": "uint8"}], "type": "function"}
     ]
 
-    # ================= UPDATED GAUGE_ABI (critical fix) =================
-    # Added "rewards(tokenId)" – this is the missing ~75% of pending AERO on SlipStream gauges
     GAUGE_ABI = [
         {"constant": True, "inputs": [{"name": "depositor", "type": "address"}], "name": "stakedValues", "outputs": [{"name": "", "type": "uint256[]"}], "type": "function"},
         {"constant": True, "inputs": [], "name": "pool", "outputs": [{"name": "", "type": "address"}], "type": "function"},
         {"constant": True, "inputs": [{"name": "account", "type": "address"}, {"name": "tokenId", "type": "uint256"}], "name": "earned", "outputs": [{"name": "", "type": "uint256"}], "type": "function"},
-        
-        # ←←← NEW: this slot holds previously accrued but not-yet-pushed rewards
-        # Aerodrome frontend + Sugar contract ALWAYS does earned + rewards
         {"constant": True, "inputs": [{"name": "tokenId", "type": "uint256"}], "name": "rewards", "outputs": [{"name": "", "type": "uint256"}], "type": "function"},
+        # ← NEW: for live accrual rate
+        {"constant": True, "inputs": [], "name": "rewardRate", "outputs": [{"name": "", "type": "uint256"}], "type": "function"},
     ]
 
+    # UPDATED POOL_ABI with stakedLiquidity for accurate per-position rate
     POOL_ABI = [
         {"inputs": [], "name": "slot0", "outputs": [
             {"internalType": "uint160", "name": "sqrtPriceX96", "type": "uint160"},
             {"internalType": "int24", "name": "tick", "type": "int24"},
-        ], "stateMutability": "view", "type": "function"}
+        ], "stateMutability": "view", "type": "function"},
+        {"inputs": [], "name": "stakedLiquidity", "outputs": [{"internalType": "uint128", "name": "", "type": "uint128"}], "stateMutability": "view", "type": "function"}
     ]
 
-    # ── Known tokens ──
     KNOWN_TOKENS = {
         "0x4200000000000000000000000000000000000006".lower(): ("WETH", 18),
         "0xcbb7c0000ab88b473b1f5afd9ef808440eed33bf".lower(): ("cbBTC", 8),
         "0x940181a94a35a4569e4529a3cdfb74e38fd98631".lower(): ("AERO", 18),
     }
 
-    # 🌱 ANSI Terminal Colors
     GREEN = "\033[92m"
     RED   = "\033[91m"
     RESET = "\033[0m"
@@ -96,7 +93,6 @@ class AerodromePositionChecker:
                     time.sleep(base_delay)
         return 0
 
-    # ================= AUTOMATIC JSON LOADING =================
     def _load_pools(self):
         try:
             with open(self.pools_file, "r", encoding="utf-8") as f:
@@ -105,10 +101,10 @@ class AerodromePositionChecker:
             print(f"✅ Loaded {len(pools)} pool configuration(s) from {self.pools_file}")
             return pools
         except FileNotFoundError:
-            print(f"❌ {self.pools_file} not found! (place it in the same folder as the script)")
+            print(f"❌ {self.pools_file} not found!")
             return []
         except json.JSONDecodeError:
-            print(f"❌ Invalid JSON format in {self.pools_file}")
+            print(f"❌ Invalid JSON in {self.pools_file}")
             return []
         except Exception as e:
             print(f"❌ Error reading {self.pools_file}: {e}")
@@ -131,11 +127,11 @@ class AerodromePositionChecker:
         staked_positions = self._get_all_staked_positions(WALLET)
 
         if not staked_positions:
-            print("No staked positions found in monitored pools.")
+            print("No staked positions found.")
             return
 
         print(f"\n✅ Found {len(staked_positions)} staked position(s). Starting LIVE monitor...")
-        print("   Price vs Range + Fees + Emissions updates every 30 seconds • Ctrl+C to stop\n")
+        print("   Price vs Range + Fees + Emissions + Accrual Rate updates every 30s • Ctrl+C to stop\n")
         time.sleep(2)
 
         try:
@@ -164,7 +160,6 @@ class AerodromePositionChecker:
         except Exception as e:
             print(f"   Error fetching unstaked: {e}")
 
-    # ================= UPDATED: FULL PENDING (earned + rewards) =================
     def _get_all_staked_positions(self, wallet):
         pools = self._load_pools()
         all_staked = []
@@ -194,12 +189,11 @@ class AerodromePositionChecker:
                     for token_id in staked_ids:
                         pos = self._call_with_retry(lambda: self.manager.functions.positions(token_id).call())
                         
-                        # NEW: full pending calculation (matches Aerodrome dashboard)
                         earned = self._call_with_retry(lambda: gauge.functions.earned(wallet, token_id).call())
                         try:
                             stored = self._call_with_retry(lambda: gauge.functions.rewards(token_id).call())
-                        except Exception:
-                            stored = 0  # fallback for any ancient gauges
+                        except:
+                            stored = 0
                         pending = earned + stored
 
                         all_staked.append({
@@ -207,16 +201,16 @@ class AerodromePositionChecker:
                             "pool_addr": pool_addr,
                             "pos": pos,
                             "gauge": gauge_addr,
-                            "pending_emissions": pending,   # initial value
+                            "pending_emissions": pending,
                             "pool_name": name
                         })
             except Exception as e:
                 print(f"   Error checking {name}: {str(e)[:100]}")
 
         if all_staked:
-            print(f"\nTotal: {len(all_staked)} staked position(s) found across all pools.")
+            print(f"\nTotal: {len(all_staked)} staked position(s) found.")
         else:
-            print("   No staked positions found in any monitored gauges.")
+            print("   No staked positions found.")
         
         return all_staked
 
@@ -233,17 +227,29 @@ class AerodromePositionChecker:
             pool_name = pos_data.get("pool_name", "")
             current_tick = self._get_current_tick(pool_addr)
 
-            # ================= LIVE REFRESH OF PENDING AERO (recommended) =================
-            # Fetches fresh every 30s so you see AERO accruing in real time
             gauge = self.w3.eth.contract(address=gauge_addr, abi=self.GAUGE_ABI)
             earned = self._call_with_retry(lambda: gauge.functions.earned(self.wallet, token_id).call())
             try:
                 stored = self._call_with_retry(lambda: gauge.functions.rewards(token_id).call())
-            except Exception:
+            except:
                 stored = 0
             pending = earned + stored
 
-            self._print_live_position(token_id, pos, current_tick, pending, pool_name)
+            # NEW: Live accrual rate (per-position, matches dashboard feel)
+            try:
+                pool_contract = self.w3.eth.contract(address=pool_addr, abi=self.POOL_ABI)
+                staked_liq = self._call_with_retry(lambda: pool_contract.functions.stakedLiquidity().call())
+                pos_liq = pos[7]  # liquidity from positions tuple
+                rr = self._call_with_retry(lambda: gauge.functions.rewardRate().call())
+                if staked_liq > 0 and pos_liq > 0 and rr > 0:
+                    share = pos_liq / staked_liq
+                    aero_per_hour = (rr / 1e18) * share * 3600
+                else:
+                    aero_per_hour = 0
+            except:
+                aero_per_hour = 0
+
+            self._print_live_position(token_id, pos, current_tick, pending, aero_per_hour, pool_name)
 
         print("\n" + "="*80)
 
@@ -267,7 +273,7 @@ class AerodromePositionChecker:
                 raise
         return self._call_with_retry(fetch)
 
-    def _print_live_position(self, token_id, pos, current_tick, pending_emissions, pool_name=""):
+    def _print_live_position(self, token_id, pos, current_tick, pending_emissions, aero_per_hour=0, pool_name=""):
         t0_addr = pos[2]
         t1_addr = pos[3]
         tick_lower = pos[5]
@@ -287,10 +293,11 @@ class AerodromePositionChecker:
         print(f"      Uncollected fees: {f0:.6f} {sym0} / {f1:.6f} {sym1}")
 
         aero_formatted = pending_emissions / 1e18
-        if aero_formatted > 0:
-            print(f"      🌱 Pending emissions: {aero_formatted:,.6f} AERO")
+        print(f"      🌱 Pending emissions: {aero_formatted:,.6f} AERO")
+        if aero_per_hour > 0.000001:
+            print(f"         → Accruing at ~{aero_per_hour:,.6f} AERO/hour (~{aero_per_hour*24:,.4f}/day)")
         else:
-            print("      🌱 Pending emissions: 0 AERO")
+            print("         → Accruing at 0 AERO/hour")
 
         if current_tick is not None:
             self._print_price_analysis(sym0, sym1, dec0, dec1, tick_lower, tick_upper, current_tick)
