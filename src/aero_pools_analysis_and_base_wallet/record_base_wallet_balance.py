@@ -102,9 +102,9 @@ class WalletRecorder:
                 return entry
         return None
 
-    # ====================== NEW: CONSOLE HISTORY ======================
+    # ====================== UPDATED: CONSOLE HISTORY (latest at bottom) ======================
     def _print_latest_entries(self):
-        """Print the latest 10 entries (newest first) in a clean console table."""
+        """Print the latest 10 entries in chronological order (latest entry at the bottom)."""
         rows = []
         source = self.CSV_FILENAME
 
@@ -125,11 +125,10 @@ class WalletRecorder:
             print("📋 No history yet to display.")
             return
 
-        latest = rows[-10:]          # last 10 (or fewer)
-        latest.reverse()             # newest on top
+        latest = rows[-10:]          # last 10 (or fewer) — newest stays at the bottom
 
         print("\n" + "═" * 80)
-        print("📋 LATEST 10 ENTRIES (newest first)")
+        print("📋 LATEST 10 ENTRIES (chronological order — latest at bottom)")
         print("-" * 80)
         print(f"{'#':<3} {'Timestamp':<20} {'ETH':<12} {'WETH':<12} {'cbBTC':<12} {'BTC-Equivalent':<12}")
         print("-" * 80)
@@ -240,7 +239,7 @@ class WalletRecorder:
             print("⚠️ NOTE: This is last known data from backup.txt")
         print("═" * 80)
 
-        # === NEW FEATURE: Latest 10 entries ===
+        # === Latest 10 entries (now with latest at bottom) ===
         self._print_latest_entries()
 
         # Final file info
