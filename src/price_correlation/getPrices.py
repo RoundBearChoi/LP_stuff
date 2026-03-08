@@ -20,6 +20,7 @@ class CryptoPriceFetcher:
         'DOGE': 'dogecoin',
         'LTC': 'litecoin',
         'XRP': 'ripple',
+        'ADA': 'cardano',
     }
 
     def __init__(self, token1: str, token2: str):
