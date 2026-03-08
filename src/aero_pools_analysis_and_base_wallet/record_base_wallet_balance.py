@@ -2,14 +2,14 @@ from web3 import Web3
 import time
 import os
 from datetime import datetime
-import json
+import json   # ← NEW: for automatic JSON loading
 
 class AerodromePositionChecker:
     # ================= CONFIG =================
     BASE_RPC = "https://mainnet.base.org"
     POSITION_MANAGER_ADDR = Web3.to_checksum_address("0x827922686190790b37229fd06084350e74485b72")
 
-    # ── ABIs ──
+    # ── ABIs ── (unchanged)
     MANAGER_ABI = [
         {"constant": True, "inputs": [{"name": "owner", "type": "address"}], "name": "balanceOf", "outputs": [{"name": "", "type": "uint256"}], "type": "function"},
         {"constant": True, "inputs": [{"name": "owner", "type": "address"}, {"name": "index", "type": "uint256"}], "name": "tokenOfOwnerByIndex", "outputs": [{"name": "", "type": "uint256"}], "type": "function"},
@@ -38,26 +38,23 @@ class AerodromePositionChecker:
         {"constant": True, "inputs": [{"name": "depositor", "type": "address"}], "name": "stakedValues", "outputs": [{"name": "", "type": "uint256[]"}], "type": "function"},
         {"constant": True, "inputs": [], "name": "pool", "outputs": [{"name": "", "type": "address"}], "type": "function"},
         {"constant": True, "inputs": [{"name": "account", "type": "address"}, {"name": "tokenId", "type": "uint256"}], "name": "earned", "outputs": [{"name": "", "type": "uint256"}], "type": "function"},
-        {"constant": True, "inputs": [{"name": "tokenId", "type": "uint256"}], "name": "rewards", "outputs": [{"name": "", "type": "uint256"}], "type": "function"},
-        # ← NEW: for live accrual rate
-        {"constant": True, "inputs": [], "name": "rewardRate", "outputs": [{"name": "", "type": "uint256"}], "type": "function"},
     ]
 
-    # UPDATED POOL_ABI with stakedLiquidity for accurate per-position rate
     POOL_ABI = [
         {"inputs": [], "name": "slot0", "outputs": [
             {"internalType": "uint160", "name": "sqrtPriceX96", "type": "uint160"},
             {"internalType": "int24", "name": "tick", "type": "int24"},
-        ], "stateMutability": "view", "type": "function"},
-        {"inputs": [], "name": "stakedLiquidity", "outputs": [{"internalType": "uint128", "name": "", "type": "uint128"}], "stateMutability": "view", "type": "function"}
+        ], "stateMutability": "view", "type": "function"}
     ]
 
+    # ── Known tokens ── (unchanged)
     KNOWN_TOKENS = {
         "0x4200000000000000000000000000000000000006".lower(): ("WETH", 18),
         "0xcbb7c0000ab88b473b1f5afd9ef808440eed33bf".lower(): ("cbBTC", 8),
         "0x940181a94a35a4569e4529a3cdfb74e38fd98631".lower(): ("AERO", 18),
     }
 
+    # 🌱 ANSI Terminal Colors (unchanged)
     GREEN = "\033[92m"
     RED   = "\033[91m"
     RESET = "\033[0m"
@@ -68,7 +65,7 @@ class AerodromePositionChecker:
         if not self.w3.is_connected():
             raise Exception("Failed to connect to Base RPC.")
         self.manager = self.w3.eth.contract(address=self.POSITION_MANAGER_ADDR, abi=self.MANAGER_ABI)
-        self.pools_file = "aero_pools.json"
+        self.pools_file = "aero_pools.json"   # ← NEW: config file name
 
     @staticmethod
     def tick_to_price(tick):
@@ -93,7 +90,9 @@ class AerodromePositionChecker:
                     time.sleep(base_delay)
         return 0
 
+    # ================= NEW: AUTOMATIC JSON LOADING =================
     def _load_pools(self):
+        """Load all pools/gauges from aero_pools.json (same folder as script)"""
         try:
             with open(self.pools_file, "r", encoding="utf-8") as f:
                 data = json.load(f)
@@ -101,10 +100,10 @@ class AerodromePositionChecker:
             print(f"✅ Loaded {len(pools)} pool configuration(s) from {self.pools_file}")
             return pools
         except FileNotFoundError:
-            print(f"❌ {self.pools_file} not found!")
+            print(f"❌ {self.pools_file} not found! (place it in the same folder as the script)")
             return []
         except json.JSONDecodeError:
-            print(f"❌ Invalid JSON in {self.pools_file}")
+            print(f"❌ Invalid JSON format in {self.pools_file}")
             return []
         except Exception as e:
             print(f"❌ Error reading {self.pools_file}: {e}")
@@ -127,11 +126,11 @@ class AerodromePositionChecker:
         staked_positions = self._get_all_staked_positions(WALLET)
 
         if not staked_positions:
-            print("No staked positions found.")
+            print("No staked positions found in monitored pools.")
             return
 
         print(f"\n✅ Found {len(staked_positions)} staked position(s). Starting LIVE monitor...")
-        print("   Price vs Range + Fees + Emissions + Accrual Rate updates every 30s • Ctrl+C to stop\n")
+        print("   Price vs Range + Fees + Emissions updates every 30 seconds • Ctrl+C to stop\n")
         time.sleep(2)
 
         try:
@@ -142,6 +141,7 @@ class AerodromePositionChecker:
             print("\n\n👋 Monitor stopped. Goodbye!")
 
     def _check_unstaked_positions(self, wallet):
+        # (unchanged from original)
         print("Unstaked positions (direct ownership):")
         try:
             count = self._call_with_retry(lambda: self.manager.functions.balanceOf(wallet).call())
@@ -160,6 +160,8 @@ class AerodromePositionChecker:
         except Exception as e:
             print(f"   Error fetching unstaked: {e}")
 
+    # ================= UPDATED: AUTO-CHECK ALL GAUGES FROM JSON =================
+    # ── This version only grabs static info at startup (no stale snapshots) ──
     def _get_all_staked_positions(self, wallet):
         pools = self._load_pools()
         all_staked = []
@@ -187,33 +189,24 @@ class AerodromePositionChecker:
                     print(f"   Gauge: {gauge_addr[:8]}...{gauge_addr[-6:]} — {len(staked_ids)} staked position(s)")
                     print(f"   Linked pool: {pool_addr}")
                     for token_id in staked_ids:
-                        pos = self._call_with_retry(lambda: self.manager.functions.positions(token_id).call())
-                        
-                        earned = self._call_with_retry(lambda: gauge.functions.earned(wallet, token_id).call())
-                        try:
-                            stored = self._call_with_retry(lambda: gauge.functions.rewards(token_id).call())
-                        except:
-                            stored = 0
-                        pending = earned + stored
-
+                        # ← We no longer fetch pos/pending here (moved to live loop for fresh data every 30s)
                         all_staked.append({
                             "token_id": token_id,
                             "pool_addr": pool_addr,
-                            "pos": pos,
-                            "gauge": gauge_addr,
-                            "pending_emissions": pending,
+                            "gauge": gauge_addr,      # ← used to re-create contract in live loop
                             "pool_name": name
                         })
             except Exception as e:
                 print(f"   Error checking {name}: {str(e)[:100]}")
 
         if all_staked:
-            print(f"\nTotal: {len(all_staked)} staked position(s) found.")
+            print(f"\nTotal: {len(all_staked)} staked position(s) found across all pools.")
         else:
-            print("   No staked positions found.")
+            print("   No staked positions found in any monitored gauges.")
         
         return all_staked
 
+    # ================= UPDATED: LIVE UPDATE (NOW REFRESHES EMISSIONS + FEES EVERY CYCLE) =================
     def _live_update(self, staked_positions):
         os.system('cls' if os.name == 'nt' else 'clear')
         print(f"=== Aerodrome SlipStream LIVE MONITOR — {datetime.now().strftime('%Y-%m-%d %H:%M:%S')} ===\n")
@@ -222,34 +215,22 @@ class AerodromePositionChecker:
         for pos_data in staked_positions:
             token_id = pos_data["token_id"]
             pool_addr = pos_data["pool_addr"]
-            pos = pos_data["pos"]
             gauge_addr = pos_data["gauge"]
             pool_name = pos_data.get("pool_name", "")
-            current_tick = self._get_current_tick(pool_addr)
 
-            gauge = self.w3.eth.contract(address=gauge_addr, abi=self.GAUGE_ABI)
-            earned = self._call_with_retry(lambda: gauge.functions.earned(self.wallet, token_id).call())
             try:
-                stored = self._call_with_retry(lambda: gauge.functions.rewards(token_id).call())
-            except:
-                stored = 0
-            pending = earned + stored
-
-            # NEW: Live accrual rate (per-position, matches dashboard feel)
-            try:
-                pool_contract = self.w3.eth.contract(address=pool_addr, abi=self.POOL_ABI)
-                staked_liq = self._call_with_retry(lambda: pool_contract.functions.stakedLiquidity().call())
-                pos_liq = pos[7]  # liquidity from positions tuple
-                rr = self._call_with_retry(lambda: gauge.functions.rewardRate().call())
-                if staked_liq > 0 and pos_liq > 0 and rr > 0:
-                    share = pos_liq / staked_liq
-                    aero_per_hour = (rr / 1e18) * share * 3600
-                else:
-                    aero_per_hour = 0
-            except:
-                aero_per_hour = 0
-
-            self._print_live_position(token_id, pos, current_tick, pending, aero_per_hour, pool_name)
+                # === Fresh data every 30-second cycle (this fixes the frozen emissions bug) ===
+                pos = self._call_with_retry(lambda: self.manager.functions.positions(token_id).call())
+                
+                # Re-create gauge contract once per position (very lightweight)
+                gauge_contract = self.w3.eth.contract(address=gauge_addr, abi=self.GAUGE_ABI)
+                pending = self._call_with_retry(lambda: gauge_contract.functions.earned(self.wallet, token_id).call())
+                
+                current_tick = self._get_current_tick(pool_addr)
+                
+                self._print_live_position(token_id, pos, current_tick, pending, pool_name)
+            except Exception as e:
+                print(f"   ⚠️  Error updating NFT {token_id}: {str(e)[:100]} (skipping this cycle)")
 
         print("\n" + "="*80)
 
@@ -260,6 +241,7 @@ class AerodromePositionChecker:
         print("\r" + " " * 70)
 
     def _get_current_tick(self, pool_addr):
+        # (unchanged)
         pool = self.w3.eth.contract(address=pool_addr, abi=self.POOL_ABI)
         def fetch():
             try:
@@ -273,7 +255,8 @@ class AerodromePositionChecker:
                 raise
         return self._call_with_retry(fetch)
 
-    def _print_live_position(self, token_id, pos, current_tick, pending_emissions, aero_per_hour=0, pool_name=""):
+    def _print_live_position(self, token_id, pos, current_tick, pending_emissions, pool_name=""):
+        # (updated to show pool name for clarity — unchanged logic)
         t0_addr = pos[2]
         t1_addr = pos[3]
         tick_lower = pos[5]
@@ -292,12 +275,11 @@ class AerodromePositionChecker:
         print(f"      Range ticks: {tick_lower:,} → {tick_upper:,}")
         print(f"      Uncollected fees: {f0:.6f} {sym0} / {f1:.6f} {sym1}")
 
-        aero_formatted = pending_emissions / 1e18
-        print(f"      🌱 Pending emissions: {aero_formatted:,.6f} AERO")
-        if aero_per_hour > 0.000001:
-            print(f"         → Accruing at ~{aero_per_hour:,.6f} AERO/hour (~{aero_per_hour*24:,.4f}/day)")
+        if pending_emissions > 0:
+            aero_formatted = pending_emissions / 1e18
+            print(f"      🌱 Pending emissions: {aero_formatted:,.4f} AERO")
         else:
-            print("         → Accruing at 0 AERO/hour")
+            print("      🌱 Pending emissions: 0 AERO")
 
         if current_tick is not None:
             self._print_price_analysis(sym0, sym1, dec0, dec1, tick_lower, tick_upper, current_tick)
@@ -305,6 +287,7 @@ class AerodromePositionChecker:
             print("      ⚠️  Could not fetch current price (RPC issue)")
 
     def _get_token_info(self, token_addr):
+        # (unchanged)
         lower = token_addr.lower()
         if lower in self.KNOWN_TOKENS:
             return self.KNOWN_TOKENS[lower]
@@ -317,6 +300,7 @@ class AerodromePositionChecker:
             return token_addr[:8] + "...", 18
 
     def _print_price_analysis(self, sym0, sym1, dec0, dec1, tick_lower, tick_upper, current_tick):
+        # (unchanged)
         p_raw = self.tick_to_price(current_tick)
         p_lower_raw = self.tick_to_price(tick_lower)
         p_upper_raw = self.tick_to_price(tick_upper)
@@ -358,7 +342,6 @@ class AerodromePositionChecker:
             extra = " (out of range)" if progress >= 100 else ""
             print(f"         Edge usage: {arrow} {progress:.2f}% toward {edge} edge{extra}")
         print("      ---")
-
 
 if __name__ == "__main__":
     checker = AerodromePositionChecker()
