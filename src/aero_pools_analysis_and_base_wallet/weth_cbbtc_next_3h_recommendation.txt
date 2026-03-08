@@ -1,7 +1,7 @@
 WETH-CBBTC Pool – Dynamic Next 3H Recommendation (KST)
 =================================================================
 
-Generated : 2026-03-08 11:03:35 KST
+Generated : 2026-03-08 11:45:30 KST
 Day       : Sunday
 Next 3h   : 12-15
 Median    : 1.113%
