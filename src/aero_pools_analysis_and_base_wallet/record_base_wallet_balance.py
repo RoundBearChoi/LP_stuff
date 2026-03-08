@@ -1,259 +1,358 @@
-import csv
+from web3 import Web3
+import time
 import os
-from datetime import datetime, timezone, timedelta
-from decimal import Decimal
+from datetime import datetime
+import json   # ← for automatic JSON loading
 
-# Import our existing modules (must be in the same folder)
-from get_base_balance import BaseBalanceChecker
-from get_market_prices import CoinGeckoPrices
+class AerodromePositionChecker:
+    # ================= CONFIG =================
+    BASE_RPC = "https://mainnet.base.org"
+    POSITION_MANAGER_ADDR = Web3.to_checksum_address("0x827922686190790b37229fd06084350e74485b72")
 
+    # ── ABIs ──
+    MANAGER_ABI = [
+        {"constant": True, "inputs": [{"name": "owner", "type": "address"}], "name": "balanceOf", "outputs": [{"name": "", "type": "uint256"}], "type": "function"},
+        {"constant": True, "inputs": [{"name": "owner", "type": "address"}, {"name": "index", "type": "uint256"}], "name": "tokenOfOwnerByIndex", "outputs": [{"name": "", "type": "uint256"}], "type": "function"},
+        {"constant": True, "inputs": [{"name": "tokenId", "type": "uint256"}], "name": "positions", "outputs": [
+            {"name": "nonce", "type": "uint96"},
+            {"name": "operator", "type": "address"},
+            {"name": "token0", "type": "address"},
+            {"name": "token1", "type": "address"},
+            {"name": "tickSpacing", "type": "int24"},
+            {"name": "tickLower", "type": "int24"},
+            {"name": "tickUpper", "type": "int24"},
+            {"name": "liquidity", "type": "uint128"},
+            {"name": "feeGrowthInside0LastX128", "type": "uint256"},
+            {"name": "feeGrowthInside1LastX128", "type": "uint256"},
+            {"name": "tokensOwed0", "type": "uint128"},
+            {"name": "tokensOwed1", "type": "uint128"}
+        ], "type": "function"}
+    ]
 
-class WalletRecorder:
-    """Final version: rolling .txt backup + auto-restore + latest 10 entries on console."""
+    ERC20_ABI = [
+        {"constant": True, "inputs": [], "name": "symbol", "outputs": [{"name": "", "type": "string"}], "type": "function"},
+        {"constant": True, "inputs": [], "name": "decimals", "outputs": [{"name": "", "type": "uint8"}], "type": "function"}
+    ]
 
-    CSV_FILENAME = "wallet_records.csv"
-    BACKUP_TXT = "wallet_records_backup.txt"
-    MAX_BACKUP_ENTRIES = 100
+    # ================= UPDATED GAUGE_ABI (critical fix) =================
+    # Added "rewards(tokenId)" – this is the missing ~75% of pending AERO on SlipStream gauges
+    GAUGE_ABI = [
+        {"constant": True, "inputs": [{"name": "depositor", "type": "address"}], "name": "stakedValues", "outputs": [{"name": "", "type": "uint256[]"}], "type": "function"},
+        {"constant": True, "inputs": [], "name": "pool", "outputs": [{"name": "", "type": "address"}], "type": "function"},
+        {"constant": True, "inputs": [{"name": "account", "type": "address"}, {"name": "tokenId", "type": "uint256"}], "name": "earned", "outputs": [{"name": "", "type": "uint256"}], "type": "function"},
+        
+        # ←←← NEW: this slot holds previously accrued but not-yet-pushed rewards
+        # Aerodrome frontend + Sugar contract ALWAYS does earned + rewards
+        {"constant": True, "inputs": [{"name": "tokenId", "type": "uint256"}], "name": "rewards", "outputs": [{"name": "", "type": "uint256"}], "type": "function"},
+    ]
 
-    def __init__(self):
-        self.balance_checker = BaseBalanceChecker()
-        self.price_fetcher = CoinGeckoPrices()
+    POOL_ABI = [
+        {"inputs": [], "name": "slot0", "outputs": [
+            {"internalType": "uint160", "name": "sqrtPriceX96", "type": "uint160"},
+            {"internalType": "int24", "name": "tick", "type": "int24"},
+        ], "stateMutability": "view", "type": "function"}
+    ]
+
+    # ── Known tokens ──
+    KNOWN_TOKENS = {
+        "0x4200000000000000000000000000000000000006".lower(): ("WETH", 18),
+        "0xcbb7c0000ab88b473b1f5afd9ef808440eed33bf".lower(): ("cbBTC", 8),
+        "0x940181a94a35a4569e4529a3cdfb74e38fd98631".lower(): ("AERO", 18),
+    }
+
+    # 🌱 ANSI Terminal Colors
+    GREEN = "\033[92m"
+    RED   = "\033[91m"
+    RESET = "\033[0m"
+
+    def __init__(self, rpc_url=None):
+        rpc = rpc_url or self.BASE_RPC
+        self.w3 = Web3(Web3.HTTPProvider(rpc))
+        if not self.w3.is_connected():
+            raise Exception("Failed to connect to Base RPC.")
+        self.manager = self.w3.eth.contract(address=self.POSITION_MANAGER_ADDR, abi=self.MANAGER_ABI)
+        self.pools_file = "aero_pools.json"
 
     @staticmethod
-    def get_kst_now() -> str:
-        """Return current time in KST (Korea Standard Time)"""
-        kst = timezone(timedelta(hours=9))
-        return datetime.now(kst).strftime("%Y-%m-%d %H:%M:%S KST")
-
-    def _calculate_btc_equivalent(
-        self,
-        eth_balance: Decimal,
-        weth_balance: Decimal,
-        cbbtc_balance: Decimal,
-        btc_price: float | None,
-        eth_price: float | None,
-    ) -> str:
-        """Calculate total portfolio in BTC terms."""
-        total_eth = eth_balance + weth_balance
-
-        if btc_price and eth_price and btc_price > 0:
-            eth_in_btc = total_eth * Decimal(str(eth_price)) / Decimal(str(btc_price))
-            btc_equivalent = cbbtc_balance + eth_in_btc
-            return f"{btc_equivalent:.8f}"
-        return "N/A"
-
-    # ====================== .TXT BACKUP LOGIC (unchanged) ======================
-    def _write_rolling_backup_txt(self, rows: list[dict]):
+    def tick_to_price(tick):
         try:
-            with open(self.BACKUP_TXT, "w", encoding="utf-8") as f:
-                f.write("=== WALLET RECORDS BACKUP (Latest 100 Entries) ===\n")
-                f.write(f"Last updated: {self.get_kst_now()}\n")
-                f.write(f"Entries: {len(rows)} (max {self.MAX_BACKUP_ENTRIES})\n")
-                f.write("=" * 60 + "\n\n")
-                for i, row in enumerate(rows, 1):
-                    f.write(f"=== ENTRY {i:03d} ===\n")
-                    for key, value in row.items():
-                        f.write(f"{key}={value}\n")
-                    f.write("\n")
-            print(f"📦 Rolling backup updated → {self.BACKUP_TXT} ({len(rows)} entries)")
-        except Exception as e:
-            print(f"⚠️ Could not update backup.txt: {e}")
+            return 1.0001 ** tick
+        except (OverflowError, ValueError):
+            return 0.0
 
-    def _parse_backup_txt(self) -> list[dict]:
-        if not os.path.isfile(self.BACKUP_TXT):
-            return []
-        try:
-            entries = []
-            current = {}
-            with open(self.BACKUP_TXT, "r", encoding="utf-8") as f:
-                for line in f:
-                    line = line.strip()
-                    if line.startswith("=== ENTRY"):
-                        if current:
-                            entries.append(current)
-                        current = {}
-                    elif "=" in line and not line.startswith("==="):
-                        key, value = line.split("=", 1)
-                        current[key.strip()] = value.strip()
-            if current:
-                entries.append(current)
-            return entries
-        except Exception:
-            return []
-
-    def _restore_from_backup(self):
-        entries = self._parse_backup_txt()
-        if not entries:
-            print("⚠️ No backup data available to restore.")
-            return
-        try:
-            with open(self.CSV_FILENAME, "w", newline="", encoding="utf-8") as f:
-                writer = csv.DictWriter(f, fieldnames=entries[0].keys())
-                writer.writeheader()
-                writer.writerows(entries)
-            print(f"✅ Restored {len(entries)} entries from backup.txt into {self.CSV_FILENAME}")
-        except Exception as e:
-            print(f"⚠️ Restore failed: {e}")
-
-    def _load_latest_from_backup(self, wallet_address: str) -> dict | None:
-        entries = self._parse_backup_txt()
-        for entry in reversed(entries):
-            if entry.get("wallet_address", "").lower() == wallet_address.lower():
-                return entry
-        return None
-
-    # ====================== UPDATED: CONSOLE HISTORY (latest at bottom) ======================
-    def _print_latest_entries(self):
-        """Print the latest 10 entries in chronological order (latest entry at the bottom)."""
-        rows = []
-        source = self.CSV_FILENAME
-
-        # Try main CSV first
-        if os.path.isfile(self.CSV_FILENAME):
+    def _call_with_retry(self, func, max_retries=6, base_delay=3):
+        for attempt in range(max_retries):
             try:
-                with open(self.CSV_FILENAME, "r", newline="", encoding="utf-8") as f:
-                    rows = list(csv.DictReader(f))
-            except Exception:
-                pass
-
-        # Fallback to backup.txt if CSV is empty/missing
-        if not rows:
-            rows = self._parse_backup_txt()
-            source = self.BACKUP_TXT
-
-        if not rows:
-            print("📋 No history yet to display.")
-            return
-
-        latest = rows[-10:]          # last 10 (or fewer) — newest stays at the bottom
-
-        print("\n" + "═" * 80)
-        print("📋 LATEST 10 ENTRIES (chronological order — latest at bottom)")
-        print("-" * 80)
-        print(f"{'#':<3} {'Timestamp':<20} {'ETH':<12} {'WETH':<12} {'cbBTC':<12} {'BTC-Equivalent':<12}")
-        print("-" * 80)
-
-        for i, row in enumerate(latest, 1):
-            ts = row["timestamp_kst"][:19]  # clean timestamp
-            eth = f"{float(row['eth_balance']):.6f}"
-            weth = f"{float(row['weth_balance']):.6f}"
-            cbbtc = f"{float(row['cbbtc_balance']):.6f}"
-            btc_eq = row["btc-equivalent"]
-            print(f"{i:<3} {ts:<20} {eth:<12} {weth:<12} {cbbtc:<12} {btc_eq:<12}")
-
-        print("-" * 80)
-        print(f"Showing {len(latest)} of {len(rows)} total entries • Source: {source}")
-        print("═" * 80)
-
-    # ====================== MAIN EXECUTION ======================
-    def run(self):
-        print("🔍 Base Wallet Recorder (Rolling 100-Entry .txt Backup + History View)\n")
-
-        wallet_address = input("Enter your Base wallet address: ").strip()
-        if not wallet_address:
-            print("❌ No address provided.")
-            return
-
-        # Auto-restore if CSV missing/empty
-        if not os.path.isfile(self.CSV_FILENAME) or os.path.getsize(self.CSV_FILENAME) == 0:
-            print("📂 Main CSV missing or empty — restoring latest 100 entries from backup.txt...")
-            self._restore_from_backup()
-
-        print("\n📡 Fetching balances from Base + prices from CoinGecko...")
-
-        row = None
-        is_backup = False
-
-        try:
-            # LIVE FETCH
-            eth_balance: Decimal = self.balance_checker.get_eth_balance(wallet_address)
-            weth_balance: Decimal = self.balance_checker.get_weth_balance(wallet_address)
-            cbbtc_balance: Decimal = self.balance_checker.get_cbbtc_balance(wallet_address)
-
-            prices = self.price_fetcher.get_all_prices()
-            btc_price = prices.get("btc")
-            eth_price = prices.get("eth")
-
-            timestamp_kst = self.get_kst_now()
-            btc_equiv_str = self._calculate_btc_equivalent(
-                eth_balance, weth_balance, cbbtc_balance, btc_price, eth_price
-            )
-
-            row = {
-                "timestamp_kst": timestamp_kst,
-                "wallet_address": wallet_address,
-                "eth_balance": str(eth_balance),
-                "weth_balance": str(weth_balance),
-                "cbbtc_balance": str(cbbtc_balance),
-                "btc_price_usd": f"{btc_price:,.2f}" if btc_price is not None else "N/A",
-                "eth_price_usd": f"{eth_price:,.2f}" if eth_price is not None else "N/A",
-                "btc-equivalent": btc_equiv_str,
-            }
-
-        except Exception as e:
-            print(f"⚠️ Live fetch failed: {str(e)}")
-            print("📂 Loading latest matching record from backup.txt...")
-
-            backup_row = self._load_latest_from_backup(wallet_address)
-            if backup_row:
-                row = backup_row.copy()
-                row["timestamp_kst"] = self.get_kst_now() + " (BACKUP)"
-                is_backup = True
-                print("✅ Successfully loaded from backup.txt!")
-            else:
-                print("❌ No matching backup data available for this wallet.")
-                return
-
-        # Append to main CSV
-        file_exists = os.path.isfile(self.CSV_FILENAME)
-        with open(self.CSV_FILENAME, "a", newline="", encoding="utf-8") as f:
-            writer = csv.DictWriter(f, fieldnames=row.keys())
-            if not file_exists:
-                writer.writeheader()
-                print(f"📁 Created new file → {self.CSV_FILENAME}")
-            writer.writerow(row)
-
-        # Update .txt backup ONLY on live data
-        if not is_backup:
-            try:
-                with open(self.CSV_FILENAME, "r", newline="", encoding="utf-8") as f:
-                    all_rows = list(csv.DictReader(f))
-                latest_rows = all_rows[-self.MAX_BACKUP_ENTRIES:]
-                self._write_rolling_backup_txt(latest_rows)
+                return func()
             except Exception as e:
-                print(f"⚠️ Could not update backup.txt: {e}")
+                err = str(e).lower()
+                if any(kw in err for kw in ["429", "rate limit", "too many requests", "limit exceeded", "timeout", "connection"]):
+                    delay = base_delay * (2 ** attempt)
+                    print(f"  ⚠️  RPC rate limit detected. Waiting {delay}s (attempt {attempt+1}/{max_retries})...")
+                    time.sleep(delay)
+                else:
+                    if attempt == max_retries - 1:
+                        raise
+                    time.sleep(base_delay)
+        return 0
 
-        # === Pretty summary (original) ===
-        print("\n" + "═" * 80)
-        status = "✅ SUCCESSFULLY RECORDED" if not is_backup else "⚠️ RECORDED FROM BACKUP"
-        print(f"{status} — {row['timestamp_kst']}")
-        print(f"Wallet         : {wallet_address}")
-        print(f"ETH            : {float(row['eth_balance']):,.8f} ETH")
-        print(f"WETH           : {float(row['weth_balance']):,.8f} WETH")
-        print(f"cbBTC          : {float(row['cbbtc_balance']):,.8f} cbBTC")
-        print("-" * 80)
-        print(f"BTC Price      : ${row['btc_price_usd']}")
-        print(f"ETH Price      : ${row['eth_price_usd']}")
-        print(f"BTC-Equivalent : {row['btc-equivalent']} BTC")
-        if is_backup:
-            print("⚠️ NOTE: This is last known data from backup.txt")
-        print("═" * 80)
+    # ================= AUTOMATIC JSON LOADING =================
+    def _load_pools(self):
+        try:
+            with open(self.pools_file, "r", encoding="utf-8") as f:
+                data = json.load(f)
+            pools = data.get("pools", [])
+            print(f"✅ Loaded {len(pools)} pool configuration(s) from {self.pools_file}")
+            return pools
+        except FileNotFoundError:
+            print(f"❌ {self.pools_file} not found! (place it in the same folder as the script)")
+            return []
+        except json.JSONDecodeError:
+            print(f"❌ Invalid JSON format in {self.pools_file}")
+            return []
+        except Exception as e:
+            print(f"❌ Error reading {self.pools_file}: {e}")
+            return []
 
-        # === Latest 10 entries (now with latest at bottom) ===
-        self._print_latest_entries()
+    def run(self):
+        WALLET_LOWER = input("Enter your Base wallet address (0x...): ").strip().lower()
+        try:
+            WALLET = Web3.to_checksum_address(WALLET_LOWER)
+            self.wallet = WALLET
+        except ValueError:
+            print("Invalid wallet address format.")
+            return
 
-        # Final file info
-        print(f"💾 Main history : {self.CSV_FILENAME}")
-        print(f"📋 Backup (txt) : {self.BACKUP_TXT} (latest 100 entries)")
+        print(f"\n=== Aerodrome SlipStream LIVE MONITOR for {WALLET} ===\n")
 
-    def close(self):
-        if hasattr(self, "balance_checker") and self.balance_checker:
-            self.balance_checker.close()
+        self._check_unstaked_positions(WALLET)
+
+        print("\nStaked positions (in gauges):")
+        staked_positions = self._get_all_staked_positions(WALLET)
+
+        if not staked_positions:
+            print("No staked positions found in monitored pools.")
+            return
+
+        print(f"\n✅ Found {len(staked_positions)} staked position(s). Starting LIVE monitor...")
+        print("   Price vs Range + Fees + Emissions updates every 30 seconds • Ctrl+C to stop\n")
+        time.sleep(2)
+
+        try:
+            while True:
+                self._live_update(staked_positions)
+                self._countdown(30)
+        except KeyboardInterrupt:
+            print("\n\n👋 Monitor stopped. Goodbye!")
+
+    def _check_unstaked_positions(self, wallet):
+        print("Unstaked positions (direct ownership):")
+        try:
+            count = self._call_with_retry(lambda: self.manager.functions.balanceOf(wallet).call())
+            print(f" → {count} positions")
+            if count > 0:
+                for i in range(count):
+                    token_id = self._call_with_retry(lambda: self.manager.functions.tokenOfOwnerByIndex(wallet, i).call())
+                    pos = self._call_with_retry(lambda: self.manager.functions.positions(token_id).call())
+                    sym0, dec0 = self._get_token_info(pos[2])
+                    sym1, dec1 = self._get_token_info(pos[3])
+                    f0 = pos[10] / (10 ** dec0)
+                    f1 = pos[11] / (10 ** dec1)
+                    print(f"   NFT {token_id}: Range {pos[5]:,} → {pos[6]}, Fees {f0:.6f} {sym0} / {f1:.6f} {sym1}")
+            else:
+                print("   (none found — all may be staked)")
+        except Exception as e:
+            print(f"   Error fetching unstaked: {e}")
+
+    # ================= UPDATED: FULL PENDING (earned + rewards) =================
+    def _get_all_staked_positions(self, wallet):
+        pools = self._load_pools()
+        all_staked = []
+        
+        if not pools:
+            return []
+
+        print(f"Checking {len(pools)} gauges from aero_pools.json...")
+
+        for pool_info in pools:
+            name = pool_info.get("name", "Unknown Pool")
+            gauge_str = pool_info.get("gauge_address")
+            if not gauge_str:
+                continue
+
+            try:
+                gauge_addr = Web3.to_checksum_address(gauge_str)
+                gauge = self.w3.eth.contract(address=gauge_addr, abi=self.GAUGE_ABI)
+
+                staked_ids = self._call_with_retry(lambda: gauge.functions.stakedValues(wallet).call())
+
+                if staked_ids:
+                    pool_addr = self._call_with_retry(lambda: gauge.functions.pool().call())
+                    print(f"\n✅ {name}")
+                    print(f"   Gauge: {gauge_addr[:8]}...{gauge_addr[-6:]} — {len(staked_ids)} staked position(s)")
+                    print(f"   Linked pool: {pool_addr}")
+                    for token_id in staked_ids:
+                        pos = self._call_with_retry(lambda: self.manager.functions.positions(token_id).call())
+                        
+                        # NEW: full pending calculation (matches Aerodrome dashboard)
+                        earned = self._call_with_retry(lambda: gauge.functions.earned(wallet, token_id).call())
+                        try:
+                            stored = self._call_with_retry(lambda: gauge.functions.rewards(token_id).call())
+                        except Exception:
+                            stored = 0  # fallback for any ancient gauges
+                        pending = earned + stored
+
+                        all_staked.append({
+                            "token_id": token_id,
+                            "pool_addr": pool_addr,
+                            "pos": pos,
+                            "gauge": gauge_addr,
+                            "pending_emissions": pending,   # initial value
+                            "pool_name": name
+                        })
+            except Exception as e:
+                print(f"   Error checking {name}: {str(e)[:100]}")
+
+        if all_staked:
+            print(f"\nTotal: {len(all_staked)} staked position(s) found across all pools.")
+        else:
+            print("   No staked positions found in any monitored gauges.")
+        
+        return all_staked
+
+    def _live_update(self, staked_positions):
+        os.system('cls' if os.name == 'nt' else 'clear')
+        print(f"=== Aerodrome SlipStream LIVE MONITOR — {datetime.now().strftime('%Y-%m-%d %H:%M:%S')} ===\n")
+        print(f"Monitoring {len(staked_positions)} staked position(s) • Refresh every 30s\n")
+
+        for pos_data in staked_positions:
+            token_id = pos_data["token_id"]
+            pool_addr = pos_data["pool_addr"]
+            pos = pos_data["pos"]
+            gauge_addr = pos_data["gauge"]
+            pool_name = pos_data.get("pool_name", "")
+            current_tick = self._get_current_tick(pool_addr)
+
+            # ================= LIVE REFRESH OF PENDING AERO (recommended) =================
+            # Fetches fresh every 30s so you see AERO accruing in real time
+            gauge = self.w3.eth.contract(address=gauge_addr, abi=self.GAUGE_ABI)
+            earned = self._call_with_retry(lambda: gauge.functions.earned(self.wallet, token_id).call())
+            try:
+                stored = self._call_with_retry(lambda: gauge.functions.rewards(token_id).call())
+            except Exception:
+                stored = 0
+            pending = earned + stored
+
+            self._print_live_position(token_id, pos, current_tick, pending, pool_name)
+
+        print("\n" + "="*80)
+
+    def _countdown(self, seconds):
+        for remaining in range(seconds, 0, -1):
+            print(f"\rNext refresh in {remaining:2d} seconds... (Ctrl+C to stop)", end="", flush=True)
+            time.sleep(1)
+        print("\r" + " " * 70)
+
+    def _get_current_tick(self, pool_addr):
+        pool = self.w3.eth.contract(address=pool_addr, abi=self.POOL_ABI)
+        def fetch():
+            try:
+                slot0 = pool.functions.slot0().call()
+                return slot0[1]
+            except:
+                selector = Web3.keccak(text="slot0()")[:4].hex()
+                raw = self.w3.eth.call({"to": pool_addr, "data": selector})
+                if len(raw) >= 64:
+                    return int.from_bytes(raw[32:64], "big", signed=True)
+                raise
+        return self._call_with_retry(fetch)
+
+    def _print_live_position(self, token_id, pos, current_tick, pending_emissions, pool_name=""):
+        t0_addr = pos[2]
+        t1_addr = pos[3]
+        tick_lower = pos[5]
+        tick_upper = pos[6]
+        fees0 = pos[10]
+        fees1 = pos[11]
+
+        sym0, dec0 = self._get_token_info(t0_addr)
+        sym1, dec1 = self._get_token_info(t1_addr)
+
+        f0 = fees0 / (10 ** dec0)
+        f1 = fees1 / (10 ** dec1)
+
+        header = f"   [{pool_name}] NFT {token_id}" if pool_name else f"   NFT {token_id}"
+        print(f"\n{header}: {sym0} ↔ {sym1}")
+        print(f"      Range ticks: {tick_lower:,} → {tick_upper:,}")
+        print(f"      Uncollected fees: {f0:.6f} {sym0} / {f1:.6f} {sym1}")
+
+        aero_formatted = pending_emissions / 1e18
+        if aero_formatted > 0:
+            print(f"      🌱 Pending emissions: {aero_formatted:,.6f} AERO")
+        else:
+            print("      🌱 Pending emissions: 0 AERO")
+
+        if current_tick is not None:
+            self._print_price_analysis(sym0, sym1, dec0, dec1, tick_lower, tick_upper, current_tick)
+        else:
+            print("      ⚠️  Could not fetch current price (RPC issue)")
+
+    def _get_token_info(self, token_addr):
+        lower = token_addr.lower()
+        if lower in self.KNOWN_TOKENS:
+            return self.KNOWN_TOKENS[lower]
+        try:
+            c = self.w3.eth.contract(token_addr, abi=self.ERC20_ABI)
+            sym = c.functions.symbol().call()
+            dec = c.functions.decimals().call()
+            return sym, dec
+        except:
+            return token_addr[:8] + "...", 18
+
+    def _print_price_analysis(self, sym0, sym1, dec0, dec1, tick_lower, tick_upper, current_tick):
+        p_raw = self.tick_to_price(current_tick)
+        p_lower_raw = self.tick_to_price(tick_lower)
+        p_upper_raw = self.tick_to_price(tick_upper)
+        center_raw = self.tick_to_price((tick_lower + tick_upper) // 2)
+
+        adjust = 10 ** (dec0 - dec1)
+        p_current = p_raw * adjust
+        p_lower   = p_lower_raw * adjust
+        p_upper   = p_upper_raw * adjust
+        p_center  = center_raw * adjust
+
+        print("\n      === Price vs Range (LIVE) ===")
+        print(f"         Current:   1 {sym0} = {p_current:.8g} {sym1}")
+        print(f"         Range:     1 {sym0} = {p_lower:.8g} → {p_upper:.8g} {sym1}")
+        print(f"         Center:    1 {sym0} = {p_center:.8g} {sym1} (tick {(tick_lower + tick_upper)//2:,})")
+
+        if current_tick < tick_lower:
+            diff = tick_lower - current_tick
+            print(f"         {self.RED}↓ BELOW range by {diff:,} ticks{self.RESET}")
+        elif current_tick > tick_upper:
+            diff = current_tick - tick_upper
+            print(f"         {self.RED}↑ ABOVE range by {diff:,} ticks{self.RESET}")
+        else:
+            print(f"         {self.GREEN}INSIDE range{self.RESET}")
+
+        if p_center > 0:
+            dev = (p_current / p_center) - 1
+            if dev >= 0:
+                half = (p_upper / p_center) - 1
+                progress = (dev / half * 100) if half > 0 else 0
+                arrow = "↑"
+                edge = "upper"
+            else:
+                half = 1 - (p_lower / p_center)
+                progress = ((-dev) / half * 100) if half > 0 else 0
+                arrow = "↓"
+                edge = "lower"
+
+            extra = " (out of range)" if progress >= 100 else ""
+            print(f"         Edge usage: {arrow} {progress:.2f}% toward {edge} edge{extra}")
+        print("      ---")
 
 
 if __name__ == "__main__":
-    recorder = WalletRecorder()
-    try:
-        recorder.run()
-    finally:
-        recorder.close()
+    checker = AerodromePositionChecker()
+    checker.run()
