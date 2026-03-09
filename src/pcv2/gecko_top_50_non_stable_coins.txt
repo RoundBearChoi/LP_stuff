@@ -1,0 +1,56 @@
+Top 50 Non-Stablecoins by Market Cap (USD)
+Generated: 2026-03-09 16:08:57 KST
+Skipped stablecoins: 12
+
+Rank Name                   Symbol              Price (USD)   Market Cap    24h %
+---------------------------------------------------------------------------------------------------
+1    Bitcoin                BTC             $  67,190.00        $1.344T     -0.10%
+2    Ethereum               ETH             $   1,977.37       $238.74B      1.37%
+3    BNB                    BNB             $     621.55        $84.79B      0.12%
+4    XRP                    XRP             $       1.34        $82.23B     -0.79%
+5    Solana                 SOL             $      82.94        $47.35B      0.54%
+6    TRON                   TRX             $       0.29        $27.32B      0.73%
+7    Figure Heloc           FIGR_HELOC      $       1.02        $16.03B      0.00%
+8    Dogecoin               DOGE            $       0.09        $13.83B      1.09%
+9    WhiteBIT Coin          WBT             $      53.99        $11.52B      0.27%
+10   Cardano                ADA             $       0.25         $9.39B      0.82%
+11   Bitcoin Cash           BCH             $     446.67         $8.94B     -0.50%
+12   LEO Token              LEO             $       9.06         $8.34B      0.25%
+13   Hyperliquid            HYPE            $      30.53         $7.28B      2.18%
+14   Monero                 XMR             $     351.25         $6.47B      2.80%
+15   Chainlink              LINK            $       8.71         $6.17B      1.09%
+16   Canton                 CC              $       0.15         $5.69B     -1.78%
+17   Stellar                XLM             $       0.15         $4.93B      0.11%
+18   Rain                   RAIN            $       0.01         $4.22B     -1.29%
+19   Hedera                 HBAR            $       0.10         $4.12B      0.09%
+20   Litecoin               LTC             $      53.21         $4.10B     -0.20%
+21   Avalanche              AVAX            $       9.09         $3.93B      2.27%
+22   Sui                    SUI             $       0.90         $3.52B      1.06%
+23   Zcash                  ZEC             $     202.98         $3.37B      3.95%
+24   Toncoin                TON             $       1.32         $3.24B      0.86%
+25   Shiba Inu              SHIB            $       0.00         $3.15B      1.07%
+26   Cronos                 CRO             $       0.07         $3.06B     -0.04%
+27   Tether Gold            XAUT            $   5,064.33         $2.86B     -1.60%
+28   World Liberty Fi...    WLFI            $       0.10         $2.74B      3.55%
+29   MemeCore               M               $       1.55         $2.70B     -0.35%
+30   PAX Gold               PAXG            $   5,107.97         $2.54B     -1.35%
+31   Polkadot               DOT             $       1.49         $2.49B      3.16%
+32   Uniswap                UNI             $       3.80         $2.41B      2.02%
+33   Mantle                 MNT             $       0.66         $2.15B     -2.74%
+34   Pi Network             PI              $       0.22         $2.09B      7.33%
+35   OKB                    OKB             $      97.75         $2.05B     -1.29%
+36   Circle USYC            USYC            $       1.12         $2.03B      0.00%
+37   Bittensor              TAO             $     194.47         $1.87B      9.91%
+38   Aster                  ASTER           $       0.70         $1.71B      1.27%
+39   Sky                    SKY             $       0.07         $1.68B      0.86%
+40   Aave                   AAVE            $     106.59         $1.62B     -1.00%
+41   NEAR Protocol          NEAR            $       1.23         $1.58B      1.79%
+42   Bitget Token           BGB             $       2.16         $1.51B     -0.45%
+43   HTX DAO                HTX             $       0.00         $1.47B      0.61%
+44   Pepe                   PEPE            $       0.00         $1.37B      1.53%
+45   Internet Computer      ICP             $       2.48         $1.36B      3.06%
+46   Ethereum Classic       ETC             $       8.12         $1.27B      0.46%
+47   Ondo                   ONDO            $       0.25         $1.21B      0.67%
+48   Pump.fun               PUMP            $       0.00         $1.14B      2.54%
+49   Gate                   GT              $       7.04         $1.13B      0.50%
+50   KuCoin                 KCS             $       8.01         $1.06B      2.54%

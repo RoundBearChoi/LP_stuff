@@ -101,7 +101,7 @@ class TopNonStableCoinsFetcher:
                   f"${coin['current_price']:>11,.4f}   ${coin['market_cap']:>15,.0f}")
 
         # ====================== SAVE TO TXT ======================
-        filename = f"top_{limit}_non_stable_coins.txt"
+        filename = f"gecko_top_{limit}_non_stable_coins.txt"   # ← UPDATED filename format
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S KST")
 
         with open(filename, "w", encoding="utf-8") as f:
@@ -139,7 +139,7 @@ if __name__ == "__main__":
     try:
         limit = int(sys.argv[1]) if len(sys.argv) > 1 else 50
     except (IndexError, ValueError):
-        print("Usage: python get_top_50_from_gecko.py [NUMBER]")
+        print("Usage: python get_gecko_top_coins.py [NUMBER]")
         print("       (defaults to 50 if no number given)\n")
         limit = 50
 

@@ -1,0 +1,106 @@
+Top 100 Non-Stablecoins by Market Cap (USD)
+Generated: 2026-03-09 16:09:02 KST
+Skipped stablecoins: 17
+
+Rank Name                   Symbol              Price (USD)   Market Cap    24h %
+---------------------------------------------------------------------------------------------------
+1    Bitcoin                BTC             $  67,190.00        $1.344T     -0.10%
+2    Ethereum               ETH             $   1,977.36       $238.74B      1.37%
+3    BNB                    BNB             $     621.55        $84.79B      0.12%
+4    XRP                    XRP             $       1.34        $82.23B     -0.79%
+5    Solana                 SOL             $      82.94        $47.35B      0.54%
+6    TRON                   TRX             $       0.29        $27.32B      0.73%
+7    Figure Heloc           FIGR_HELOC      $       1.02        $16.03B      0.00%
+8    Dogecoin               DOGE            $       0.09        $13.83B      1.09%
+9    WhiteBIT Coin          WBT             $      53.98        $11.52B      0.26%
+10   Cardano                ADA             $       0.25         $9.39B      0.82%
+11   Bitcoin Cash           BCH             $     446.67         $8.94B     -0.50%
+12   LEO Token              LEO             $       9.06         $8.34B      0.25%
+13   Hyperliquid            HYPE            $      30.53         $7.28B      2.18%
+14   Monero                 XMR             $     351.25         $6.47B      2.80%
+15   Chainlink              LINK            $       8.71         $6.17B      1.09%
+16   Canton                 CC              $       0.15         $5.69B     -1.78%
+17   Stellar                XLM             $       0.15         $4.93B      0.10%
+18   Rain                   RAIN            $       0.01         $4.22B     -1.29%
+19   Hedera                 HBAR            $       0.10         $4.12B      0.09%
+20   Litecoin               LTC             $      53.21         $4.10B     -0.20%
+21   Avalanche              AVAX            $       9.09         $3.93B      2.27%
+22   Sui                    SUI             $       0.90         $3.52B      1.06%
+23   Zcash                  ZEC             $     202.98         $3.37B      3.95%
+24   Toncoin                TON             $       1.32         $3.24B      0.87%
+25   Shiba Inu              SHIB            $       0.00         $3.15B      1.09%
+26   Cronos                 CRO             $       0.07         $3.06B     -0.04%
+27   Tether Gold            XAUT            $   5,063.96         $2.86B     -1.60%
+28   World Liberty Fi...    WLFI            $       0.10         $2.74B      3.59%
+29   MemeCore               M               $       1.55         $2.70B     -0.35%
+30   PAX Gold               PAXG            $   5,107.70         $2.54B     -1.36%
+31   Polkadot               DOT             $       1.49         $2.49B      3.16%
+32   Uniswap                UNI             $       3.80         $2.41B      2.00%
+33   Mantle                 MNT             $       0.66         $2.15B     -2.74%
+34   Pi Network             PI              $       0.22         $2.09B      7.33%
+35   OKB                    OKB             $      97.75         $2.05B     -1.29%
+36   Circle USYC            USYC            $       1.12         $2.03B      0.00%
+37   Bittensor              TAO             $     194.47         $1.87B      9.91%
+38   Aster                  ASTER           $       0.70         $1.71B      1.28%
+39   Sky                    SKY             $       0.07         $1.68B      0.86%
+40   Aave                   AAVE            $     106.59         $1.62B     -1.00%
+41   NEAR Protocol          NEAR            $       1.23         $1.58B      1.78%
+42   Bitget Token           BGB             $       2.16         $1.51B     -0.45%
+43   HTX DAO                HTX             $       0.00         $1.47B      0.61%
+44   Pepe                   PEPE            $       0.00         $1.37B      1.54%
+45   Internet Computer      ICP             $       2.48         $1.36B      3.06%
+46   Ethereum Classic       ETC             $       8.12         $1.27B      0.46%
+47   Ondo                   ONDO            $       0.25         $1.21B      0.64%
+48   Pump.fun               PUMP            $       0.00         $1.14B      2.53%
+49   Gate                   GT              $       7.04         $1.13B      0.50%
+50   KuCoin                 KCS             $       8.01         $1.06B      2.54%
+51   Worldcoin              WLD             $       0.36         $1.05B     -2.67%
+52   Superstate Short...    USTB            $      11.01         $1.05B      0.00%
+53   Morpho                 MORPHO          $       1.91         $1.05B      3.04%
+54   POL (ex-MATIC)         POL             $       0.10         $1.02B      2.29%
+55   Ondo US Dollar Y...    USDY            $       1.12        $919.5M     -0.93%
+56   Midnight               NIGHT           $       0.06        $918.5M     -2.25%
+57   Quant                  QNT             $      62.80        $913.4M     -1.92%
+58   NEXO                   NEXO            $       0.88        $883.3M      1.09%
+59   Spiko EU T-Bills...    EUTBL           $       1.21        $870.7M     -0.62%
+60   Cosmos Hub             ATOM            $       1.75        $868.3M     -1.28%
+61   Ethena                 ENA             $       0.10        $855.7M      0.73%
+62   Kaspa                  KAS             $       0.03        $798.3M      1.63%
+63   Flare                  FLR             $       0.01        $758.1M     -0.23%
+64   OUSG                   OUSG            $     114.50        $750.8M      0.00%
+65   Janus Henderson ...    JAAA            $       1.03        $744.9M      0.00%
+66   Provenance Block...    HASH            $       0.01        $740.6M     -5.70%
+67   Aptos                  APT             $       0.95        $739.2M      1.46%
+68   Algorand               ALGO            $       0.08        $738.9M      0.84%
+69   Filecoin               FIL             $       0.95        $723.0M      1.75%
+70   Render                 RENDER          $       1.37        $709.0M     -0.99%
+71   Official Trump         TRUMP           $       2.99        $694.9M      0.04%
+72   XDC Network            XDC             $       0.03        $627.3M     -3.65%
+73   Beldex                 BDX             $       0.08        $603.4M     -0.86%
+74   YLDS                   YLDS            $       1.00        $600.6M      0.01%
+75   VeChain                VET             $       0.01        $596.6M      1.05%
+76   Arbitrum               ARB             $       0.10        $576.2M      1.28%
+77   Janus Henderson ...    JTRSY           $       1.10        $568.3M      0.00%
+78   Jupiter                JUP             $       0.16        $568.0M     -0.01%
+79   GHO                    GHO             $       1.00        $564.1M      0.00%
+80   Stable                 STABLE          $       0.03        $529.9M    -14.46%
+81   Kite                   KITE            $       0.28        $502.3M     -4.46%
+82   Bonk                   BONK            $       0.00        $501.1M      1.22%
+83   A7A5                   A7A5            $       0.01        $496.6M      0.93%
+84   Decred                 DCR             $      28.33        $490.6M      0.03%
+85   Fasttoken              FTN             $       1.09        $472.7M      0.12%
+86   Stacks                 STX             $       0.26        $468.8M      0.23%
+87   EURC                   EURC            $       1.15        $455.0M     -0.48%
+88   JUST                   JST             $       0.05        $444.6M      0.74%
+89   PancakeSwap            CAKE            $       1.34        $443.2M      2.19%
+90   Virtuals Protocol      VIRTUAL         $       0.65        $426.0M     -1.39%
+91   Pudgy Penguins         PENGU           $       0.01        $424.0M      3.54%
+92   Sei                    SEI             $       0.06        $423.0M     -1.58%
+93   LayerZero              ZRO             $       1.96        $397.9M      1.16%
+94   Dash                   DASH            $      31.48        $397.4M      0.31%
+95   Kinesis Gold           KAU             $     165.87        $395.8M     -5.87%
+96   Ether.fi               ETHFI           $       0.53        $395.1M      2.27%
+97   Tezos                  XTZ             $       0.36        $392.8M      0.40%
+98   Chiliz                 CHZ             $       0.04        $389.4M     10.60%
+99   USX                    USX             $       1.00        $364.2M     -0.01%
+100  Curve DAO              CRV             $       0.24        $350.3M      1.45%
