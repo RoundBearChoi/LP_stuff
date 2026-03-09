@@ -7,13 +7,21 @@ import unicodedata   # ← Added for cleaning invisible chars
 class TopNonStableCoinsFetcher:
     """
     Fetches top non-stablecoins from CoinGecko by market cap.
-    Handles stablecoin skipping, name/symbol truncation, invisible Unicode cleaning,
-    and saves a perfectly aligned TXT report.
+    Handles stablecoin skipping, CUSTOM exclusions, name/symbol truncation,
+    invisible Unicode cleaning, and saves a perfectly aligned TXT report.
     """
     # Current major stablecoin CoinGecko IDs (update occasionally)
     STABLE_IDS = {
         'tether', 'usd-coin', 'usds', 'ethena-usde', 'dai',
         'paypal-usd', 'first-digital-usd', 'true-usd', 'usdd', 'frax'
+    }
+
+    # ← NEW: Coins you want to completely exclude (add more here anytime)
+    # Use exact CoinGecko IDs (lowercase, as returned by the API)
+    EXCLUDED_IDS = {
+        'figure-heloc',
+        # 'some-other-coin-id',      # ← just add lines like this in the future
+        # 'yet-another-token',
     }
 
     MAX_NAME_LEN = 19
@@ -26,7 +34,6 @@ class TopNonStableCoinsFetcher:
         """Remove invisible Unicode characters (zero-width spaces, etc.) that break alignment."""
         if not text:
             return ""
-        # Remove format/control/line-separator chars (fixes "​​Stable" → "Stable")
         cleaned = ''.join(
             c for c in text
             if unicodedata.category(c) not in {'Cf', 'Cc', 'Zl', 'Zp'}
@@ -50,6 +57,7 @@ class TopNonStableCoinsFetcher:
     def fetch_and_save(self, limit: int = 50):
         """
         Fetch, filter, print, and save exactly 'limit' non-stablecoins.
+        Now also respects the EXCLUDED_IDS list.
         """
         if limit < 1:
             limit = 50
@@ -70,7 +78,8 @@ class TopNonStableCoinsFetcher:
         data = response.json()
 
         filtered = []
-        skipped = 0
+        skipped_stables = 0
+        excluded_custom = 0
 
         for coin in data:
             coin_id = coin['id']
@@ -78,18 +87,29 @@ class TopNonStableCoinsFetcher:
             symbol = coin.get('symbol', '').lower()
             name = coin.get('name', '').lower()
 
+            # Skip known stables
             if coin_id in self.STABLE_IDS:
-                skipped += 1
+                skipped_stables += 1
                 continue
+
+            # Skip custom exclusions (figure-heloc, etc.)
+            if coin_id in self.EXCLUDED_IDS:
+                excluded_custom += 1
+                continue
+
+            # Additional price-based stable detection (kept as safety net)
             if 0.92 < price < 1.08 and ('usd' in symbol or 'usd' in name):
-                skipped += 1
+                skipped_stables += 1
                 continue
 
             filtered.append(coin)
             if len(filtered) >= limit:
                 break
 
-        print(f"✅ Fetched {len(data)} coins • Skipped {skipped} stablecoins • Returning top {len(filtered)} non-stables\n")
+        print(f"✅ Fetched {len(data)} coins • "
+              f"Skipped {skipped_stables} stablecoins • "
+              f"Excluded {excluded_custom} custom coins • "
+              f"Returning top {len(filtered)} non-stables\n")
 
         # Console preview (top 5)
         print(f"{'Rank':<4} {'Name':<22} {'Symbol':<15} {'Price':>12} {'Market Cap':>18}")
@@ -101,13 +121,14 @@ class TopNonStableCoinsFetcher:
                   f"${coin['current_price']:>11,.4f}   ${coin['market_cap']:>15,.0f}")
 
         # ====================== SAVE TO TXT ======================
-        filename = f"gecko_top_{limit}_non_stable_coins.txt"   # ← UPDATED filename format
+        filename = f"gecko_top_{limit}_non_stable_coins.txt"
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S KST")
 
         with open(filename, "w", encoding="utf-8") as f:
             f.write(f"Top {limit} Non-Stablecoins by Market Cap ({self.vs_currency})\n")
             f.write(f"Generated: {timestamp}\n")
-            f.write(f"Skipped stablecoins: {skipped}\n\n")
+            f.write(f"Skipped stablecoins: {skipped_stables}\n")
+            f.write(f"Excluded additional coins: {excluded_custom}\n\n")
             
             f.write(f"{'Rank':<4} {'Name':<22} {'Symbol':<15} {'Price ({})':>14} {'Market Cap':>12} {'24h %':>8}\n"
                     .format(self.vs_currency))
