@@ -1,63 +1,67 @@
 import pandas as pd
 import requests
 from datetime import datetime
-import sys
 
-print("🚀 CoinGecko Free Demo - ~1 Year BTC Price Downloader")
-print("=" * 65)
 
-# === PROMPT FOR YOUR DEMO KEY ===
-while True:
-    api_key = input("\nEnter your CoinGecko Demo API key (starts with CG-...): ").strip()
-    if api_key.startswith("CG-") and len(api_key) > 20:
-        print("✅ Key accepted")
-        break
-    print("❌ Invalid format. Try again.")
+class CoinGeckoBTCDailyDownloader:
+    """CoinGecko Free Demo - ~1 Year BTC Daily OHLC Downloader (Real candles)."""
 
-headers = {"x-cg-demo-api-key": api_key}
+    def __init__(self):
+        print("🚀 CoinGecko Free Demo - ~1 Year BTC Daily OHLC Downloader")
+        print("=" * 65)
 
-# === DOWNLOAD THE DATA (this part already worked for you) ===
-print("\n📥 Downloading ~1 year of BTC price data...")
+        self.api_key = None
+        self.headers = None
+        self.df_daily = None   # final daily OHLC
 
-url = "https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=365&precision=full"
+    def get_api_key(self):
+        """Prompt user for valid CoinGecko Demo API key."""
+        while True:
+            api_key = input("\nEnter your CoinGecko Demo API key (starts with CG-...): ").strip()
+            if api_key.startswith("CG-") and len(api_key) > 20:
+                print("✅ Key accepted")
+                self.api_key = api_key
+                self.headers = {"x-cg-demo-api-key": api_key}
+                break
+            print("❌ Invalid format. Try again.")
 
-resp = requests.get(url, headers=headers)
-resp.raise_for_status()
+    def download_data(self):
+        """Download ~1 year of real daily OHLC candles."""
+        print("\n📥 Downloading ~1 year of BTC daily OHLC data...")
 
-data = resp.json()['prices']
-df = pd.DataFrame(data, columns=['timestamp', 'price'])
-df['timestamp'] = pd.to_datetime(df['timestamp'], unit='ms')
-df = df.set_index('timestamp')
+        url = "https://api.coingecko.com/api/v3/coins/bitcoin/ohlc?vs_currency=usd&days=365"
 
-print(f"✅ Raw data loaded: {len(df):,} price points")
+        resp = requests.get(url, headers=self.headers)
+        resp.raise_for_status()
 
-# === RESAMPLE TO CLEAN HOURLY (FIXED for newer pandas) ===
-print("🔄 Converting to clean hourly OHLC candles...")
-df_hourly = df.resample('1h').agg({      # ← changed from '1H' to '1h'
-    'price': ['first', 'max', 'min', 'last']
-})
-df_hourly.columns = ['open', 'high', 'low', 'close']
-df_hourly = df_hourly.dropna()
+        data = resp.json()  # format: [[timestamp, open, high, low, close], ...]
+        self.df_daily = pd.DataFrame(data, columns=['timestamp', 'open', 'high', 'low', 'close'])
+        self.df_daily['timestamp'] = pd.to_datetime(self.df_daily['timestamp'], unit='ms')
+        self.df_daily = self.df_daily.set_index('timestamp')
 
-# Results
-print(f"\n🎉 SUCCESS! You now have {len(df_hourly):,} hourly candles (~1 full year)")
-print(f"Date range: {df_hourly.index[0].date()} → {df_hourly.index[-1].date()}")
-print("\nLast 5 candles:")
-print(df_hourly.tail(5))
+        print(f"✅ Loaded {len(self.df_daily):,} daily OHLC candles")
 
-# Save
-filename = f"btc_hourly_1year_free_{datetime.now().strftime('%Y%m%d')}.csv"
-df_hourly.to_csv(filename)
-print(f"\n💾 Saved to: {filename}")
-print("   Open in Excel, TradingView, or your backtester!")
+    def save_results(self):
+        """Print success message and save to CSV with clear CoinGecko branding."""
+        print(f"\n🎉 SUCCESS! You now have {len(self.df_daily):,} daily OHLC candles (~1 full year)")
+        print(f"Date range: {self.df_daily.index[0].date()} → {self.df_daily.index[-1].date()}")
+        print("\nLast 5 candles:")
+        print(self.df_daily.tail(5))
 
-# === BONUS: Want 4-hour candles instead? Just uncomment these lines ===
-# print("🔄 Converting to clean 4-hour candles instead...")
-# df_4h = df.resample('4h').agg({
-#     'price': ['first', 'max', 'min', 'last']
-# })
-# df_4h.columns = ['open', 'high', 'low', 'close']
-# df_4h = df_4h.dropna()
-# filename = f"btc_4hour_1year_free_{datetime.now().strftime('%Y%m%d')}.csv"
-# df_4h.to_csv(filename)
-# print(f"💾 Saved 4h version to: {filename}")
+        # ←←← UPDATED FILENAME WITH COINGECKO FOR CLARITY ←←←
+        filename = f"btc_coingecko_daily_ohlc_1year_free_{datetime.now().strftime('%Y%m%d')}.csv"
+        self.df_daily.to_csv(filename)
+        print(f"\n💾 Saved to: {filename}")
+        print("   Open in Excel, TradingView, or your backtester!")
+
+    def run(self):
+        """Run the complete pipeline."""
+        self.get_api_key()
+        self.download_data()
+        self.save_results()
+
+
+# ====================== RUN AS SCRIPT ======================
+if __name__ == "__main__":
+    downloader = CoinGeckoBTCDailyDownloader()
+    downloader.run()
