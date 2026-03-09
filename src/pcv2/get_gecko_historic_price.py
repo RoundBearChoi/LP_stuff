@@ -42,14 +42,14 @@ class CoinGeckoBTCDailyDownloader:
         print(f"✅ Loaded {len(self.df_daily):,} daily OHLC candles")
 
     def save_results(self):
-        """Print success message and save to CSV with clear CoinGecko branding."""
+        """Print success message and save to CSV using the requested clean format."""
         print(f"\n🎉 SUCCESS! You now have {len(self.df_daily):,} daily OHLC candles (~1 full year)")
         print(f"Date range: {self.df_daily.index[0].date()} → {self.df_daily.index[-1].date()}")
         print("\nLast 5 candles:")
         print(self.df_daily.tail(5))
 
-        # ←←← UPDATED FILENAME WITH COINGECKO FOR CLARITY ←←←
-        filename = f"btc_coingecko_daily_ohlc_1year_free_{datetime.now().strftime('%Y%m%d')}.csv"
+        # ←←← CHANGED TO MATCH YOUR REQUESTED FORMAT ←←←
+        filename = "btc_daily_1year_coingecko.csv"
         self.df_daily.to_csv(filename)
         print(f"\n💾 Saved to: {filename}")
         print("   Open in Excel, TradingView, or your backtester!")
