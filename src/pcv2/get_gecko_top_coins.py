@@ -7,8 +7,10 @@ import unicodedata   # ← Added for cleaning invisible chars
 class TopNonStableCoinsFetcher:
     """
     Fetches top non-stablecoins from CoinGecko by market cap.
-    Handles stablecoin skipping, CUSTOM exclusions, name/symbol truncation,
-    invisible Unicode cleaning, and saves a perfectly aligned TXT report.
+    Handles stablecoin skipping, CUSTOM exclusions (figure-heloc, hashnote-usyc,
+    superstate USTB, eutbl, janus-henderson JAAA/JTRSY, ylds, etc.),
+    name/symbol truncation, invisible Unicode cleaning, and saves a perfectly
+    aligned TXT report.
     """
     # Current major stablecoin CoinGecko IDs (update occasionally)
     STABLE_IDS = {
@@ -16,12 +18,17 @@ class TopNonStableCoinsFetcher:
         'paypal-usd', 'first-digital-usd', 'true-usd', 'usdd', 'frax'
     }
 
-    # ← NEW: Coins you want to completely exclude (add more here anytime)
-    # Use exact CoinGecko IDs (lowercase, as returned by the API)
+    # ← CUSTOM BLACKLIST: Add any CoinGecko IDs here (one per line)
+    # Verified directly from CoinGecko pages / API
     EXCLUDED_IDS = {
         'figure-heloc',
-        # 'some-other-coin-id',      # ← just add lines like this in the future
-        # 'yet-another-token',
+        'hashnote-usyc',                                   # Circle USYC (originally Hashnote)
+        'superstate-short-duration-us-government-securities-fund-ustb',  # Superstate USTB
+        'eutbl',                                           # Spiko EU T-Bills (EUTBL)
+        'janus-henderson-anemoy-aaa-clo-fund',             # Janus Henderson Anemoy AAA CLO (JAAA)
+        'janus-henderson-anemoy-treasury-fund',            # Janus Henderson Anemoy Treasury Fund (JTRSY)
+        'ylds',                                            # YLDS yield product
+        # 'next-rwa-or-token-id',                          # ← just add lines like this
     }
 
     MAX_NAME_LEN = 19
@@ -57,7 +64,8 @@ class TopNonStableCoinsFetcher:
     def fetch_and_save(self, limit: int = 50):
         """
         Fetch, filter, print, and save exactly 'limit' non-stablecoins.
-        Now also respects the EXCLUDED_IDS list.
+        Now excludes figure-heloc, hashnote-usyc, USTB, EUTBL, JAAA,
+        JTRSY, YLDS + any future additions.
         """
         if limit < 1:
             limit = 50
@@ -92,12 +100,12 @@ class TopNonStableCoinsFetcher:
                 skipped_stables += 1
                 continue
 
-            # Skip custom exclusions (figure-heloc, etc.)
+            # Skip custom exclusions (now includes JTRSY)
             if coin_id in self.EXCLUDED_IDS:
                 excluded_custom += 1
                 continue
 
-            # Additional price-based stable detection (kept as safety net)
+            # Additional price-based stable detection (safety net)
             if 0.92 < price < 1.08 and ('usd' in symbol or 'usd' in name):
                 skipped_stables += 1
                 continue
