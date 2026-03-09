@@ -2,103 +2,127 @@ import requests
 import pandas as pd
 from datetime import datetime, timedelta
 import sys
+import time
 
-def fetch_btc_hourly_1year(api_key: str) -> pd.DataFrame:
-    """
-    Fetch exactly 1 year of hourly BTC/USD data from CryptoCompare (CCCAGG).
-    datetime column is now timezone-aware UTC (+00:00).
-    """
-    if not api_key or not api_key.strip():
-        print("❌ ERROR: A valid CryptoCompare API key is required.")
-        sys.exit(1)
-    
+def parse_symbols_from_txt(filename="top_100_non_stable_coins.txt"):
+    """Extract all symbols from your text file (works with the exact format you provided)."""
+    symbols = []
+    with open(filename, 'r', encoding='utf-8') as f:
+        for line in f:
+            line = line.strip()
+            if line and line[0].isdigit():   # only data rows
+                parts = line.split()
+                for part in parts:
+                    if (part.isupper() and len(part) >= 2 
+                        and not part.startswith('$') 
+                        and part not in ['T', 'B', 'M', 'KST']):
+                        symbols.append(part)
+                        break
+    return symbols
+
+
+def fetch_crypto_hourly_1year(symbol: str, api_key: str) -> pd.DataFrame:
+    """Fetch 1 year hourly data for any symbol (same logic as before)."""
     url = "https://min-api.cryptocompare.com/data/v2/histohour"
     all_data = []
     
     to_ts = int(datetime.now().timestamp())
     target_start = int((datetime.now() - timedelta(days=390)).timestamp())
     
-    print("🚀 Fetching 1 year of BTC hourly data from CryptoCompare...")
-    print("   (Timezone-aware UTC output + fast key mode)\n")
+    print(f"  → {symbol:<12} ", end="")
     
-    for i in range(10):
+    for i in range(12):
         params = {
-            'fsym': 'BTC',
+            'fsym': symbol,
             'tsym': 'USD',
             'limit': 2000,
             'toTs': to_ts,
             'api_key': api_key.strip()
         }
         
-        response = requests.get(url, params=params)
-        
-        if response.status_code != 200:
-            print(f"❌ HTTP Error: {response.status_code}")
-            sys.exit(1)
-        
-        data = response.json()
-        if data.get('Response') != 'Success':
-            print("❌ API Error:", data.get('Message', 'Unknown error'))
-            sys.exit(1)
-        
-        batch = data['Data']['Data']
-        if not batch:
-            break
+        try:
+            r = requests.get(url, params=params, timeout=20)
+            data = r.json()
             
-        all_data.extend(batch)
-        
-        oldest_ts = batch[0]['time']
-        to_ts = oldest_ts - 1
-        
-        print(f"   Batch {i+1}: +{len(batch):,} records | Oldest: {datetime.fromtimestamp(oldest_ts)}")
-        
-        if oldest_ts < target_start:
-            break
+            if data.get('Response') != 'Success':
+                print("API error")
+                return pd.DataFrame()
+                
+            batch = data['Data']['Data']
+            if not batch:
+                break
+                
+            all_data.extend(batch)
+            to_ts = batch[0]['time'] - 1
+            
+            if batch[0]['time'] < target_start:
+                break
+        except Exception:
+            print("Request failed")
+            return pd.DataFrame()
     
     if not all_data:
-        print("❌ No data received.")
-        sys.exit(1)
+        print("No data")
+        return pd.DataFrame()
     
-    # Convert to clean DataFrame with timezone-aware UTC
+    # Clean DataFrame exactly like your original script
     df = pd.DataFrame(all_data)
     df['datetime'] = pd.to_datetime(df['time'], unit='s', utc=True)
     df = df.sort_values('time').reset_index(drop=True)
     
-    # Trim exactly to last 365 days
-    cutoff = datetime.now() - timedelta(days=365)
-    # Make cutoff timezone-aware for clean comparison
-    cutoff = pd.Timestamp(cutoff, tz='UTC')
+    # Trim exactly to last 365 days (timezone-aware UTC)
+    cutoff = pd.Timestamp(datetime.now() - timedelta(days=365), tz='UTC')
     df = df[df['datetime'] >= cutoff].reset_index(drop=True)
     
-    # Keep only the most useful columns
     df = df[['datetime', 'open', 'high', 'low', 'close', 'volumefrom', 'volumeto']]
     
-    print(f"\n✅ SUCCESS! Fetched {len(df):,} hourly candles")
-    print(f"   Date range: {df['datetime'].min()} → {df['datetime'].max()}")
-    print(f"   Latest close price: ${df['close'].iloc[-1]:,.2f}")
-    print("   Timezone: UTC (fully aware with +00:00)")
-    
+    print(f"✅ {len(df):,} candles")
     return df
 
 
 # ====================== RUN IT ======================
 if __name__ == "__main__":
-    print("🔑 CryptoCompare API Key Required")
-    print("   (Get your free key at: https://min-api.cryptocompare.com/)\n")
+    symbols = parse_symbols_from_txt()
+    print(f"✅ Loaded {len(symbols)} coins from top_100_non_stable_coins.txt\n")
     
     api_key = input("Paste your CryptoCompare API key here and press Enter: ").strip()
-    
     if not api_key:
-        print("❌ ERROR: You must provide a CryptoCompare API key to run this script.")
+        print("❌ API key required")
         sys.exit(1)
     
-    df = fetch_btc_hourly_1year(api_key)
+    dataframes = []
+    success = 0
     
-    filename = 'btc_hourly_1year_cryptocompare.csv'
-    df.to_csv(filename, index=False)
-    print(f"\n💾 Saved to {filename}")
-    print("   (Now with timezone-aware UTC timestamps like 2025-03-09 14:00:00+00:00)")
+    print("🚀 Starting fetch for all 100 coins...\n")
     
-    # Quick preview
-    print("\nFirst 5 rows preview:")
-    print(df.head().to_string(index=False))
+    for i, sym in enumerate(symbols, 1):
+        print(f"[{i:2d}/{len(symbols)}]", end="")
+        df = fetch_crypto_hourly_1year(sym, api_key)
+        
+        if len(df) > 500:  # reasonable threshold
+            df = df.copy()
+            df['symbol'] = sym
+            dataframes.append(df)
+            success += 1
+        else:
+            print("   skipped (not enough data)")
+        
+        time.sleep(1.2)  # polite rate limit
+    
+    # === CREATE GIANT CSV ===
+    if dataframes:
+        print("\n📊 Combining all data into one giant CSV...")
+        big_df = pd.concat(dataframes, ignore_index=True)
+        big_df = big_df.sort_values(['symbol', 'datetime']).reset_index(drop=True)
+        
+        filename = "top100_non_stablecoins_hourly_1year_cryptocompare.csv"
+        big_df.to_csv(filename, index=False)
+        
+        print(f"\n🎉 SUCCESS! Giant file saved:")
+        print(f"   📁 {filename}")
+        print(f"   📏 {len(big_df):,} total rows ({success} coins)")
+        print(f"   📅 Date range: {big_df['datetime'].min()} → {big_df['datetime'].max()}")
+        print(f"   🏷️  Columns: symbol + open/high/low/close + volumes")
+        print("\n   Ready to load in pandas: df = pd.read_csv(filename, parse_dates=['datetime'])")
+    else:
+        print("\n❌ No data was collected.")
