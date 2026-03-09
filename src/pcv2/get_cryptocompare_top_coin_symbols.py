@@ -7,11 +7,11 @@ print("🔑 CryptoCompare API Key Setup")
 print("   (Free keys available at https://www.cryptocompare.com/cryptopian/api-keys)")
 api_key = input("   Enter your API key (or press Enter to skip): ").strip()
 
-# ====================== FETCH FUNCTION (FIXED) ======================
+# ====================== FETCH FUNCTION ======================
 def fetch_top_symbols(page: int, api_key: str) -> list[str]:
     """
     Fetches one page (max 100 coins) from CryptoCompare.
-    Now uses robust success check (API format changed).
+    Robust success check (API format changed).
     """
     url = f"https://min-api.cryptocompare.com/data/top/mktcapfull?limit=100&tsym=USD&page={page}"
     if api_key:
@@ -21,7 +21,6 @@ def fetch_top_symbols(page: int, api_key: str) -> list[str]:
         with urllib.request.urlopen(url, timeout=15) as response:
             data = json.loads(response.read().decode("utf-8"))
             
-            # FIXED: Check for actual Data list instead of "Response" key
             if isinstance(data.get("Data"), list):
                 symbols = [coin["CoinInfo"]["Name"] for coin in data.get("Data", [])]
                 print(f"✅ Page {page} → {len(symbols)} symbols fetched")
@@ -44,8 +43,11 @@ def fetch_top_symbols(page: int, api_key: str) -> list[str]:
 
 # ========================= CONFIG =========================
 NUM_PAGES = 3                    # ← Change to 5 for top 500, 10 for top 1,000, etc.
-OUTPUT_TXT = f"top_{NUM_PAGES*100}_symbols.txt"
-OUTPUT_JSON = f"top_{NUM_PAGES*100}_symbols.json"
+
+# NEW FILENAME FORMAT AS REQUESTED
+OUTPUT_BASE = f"cryptocompare_top_{NUM_PAGES*100}_symbols"
+OUTPUT_TXT = f"{OUTPUT_BASE}.txt"
+OUTPUT_JSON = f"{OUTPUT_BASE}.json"
 # =========================================================
 
 print("\n🚀 Starting fetch of top", NUM_PAGES * 100, "coins from CryptoCompare...\n")
@@ -58,13 +60,13 @@ for page in range(NUM_PAGES):
 # Remove any accidental duplicates while preserving order
 all_symbols = list(dict.fromkeys(all_symbols))
 
-print("\n" + "="*60)
+print("\n" + "="*70)
 print(f"✅ DONE! Fetched {len(all_symbols)} unique symbols (top ~{NUM_PAGES*100} by market cap)")
-print("="*60)
+print("="*70)
 print("Top 10  :", all_symbols[:10])
 print("Rank 100:", all_symbols[99] if len(all_symbols) > 99 else "N/A")
 print("Bottom 10:", all_symbols[-10:])
-print("\n💾 Files saved:")
+print("\n💾 Files saved with your new naming format:")
 
 # Save to TXT (one symbol per line)
 with open(OUTPUT_TXT, "w", encoding="utf-8") as f:
@@ -76,7 +78,7 @@ with open(OUTPUT_JSON, "w", encoding="utf-8") as f:
     json.dump(all_symbols, f, indent=2)
 print(f"   • {OUTPUT_JSON}")
 
-print("\n🎉 All set! You now have the full list.")
+print("\n🎉 All set! You now have the full list in the exact format you wanted.")
 if api_key:
     print("   🔑 API key was used — higher limits active.")
 else:
