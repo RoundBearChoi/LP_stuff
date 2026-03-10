@@ -19,6 +19,16 @@ def analyze_pair(sym1: str, sym2: str, csv_path: str = "top100_hourly_1year_comb
 
     data = pd.merge(df1, df2, left_index=True, right_index=True, how='inner').dropna()
 
+    # ==================== NEW UPGRADE: DATE & OVERLAP INFO ====================
+    print(f"📅 {sym1} data available from : {df1.index[0].date()}")
+    print(f"📅 {sym2} data available from : {df2.index[0].date()}")
+    print(f"🔄 Overlap period            : {data.index[0].date()} to {data.index[-1].date()}")
+    print(f"   ({len(data):,} hours ≈ {len(data)//24} days)\n")
+    
+    if len(data) < 4000:
+        print("⚠️  WARNING: Short overlap (< ~6 months) — results are still valid but less robust.\n")
+    # =========================================================================
+
     if len(data) < 200:
         print("❌ Not enough overlapping hourly data points.")
         return
