@@ -3,7 +3,11 @@ import pandas as pd
 from datetime import datetime, timedelta
 import sys
 import time
-import os   # ← for creating the raw_data folder
+import os
+
+# ====================== NEW FEATURE CONFIG ======================
+FORCE_REDOWNLOAD = False  # ← Change to True to force fresh download of EVERYTHING
+# ============================================================
 
 def get_top100_symbols(txt_file: str = "gecko_top_100_non_stable_coins.txt") -> list:
     """Robust parser — now correctly includes M (MemeCore)."""
@@ -84,9 +88,6 @@ def fetch_crypto_hourly_1year(symbol: str, api_key: str) -> pd.DataFrame:
     df = df[['datetime', 'open', 'high', 'low', 'close', 'volumefrom', 'volumeto']]
     
     # ====================== PERMANENT ZERO-PRICE CLEANING ======================
-    # CryptoCompare returns 0s for any hour before a coin had real trading data
-    # (very common on newer tokens). We remove them here so your final files
-    # are always clean and analysis-ready.
     original_rows = len(df)
     df = df[
         (df['open'] > 0) &
@@ -108,15 +109,14 @@ def fetch_crypto_hourly_1year(symbol: str, api_key: str) -> pd.DataFrame:
 # ====================== RUN IT ======================
 if __name__ == "__main__":
     print("🚀 CryptoCompare Top-100 → raw_data/ folder + GIANT combined CSV")
-    print("   (Individual files now go into raw_data/ — giant file stays here)\n")
-    print("   ✨ Zero-price rows are now auto-removed during download!\n")
+    print("   💡 New: Skips existing files in raw_data/ (set FORCE_REDOWNLOAD = True to refresh)\n")
+    print("   ✨ Zero-price rows are auto-removed during download!\n")
     
     api_key = input("Paste your CryptoCompare API key and press Enter: ").strip()
     if not api_key:
         print("❌ ERROR: API key required.")
         sys.exit(1)
     
-    # Create raw_data folder automatically
     os.makedirs("raw_data", exist_ok=True)
     print("📁 Created/verified folder: raw_data/\n")
     
@@ -129,12 +129,34 @@ if __name__ == "__main__":
     
     for i, symbol in enumerate(symbols, 1):
         print(f"[{i:3d}/{len(symbols)}] {symbol}")
+        
+        individual_file = f"raw_data/{symbol.lower()}_hourly_1year_cryptocompare.csv"
+        
+        # === NEW FEATURE: Skip if file exists (unless force-reload) ===
+        if os.path.exists(individual_file) and not FORCE_REDOWNLOAD:
+            print("   📂 File already exists → loading from disk")
+            try:
+                df = pd.read_csv(individual_file)
+                # Ensure datetime is properly typed (CSV stores as string)
+                if 'datetime' in df.columns:
+                    df['datetime'] = pd.to_datetime(df['datetime'], utc=True)
+                # Ensure symbol column exists (for very old files)
+                if 'symbol' not in df.columns:
+                    df['symbol'] = symbol
+                
+                all_dfs.append(df)
+                success += 1
+                print(f"   ✅ Loaded existing data: {len(df):,} hourly candles\n")
+                continue
+            except Exception as e:
+                print(f"   ⚠️  Could not load existing file ({e}). Will re-download...\n")
+        
+        # === Download (only runs when needed) ===
         try:
             df = fetch_crypto_hourly_1year(symbol, api_key)
             df['symbol'] = symbol
             
-            # Save to raw_data/ folder (now guaranteed clean)
-            individual_file = f"raw_data/{symbol.lower()}_hourly_1year_cryptocompare.csv"
+            # Save to raw_data/ (now guaranteed clean)
             df.to_csv(individual_file, index=False)
             
             all_dfs.append(df)
@@ -159,7 +181,7 @@ if __name__ == "__main__":
         print(f"\n🎉 FINISHED!")
         print(f"   Giant file saved → {giant_file}  (in current folder)")
         print(f"   Total rows: {len(combined):,} (≈ {len(combined)//success:,} hours × {success} coins)")
-        print(f"   Successfully downloaded: {success}/{len(symbols)} coins")
+        print(f"   Successfully processed: {success}/{len(symbols)} coins")
     
     if failed:
         print(f"\n⚠️  Failed coins ({len(failed)}): {', '.join(failed)}")
