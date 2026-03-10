@@ -146,6 +146,6 @@ if __name__ == "__main__":
         print(f"\n⚠️  Failed coins ({len(failed)}): {', '.join(failed)}")
     
     print("\n📂 Final structure:")
-    print("   • raw_data/          ← contains all 93 individual CSVs")
+    print(f"   • raw_data/          ← contains {success} individual CSVs")
     print("   • top100_hourly_1year_combined.csv  ← your main analysis file (stays here)")
     print("   • get_cryptocompare_top_coins_prices_historic.py")
