@@ -25,6 +25,14 @@ class TopNonStableCoinsFetcher:
         'ylds',
         'janus-henderson-anemoy-treasury-fund',
         'eurc',
+        # Newly added per request (March 2026):
+        'rain',           # RAIN
+        'mantle',         # MNT (Mantle L2)
+        'pi-network',     # PI (Pi Network)
+        'ousg',           # OUSG (tokenized T-bills)
+        'a7a5',           # A7A5
+        'kinesis-gold',   # KAU (gold-backed)
+        'usx',            # USX
     }
 
     MAX_NAME_LEN = 19
@@ -86,7 +94,7 @@ class TopNonStableCoinsFetcher:
             f.write(f"Excluded Coins Report (from top {len(excluded) + limit} fetched)\n")
             f.write(f"Generated: {timestamp}\n")
             f.write(f"Total skipped stablecoins: {skipped_stables}\n")
-            f.write(f"Total custom excluded (RWAs + euro): {excluded_custom}\n")
+            f.write(f"Total custom excluded (RWAs + euro + requested blacklist): {excluded_custom}\n")
             f.write(f"Total excluded: {len(excluded)}\n\n")
 
             f.write(f"{'Orig Rank':<10} {'Name':<30} {'Symbol':<12} {'Price ({})':>14} "
@@ -200,8 +208,6 @@ class TopNonStableCoinsFetcher:
             f.write(f"Generated: {timestamp}\n")
             f.write(f"Skipped stablecoins: {skipped_stables}\n")
             f.write(f"Excluded additional coins: {excluded_custom}\n\n")
-            
-            # ←←← THIS WHOLE BLOCK WAS REMOVED (exactly what you asked for) ←←←
             
             f.write(f"{'Rank':<4} {'Name':<22} {'Symbol':<15} {'Price ({})':>14} {'Market Cap':>12} {'24h %':>8}\n"
                     .format(self.vs_currency))
