@@ -3,7 +3,7 @@ import pandas as pd
 from datetime import datetime, timedelta
 import sys
 import time
-import os   # ← NEW: for creating the raw_data folder
+import os   # ← for creating the raw_data folder
 
 def get_top100_symbols(txt_file: str = "gecko_top_100_non_stable_coins.txt") -> list:
     """Robust parser — now correctly includes M (MemeCore)."""
@@ -44,7 +44,7 @@ def fetch_crypto_hourly_1year(symbol: str, api_key: str) -> pd.DataFrame:
             'api_key': api_key.strip()
         }
         
-        response = requests.get(url, params=params, timeout=30)  # increased timeout for stability
+        response = requests.get(url, params=params, timeout=30)
         
         if response.status_code != 200:
             raise ConnectionError(f"HTTP {response.status_code} for {symbol}")
@@ -83,7 +83,25 @@ def fetch_crypto_hourly_1year(symbol: str, api_key: str) -> pd.DataFrame:
     
     df = df[['datetime', 'open', 'high', 'low', 'close', 'volumefrom', 'volumeto']]
     
-    print(f"   ✅ {symbol}: {len(df):,} hourly candles")
+    # ====================== PERMANENT ZERO-PRICE CLEANING ======================
+    # CryptoCompare returns 0s for any hour before a coin had real trading data
+    # (very common on newer tokens). We remove them here so your final files
+    # are always clean and analysis-ready.
+    original_rows = len(df)
+    df = df[
+        (df['open'] > 0) &
+        (df['high'] > 0) &
+        (df['low'] > 0) &
+        (df['close'] > 0)
+    ].reset_index(drop=True)
+    
+    dropped = original_rows - len(df)
+    if dropped > 0:
+        print(f"   🧹 Dropped {dropped:,} zero-price rows (pre-launch / no-data gaps)")
+    
+    # ====================== END CLEANING ======================
+    
+    print(f"   ✅ {symbol}: {len(df):,} valid hourly candles")
     return df
 
 
@@ -91,6 +109,7 @@ def fetch_crypto_hourly_1year(symbol: str, api_key: str) -> pd.DataFrame:
 if __name__ == "__main__":
     print("🚀 CryptoCompare Top-100 → raw_data/ folder + GIANT combined CSV")
     print("   (Individual files now go into raw_data/ — giant file stays here)\n")
+    print("   ✨ Zero-price rows are now auto-removed during download!\n")
     
     api_key = input("Paste your CryptoCompare API key and press Enter: ").strip()
     if not api_key:
@@ -114,7 +133,7 @@ if __name__ == "__main__":
             df = fetch_crypto_hourly_1year(symbol, api_key)
             df['symbol'] = symbol
             
-            # ← CHANGED: save to raw_data/ folder
+            # Save to raw_data/ folder (now guaranteed clean)
             individual_file = f"raw_data/{symbol.lower()}_hourly_1year_cryptocompare.csv"
             df.to_csv(individual_file, index=False)
             
@@ -146,6 +165,6 @@ if __name__ == "__main__":
         print(f"\n⚠️  Failed coins ({len(failed)}): {', '.join(failed)}")
     
     print("\n📂 Final structure:")
-    print(f"   • raw_data/          ← contains {success} individual CSVs")
+    print(f"   • raw_data/          ← contains {success} individual CSVs (all clean)")
     print("   • top100_hourly_1year_combined.csv  ← your main analysis file (stays here)")
     print("   • get_cryptocompare_top_coins_prices_historic.py")
