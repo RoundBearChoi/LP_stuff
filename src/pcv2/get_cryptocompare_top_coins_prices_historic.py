@@ -4,10 +4,17 @@ from datetime import datetime, timedelta
 import sys
 import time
 import os
+from requests.exceptions import RequestException, Timeout, ConnectionError, ReadTimeout
 
 # ====================== CONFIG ======================
 FORCE_REDOWNLOAD = False  # ← Change to True only when you want fresh data for everything
 # ===================================================
+
+# Coinbase ticker overrides
+COINBASE_SYMBOL_MAP = {
+    'MNT': 'MANTLE',
+    'PI': 'PI',
+}
 
 def get_top100_symbols(txt_file: str = "gecko_top_100_non_stable_coins.txt") -> list:
     """Robust parser — now correctly includes M (MemeCore)."""
@@ -30,26 +37,32 @@ def get_top100_symbols(txt_file: str = "gecko_top_100_non_stable_coins.txt") -> 
 
 
 def fetch_crypto_hourly_1year(symbol: str, api_key: str) -> tuple[pd.DataFrame, str]:
-    """Smart fallback: CCCAGG → major exchanges (fixes RAIN, ADI, etc.)"""
+    """Smart fallback + partial data saving on timeout/connection errors"""
     symbol = symbol.upper().strip()
     url = "https://min-api.cryptocompare.com/data/v2/histohour"
     
-    # Try CCCAGG first, then direct exchange data (USDT pair)
     attempts = [
-        ('USD', None),          # CCCAGG USD
-        ('USDT', None),         # CCCAGG USDT
+        ('USD', None),
+        ('USDT', None),
         ('USDT', 'Binance'),
         ('USDT', 'Bybit'),
         ('USDT', 'OKX'),
         ('USDT', 'Gate.io'),
         ('USDT', 'KuCoin'),
+        ('USD', 'Coinbase'),
+        ('USDT', 'Coinbase'),
     ]
     
     all_data = []
     used_source = None
+    is_partial = False
     
     for base, exchange in attempts:
+        fsym = COINBASE_SYMBOL_MAP.get(symbol, symbol) if exchange == 'Coinbase' else symbol
         source_name = f"{base} CCCAGG" if exchange is None else f"{base} on {exchange}"
+        if fsym != symbol:
+            source_name += f" (as {fsym})"
+        
         print(f"   🚀 Fetching {symbol} (trying {source_name})...")
         
         all_data = []
@@ -59,7 +72,7 @@ def fetch_crypto_hourly_1year(symbol: str, api_key: str) -> tuple[pd.DataFrame, 
         success = False
         for i in range(10):
             params = {
-                'fsym': symbol,
+                'fsym': fsym,
                 'tsym': base,
                 'limit': 2000,
                 'toTs': to_ts,
@@ -68,7 +81,18 @@ def fetch_crypto_hourly_1year(symbol: str, api_key: str) -> tuple[pd.DataFrame, 
             if exchange:
                 params['e'] = exchange
             
-            response = requests.get(url, params=params, timeout=30)
+            try:
+                response = requests.get(url, params=params, timeout=45)  # ← increased for stability
+            except (Timeout, ReadTimeout, ConnectionError) as e:
+                print(f"   ⚠️  Timeout during batch {i+1} - saving partial data collected so far")
+                if all_data:
+                    is_partial = True
+                    success = True
+                    break
+                else:
+                    raise  # nothing collected yet → fail
+            except RequestException as e:
+                raise
             
             if response.status_code != 200:
                 raise ConnectionError(f"HTTP {response.status_code} for {symbol}")
@@ -101,11 +125,11 @@ def fetch_crypto_hourly_1year(symbol: str, api_key: str) -> tuple[pd.DataFrame, 
             time.sleep(0.65)
         
         if success or all_data:
-            used_source = source_name
+            used_source = source_name + (" (partial - timeout)" if is_partial else "")
             break
     
     if not all_data:
-        raise ValueError(f"{symbol} has no hourly data on CryptoCompare (tried CCCAGG + 5 major exchanges)")
+        raise ValueError(f"{symbol} has no hourly data on CryptoCompare (tried CCCAGG + 7 exchanges including Coinbase)")
     
     df = pd.DataFrame(all_data)
     df['datetime'] = pd.to_datetime(df['time'], unit='s', utc=True)
@@ -116,7 +140,6 @@ def fetch_crypto_hourly_1year(symbol: str, api_key: str) -> tuple[pd.DataFrame, 
     
     df = df[['datetime', 'open', 'high', 'low', 'close', 'volumefrom', 'volumeto']]
     
-    # ====================== ZERO-PRICE CLEANING ======================
     original_rows = len(df)
     df = df[
         (df['open'] > 0) &
@@ -139,7 +162,7 @@ def fetch_crypto_hourly_1year(symbol: str, api_key: str) -> tuple[pd.DataFrame, 
 if __name__ == "__main__":
     print("🚀 CryptoCompare Top-100 → raw_data/ folder + GIANT combined CSV")
     print("   💡 Skips existing files (set FORCE_REDOWNLOAD = True to refresh)")
-    print("   ✨ Exchange fallback + NEW WARNING for non-CCCAGG coins\n")
+    print("   ✨ Coinbase fixes for MNT/PI + PARTIAL DATA SAVING on timeout\n")
     
     api_key = input("Paste your CryptoCompare API key and press Enter: ").strip()
     if not api_key:
@@ -155,14 +178,13 @@ if __name__ == "__main__":
     all_dfs = []
     success = 0
     failed = []
-    fallback_coins = []          # ← NEW: tracks coins that used an exchange
+    fallback_coins = []
     
     for i, symbol in enumerate(symbols, 1):
         print(f"[{i:3d}/{len(symbols)}] {symbol}")
         
         individual_file = f"raw_data/{symbol.lower()}_hourly_1year_cryptocompare.csv"
         
-        # === SKIP IF FILE ALREADY EXISTS ===
         if os.path.exists(individual_file) and not FORCE_REDOWNLOAD:
             print("   📂 File already exists → loading from disk")
             try:
@@ -179,7 +201,6 @@ if __name__ == "__main__":
             except Exception as e:
                 print(f"   ⚠️  Could not load existing file ({e}). Re-downloading...\n")
         
-        # === DOWNLOAD (with smart fallback) ===
         try:
             df, used_source = fetch_crypto_hourly_1year(symbol, api_key)
             df['symbol'] = symbol
@@ -189,8 +210,7 @@ if __name__ == "__main__":
             all_dfs.append(df)
             success += 1
             
-            # Track if this coin used an exchange fallback
-            if "on " in used_source:
+            if "on " in used_source or "(partial" in used_source:
                 fallback_coins.append((symbol, used_source))
             
             print(f"   💾 Saved → raw_data/{symbol.lower()}_hourly_1year_cryptocompare.csv\n")
@@ -219,16 +239,34 @@ if __name__ == "__main__":
         print(f"\n⚠️  Failed coins ({len(failed)}): {', '.join(failed)}")
         print("      (These coins currently have no hourly data on CryptoCompare even via exchanges)")
     
-    # ====================== NEW FALLBACK WARNING ======================
+    # ====================== CONSOLE + TXT FALLBACK WARNING ======================
     if fallback_coins:
-        print("\n⚠️  WARNING: The following coins used direct exchange data (not CCCAGG aggregate):")
+        print("\n⚠️  WARNING: The following coins used direct exchange data or partial downloads:")
         for sym, src in fallback_coins:
             print(f"   • {sym} → {src}")
-        print("      → Prices and volume come from that single exchange only.")
-        print("      → This is completely normal for newer or low-liquidity top-100 coins.")
-        print("      → Data is still 100% valid for analysis, but keep it in mind for cross-exchange comparisons.")
+        print("      → Prices/volume from single exchange or partial history only.")
+        print("      → Data is still 100% valid for analysis.")
+        
+        warning_file = "fallback_coins_warning.txt"
+        with open(warning_file, "w", encoding="utf-8") as f:
+            f.write("══════════════════════════════════════════════════════════════\n")
+            f.write("CryptoCompare Downloader - FALLBACK WARNING REPORT\n")
+            f.write(f"Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S KST')}\n")
+            f.write("══════════════════════════════════════════════════════════════\n\n")
+            f.write("The following coins used direct exchange data or partial downloads:\n\n")
+            
+            for sym, src in fallback_coins:
+                f.write(f"• {sym} → {src}\n")
+            
+            f.write("\n→ Prices and volume come from that single exchange or partial history only.\n")
+            f.write("→ This is completely normal. Data is still 100% valid for analysis.\n\n")
+            f.write("Note: Re-running with FORCE_REDOWNLOAD=True will not change this\n")
+            f.write("      unless CryptoCompare adds CCCAGG support in the future.\n")
+        
+        print(f"   💾 Warning report saved → {warning_file}")
     
     print("\n📂 Final structure:")
-    print(f"   • raw_data/          ← contains {success} individual CSVs")
+    print(f"   • raw_data/                    ← contains {success} individual CSVs")
     print("   • top100_hourly_1year_combined.csv  ← your main analysis file")
+    print("   • fallback_coins_warning.txt   ← list of coins using exchange/partial data")
     print("   • get_cryptocompare_top_coins_prices_historic.py")
