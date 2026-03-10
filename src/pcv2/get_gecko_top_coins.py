@@ -25,10 +25,11 @@ class TopNonStableCoinsFetcher:
         'ylds',
         'janus-henderson-anemoy-treasury-fund',
         'eurc',
-        # Newly added per request (March 2026):
-        'rain',           # RAIN
-        'mantle',         # MNT (Mantle L2)
-        'pi-network',     # PI (Pi Network)
+        
+        # Newly added (March 2026):
+        #'rain',           # RAIN
+        #'mantle',         # MNT (Mantle L2)
+        #'pi-network',     # PI (Pi Network)
         'ousg',           # OUSG (tokenized T-bills)
         'a7a5',           # A7A5
         'kinesis-gold',   # KAU (gold-backed)

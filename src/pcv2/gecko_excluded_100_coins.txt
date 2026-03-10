@@ -1,40 +1,37 @@
-Excluded Coins Report (from top 132 fetched)
-Generated: 2026-03-10 12:55:47 KST
+Excluded Coins Report (from top 129 fetched)
+Generated: 2026-03-10 16:03:49 KST
 Total skipped stablecoins: 18
-Total custom excluded (RWAs + euro + requested blacklist): 14
-Total excluded: 32
+Total custom excluded (RWAs + euro + requested blacklist): 11
+Total excluded: 29
 
 Orig Rank  Name                           Symbol           Price (USD)      Market Cap Reason                        
 --------------------------------------------------------------------------------------------------------------
 3          Tether                         USDT         $       1.00          $183.92B   Major stablecoin ID           
-6          USDC                           USDC         $       1.00           $78.17B   Major stablecoin ID           
+6          USDC                           USDC         $       1.00           $78.20B   Major stablecoin ID           
 9          Figure Heloc                   FIGR_HELOC   $       1.04           $16.30B   Custom RWA/euro exclusion     
 12         USDS                           USDS         $       1.00           $11.13B   Major stablecoin ID           
-19         Ethena USDe                    USDE         $       1.00            $5.92B   Major stablecoin ID           
+19         Ethena USDe                    USDE         $       1.00            $5.93B   Major stablecoin ID           
 22         USD1                           USD1         $       1.00            $4.60B   Dynamic USD-pegged stable     
-23         Rain                           RAIN         $       0.01            $4.34B   Custom RWA/euro exclusion     
 24         Dai                            DAI          $       1.00            $4.27B   Major stablecoin ID           
 27         PayPal USD                     PYUSD        $       1.00            $4.08B   Major stablecoin ID           
-40         Mantle                         MNT          $       0.67            $2.20B   Custom RWA/euro exclusion     
-41         Pi Network                     PI           $       0.22            $2.09B   Custom RWA/euro exclusion     
 43         Circle USYC                    USYC         $       1.12            $2.03B   Custom RWA/euro exclusion     
 44         BlackRock USD In...            BUIDL        $       1.00            $2.01B   Dynamic USD-pegged stable     
 47         Falcon USD                     USDF         $       1.00            $1.74B   Dynamic USD-pegged stable     
 49         Global Dollar                  USDG         $       1.00            $1.70B   Dynamic USD-pegged stable     
 52         Ripple USD                     RLUSD        $       1.00            $1.59B   Dynamic USD-pegged stable     
 57         BFUSD                          BFUSD        $       1.00            $1.32B   Dynamic USD-pegged stable     
-64         Superstate Short...            USTB         $      11.01            $1.07B   Custom RWA/euro exclusion     
-70         Spiko EU T-Bills...            EUTBL        $       1.22           $918.5M   Custom RWA/euro exclusion     
-74         USDtb                          USDTB        $       1.00           $835.6M   Dynamic USD-pegged stable     
+65         Superstate Short...            USTB         $      11.01            $1.07B   Custom RWA/euro exclusion     
+70         Spiko EU T-Bills...            EUTBL        $       1.22           $920.3M   Custom RWA/euro exclusion     
+74         USDtb                          USDTB        $       1.00           $835.4M   Dynamic USD-pegged stable     
 80         OUSG                           OUSG         $     114.54           $748.9M   Custom RWA/euro exclusion     
-81         Janus Henderson ...            JAAA         $       1.03           $745.2M   Custom RWA/euro exclusion     
-83         USDD                           USDD         $       1.00           $736.3M   Major stablecoin ID           
-89         YLDS                           YLDS         $       1.00           $597.1M   Custom RWA/euro exclusion     
+82         Janus Henderson ...            JAAA         $       1.03           $745.2M   Custom RWA/euro exclusion     
+83         USDD                           USDD         $       1.00           $739.6M   Major stablecoin ID           
+91         YLDS                           YLDS         $       1.00           $597.1M   Custom RWA/euro exclusion     
 93         Janus Henderson ...            JTRSY        $       1.10           $568.4M   Custom RWA/euro exclusion     
-95         Usual USD                      USD0         $       1.00           $562.1M   Dynamic USD-pegged stable     
-99         TrueUSD                        TUSD         $       1.00           $494.8M   Major stablecoin ID           
-100        A7A5                           A7A5         $       0.01           $486.0M   Custom RWA/euro exclusion     
-113        Kinesis Gold                   KAU          $     166.37           $397.0M   Custom RWA/euro exclusion     
+95         Usual USD                      USD0         $       1.00           $560.8M   Dynamic USD-pegged stable     
+99         TrueUSD                        TUSD         $       1.00           $494.7M   Major stablecoin ID           
+100        A7A5                           A7A5         $       0.01           $491.3M   Custom RWA/euro exclusion     
+113        Kinesis Gold                   KAU          $     166.98           $398.5M   Custom RWA/euro exclusion     
 115        First Digital USD              FDUSD        $       1.00           $373.4M   Major stablecoin ID           
-118        USX                            USX          $       1.00           $362.0M   Custom RWA/euro exclusion     
-125        USDai                          USDAI        $       1.00           $315.8M   Dynamic USD-pegged stable     
+119        USX                            USX          $       1.00           $362.0M   Custom RWA/euro exclusion     
+125        USDai                          USDAI        $       1.00           $314.6M   Dynamic USD-pegged stable     
