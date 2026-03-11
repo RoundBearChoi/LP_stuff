@@ -10,10 +10,11 @@ class CointegrationChart:
     """
     Clean, reusable class for generating the full 5-chart cointegration analysis.
     - Works exactly like before from the command line
+    - Defaults to ETH/BTC if no arguments are provided (super convenient!)
     - Emojis ONLY in console output
     - dpi=200
     - No plt.show() → instant run
-    - FIXED LAYOUT + verdict box now shows: Full-Sample → Beta → ADF p-value → Verdict
+    - FIXED LAYOUT: verdict box inside Chart 1 (Beta → ADF p-value → Verdict)
     """
 
     DEFAULT_CSV = "top100_hourly_1year_combined.csv"
@@ -146,7 +147,7 @@ class CointegrationChart:
         axs[0].legend(loc='upper left')
         axs[0].grid(True, alpha=0.3)
 
-        # === VERDICT BOX (Beta now appears BEFORE ADF p-value) ===
+        # === VERDICT BOX (Beta appears BEFORE ADF p-value) ===
         axs[0].text(0.02, 0.82,
                     f"FULL-SAMPLE RESULTS\n"
                     f"Beta = {self.beta:.4f}\n"
@@ -157,8 +158,7 @@ class CointegrationChart:
                     bbox=dict(boxstyle="round,pad=1.0", facecolor=self.box_color,
                               alpha=0.95, edgecolor='black'))
 
-        # ==================== CHARTS 2–5 (unchanged) ====================
-        # Chart 2
+        # ==================== CHARTS 2–5 ====================
         axs[1].plot(self.ratio.index, self.ratio, label=f"{self.sym1}/{self.sym2} Ratio",
                     color='purple', linewidth=2)
         axs[1].plot(self.ratio_rolling_mean.index, self.ratio_rolling_mean,
@@ -171,7 +171,6 @@ class CointegrationChart:
         axs[1].legend()
         axs[1].grid(True, alpha=0.3)
 
-        # Chart 3
         axs[2].plot(self.spread.index, self.spread, label='Spread', color='blue', linewidth=2)
         axs[2].axhline(self.spread.mean(), color='red', linestyle='--', label='Mean')
         axs[2].fill_between(self.spread.index,
@@ -182,7 +181,6 @@ class CointegrationChart:
         axs[2].legend()
         axs[2].grid(True, alpha=0.3)
 
-        # Chart 4
         axs[3].plot(self.zscore.index, self.zscore, label='Z-Score', color='darkgreen', linewidth=2)
         axs[3].axhline(0, color='black', linestyle='--')
         axs[3].axhline(2, color='red', linestyle='--', label='+2/-2 Entry')
@@ -194,7 +192,6 @@ class CointegrationChart:
         axs[3].grid(True, alpha=0.3)
         axs[3].set_ylim(-5, 5)
 
-        # Chart 5: Rolling
         ax_beta = axs[4]
         ax_p = ax_beta.twinx()
         ax_beta.plot(self.rolling_dates, self.rolling_betas, color='blue', linewidth=2,
@@ -229,7 +226,7 @@ class CointegrationChart:
         output_file = f"cointegration_{self.sym1}_{self.sym2}_with_rolling.png"
         plt.savefig(output_file, dpi=200, bbox_inches='tight')
         plt.close(fig)
-        print(f"\n✅ Saved: {output_file} (verdict box now shows Beta before ADF p-value)")
+        print(f"\n✅ Saved: {output_file} (Beta-first verdict box + ETH/BTC default support)")
 
 if __name__ == "__main__":
     if len(sys.argv) == 4:
@@ -240,8 +237,16 @@ if __name__ == "__main__":
         csv_file = None
         sym1 = sys.argv[1]
         sym2 = sys.argv[2]
+    elif len(sys.argv) == 1:
+        # Default fallback as requested
+        csv_file = None
+        sym1 = "ETH"
+        sym2 = "BTC"
+        print("⚡ No symbols provided → Using default pair: ETH / BTC")
     else:
-        print(f"Usage: python {sys.argv[0]} ETH BTC")
+        print(f"Usage: python {sys.argv[0]} [CSV_FILE] SYM1 SYM2")
+        print("   Example: python draw_cointegration_chart.py ETH SOL")
+        print("   No arguments → automatically defaults to ETH/BTC")
         sys.exit(1)
 
     chart = CointegrationChart(sym1, sym2, csv_file)
