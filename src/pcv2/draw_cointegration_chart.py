@@ -10,8 +10,8 @@ class CointegrationChart:
     """
     Gold-standard cointegration analysis + Half-life (clean verdict box).
     - Full-sample + rolling use coint() on LOG prices with autolag='AIC'
-    - Half-life (OU process) in console + verdict box
-    - Verdict box now cleaner (no title line + slightly smaller font)
+    - Half-life now placed right after Beta in the verdict box (as requested)
+    - Console output unchanged for readability
     """
 
     DEFAULT_CSV = "top100_hourly_1year_combined.csv"
@@ -156,11 +156,11 @@ class CointegrationChart:
         axs[0].legend(loc='upper left')
         axs[0].grid(True, alpha=0.3)
 
-        # === CLEAN VERDICT BOX (no title line + slightly smaller font) ===
+        # === VERDICT BOX (Beta → Half-life → p-value as requested) ===
         axs[0].text(0.02, 0.80,
                     f"Beta = {self.beta:.4f}\n"
-                    f"Cointegration p-value = {self.p_value:.5f}\n"
                     f"Half-life ≈ {self.half_life_days:.1f} days\n"
+                    f"Cointegration p-value = {self.p_value:.5f}\n"
                     f"{self.verdict_chart}",
                     transform=axs[0].transAxes,
                     fontsize=12.8, ha='left', va='top', fontweight='bold',
@@ -235,7 +235,7 @@ class CointegrationChart:
         output_file = f"cointegration_{self.sym1}_{self.sym2}_with_rolling.png"
         plt.savefig(output_file, dpi=200, bbox_inches='tight')
         plt.close(fig)
-        print(f"\n✅ Saved: {output_file} (cleaner verdict box + half-life)")
+        print(f"\n✅ Saved: {output_file} (Half-life now after Beta in verdict box)")
 
 if __name__ == "__main__":
     if len(sys.argv) == 4:
