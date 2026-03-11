@@ -82,7 +82,7 @@ def fetch_crypto_hourly_1year(symbol: str, api_key: str) -> tuple[pd.DataFrame, 
                 params['e'] = exchange
             
             try:
-                response = requests.get(url, params=params, timeout=45)  # ← increased for stability
+                response = requests.get(url, params=params, timeout=45)
             except (Timeout, ReadTimeout, ConnectionError) as e:
                 print(f"   ⚠️  Timeout during batch {i+1} - saving partial data collected so far")
                 if all_data:
@@ -90,7 +90,7 @@ def fetch_crypto_hourly_1year(symbol: str, api_key: str) -> tuple[pd.DataFrame, 
                     success = True
                     break
                 else:
-                    raise  # nothing collected yet → fail
+                    raise
             except RequestException as e:
                 raise
             
@@ -220,15 +220,35 @@ if __name__ == "__main__":
         
         time.sleep(1.8)
     
-    # ====================== GIANT COMBINED CSV ======================
+    # ====================== GIANT COMBINED CSV + EXACT TXT BACKUP ======================
     if all_dfs:
-        print("🔄 Creating ONE GIANT combined CSV...")
+        print("🔄 Creating ONE GIANT combined CSV + exact TXT backup...")
         combined = pd.concat(all_dfs, ignore_index=True)
         combined = combined[['datetime', 'symbol', 'open', 'high', 'low', 'close', 'volumefrom', 'volumeto']]
         combined = combined.sort_values(['symbol', 'datetime']).reset_index(drop=True)
         
         giant_file = "top100_hourly_1year_combined.csv"
         combined.to_csv(giant_file, index=False)
+        
+        # === EXACT TEXT COPY INTO TXT (your requested update) ===
+        backup_txt      = "top100_hourly_1year_combined_backup.txt"          # latest backup (overwritten each run)
+        backup_dated    = f"top100_hourly_1year_combined_backup_{datetime.now().strftime('%Y%m%d_%H%M')}.txt"
+        
+        try:
+            with open(giant_file, "r", encoding="utf-8") as source:
+                content = source.read()
+            
+            with open(backup_txt, "w", encoding="utf-8") as f:
+                f.write(content)
+            
+            with open(backup_dated, "w", encoding="utf-8") as f:
+                f.write(content)
+            
+            print(f"   📋 Exact TXT backups created:")
+            print(f"      • Latest:  {backup_txt}")
+            print(f"      • Dated:   {backup_dated}")
+        except Exception as backup_error:
+            print(f"   ⚠️  TXT backup failed (CSV still saved): {backup_error}")
         
         print(f"\n🎉 FINISHED!")
         print(f"   Giant file saved → {giant_file}")
@@ -267,6 +287,8 @@ if __name__ == "__main__":
     
     print("\n📂 Final structure:")
     print(f"   • raw_data/                    ← contains {success} individual CSVs")
-    print("   • top100_hourly_1year_combined.csv  ← your main analysis file")
-    print("   • fallback_coins_warning.txt   ← list of coins using exchange/partial data")
+    print("   • top100_hourly_1year_combined.csv")
+    print("   • top100_hourly_1year_combined_backup.txt          ← exact text copy")
+    print("   • top100_hourly_1year_combined_backup_YYYYMMDD_HHMM.txt  ← dated history")
+    print("   • fallback_coins_warning.txt")
     print("   • get_cryptocompare_top_coins_prices_historic.py")

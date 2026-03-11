@@ -1,17 +1,16 @@
 ══════════════════════════════════════════════════════════════
 CryptoCompare Downloader - FALLBACK WARNING REPORT
-Generated on: 2026-03-10 16:35:28 KST
+Generated on: 2026-03-11 12:18:09 KST
 ══════════════════════════════════════════════════════════════
 
-The following coins used direct exchange data (not CCCAGG aggregate):
+The following coins used direct exchange data or partial downloads:
 
 • RAIN → USDT on KuCoin
 • MNT → USD on Coinbase (as MANTLE)
 • ADI → USDT on KuCoin
 
-→ Prices and volume come from that single exchange only.
-→ This is completely normal for newer or low-liquidity top-100 coins.
-→ Data is still 100% valid for analysis.
+→ Prices and volume come from that single exchange or partial history only.
+→ This is completely normal. Data is still 100% valid for analysis.
 
 Note: Re-running with FORCE_REDOWNLOAD=True will not change this
       unless CryptoCompare adds CCCAGG support in the future.
