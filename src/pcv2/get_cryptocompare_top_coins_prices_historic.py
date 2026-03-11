@@ -162,133 +162,161 @@ def fetch_crypto_hourly_1year(symbol: str, api_key: str) -> tuple[pd.DataFrame, 
 if __name__ == "__main__":
     print("🚀 CryptoCompare Top-100 → raw_data/ folder + GIANT combined CSV")
     print("   💡 Skips existing files (set FORCE_REDOWNLOAD = True to refresh)")
-    print("   ✨ Coinbase fixes for MNT/PI + PARTIAL DATA SAVING on timeout\n")
+    print("   ✨ Coinbase fixes + 3-part TXT backup + skip-download option\n")
     
-    api_key = input("Paste your CryptoCompare API key and press Enter: ").strip()
-    if not api_key:
-        print("❌ ERROR: API key required.")
-        sys.exit(1)
+    # === NEW: BACKUP TXT CHECK (your requested feature) ===
+    backup_files = [
+        "top100_hourly_1year_combined_backup_1.txt",
+        "top100_hourly_1year_combined_backup_2.txt",
+        "top100_hourly_1year_combined_backup_3.txt"
+    ]
     
-    os.makedirs("raw_data", exist_ok=True)
-    print("📁 Created/verified folder: raw_data/\n")
-    
-    symbols = get_top100_symbols()
-    print(f"📋 Parsed {len(symbols)} coins from gecko_top_100_non_stable_coins.txt\n")
+    use_backup = False
+    if all(os.path.exists(f) for f in backup_files):
+        print("📂 Backup files detected!")
+        choice = input("   Skip download and load data from backup instead? (y/n): ").strip().lower()
+        if choice in ['y', 'yes', '']:
+            use_backup = True
     
     all_dfs = []
     success = 0
     failed = []
     fallback_coins = []
+    combined = None
     
-    for i, symbol in enumerate(symbols, 1):
-        print(f"[{i:3d}/{len(symbols)}] {symbol}")
+    if use_backup:
+        print("✅ Loading data from 3-part backup...")
+        try:
+            dfs = [pd.read_csv(f) for f in backup_files]
+            combined = pd.concat(dfs, ignore_index=True)
+            combined = combined[['datetime', 'symbol', 'open', 'high', 'low', 'close', 'volumefrom', 'volumeto']]
+            combined = combined.sort_values(['symbol', 'datetime']).reset_index(drop=True)
+            
+            giant_file = "top100_hourly_1year_combined.csv"
+            combined.to_csv(giant_file, index=False)
+            
+            print(f"🎉 Loaded {len(combined):,} rows ({combined['symbol'].nunique()} coins) from backup")
+            print(f"   Giant CSV saved → {giant_file}")
+            
+            # Refresh the 3 backup files (clean + sorted)
+            n = len(combined)
+            chunk_size = (n + 2) // 3
+            print(f"   Refreshing 3 backup files (~{chunk_size:,} rows each)...")
+            for i in range(3):
+                start = i * chunk_size
+                end = min(start + chunk_size, n)
+                chunk = combined.iloc[start:end]
+                backup_file = f"top100_hourly_1year_combined_backup_{i+1}.txt"
+                chunk.to_csv(backup_file, index=False)
+            
+            success = combined['symbol'].nunique()
+            all_dfs = [combined]
+            
+        except Exception as e:
+            print(f"❌ Failed to load backup: {e}")
+            print("Falling back to normal download mode...\n")
+            use_backup = False
+    
+    # ====================== NORMAL DOWNLOAD MODE ======================
+    if not use_backup:
+        api_key = input("Paste your CryptoCompare API key and press Enter: ").strip()
+        if not api_key:
+            print("❌ ERROR: API key required.")
+            sys.exit(1)
         
-        individual_file = f"raw_data/{symbol.lower()}_hourly_1year_cryptocompare.csv"
+        os.makedirs("raw_data", exist_ok=True)
+        print("📁 Created/verified folder: raw_data/\n")
         
-        if os.path.exists(individual_file) and not FORCE_REDOWNLOAD:
-            print("   📂 File already exists → loading from disk")
+        symbols = get_top100_symbols()
+        print(f"📋 Parsed {len(symbols)} coins from gecko_top_100_non_stable_coins.txt\n")
+        
+        for i, symbol in enumerate(symbols, 1):
+            print(f"[{i:3d}/{len(symbols)}] {symbol}")
+            
+            individual_file = f"raw_data/{symbol.lower()}_hourly_1year_cryptocompare.csv"
+            
+            if os.path.exists(individual_file) and not FORCE_REDOWNLOAD:
+                print("   📂 File already exists → loading from disk")
+                try:
+                    df = pd.read_csv(individual_file)
+                    if 'datetime' in df.columns:
+                        df['datetime'] = pd.to_datetime(df['datetime'], utc=True)
+                    if 'symbol' not in df.columns:
+                        df['symbol'] = symbol
+                    all_dfs.append(df)
+                    success += 1
+                    print(f"   ✅ Loaded existing data: {len(df):,} hourly candles\n")
+                    continue
+                except Exception as e:
+                    print(f"   ⚠️  Could not load existing file ({e}). Re-downloading...\n")
+            
             try:
-                df = pd.read_csv(individual_file)
-                if 'datetime' in df.columns:
-                    df['datetime'] = pd.to_datetime(df['datetime'], utc=True)
-                if 'symbol' not in df.columns:
-                    df['symbol'] = symbol
+                df, used_source = fetch_crypto_hourly_1year(symbol, api_key)
+                df['symbol'] = symbol
+                
+                df.to_csv(individual_file, index=False)
                 
                 all_dfs.append(df)
                 success += 1
-                print(f"   ✅ Loaded existing data: {len(df):,} hourly candles\n")
-                continue
+                
+                if "on " in used_source or "(partial" in used_source:
+                    fallback_coins.append((symbol, used_source))
+                
+                print(f"   💾 Saved → raw_data/{symbol.lower()}_hourly_1year_cryptocompare.csv\n")
             except Exception as e:
-                print(f"   ⚠️  Could not load existing file ({e}). Re-downloading...\n")
+                print(f"   ❌ Skipped: {e}\n")
+                failed.append(symbol)
+            
+            time.sleep(1.8)
         
-        try:
-            df, used_source = fetch_crypto_hourly_1year(symbol, api_key)
-            df['symbol'] = symbol
+        # ====================== CREATE GIANT CSV + 3-PART BACKUP ======================
+        if all_dfs:
+            print("🔄 Creating ONE GIANT combined CSV + 3-part TXT backup...")
+            combined = pd.concat(all_dfs, ignore_index=True)
+            combined = combined[['datetime', 'symbol', 'open', 'high', 'low', 'close', 'volumefrom', 'volumeto']]
+            combined = combined.sort_values(['symbol', 'datetime']).reset_index(drop=True)
             
-            df.to_csv(individual_file, index=False)
+            giant_file = "top100_hourly_1year_combined.csv"
+            combined.to_csv(giant_file, index=False)
             
-            all_dfs.append(df)
-            success += 1
+            # Split into 3 backup files (no date in filename)
+            n = len(combined)
+            chunk_size = (n + 2) // 3
+            print(f"   📋 Splitting into 3 backup files (~{chunk_size:,} rows each)...")
             
-            if "on " in used_source or "(partial" in used_source:
-                fallback_coins.append((symbol, used_source))
-            
-            print(f"   💾 Saved → raw_data/{symbol.lower()}_hourly_1year_cryptocompare.csv\n")
-        except Exception as e:
-            print(f"   ❌ Skipped: {e}\n")
-            failed.append(symbol)
-        
-        time.sleep(1.8)
+            for i in range(3):
+                start = i * chunk_size
+                end = min(start + chunk_size, n)
+                chunk = combined.iloc[start:end]
+                backup_file = f"top100_hourly_1year_combined_backup_{i+1}.txt"
+                chunk.to_csv(backup_file, index=False)
+                print(f"      • Part {i+1}: {backup_file} ({len(chunk):,} rows)")
     
-    # ====================== GIANT COMBINED CSV + EXACT TXT BACKUP ======================
-    if all_dfs:
-        print("🔄 Creating ONE GIANT combined CSV + exact TXT backup...")
-        combined = pd.concat(all_dfs, ignore_index=True)
-        combined = combined[['datetime', 'symbol', 'open', 'high', 'low', 'close', 'volumefrom', 'volumeto']]
-        combined = combined.sort_values(['symbol', 'datetime']).reset_index(drop=True)
-        
-        giant_file = "top100_hourly_1year_combined.csv"
-        combined.to_csv(giant_file, index=False)
-        
-        # === EXACT TEXT COPY INTO TXT (your requested update) ===
-        backup_txt      = "top100_hourly_1year_combined_backup.txt"          # latest backup (overwritten each run)
-        backup_dated    = f"top100_hourly_1year_combined_backup_{datetime.now().strftime('%Y%m%d_%H%M')}.txt"
-        
-        try:
-            with open(giant_file, "r", encoding="utf-8") as source:
-                content = source.read()
-            
-            with open(backup_txt, "w", encoding="utf-8") as f:
-                f.write(content)
-            
-            with open(backup_dated, "w", encoding="utf-8") as f:
-                f.write(content)
-            
-            print(f"   📋 Exact TXT backups created:")
-            print(f"      • Latest:  {backup_txt}")
-            print(f"      • Dated:   {backup_dated}")
-        except Exception as backup_error:
-            print(f"   ⚠️  TXT backup failed (CSV still saved): {backup_error}")
-        
-        print(f"\n🎉 FINISHED!")
-        print(f"   Giant file saved → {giant_file}")
-        print(f"   Total rows: {len(combined):,} (≈ {len(combined)//success:,} hours × {success} coins)")
-        print(f"   Successfully processed: {success}/{len(symbols)} coins")
+    # ====================== FINAL SUMMARY ======================
+    print(f"\n🎉 FINISHED!")
+    print(f"   Giant file saved → top100_hourly_1year_combined.csv")
+    if combined is not None:
+        print(f"   Total rows: {len(combined):,} (≈ {len(combined)//max(success,1):,} hours × {success} coins)")
+    print(f"   Successfully processed: {success} coins")
     
     if failed:
         print(f"\n⚠️  Failed coins ({len(failed)}): {', '.join(failed)}")
-        print("      (These coins currently have no hourly data on CryptoCompare even via exchanges)")
     
-    # ====================== CONSOLE + TXT FALLBACK WARNING ======================
     if fallback_coins:
-        print("\n⚠️  WARNING: The following coins used direct exchange data or partial downloads:")
+        print("\n⚠️  WARNING: Some coins used exchange-specific or partial data:")
         for sym, src in fallback_coins:
             print(f"   • {sym} → {src}")
-        print("      → Prices/volume from single exchange or partial history only.")
-        print("      → Data is still 100% valid for analysis.")
         
-        warning_file = "fallback_coins_warning.txt"
-        with open(warning_file, "w", encoding="utf-8") as f:
-            f.write("══════════════════════════════════════════════════════════════\n")
-            f.write("CryptoCompare Downloader - FALLBACK WARNING REPORT\n")
-            f.write(f"Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S KST')}\n")
-            f.write("══════════════════════════════════════════════════════════════\n\n")
-            f.write("The following coins used direct exchange data or partial downloads:\n\n")
-            
+        with open("fallback_coins_warning.txt", "w", encoding="utf-8") as f:
+            f.write("FALLBACK COINS REPORT\n")
             for sym, src in fallback_coins:
                 f.write(f"• {sym} → {src}\n")
-            
-            f.write("\n→ Prices and volume come from that single exchange or partial history only.\n")
-            f.write("→ This is completely normal. Data is still 100% valid for analysis.\n\n")
-            f.write("Note: Re-running with FORCE_REDOWNLOAD=True will not change this\n")
-            f.write("      unless CryptoCompare adds CCCAGG support in the future.\n")
-        
-        print(f"   💾 Warning report saved → {warning_file}")
+        print("   💾 Warning report saved → fallback_coins_warning.txt")
     
     print("\n📂 Final structure:")
-    print(f"   • raw_data/                    ← contains {success} individual CSVs")
+    print("   • raw_data/                          ← individual CSVs")
     print("   • top100_hourly_1year_combined.csv")
-    print("   • top100_hourly_1year_combined_backup.txt          ← exact text copy")
-    print("   • top100_hourly_1year_combined_backup_YYYYMMDD_HHMM.txt  ← dated history")
-    print("   • fallback_coins_warning.txt")
-    print("   • get_cryptocompare_top_coins_prices_historic.py")
+    print("   • top100_hourly_1year_combined_backup_1.txt")
+    print("   • top100_hourly_1year_combined_backup_2.txt")
+    print("   • top100_hourly_1year_combined_backup_3.txt")
+    print("   • fallback_coins_warning.txt (if any)")
