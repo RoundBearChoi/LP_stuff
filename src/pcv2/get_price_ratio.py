@@ -1,15 +1,19 @@
 import sys
 import pandas as pd
-import matplotlib
-matplotlib.use('Agg')                # Non-interactive (no window ever appears)
-import matplotlib.pyplot as plt
-from datetime import datetime
+import matplotlib.pyplot as plt   # ← Agg removed so chart shows + pauses
 
 
 class PriceRatioChart:
     """Clean, reusable class to generate price ratio charts from your CSV."""
 
     CSV_FILE = 'top100_hourly_1year_combined.csv'   # Your exact file (same folder)
+
+    # ==================== TUNABLE SETTINGS (change these only) ====================
+    MA_PERIOD = 168                     # hours (168 = 7 days)
+    RSI_PERIOD = 14
+    RATIO_LINE_WIDTH = 1                # ← thinner raw ratio line
+    MA_LINE_WIDTH = 2.4                 # ← thinner colored MA line
+    # =============================================================================
 
     def __init__(self):
         """Initialize with default settings."""
@@ -26,8 +30,17 @@ class PriceRatioChart:
             print("No symbols provided → defaulting to BTC / ETH")
             return 'BTC', 'ETH'
 
+    def calculate_rsi(self, series):
+        """Simple RSI calculation on the ratio series."""
+        delta = series.diff()
+        gain = delta.where(delta > 0, 0).rolling(window=self.RSI_PERIOD).mean()
+        loss = (-delta.where(delta < 0, 0)).rolling(window=self.RSI_PERIOD).mean()
+        rs = gain / loss
+        rsi = 100 - (100 / (1 + rs))
+        return rsi
+
     def run(self):
-        """Main execution flow — identical behavior to previous version."""
+        """Main execution flow — thinner lines + show + pause."""
         symbol1, symbol2 = self.parse_arguments()
 
         print(f"Loading {self.CSV_FILE}... (this may take a few seconds)")
@@ -66,40 +79,72 @@ class PriceRatioChart:
             print("❌ No overlapping hourly data between the two assets.")
             sys.exit(1)
 
-        print(f"Calculating ratio over {len(merged):,} common hours...")
-
-        # Calculate ratio
         merged['ratio'] = merged[f'close_{symbol1}'] / merged[f'close_{symbol2}']
 
-        # ====================== CREATE & SAVE CHART (SILENT) ======================
-        plt.figure(figsize=(14, 7))
+        # ====================== CALCULATE MA + RSI ======================
+        print(f"Calculating {self.MA_PERIOD}-hour MA + RSI({self.RSI_PERIOD})...")
+        merged['rsi'] = self.calculate_rsi(merged['ratio'])
+        merged['ma'] = merged['ratio'].rolling(window=self.MA_PERIOD).mean()
 
-        plt.plot(merged['datetime'], merged['ratio'],
-                 label=f'{symbol1} / {symbol2} Price Ratio',
-                 color='#006400', linewidth=2.5)   # Dark professional green
+        # Drop early NaNs from rolling calculations
+        merged = merged.dropna(subset=['rsi', 'ma']).reset_index(drop=True)
 
-        plt.title(f'Price Ratio: {symbol1} ÷ {symbol2}\n'
-                  f'{merged["datetime"].min().strftime("%Y-%m-%d %H:%M")} → '
-                  f'{merged["datetime"].max().strftime("%Y-%m-%d %H:%M")}',
-                  fontsize=16, fontweight='bold')
+        print(f"Plotting {len(merged):,} points with RSI coloring on the MA...")
 
-        plt.xlabel('Date (Hourly)', fontsize=12)
-        plt.ylabel(f'{symbol1} / {symbol2} Ratio', fontsize=12)
-        plt.grid(True, alpha=0.3)
-        plt.legend(fontsize=12)
+        # ====================== CREATE CHART ======================
+        fig, ax = plt.subplots(figsize=(14, 7))
+
+        x = merged['datetime']
+        y = merged['ratio']
+        ma = merged['ma']
+        rsi = merged['rsi']
+
+        # 1. Thinner neutral raw ratio line (background)
+        ax.plot(x, y,
+                label=f'{symbol1} / {symbol2} Ratio',
+                color='#0189FB', linewidth=self.RATIO_LINE_WIDTH, alpha=0.82)
+
+        # 2. Thinner RSI-colored MA line (the star)
+        for i in range(1, len(merged)):
+            if rsi.iloc[i] > 70:
+                color = '#e63939'      # deep red — heavily overbought
+            elif rsi.iloc[i] > 60:
+                color = '#f77f00'      # orange-red
+            elif rsi.iloc[i] < 30:
+                color = '#2a9d8e'      # strong teal-green — heavily oversold
+            elif rsi.iloc[i] < 40:
+                color = '#52b788'      # lighter green
+            else:
+                color = '#006400'      # neutral dark green
+
+            ax.plot(x.iloc[i-1:i+1], ma.iloc[i-1:i+1], color=color, linewidth=self.MA_LINE_WIDTH)
+
+        ax.set_title(f'Price Ratio: {symbol1} ÷ {symbol2}   |   {self.MA_PERIOD}-hour MA Colored by RSI({self.RSI_PERIOD})\n'
+                     f'{merged["datetime"].min().strftime("%Y-%m-%d %H:%M")} → '
+                     f'{merged["datetime"].max().strftime("%Y-%m-%d %H:%M")}',
+                     fontsize=16, fontweight='bold')
+
+        ax.set_xlabel('Date (Hourly)', fontsize=12)
+        ax.set_ylabel(f'{symbol1} / {symbol2} Ratio', fontsize=12)
+        ax.grid(True, alpha=0.3)
+        ax.legend(fontsize=12)
 
         plt.xticks(rotation=45)
         plt.tight_layout()
 
-        # Save (simple filename, no window)
+        # ====================== SAVE + SHOW & PAUSE ======================
         save_name = f"ratio_{symbol1}_{symbol2}.png"
-        plt.savefig(save_name, dpi=150, bbox_inches='tight')
-        plt.close()
-
-        print("\n✅ SUCCESS! Chart saved silently.")
+        plt.savefig(save_name, dpi=200, bbox_inches='tight')
+        
+        print("\n✅ SUCCESS! Chart saved AND displayed.")
         print(f"   File: {save_name}")
         print(f"   Data points: {len(merged):,} hourly candles")
-        print(f"   Time period: {merged['datetime'].min().strftime('%Y-%m-%d')} → {merged['datetime'].max().strftime('%Y-%m-%d')}")
+        print(f"   MA period: {self.MA_PERIOD} hours")
+        print(f"   Line widths: ratio={self.RATIO_LINE_WIDTH}, MA={self.MA_LINE_WIDTH} (change at top)")
+        print("\n📊 Opening chart window now... CLOSE the window to exit the program.")
+
+        plt.show()   # ← This shows the chart AND pauses the script
+        plt.close()
 
 
 # ====================== RUN THE CLASS ======================
