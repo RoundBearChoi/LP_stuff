@@ -93,7 +93,7 @@ class PriceRatioChart:
 
         # Save (simple filename, no window)
         save_name = f"ratio_{symbol1}_{symbol2}.png"
-        plt.savefig(save_name, dpi=300, bbox_inches='tight')
+        plt.savefig(save_name, dpi=150, bbox_inches='tight')
         plt.close()
 
         print("\n✅ SUCCESS! Chart saved silently.")
