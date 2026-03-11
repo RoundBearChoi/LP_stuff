@@ -1,7 +1,6 @@
 import sys
 import pandas as pd
-import matplotlib.pyplot as plt   # ← Agg removed so chart shows + pauses
-
+import matplotlib.pyplot as plt
 
 class PriceRatioChart:
     """Clean, reusable class to generate price ratio charts from your CSV."""
@@ -11,8 +10,9 @@ class PriceRatioChart:
     # ==================== TUNABLE SETTINGS (change these only) ====================
     MA_PERIOD = 168                     # hours (168 = 7 days)
     RSI_PERIOD = 14
-    RATIO_LINE_WIDTH = 1                # ← thinner raw ratio line
-    MA_LINE_WIDTH = 2.4                 # ← thinner colored MA line
+    BAND_MULTIPLIER = 2.4               # σ multiplier for red bands (2.0 = classic)
+    RATIO_LINE_WIDTH = 1
+    MA_LINE_WIDTH = 2.4
     # =============================================================================
 
     def __init__(self):
@@ -40,7 +40,7 @@ class PriceRatioChart:
         return rsi
 
     def run(self):
-        """Main execution flow — thinner lines + show + pause."""
+        """Main execution flow — now with clean red Bollinger Bands."""
         symbol1, symbol2 = self.parse_arguments()
 
         print(f"Loading {self.CSV_FILE}... (this may take a few seconds)")
@@ -57,11 +57,8 @@ class PriceRatioChart:
         df1 = df[df['symbol'] == symbol1].copy()
         df2 = df[df['symbol'] == symbol2].copy()
 
-        if df1.empty:
-            print(f"❌ Symbol '{symbol1}' not found in the CSV.")
-            sys.exit(1)
-        if df2.empty:
-            print(f"❌ Symbol '{symbol2}' not found in the CSV.")
+        if df1.empty or df2.empty:
+            print(f"❌ One or both symbols not found in the CSV.")
             sys.exit(1)
 
         print(f"Found data for {symbol1} and {symbol2}")
@@ -81,15 +78,18 @@ class PriceRatioChart:
 
         merged['ratio'] = merged[f'close_{symbol1}'] / merged[f'close_{symbol2}']
 
-        # ====================== CALCULATE MA + RSI ======================
-        print(f"Calculating {self.MA_PERIOD}-hour MA + RSI({self.RSI_PERIOD})...")
+        # ====================== CALCULATE MA + RSI + BANDS ======================
+        print(f"Calculating {self.MA_PERIOD}-hour MA + RSI({self.RSI_PERIOD}) + ±{self.BAND_MULTIPLIER}σ Bands...")
         merged['rsi'] = self.calculate_rsi(merged['ratio'])
         merged['ma'] = merged['ratio'].rolling(window=self.MA_PERIOD).mean()
+        merged['std'] = merged['ratio'].rolling(window=self.MA_PERIOD).std()
+        merged['upper_band'] = merged['ma'] + self.BAND_MULTIPLIER * merged['std']
+        merged['lower_band'] = merged['ma'] - self.BAND_MULTIPLIER * merged['std']
 
         # Drop early NaNs from rolling calculations
-        merged = merged.dropna(subset=['rsi', 'ma']).reset_index(drop=True)
+        merged = merged.dropna(subset=['rsi', 'ma', 'std']).reset_index(drop=True)
 
-        print(f"Plotting {len(merged):,} points with RSI coloring on the MA...")
+        print(f"Plotting {len(merged):,} points with RSI coloring + red bands...")
 
         # ====================== CREATE CHART ======================
         fig, ax = plt.subplots(figsize=(14, 7))
@@ -99,12 +99,18 @@ class PriceRatioChart:
         ma = merged['ma']
         rsi = merged['rsi']
 
-        # 1. Thinner neutral raw ratio line (background)
+        # 1. Red Bollinger Bands (plotted first so they sit in background)
+        ax.plot(x, merged['upper_band'], color='#e63939', linewidth=1.1,
+                linestyle='--', alpha=0.68, label=f'+{self.BAND_MULTIPLIER}σ')
+        ax.plot(x, merged['lower_band'], color='#e63939', linewidth=1.1,
+                linestyle='--', alpha=0.68, label=f'-{self.BAND_MULTIPLIER}σ')
+
+        # 2. Thinner neutral raw ratio line (background)
         ax.plot(x, y,
                 label=f'{symbol1} / {symbol2} Ratio',
                 color='#0189FB', linewidth=self.RATIO_LINE_WIDTH, alpha=0.82)
 
-        # 2. Thinner RSI-colored MA line (the star)
+        # 3. Thinner RSI-colored MA line (the star — on top)
         for i in range(1, len(merged)):
             if rsi.iloc[i] > 70:
                 color = '#e63939'      # deep red — heavily overbought
@@ -119,7 +125,8 @@ class PriceRatioChart:
 
             ax.plot(x.iloc[i-1:i+1], ma.iloc[i-1:i+1], color=color, linewidth=self.MA_LINE_WIDTH)
 
-        ax.set_title(f'Price Ratio: {symbol1} ÷ {symbol2}   |   {self.MA_PERIOD}-hour MA Colored by RSI({self.RSI_PERIOD})\n'
+        ax.set_title(f'Price Ratio: {symbol1} ÷ {symbol2}   |   '
+                     f'{self.MA_PERIOD}h MA + ±{self.BAND_MULTIPLIER}σ Bands (RSI-colored MA)\n'
                      f'{merged["datetime"].min().strftime("%Y-%m-%d %H:%M")} → '
                      f'{merged["datetime"].max().strftime("%Y-%m-%d %H:%M")}',
                      fontsize=16, fontweight='bold')
@@ -127,7 +134,7 @@ class PriceRatioChart:
         ax.set_xlabel('Date (Hourly)', fontsize=12)
         ax.set_ylabel(f'{symbol1} / {symbol2} Ratio', fontsize=12)
         ax.grid(True, alpha=0.3)
-        ax.legend(fontsize=12)
+        ax.legend(fontsize=11)
 
         plt.xticks(rotation=45)
         plt.tight_layout()
@@ -140,6 +147,7 @@ class PriceRatioChart:
         print(f"   File: {save_name}")
         print(f"   Data points: {len(merged):,} hourly candles")
         print(f"   MA period: {self.MA_PERIOD} hours")
+        print(f"   Bands: ±{self.BAND_MULTIPLIER} standard deviations (red dashed)")
         print(f"   Line widths: ratio={self.RATIO_LINE_WIDTH}, MA={self.MA_LINE_WIDTH} (change at top)")
         print("\n📊 Opening chart window now... CLOSE the window to exit the program.")
 
