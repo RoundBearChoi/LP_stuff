@@ -13,7 +13,8 @@ class CointegrationChart:
     - Emojis ONLY in console output
     - dpi=200
     - No plt.show() → instant run
-    - NO MORE tight_layout warning (now using constrained_layout)
+    - FIXED LAYOUT: verdict box now INSIDE Chart 1 + taller figure + more hspace
+      → ZERO overlap, even on dense charts or long titles
     """
 
     DEFAULT_CSV = "top100_hourly_1year_combined.csv"
@@ -123,26 +124,42 @@ class CointegrationChart:
         self.ratio_rolling_std = self.ratio.rolling(window=720, min_periods=1).std()
 
     def generate(self):
-        """Main method — everything + instant PNG save, no warning, no pause"""
+        """Main method — everything + instant PNG save, no warning, no pause, FIXED LAYOUT"""
         self._load_data()
         self._compute_full_sample()
         self._compute_rolling()
         self._create_ratio_stats()
 
-        # ====================== 5 CHARTS (constrained_layout = no warning) ======================
-        fig, axs = plt.subplots(5, 1, figsize=(14, 23), sharex=True,
-                                gridspec_kw={'hspace': 0.35},
-                                constrained_layout=True)   # ← this fixes the warning
+        # ====================== 5 CHARTS (MORE SPACE + NO OVERLAP) ======================
+        fig, axs = plt.subplots(5, 1, figsize=(14, 28),      # ← taller figure
+                                sharex=True,
+                                gridspec_kw={'hspace': 0.48},   # ← much more breathing room
+                                constrained_layout=False)       # manual control is cleaner
 
-        # Chart 1
+        # Precise margin control — this is the key to eliminating overlap forever
+        fig.subplots_adjust(top=0.905, bottom=0.05, left=0.07, right=0.93, hspace=0.48)
+
+        # ==================== CHART 1 (with verdict box INSIDE it) ====================
         norm1 = self.p1 / self.p1.iloc[0] * 100
         norm2 = self.p2 / self.p2.iloc[0] * 100
         axs[0].plot(norm1.index, norm1, label=self.sym1, linewidth=2)
         axs[0].plot(norm2.index, norm2, label=self.sym2, linewidth=2)
         axs[0].set_title(f"1. Normalized Prices — {self.sym1} vs {self.sym2}")
-        axs[0].legend()
+        axs[0].legend(loc='upper left')
         axs[0].grid(True, alpha=0.3)
 
+        # === VERDICT BOX (now inside Chart 1 — no more overlap ever) ===
+        axs[0].text(0.02, 0.82,   # top-left corner inside the subplot
+                    f"FULL-SAMPLE RESULTS\n"
+                    f"ADF p-value = {self.p_value:.5f}\n"
+                    f"Beta = {self.beta:.4f}\n"
+                    f"{self.verdict_chart}",
+                    transform=axs[0].transAxes,
+                    fontsize=13.5, ha='left', va='top', fontweight='bold',
+                    bbox=dict(boxstyle="round,pad=1.0", facecolor=self.box_color,
+                              alpha=0.95, edgecolor='black'))
+
+        # ==================== CHARTS 2–5 ====================
         # Chart 2
         axs[1].plot(self.ratio.index, self.ratio, label=f"{self.sym1}/{self.sym2} Ratio",
                     color='purple', linewidth=2)
@@ -162,7 +179,7 @@ class CointegrationChart:
         axs[2].fill_between(self.spread.index,
                             self.spread.mean() - 2 * self.spread.std(),
                             self.spread.mean() + 2 * self.spread.std(),
-                            color='red', alpha=0.15)
+                            color='red', alpha=0.12)   # slightly softer fill
         axs[2].set_title(f"3. Spread = log({self.sym1}) − {self.beta:.4f} × log({self.sym2})")
         axs[2].legend()
         axs[2].grid(True, alpha=0.3)
@@ -175,7 +192,7 @@ class CointegrationChart:
         axs[3].axhline(1, color='orange', linestyle='--', label='+1/-1 Exit')
         axs[3].axhline(-1, color='orange', linestyle='--')
         axs[3].set_title("4. Z-Score of Spread")
-        axs[3].legend()
+        axs[3].legend(fontsize=10)
         axs[3].grid(True, alpha=0.3)
         axs[3].set_ylim(-5, 5)
 
@@ -204,26 +221,18 @@ class CointegrationChart:
 
         lines1, labels1 = ax_beta.get_legend_handles_labels()
         lines2, labels2 = ax_p.get_legend_handles_labels()
-        ax_beta.legend(lines1 + lines2, labels1 + labels2, loc='upper left')
+        ax_beta.legend(lines1 + lines2, labels1 + labels2, loc='upper left', fontsize=10)
 
-        # Clean verdict box
-        fig.text(0.5, 0.935,
-                 f"FULL-SAMPLE: ADF p-value = {self.p_value:.5f}\n"
-                 f"Beta = {self.beta:.4f}\n"
-                 f"{self.verdict_chart}",
-                 fontsize=15, ha='center', va='center', fontweight='bold',
-                 bbox=dict(boxstyle="round,pad=1", facecolor=self.box_color, alpha=0.9, edgecolor='black'))
-
+        # ==================== CLEAN SUPTITLE ====================
         fig.suptitle(f"COINTEGRATION ANALYSIS: {self.sym1} vs {self.sym2} — "
                      f"{len(self.p1):,} hourly bars "
                      f"({self.p1.index[0].date()} to {self.p1.index[-1].date()})",
-                     fontsize=16, y=0.98)
+                     fontsize=15.5, y=0.965)
 
         output_file = f"cointegration_{self.sym1}_{self.sym2}_with_rolling.png"
         plt.savefig(output_file, dpi=200, bbox_inches='tight')
         plt.close(fig)
-        print(f"\n✅ Saved: {output_file} (5 charts, clean no-emoji PNG, dpi=200, no pause, no warning)")
-
+        print(f"\n✅ Saved: {output_file} (5 charts, fixed layout — no overlap, more breathing room)")
 
 if __name__ == "__main__":
     if len(sys.argv) == 4:
