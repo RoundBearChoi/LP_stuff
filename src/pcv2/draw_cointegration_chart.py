@@ -3,18 +3,15 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from statsmodels.api import OLS, add_constant
-from statsmodels.tsa.stattools import adfuller
+from statsmodels.tsa.stattools import coint
 import os
 
 class CointegrationChart:
     """
-    Clean, reusable class for generating the full 5-chart cointegration analysis.
-    - Works exactly like before from the command line
-    - Defaults to ETH/BTC if no arguments are provided (super convenient!)
-    - Emojis ONLY in console output
-    - dpi=200
-    - No plt.show() → instant run
-    - FIXED LAYOUT: verdict box inside Chart 1 (Beta → ADF p-value → Verdict)
+    Gold-standard cointegration analysis + Half-life (clean verdict box).
+    - Full-sample + rolling use coint() on LOG prices with autolag='AIC'
+    - Half-life (OU process) in console + verdict box
+    - Verdict box now cleaner (no title line + slightly smaller font)
     """
 
     DEFAULT_CSV = "top100_hourly_1year_combined.csv"
@@ -31,6 +28,7 @@ class CointegrationChart:
         self.spread = None
         self.zscore = None
         self.p_value = None
+        self.half_life_days = None
         self.verdict_console = ""
         self.verdict_chart = ""
         self.box_color = ""
@@ -59,15 +57,26 @@ class CointegrationChart:
         log_p1 = np.log(self.p1)
         log_p2 = np.log(self.p2)
 
+        # === Beta & spread ===
         X = add_constant(log_p2)
         model = OLS(log_p1, X).fit()
         self.beta = model.params.iloc[1]
         self.spread = log_p1 - self.beta * log_p2
         self.zscore = (self.spread - self.spread.mean()) / self.spread.std()
 
-        adf = adfuller(self.spread, maxlag=1, regression='c')
-        self.p_value = adf[1]
+        # === GOLD-STANDARD COINTEGRATION ===
+        _, self.p_value, _ = coint(log_p1, log_p2, autolag='AIC')
 
+        # === HALF-LIFE ===
+        lagged = self.spread.shift(1).dropna()
+        delta = self.spread.diff().dropna()
+        X_ou = add_constant(lagged)
+        ou_model = OLS(delta, X_ou).fit()
+        kappa = -ou_model.params.iloc[1]
+        half_life_hours = np.log(2) / kappa if kappa > 1e-8 else float('inf')
+        self.half_life_days = half_life_hours / 24
+
+        # === Verdict ===
         if self.p_value < 0.01:
             self.verdict_console = "✅ STRONG COINTEGRATION (p < 0.01)"
             self.verdict_chart = "STRONG COINTEGRATION (p < 0.01)"
@@ -85,9 +94,11 @@ class CointegrationChart:
             self.verdict_chart = "NO COINTEGRATION (p ≥ 0.10)"
             self.box_color = 'salmon'
 
-        print("\n=== FULL-SAMPLE RESULTS ===")
+        print("\n=== FULL-SAMPLE RESULTS (GOLD STANDARD) ===")
         print(f"Hedge ratio (beta): {self.beta:.4f}")
-        print(f"ADF p-value: {self.p_value:.6f} → {self.verdict_console}")
+        print(f"Cointegration p-value: {self.p_value:.6f}")
+        print(f"Half-life: {self.half_life_days:.1f} days")
+        print(f"→ {self.verdict_console}")
 
     def _compute_rolling(self):
         print("\nComputing rolling cointegration (90-day windows, updated daily)...")
@@ -109,11 +120,10 @@ class CointegrationChart:
             model_win = OLS(log_p1_win, X_win).fit()
             beta_win = model_win.params.iloc[1]
 
-            spread_win = log_p1_win - beta_win * log_p2_win
-            adf_win = adfuller(spread_win, maxlag=1, regression='c')
+            _, pval_win, _ = coint(log_p1_win, log_p2_win, autolag='AIC')
 
             self.rolling_betas.append(beta_win)
-            self.rolling_pvals.append(adf_win[1])
+            self.rolling_pvals.append(pval_win)
             self.rolling_dates.append(log_p1.index[i + window - 1])
 
         print(f"Rolling windows computed: {len(self.rolling_dates)}")
@@ -124,7 +134,6 @@ class CointegrationChart:
         self.ratio_rolling_std = self.ratio.rolling(window=720, min_periods=1).std()
 
     def generate(self):
-        """Main method — everything + instant PNG save, no warning, no pause"""
         self._load_data()
         self._compute_full_sample()
         self._compute_rolling()
@@ -138,7 +147,7 @@ class CointegrationChart:
 
         fig.subplots_adjust(top=0.905, bottom=0.05, left=0.07, right=0.93, hspace=0.48)
 
-        # ==================== CHART 1 (with verdict box) ====================
+        # ==================== CHART 1 ====================
         norm1 = self.p1 / self.p1.iloc[0] * 100
         norm2 = self.p2 / self.p2.iloc[0] * 100
         axs[0].plot(norm1.index, norm1, label=self.sym1, linewidth=2)
@@ -147,18 +156,18 @@ class CointegrationChart:
         axs[0].legend(loc='upper left')
         axs[0].grid(True, alpha=0.3)
 
-        # === VERDICT BOX (Beta appears BEFORE ADF p-value) ===
-        axs[0].text(0.02, 0.82,
-                    f"FULL-SAMPLE RESULTS\n"
+        # === CLEAN VERDICT BOX (no title line + slightly smaller font) ===
+        axs[0].text(0.02, 0.80,
                     f"Beta = {self.beta:.4f}\n"
-                    f"ADF p-value = {self.p_value:.5f}\n"
+                    f"Cointegration p-value = {self.p_value:.5f}\n"
+                    f"Half-life ≈ {self.half_life_days:.1f} days\n"
                     f"{self.verdict_chart}",
                     transform=axs[0].transAxes,
-                    fontsize=13.5, ha='left', va='top', fontweight='bold',
+                    fontsize=12.8, ha='left', va='top', fontweight='bold',
                     bbox=dict(boxstyle="round,pad=1.0", facecolor=self.box_color,
                               alpha=0.95, edgecolor='black'))
 
-        # ==================== CHARTS 2–5 ====================
+        # ==================== CHARTS 2–5 (unchanged) ====================
         axs[1].plot(self.ratio.index, self.ratio, label=f"{self.sym1}/{self.sym2} Ratio",
                     color='purple', linewidth=2)
         axs[1].plot(self.ratio_rolling_mean.index, self.ratio_rolling_mean,
@@ -197,7 +206,7 @@ class CointegrationChart:
         ax_beta.plot(self.rolling_dates, self.rolling_betas, color='blue', linewidth=2,
                      label='Rolling Beta (hedge ratio)')
         ax_p.plot(self.rolling_dates, self.rolling_pvals, color='red', linewidth=2,
-                  label='Rolling ADF p-value')
+                  label='Rolling Cointegration p-value')
 
         pvals_arr = np.array(self.rolling_pvals)
         dates_arr = pd.to_datetime(self.rolling_dates)
@@ -210,15 +219,15 @@ class CointegrationChart:
         ax_p.axhline(0.10, color='orange', linestyle='--', alpha=0.7)
 
         ax_beta.set_ylabel('Rolling Beta', color='blue')
-        ax_p.set_ylabel('Rolling ADF p-value', color='red')
-        ax_beta.set_title("5. Rolling Cointegration (90-day windows) — Beta & ADF p-value")
+        ax_p.set_ylabel('Rolling Cointegration p-value', color='red')
+        ax_beta.set_title("5. Rolling Cointegration (90-day windows) — Beta & p-value")
         ax_beta.grid(True, alpha=0.3)
 
         lines1, labels1 = ax_beta.get_legend_handles_labels()
         lines2, labels2 = ax_p.get_legend_handles_labels()
         ax_beta.legend(lines1 + lines2, labels1 + labels2, loc='upper left', fontsize=10)
 
-        fig.suptitle(f"COINTEGRATION ANALYSIS: {self.sym1} vs {self.sym2} — "
+        fig.suptitle(f"COINTEGRATION ANALYSIS (GOLD STANDARD): {self.sym1} vs {self.sym2} — "
                      f"{len(self.p1):,} hourly bars "
                      f"({self.p1.index[0].date()} to {self.p1.index[-1].date()})",
                      fontsize=15.5, y=0.965)
@@ -226,7 +235,7 @@ class CointegrationChart:
         output_file = f"cointegration_{self.sym1}_{self.sym2}_with_rolling.png"
         plt.savefig(output_file, dpi=200, bbox_inches='tight')
         plt.close(fig)
-        print(f"\n✅ Saved: {output_file} (Beta-first verdict box + ETH/BTC default support)")
+        print(f"\n✅ Saved: {output_file} (cleaner verdict box + half-life)")
 
 if __name__ == "__main__":
     if len(sys.argv) == 4:
@@ -238,7 +247,6 @@ if __name__ == "__main__":
         sym1 = sys.argv[1]
         sym2 = sys.argv[2]
     elif len(sys.argv) == 1:
-        # Default fallback as requested
         csv_file = None
         sym1 = "ETH"
         sym2 = "BTC"
