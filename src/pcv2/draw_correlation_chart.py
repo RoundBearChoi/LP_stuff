@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import seaborn as sns
 import sys
+import numpy as np
 from get_correlation import CorrelationAnalyzer
 
 # Nice dark theme for crypto charts
@@ -28,13 +29,22 @@ class CorrelationChartDrawer:
         prices = analyzer.prices
         daily_logret = analyzer.daily_logret
 
-        # === Compute overall Pearson correlation (for highlight) ===
-        corr = daily_logret[self.sym1].corr(daily_logret[self.sym2])
-        if abs(corr) >= 0.8:
+        # === Compute ALL THREE correlations (exactly matches analyzer output) ===
+        # Hourly log returns from raw hourly prices
+        log_prices = np.log(prices)
+        hourly_logret = log_prices.diff().dropna()
+        hourly_pearson = hourly_logret[self.sym1].corr(hourly_logret[self.sym2])
+        hourly_spearman = hourly_logret[self.sym1].corr(hourly_logret[self.sym2], method='spearman')
+
+        # Daily Pearson (from analyzer's daily series)
+        daily_pearson = daily_logret[self.sym1].corr(daily_logret[self.sym2])
+
+        # Strength label (based on daily — the most important one)
+        if abs(daily_pearson) >= 0.8:
             strength = "Very Strong"
-        elif abs(corr) >= 0.5:
+        elif abs(daily_pearson) >= 0.5:
             strength = "Moderate"
-        elif abs(corr) >= 0.3:
+        elif abs(daily_pearson) >= 0.3:
             strength = "Weak"
         else:
             strength = "Very Weak"
@@ -43,8 +53,10 @@ class CorrelationChartDrawer:
         fig, axs = plt.subplots(4, 1, figsize=(13, 24), dpi=160)
         fig.suptitle(f"{self.sym1} vs {self.sym2} — Full Correlation Analysis\n"
                      f"(Overlap: {len(prices):,} hourly points)  |  "
-                     f"Overall Pearson r = {corr:.3f} ({strength})",
-                     fontsize=18, fontweight='bold', y=0.98)
+                     f"Hourly Pearson: {hourly_pearson:.4f} | "
+                     f"Spearman: {hourly_spearman:.4f} | "
+                     f"Daily Pearson: {daily_pearson:.4f} ({strength})",
+                     fontsize=17, fontweight='bold', y=0.97)
 
         # 1. Normalized Price Overlay
         norm = prices / prices.iloc[0] * 100
@@ -53,20 +65,23 @@ class CorrelationChartDrawer:
         axs[0].set_ylabel("Indexed Price")
         axs[0].legend(fontsize=12)
 
-        # 2. Log Returns Scatter + Regression + HIGHLIGHTED CORRELATION
+        # 2. Log Returns Scatter + Regression + ALL 3 CORRELATIONS HIGHLIGHTED
         x = daily_logret[self.sym1]
         y = daily_logret[self.sym2]
         sns.regplot(x=x, y=y, ax=axs[1],
                     scatter_kws={'alpha': 0.6, 's': 18, 'color': '#1f77b4'},
                     line_kws={'color': 'red', 'linewidth': 2.8})
         
-        # === Highlighted correlation box (this is what you asked for) ===
-        axs[1].text(0.02, 0.95, f'Pearson r = {corr:.3f}\n({strength})',
+        # === Highlight box with all three (exactly what you asked for) ===
+        axs[1].text(0.02, 0.96,
+                    f"Hourly Pearson (log returns) : {hourly_pearson:.4f}\n"
+                    f"Hourly Spearman (rank)      : {hourly_spearman:.4f}\n"
+                    f"Daily Pearson (log returns) : {daily_pearson:.4f}  ({strength})",
                     transform=axs[1].transAxes,
-                    fontsize=14, fontweight='bold',
+                    fontsize=13, fontweight='bold',
                     verticalalignment='top',
-                    bbox=dict(boxstyle="round,pad=0.6", facecolor="yellow", 
-                              alpha=0.9, edgecolor="red", linewidth=2))
+                    bbox=dict(boxstyle="round,pad=0.7", facecolor="yellow",
+                              alpha=0.92, edgecolor="red", linewidth=2.2))
 
         axs[1].set_title("2. Daily Log Returns Scatter + Regression Line")
         axs[1].set_xlabel(f"{self.sym1} Daily Log Return")
@@ -98,9 +113,9 @@ class CorrelationChartDrawer:
         # Save (no pause)
         filename = f"correlation_{self.sym1}_vs_{self.sym2}.png"
         plt.savefig(filename, bbox_inches='tight', facecolor='white')
-        print(f"\n✅ Saved: {filename}  (correlation value is now highlighted in yellow on chart #2)")
+        print(f"\n✅ Saved: {filename}  (all 3 correlations now highlighted in yellow box on chart #2)")
 
-        # plt.show()  # ← commented out so it never pauses
+        # plt.show()  # ← commented out
 
 
 if __name__ == "__main__":
