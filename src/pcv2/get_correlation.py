@@ -80,6 +80,13 @@ class CorrelationAnalyzer:
         daily_logret = np.log(daily_prices / daily_prices.shift(1)).dropna()
         daily_pearson = daily_logret[self.sym1].corr(daily_logret[self.sym2])
 
+        # === ADDED FOR draw_correlation_chart.py (makes data reusable) ===
+        # These four lines let the chart script access everything without re-computing
+        self.prices = prices
+        self.log_returns = log_returns
+        self.daily_prices = daily_prices
+        self.daily_logret = daily_logret
+
         # Results
         print("\n" + "="*70)
         print(f"INDUSTRY-STANDARD CORRELATION: {self.sym1} vs {self.sym2}")
