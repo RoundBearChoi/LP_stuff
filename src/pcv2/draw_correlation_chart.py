@@ -20,7 +20,7 @@ class CorrelationChartDrawer:
         analyzer = CorrelationAnalyzer(self.sym1, self.sym2, self.file_path)
         analyzer.run()
 
-        # Safety check (uses the data we exposed)
+        # Safety check
         if not hasattr(analyzer, 'prices') or len(analyzer.prices) < 200:
             print("⚠️  Not enough overlapping data for meaningful charts.")
             return
@@ -28,30 +28,51 @@ class CorrelationChartDrawer:
         prices = analyzer.prices
         daily_logret = analyzer.daily_logret
 
+        # === Compute overall Pearson correlation (for highlight) ===
+        corr = daily_logret[self.sym1].corr(daily_logret[self.sym2])
+        if abs(corr) >= 0.8:
+            strength = "Very Strong"
+        elif abs(corr) >= 0.5:
+            strength = "Moderate"
+        elif abs(corr) >= 0.3:
+            strength = "Weak"
+        else:
+            strength = "Very Weak"
+
         # === One tall vertical figure with all 4 charts ===
         fig, axs = plt.subplots(4, 1, figsize=(13, 24), dpi=160)
         fig.suptitle(f"{self.sym1} vs {self.sym2} — Full Correlation Analysis\n"
-                     f"(Overlap: {len(prices):,} hourly points)", 
+                     f"(Overlap: {len(prices):,} hourly points)  |  "
+                     f"Overall Pearson r = {corr:.3f} ({strength})",
                      fontsize=18, fontweight='bold', y=0.98)
 
-        # 1. Normalized Price Overlay (the trader intuition chart)
+        # 1. Normalized Price Overlay
         norm = prices / prices.iloc[0] * 100
         norm.plot(ax=axs[0], linewidth=2.3)
         axs[0].set_title("1. Normalized Prices (100 at start of overlap)")
         axs[0].set_ylabel("Indexed Price")
         axs[0].legend(fontsize=12)
 
-        # 2. Log Returns Scatter + Regression (statistical truth)
+        # 2. Log Returns Scatter + Regression + HIGHLIGHTED CORRELATION
         x = daily_logret[self.sym1]
         y = daily_logret[self.sym2]
         sns.regplot(x=x, y=y, ax=axs[1],
                     scatter_kws={'alpha': 0.6, 's': 18, 'color': '#1f77b4'},
                     line_kws={'color': 'red', 'linewidth': 2.8})
+        
+        # === Highlighted correlation box (this is what you asked for) ===
+        axs[1].text(0.02, 0.95, f'Pearson r = {corr:.3f}\n({strength})',
+                    transform=axs[1].transAxes,
+                    fontsize=14, fontweight='bold',
+                    verticalalignment='top',
+                    bbox=dict(boxstyle="round,pad=0.6", facecolor="yellow", 
+                              alpha=0.9, edgecolor="red", linewidth=2))
+
         axs[1].set_title("2. Daily Log Returns Scatter + Regression Line")
         axs[1].set_xlabel(f"{self.sym1} Daily Log Return")
         axs[1].set_ylabel(f"{self.sym2} Daily Log Return")
 
-        # 3. Rolling Correlation (the "is this real?" chart)
+        # 3. Rolling Correlation
         window = 30
         rolling = daily_logret[self.sym1].rolling(window=window).corr(daily_logret[self.sym2])
         rolling.plot(ax=axs[2], color='purple', linewidth=2.8)
@@ -62,7 +83,7 @@ class CorrelationChartDrawer:
         axs[2].set_ylabel("Correlation")
         axs[2].legend()
 
-        # 4. Price Ratio (pairs-trading / structural shift detector)
+        # 4. Price Ratio
         ratio = prices[self.sym1] / prices[self.sym2]
         ratio.plot(ax=axs[3], color='teal', linewidth=2.2)
         mean_r = ratio.mean()
@@ -74,11 +95,12 @@ class CorrelationChartDrawer:
 
         plt.tight_layout(rect=[0, 0.02, 1, 0.96])
 
-        # Save & show
+        # Save (no pause)
         filename = f"correlation_{self.sym1}_vs_{self.sym2}.png"
         plt.savefig(filename, bbox_inches='tight', facecolor='white')
-        print(f"\n✅ Saved: {filename}  (open it — all 4 charts vertically stacked)")
-        plt.show()
+        print(f"\n✅ Saved: {filename}  (correlation value is now highlighted in yellow on chart #2)")
+
+        # plt.show()  # ← commented out so it never pauses
 
 
 if __name__ == "__main__":
