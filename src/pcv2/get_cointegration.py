@@ -60,7 +60,7 @@ class CointegrationAnalyzer:
         return p1, p2
 
     def compute(self) -> CointegrationResults:
-        """Runs the full gold-standard analysis and prints the exact console block you wanted."""
+        """Runs the full gold-standard analysis and prints the exact console block."""
         p1, p2 = self._load_data()
         log_p1 = np.log(p1)
         log_p2 = np.log(p2)
@@ -142,7 +142,7 @@ class CointegrationAnalyzer:
         return self.results
 
 
-# ==================== STANDALONE CLI (new) ====================
+# ==================== STANDALONE CLI (now with ETH/BTC default) ====================
 if __name__ == "__main__":
     if len(sys.argv) == 4:
         csv_file = sys.argv[1]
@@ -152,9 +152,15 @@ if __name__ == "__main__":
         csv_file = None
         sym1 = sys.argv[1]
         sym2 = sys.argv[2]
+    elif len(sys.argv) == 1:
+        csv_file = None
+        sym1 = "ETH"
+        sym2 = "BTC"
+        print("⚡ No symbols provided → Using default pair: ETH / BTC")
     else:
         print(f"Usage: python {sys.argv[0]} [CSV_FILE] SYM1 SYM2")
         print("   Example: python get_cointegration.py ETH SOL")
+        print("   No arguments → automatically defaults to ETH/BTC")
         sys.exit(1)
 
     analyzer = CointegrationAnalyzer(sym1, sym2, csv_file)
