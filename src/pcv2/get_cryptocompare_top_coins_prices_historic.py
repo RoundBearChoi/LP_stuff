@@ -16,8 +16,10 @@ COINBASE_SYMBOL_MAP = {
     'PI': 'PI',
 }
 
-def get_top100_symbols(txt_file: str = "gecko_top_100_non_stable_coins.txt") -> list:
+
+def get_top_symbols(n: int = 100) -> list:
     """Robust parser — now correctly includes M (MemeCore)."""
+    txt_file = f"gecko_top_{n}_non_stable_coins.txt"
     symbols = []
     with open(txt_file, "r", encoding="utf-8") as f:
         for line in f:
@@ -160,15 +162,31 @@ def fetch_crypto_hourly_1year(symbol: str, api_key: str) -> tuple[pd.DataFrame, 
 
 # ====================== RUN IT ======================
 if __name__ == "__main__":
-    print("🚀 CryptoCompare Top-100 → raw_data/ folder + GIANT combined CSV")
+    # === Command line argument support (your requested feature) ===
+    n_coins = 100
+    if len(sys.argv) > 1:
+        try:
+            n_coins = int(sys.argv[1])
+            if n_coins < 1 or n_coins > 2000:
+                raise ValueError
+        except ValueError:
+            print("❌ Usage: python get_cryptocompare_top_coins_prices_historic.py [N]")
+            print("   N = number of top coins (default: 100)")
+            print("Example: python get_cryptocompare_top_coins_prices_historic.py 200")
+            sys.exit(1)
+
+    base_name = f"top{n_coins}_hourly_1year"
+    giant_file = f"{base_name}_combined.csv"
+    
+    print(f"🚀 CryptoCompare Top-{n_coins} → raw_data/ folder + GIANT combined CSV")
     print("   💡 Skips existing files (set FORCE_REDOWNLOAD = True to refresh)")
     print("   ✨ Coinbase fixes + 3-part TXT backup + skip-download option\n")
     
-    # === NEW: BACKUP TXT CHECK (your requested feature) ===
+    # === DYNAMIC BACKUP FILES ===
     backup_files = [
-        "top100_hourly_1year_combined_backup_1.txt",
-        "top100_hourly_1year_combined_backup_2.txt",
-        "top100_hourly_1year_combined_backup_3.txt"
+        f"{base_name}_combined_backup_1.txt",
+        f"{base_name}_combined_backup_2.txt",
+        f"{base_name}_combined_backup_3.txt"
     ]
     
     use_backup = False
@@ -192,21 +210,18 @@ if __name__ == "__main__":
             combined = combined[['datetime', 'symbol', 'open', 'high', 'low', 'close', 'volumefrom', 'volumeto']]
             combined = combined.sort_values(['symbol', 'datetime']).reset_index(drop=True)
             
-            giant_file = "top100_hourly_1year_combined.csv"
             combined.to_csv(giant_file, index=False)
             
             print(f"🎉 Loaded {len(combined):,} rows ({combined['symbol'].nunique()} coins) from backup")
             print(f"   Giant CSV saved → {giant_file}")
             
-            # Refresh the 3 backup files (clean + sorted)
             n = len(combined)
             chunk_size = (n + 2) // 3
-            print(f"   Refreshing 3 backup files (~{chunk_size:,} rows each)...")
             for i in range(3):
                 start = i * chunk_size
                 end = min(start + chunk_size, n)
                 chunk = combined.iloc[start:end]
-                backup_file = f"top100_hourly_1year_combined_backup_{i+1}.txt"
+                backup_file = f"{base_name}_combined_backup_{i+1}.txt"
                 chunk.to_csv(backup_file, index=False)
             
             success = combined['symbol'].nunique()
@@ -214,7 +229,6 @@ if __name__ == "__main__":
             
         except Exception as e:
             print(f"❌ Failed to load backup: {e}")
-            print("Falling back to normal download mode...\n")
             use_backup = False
     
     # ====================== NORMAL DOWNLOAD MODE ======================
@@ -227,8 +241,8 @@ if __name__ == "__main__":
         os.makedirs("raw_data", exist_ok=True)
         print("📁 Created/verified folder: raw_data/\n")
         
-        symbols = get_top100_symbols()
-        print(f"📋 Parsed {len(symbols)} coins from gecko_top_100_non_stable_coins.txt\n")
+        symbols = get_top_symbols(n_coins)
+        print(f"📋 Parsed {len(symbols)} coins from gecko_top_{n_coins}_non_stable_coins.txt\n")
         
         for i, symbol in enumerate(symbols, 1):
             print(f"[{i:3d}/{len(symbols)}] {symbol}")
@@ -276,10 +290,8 @@ if __name__ == "__main__":
             combined = combined[['datetime', 'symbol', 'open', 'high', 'low', 'close', 'volumefrom', 'volumeto']]
             combined = combined.sort_values(['symbol', 'datetime']).reset_index(drop=True)
             
-            giant_file = "top100_hourly_1year_combined.csv"
             combined.to_csv(giant_file, index=False)
             
-            # Split into 3 backup files (no date in filename)
             n = len(combined)
             chunk_size = (n + 2) // 3
             print(f"   📋 Splitting into 3 backup files (~{chunk_size:,} rows each)...")
@@ -288,13 +300,13 @@ if __name__ == "__main__":
                 start = i * chunk_size
                 end = min(start + chunk_size, n)
                 chunk = combined.iloc[start:end]
-                backup_file = f"top100_hourly_1year_combined_backup_{i+1}.txt"
+                backup_file = f"{base_name}_combined_backup_{i+1}.txt"
                 chunk.to_csv(backup_file, index=False)
                 print(f"      • Part {i+1}: {backup_file} ({len(chunk):,} rows)")
     
     # ====================== FINAL SUMMARY ======================
     print(f"\n🎉 FINISHED!")
-    print(f"   Giant file saved → top100_hourly_1year_combined.csv")
+    print(f"   Giant file saved → {giant_file}")
     if combined is not None:
         print(f"   Total rows: {len(combined):,} (≈ {len(combined)//max(success,1):,} hours × {success} coins)")
     print(f"   Successfully processed: {success} coins")
@@ -307,16 +319,16 @@ if __name__ == "__main__":
         for sym, src in fallback_coins:
             print(f"   • {sym} → {src}")
         
-        with open("fallback_coins_warning.txt", "w", encoding="utf-8") as f:
+        fallback_warning = f"{base_name}_fallback_coins_warning.txt"
+        with open(fallback_warning, "w", encoding="utf-8") as f:
             f.write("FALLBACK COINS REPORT\n")
             for sym, src in fallback_coins:
                 f.write(f"• {sym} → {src}\n")
-        print("   💾 Warning report saved → fallback_coins_warning.txt")
+        print(f"   💾 Warning report saved → {fallback_warning}")
     
     print("\n📂 Final structure:")
     print("   • raw_data/                          ← individual CSVs")
-    print("   • top100_hourly_1year_combined.csv")
-    print("   • top100_hourly_1year_combined_backup_1.txt")
-    print("   • top100_hourly_1year_combined_backup_2.txt")
-    print("   • top100_hourly_1year_combined_backup_3.txt")
-    print("   • fallback_coins_warning.txt (if any)")
+    print(f"   • {giant_file}")
+    for i in range(1, 4):
+        print(f"   • {base_name}_combined_backup_{i}.txt")
+    print(f"   • {base_name}_fallback_coins_warning.txt (if any)")

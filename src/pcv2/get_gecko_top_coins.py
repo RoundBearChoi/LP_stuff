@@ -8,8 +8,10 @@ import os
 class TopNonStableCoinsFetcher:
     """
     Fetches top non-stablecoins from CoinGecko by market cap.
+    Now uses multi-page pagination to GUARANTEE exactly the requested number
+    of coins (e.g. always 200), even after skipping stables and custom exclusions.
     Interactive API key prompt + automatic retry on 429.
-    Main list is now ultra-clean (no custom exclusion list/note).
+    Main list is ultra-clean (no custom exclusion list/note).
     """
     STABLE_IDS = {
         'tether',
@@ -44,8 +46,19 @@ class TopNonStableCoinsFetcher:
         'usx',                      # USX
         'gho',                      # overcollateralized stablecoin backed by assets
         'ondo-us-dollar-yield',     # USDY (Ondo US Dollar Yield) – tokenized yield-bearing USD note
+        'spiko-us-t-bills-money-market-fund',  # Spiko US T-Bills Money Market Fund (USTBL) – tokenized T-bills MMF
+        'fidelity-digital-interest-token',  # FDIT (Fidelity Digital Interest Token) – Fidelity tokenized Treasury money market fund
+        'tradable-na-rent-financing-platform-sstn',  # PC0000031 (Tradable NA Rent Financing Platform SSTN)
+        'the9bit',                  # 9BIT (The9bit) – Solana ecosystem token (Gaming Marketplace / GameFi category)
+        'blockchain-capital',       # BCAP (Blockchain Capital) – old tokenized VC fund token
+        'thetrumptoken',            # GREAT (TheTrumpToken) – Trump-themed PolitiFi / Solana meme coin
+        'theo-short-duration-us-treasury-fund',  # THBILL (Theo Short Duration US Treasury Fund)
+        'onyc',                     # ONYC (Onchain Yield Coin) – tokenized yield-generating asset on Solana
+        'apollo-diversified-credit-securitize-fund',  # ACRED (Apollo Diversified Credit Securitize Fund)
+        'cash-4',                   # CASH (CASH) – fully backed USD stablecoin by Bridge and Phantom
+        'gmt-token',                # GOMINING (GoMining Token) – Bitcoin mining utility token
     }
-
+    
     MAX_NAME_LEN = 19
     MAX_SYMBOL_LEN = 12
 
@@ -128,15 +141,6 @@ class TopNonStableCoinsFetcher:
         if limit < 1:
             limit = 50
 
-        params = {
-            'vs_currency': self.vs_currency.lower(),
-            'order': 'market_cap_desc',
-            'per_page': min(limit + 60, 250),
-            'page': 1,
-            'sparkline': False,
-            'price_change_percentage': '24h'
-        }
-
         # === INTERACTIVE API KEY PROMPT ===
         api_key = os.getenv("COINGECKO_API_KEY")
         if api_key:
@@ -151,49 +155,70 @@ class TopNonStableCoinsFetcher:
                 print("⚠️  No key provided — using public rate limit. "
                       "Get a free key at https://www.coingecko.com/en/developers/dashboard")
 
-        if api_key:
-            params['x_cg_demo_api_key'] = api_key
-
         headers = {'User-Agent': 'TopNonStableCoinsFetcher/2.0'}
-
         url = "https://api.coingecko.com/api/v3/coins/markets"
-        print("📡 Fetching from CoinGecko...")
-        response = self._make_request_with_retry(url, params, headers)
 
-        data = response.json()
-
+        # === PAGINATION LOGIC – GUARANTEES EXACTLY `limit` NON-STABLECOINS ===
         filtered = []
         excluded = []
         skipped_stables = 0
         excluded_custom = 0
+        page = 1
+        global_rank = 0
+        max_pages = 8  # safety cap (2000 coins max)
 
-        for i, coin in enumerate(data, 1):
-            coin_id = coin['id']
-            price = coin.get('current_price') or 0
-            symbol = coin.get('symbol', '').lower()
-            name = coin.get('name', '').lower()
+        print("📡 Fetching from CoinGecko...")
 
-            if coin_id in self.STABLE_IDS:
-                skipped_stables += 1
-                excluded.append((i, coin, "Major stablecoin ID"))
-                continue
-            if coin_id in self.EXCLUDED_IDS:
-                excluded_custom += 1
-                excluded.append((i, coin, "Custom/manual blacklist"))
-                continue
-            if 0.92 < price < 1.08 and ('usd' in symbol or 'usd' in name):
-                skipped_stables += 1
-                excluded.append((i, coin, "Dynamic USD-pegged stable"))
-                continue
+        while len(filtered) < limit and page <= max_pages:
+            params = {
+                'vs_currency': self.vs_currency.lower(),
+                'order': 'market_cap_desc',
+                'per_page': 250,
+                'page': page,
+                'sparkline': False,
+                'price_change_percentage': '24h'
+            }
+            if api_key:
+                params['x_cg_demo_api_key'] = api_key
 
-            filtered.append(coin)
-            if len(filtered) >= limit:
+            response = self._make_request_with_retry(url, params, headers)
+            data = response.json()
+
+            if not data:
+                print("   No more data from CoinGecko")
                 break
 
-        print(f"✅ Fetched {len(data)} coins • "
+            for coin in data:
+                global_rank += 1
+                coin_id = coin['id']
+                price = coin.get('current_price') or 0
+                symbol = coin.get('symbol', '').lower()
+                name = coin.get('name', '').lower()
+
+                if coin_id in self.STABLE_IDS:
+                    skipped_stables += 1
+                    excluded.append((global_rank, coin, "Major stablecoin ID"))
+                    continue
+                if coin_id in self.EXCLUDED_IDS:
+                    excluded_custom += 1
+                    excluded.append((global_rank, coin, "Custom/manual blacklist"))
+                    continue
+                if 0.92 < price < 1.08 and ('usd' in symbol or 'usd' in name):
+                    skipped_stables += 1
+                    excluded.append((global_rank, coin, "Dynamic USD-pegged stable"))
+                    continue
+
+                filtered.append(coin)
+                if len(filtered) >= limit:
+                    break
+
+            print(f"   Page {page} → {len(filtered)}/{limit} non-stables collected so far")
+            page += 1
+
+        print(f"✅ Fetched {global_rank} raw coins across {page-1} page(s) • "
               f"Skipped {skipped_stables} stablecoins • "
               f"Excluded {excluded_custom} custom coins • "
-              f"Returning top {len(filtered)} non-stables\n")
+              f"Returning exactly {len(filtered)} non-stables\n")
 
         # Console preview
         print(f"{'Rank':<4} {'Name':<22} {'Symbol':<15} {'Price':>12} {'Market Cap':>18}")
@@ -246,10 +271,10 @@ class TopNonStableCoinsFetcher:
 # ==================== COMMAND-LINE RUN ====================
 if __name__ == "__main__":
     try:
-        limit = int(sys.argv[1]) if len(sys.argv) > 1 else 100
+        limit = int(sys.argv[1]) if len(sys.argv) > 1 else 200
     except (IndexError, ValueError):
         print("Usage: python get_gecko_top_coins.py [NUMBER]")
-        limit = 100
+        limit = 200
 
     fetcher = TopNonStableCoinsFetcher()
     fetcher.fetch_and_save(limit)

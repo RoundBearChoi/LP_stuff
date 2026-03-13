@@ -1,0 +1,7 @@
+FALLBACK COINS REPORT
+• RAIN → USDT on KuCoin
+• MNT → USD on Coinbase (as MANTLE)
+• ASTER → USD CCCAGG (partial - timeout)
+• ADI → USDT on KuCoin
+• 9BIT → USDT on KuCoin
+• SENT → USDT on Binance
