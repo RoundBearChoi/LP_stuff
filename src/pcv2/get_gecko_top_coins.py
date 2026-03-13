@@ -12,8 +12,16 @@ class TopNonStableCoinsFetcher:
     Main list is now ultra-clean (no custom exclusion list/note).
     """
     STABLE_IDS = {
-        'tether', 'usd-coin', 'usds', 'ethena-usde', 'dai',
-        'paypal-usd', 'first-digital-usd', 'true-usd', 'usdd', 'frax'
+        'tether',
+        'usd-coin',
+        'usds',
+        'ethena-usde',
+        'dai',
+        'paypal-usd',
+        'first-digital-usd',
+        'true-usd',
+        'usdd',
+        'frax'
     }
 
     EXCLUDED_IDS = {
@@ -27,15 +35,15 @@ class TopNonStableCoinsFetcher:
         'euro-coin',
         
         # Newly added (March 2026):
-        #'rain',           # RAIN
-        #'mantle',         # MNT (Mantle L2)
-        #'pi-network',     # PI (Pi Network)
-        'ousg',           # OUSG (tokenized T-bills)
-        'a7a5',           # A7A5
-        'kinesis-gold',   # KAU (gold-backed)
-        'usx',            # USX
-        'gho',
-        'ondo-us-dollar-yield',   # USDY (Ondo US Dollar Yield) – tokenized yield-bearing USD note
+        #'rain',                    # RAIN
+        #'mantle',                  # MNT (Mantle L2)
+        #'pi-network',              # PI (Pi Network)
+        'ousg',                     # OUSG (tokenized T-bills)
+        'a7a5',                     # A7A5
+        'kinesis-gold',             # KAU (gold-backed)
+        'usx',                      # USX
+        'gho',                      # overcollateralized stablecoin backed by assets
+        'ondo-us-dollar-yield',     # USDY (Ondo US Dollar Yield) – tokenized yield-bearing USD note
     }
 
     MAX_NAME_LEN = 19
