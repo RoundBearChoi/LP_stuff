@@ -1,0 +1,52 @@
+Excluded Coins Report (from top 244 fetched)
+Generated: 2026-03-13 17:20:34 KST
+Total skipped stablecoins: 30
+Total custom excluded (manual blacklist): 14
+Total excluded: 44
+
+Orig Rank  Name                           Symbol           Price (USD)      Market Cap Reason                        
+--------------------------------------------------------------------------------------------------------------
+3          Tether                         USDT         $       1.00          $183.99B   Major stablecoin ID           
+6          USDC                           USDC         $       1.00           $78.88B   Major stablecoin ID           
+9          Figure Heloc                   FIGR_HELOC   $       1.01           $15.92B   Custom/manual blacklist       
+12         USDS                           USDS         $       1.00           $11.28B   Major stablecoin ID           
+19         Ethena USDe                    USDE         $       1.00            $5.92B   Major stablecoin ID           
+22         USD1                           USD1         $       1.00            $4.62B   Dynamic USD-pegged stable     
+24         Dai                            DAI          $       1.00            $4.26B   Major stablecoin ID           
+28         PayPal USD                     PYUSD        $       1.00            $4.12B   Major stablecoin ID           
+42         Circle USYC                    USYC         $       1.12            $2.31B   Custom/manual blacklist       
+44         BlackRock USD In...            BUIDL        $       1.00            $1.99B   Dynamic USD-pegged stable     
+47         Falcon USD                     USDF         $       1.00            $1.75B   Dynamic USD-pegged stable     
+48         Global Dollar                  USDG         $       1.00            $1.75B   Dynamic USD-pegged stable     
+52         Ripple USD                     RLUSD        $       1.00            $1.57B   Dynamic USD-pegged stable     
+57         BFUSD                          BFUSD        $       1.00            $1.32B   Dynamic USD-pegged stable     
+58         Ondo US Dollar Y...            USDY         $       1.13            $1.32B   Custom/manual blacklist       
+63         Superstate Short...            USTB         $      11.02            $1.09B   Custom/manual blacklist       
+70         Spiko EU T-Bills...            EUTBL        $       1.20           $938.5M   Custom/manual blacklist       
+75         USDtb                          USDTB        $       1.00           $839.0M   Dynamic USD-pegged stable     
+80         USDD                           USDD         $       1.00           $757.9M   Major stablecoin ID           
+83         OUSG                           OUSG         $     114.57           $723.4M   Custom/manual blacklist       
+85         Janus Henderson ...            JTRSY        $       1.10           $668.6M   Custom/manual blacklist       
+90         YLDS                           YLDS         $       1.00           $595.5M   Custom/manual blacklist       
+92         GHO                            GHO          $       1.00           $584.7M   Custom/manual blacklist       
+94         Usual USD                      USD0         $       1.00           $562.9M   Dynamic USD-pegged stable     
+96         TrueUSD                        TUSD         $       1.00           $495.0M   Major stablecoin ID           
+97         A7A5                           A7A5         $       0.01           $490.3M   Custom/manual blacklist       
+106        EURC                           EURC         $       1.15           $446.1M   Custom/manual blacklist       
+110        Janus Henderson ...            JAAA         $       1.03           $417.8M   Custom/manual blacklist       
+117        Kinesis Gold                   KAU          $     164.26           $392.1M   Custom/manual blacklist       
+118        First Digital USD              FDUSD        $       1.00           $376.5M   Major stablecoin ID           
+119        USX                            USX          $       1.00           $365.6M   Custom/manual blacklist       
+125        USDai                          USDAI        $       1.00           $330.2M   Dynamic USD-pegged stable     
+145        Legacy Frax Dollar             FRAX         $       1.00           $274.6M   Major stablecoin ID           
+150        crvUSD                         CRVUSD       $       1.00           $262.3M   Dynamic USD-pegged stable     
+162        Neutrl USD                     NUSD         $       1.01           $228.1M   Dynamic USD-pegged stable     
+166        USDa                           USDA         $       0.98           $217.2M   Dynamic USD-pegged stable     
+167        AUSD                           AUSD         $       1.00           $216.4M   Dynamic USD-pegged stable     
+196        InfiniFi USD                   IUSD         $       1.00           $170.9M   Dynamic USD-pegged stable     
+206        Satoshi Stablecoin             SATUSD       $       1.00           $158.6M   Dynamic USD-pegged stable     
+210        GUSD                           GUSD         $       1.00           $150.1M   Dynamic USD-pegged stable     
+220        Aster USDF                     USDF         $       1.00           $133.8M   Dynamic USD-pegged stable     
+237        Pleasing USD                   PUSD         $       1.00           $120.5M   Dynamic USD-pegged stable     
+239        Avant USD                      AVUSD        $       1.00           $120.0M   Dynamic USD-pegged stable     
+240        Frax USD                       FRXUSD       $       1.00           $119.1M   Dynamic USD-pegged stable     
