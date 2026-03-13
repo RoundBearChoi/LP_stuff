@@ -2,8 +2,9 @@ import requests
 import pandas as pd
 from datetime import datetime, timedelta, timezone
 import time
+import sys
 
-# ================== FETCH FUNCTIONS ==================
+# ================== FETCH FUNCTIONS (unchanged) ==================
 def fetch_funding_rates(symbol: str, start_time=None, end_time=None, limit: int = 1000):
     url = "https://fapi.binance.com/fapi/v1/fundingRate"
     params = {'symbol': symbol.upper(), 'limit': limit}
@@ -26,7 +27,7 @@ def fetch_funding_rates(symbol: str, start_time=None, end_time=None, limit: int 
 
 def get_full_funding_history(symbol: str, years: int = 2):
     end = datetime.now(timezone.utc)
-    start = end - timedelta(days=int(365.25 * years) + 3)  # +3 days buffer to catch first funding
+    start = end - timedelta(days=int(365.25 * years) + 3)
     all_dfs = []
     current_start = start
     
@@ -70,7 +71,7 @@ def fetch_klines(symbol: str, interval: str = '15m', start_time=None, end_time=N
 
 def get_full_klines(symbol: str, interval: str = '15m', years: int = 2):
     end = datetime.now(timezone.utc)
-    start = end - timedelta(days=int(365.25 * years) + 3)  # +3 days buffer
+    start = end - timedelta(days=int(365.25 * years) + 3)
     all_dfs = []
     current_start = start
     
@@ -96,55 +97,68 @@ def merge_price_funding(price_df: pd.DataFrame, funding_df: pd.DataFrame) -> pd.
     combined['fundingRate'] = combined['fundingRate'].ffill()
     return combined
 
-# ================== BTC-ETH COMBINED ==================
-def create_btc_eth_combined(btc_merged: pd.DataFrame, eth_merged: pd.DataFrame):
-    combined = btc_merged[['close', 'fundingRate']].rename(columns={'close':'btc_close', 'fundingRate':'btc_funding'}) \
-                .join(
-                    eth_merged[['close', 'fundingRate']].rename(columns={'close':'eth_close', 'fundingRate':'eth_funding'}), 
-                    how='inner'
-                )
+# ================== GENERALIZED COMBINED ==================
+def create_pair_combined(merged1: pd.DataFrame, merged2: pd.DataFrame, sym1: str, sym2: str):
+    s1 = sym1.lower()
+    s2 = sym2.lower()
+    combined = merged1[['close', 'fundingRate']].rename(columns={
+                'close': f'{s1}_close', 
+                'fundingRate': f'{s1}_funding'
+            }).join(
+                merged2[['close', 'fundingRate']].rename(columns={
+                    'close': f'{s2}_close', 
+                    'fundingRate': f'{s2}_funding'
+                }), how='inner'
+            )
     
-    combined['btc_eth_ratio'] = combined['btc_close'] / combined['eth_close']
-    combined['eth_btc_ratio'] = combined['eth_close'] / combined['btc_close']   # ← ADDED
+    combined[f'{s1}_{s2}_ratio'] = combined[f'{s1}_close'] / combined[f'{s2}_close']
+    combined[f'{s2}_{s1}_ratio'] = combined[f'{s2}_close'] / combined[f'{s1}_close']
     
-    combined['funding_spread'] = combined['btc_funding'] - combined['eth_funding']
+    combined['funding_spread'] = combined[f'{s1}_funding'] - combined[f'{s2}_funding']
     
-    # === CLEAN START: drop any rows before BOTH funding rates exist ===
-    combined = combined.dropna(subset=['btc_funding', 'eth_funding']).copy()
-    
+    combined = combined.dropna(subset=[f'{s1}_funding', f'{s2}_funding']).copy()
     return combined
 
 # ================== MAIN ==================
 if __name__ == "__main__":
+    if len(sys.argv) != 3:
+        print("Usage: python fetchData.py <symbol1> <symbol2>")
+        print("Example: python fetchData.py cake btc")
+        sys.exit(1)
+
+    sym1 = sys.argv[1].upper()
+    sym2 = sys.argv[2].upper()
+    s1 = sym1.lower()
+    s2 = sym2.lower()
+
     INTERVAL = '15m'
     YEARS = 2
     
-    print("Fetching ~2 years of BTC data... ⌛ pls wait")
-    btc_price = get_full_klines('BTCUSDT', INTERVAL, YEARS)
-    btc_fund  = get_full_funding_history('BTCUSDT', YEARS)
+    print(f"Fetching ~2 years of {sym1} data... ⌛ pls wait")
+    price1 = get_full_klines(f'{sym1}USDT', INTERVAL, YEARS)
+    fund1  = get_full_funding_history(f'{sym1}USDT', YEARS)
     
-    print("Fetching ~2 years of ETH data... ⌛ pls wait")
-    eth_price = get_full_klines('ETHUSDT', INTERVAL, YEARS)
-    eth_fund  = get_full_funding_history('ETHUSDT', YEARS)
+    print(f"Fetching ~2 years of {sym2} data... ⌛ pls wait")
+    price2 = get_full_klines(f'{sym2}USDT', INTERVAL, YEARS)
+    fund2  = get_full_funding_history(f'{sym2}USDT', YEARS)
     
     print("Merging price + funding data...")
-    btc_merged = merge_price_funding(btc_price, btc_fund)
-    eth_merged = merge_price_funding(eth_price, eth_fund)
+    merged1 = merge_price_funding(price1, fund1)
+    merged2 = merge_price_funding(price2, fund2)
     
-    print("Creating BTC/ETH combined dataset...")
-    combined = create_btc_eth_combined(btc_merged, eth_merged)
+    print(f"Creating {sym1}/{sym2} combined dataset...")
+    combined = create_pair_combined(merged1, merged2, sym1, sym2)
     
-    # ================== SAVE RAW DATA ==================
-    btc_merged.to_csv("btc_merged_2y.csv")
-    eth_merged.to_csv("eth_merged_2y.csv")
-    combined.to_csv("btc_eth_funding_spread_2y.csv")
+    merged1.to_csv(f"{s1}_merged_2y.csv")
+    merged2.to_csv(f"{s2}_merged_2y.csv")
+    combined.to_csv(f"{s1}_{s2}_funding_spread_2y.csv")
     
-    print(f"\n✅ All raw data saved!")
-    print(f"   • BTC full:   btc_merged_2y.csv          ({len(btc_merged):,} rows)")
-    print(f"   • ETH full:   eth_merged_2y.csv          ({len(eth_merged):,} rows)")
-    print(f"   • Combined:   btc_eth_funding_spread_2y.csv ({len(combined):,} rows)")
+    print(f"\n✅ All raw data saved for {sym1}-{sym2}!")
+    print(f"   • {sym1}: {s1}_merged_2y.csv          ({len(merged1):,} rows)")
+    print(f"   • {sym2}: {s2}_merged_2y.csv          ({len(merged2):,} rows)")
+    print(f"   • Combined: {s1}_{s2}_funding_spread_2y.csv ({len(combined):,} rows)")
     
     print(f"\n📅 Actual clean data range:")
     print(f"   From: {combined.index[0]}")
     print(f"   To:   {combined.index[-1]}")
-    print(f"\nFiles are ready in your current folder. Now includes both btc_eth_ratio and eth_btc_ratio! 🎯")
+    print(f"\nFiles are ready! Includes both {s1}_{s2}_ratio and {s2}_{s1}_ratio. 🎯")
