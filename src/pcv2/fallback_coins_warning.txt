@@ -1,5 +1,0 @@
-FALLBACK COINS REPORT
-• RAIN → USDT on KuCoin
-• TON → USD CCCAGG (partial - timeout)
-• MNT → USD on Coinbase (as MANTLE)
-• ADI → USDT on KuCoin
