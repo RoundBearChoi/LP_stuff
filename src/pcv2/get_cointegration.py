@@ -32,7 +32,7 @@ class CointegrationResults:
 
 class CointegrationAnalyzer:
     DEFAULT_CSV = DEFAULT_CSV_FILE
-    ROLLING_WINDOW_DAYS = 30          # ← CHANGED FROM 90 TO 30
+    ROLLING_WINDOW_DAYS = 90         # ← adjust days
 
     def __init__(self, sym1: str, sym2: str, csv_file: Optional[str] = None, max_months: int = DEFAULT_MAX_MONTHS):
         self.sym1 = sym1.upper()
