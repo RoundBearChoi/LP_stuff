@@ -2,8 +2,9 @@ import requests
 import pandas as pd
 from datetime import datetime, timedelta, timezone
 import time
+import sys
 
-# ================== FETCH FUNCTIONS (FINAL ROBUST VERSION) ==================
+# ================== FETCH FUNCTIONS (unchanged) ==================
 def fetch_klines(symbol: str, interval: str = '15m', days: int = 30):
     url = "https://fapi.binance.com/fapi/v1/klines"
     end = datetime.now(timezone.utc)
@@ -44,7 +45,7 @@ def fetch_open_interest(symbol: str, days: int = 30):
     end = datetime.now(timezone.utc)
     all_dfs = []
     current_end = end
-    max_loops = 20  # safety
+    max_loops = 20
     
     while len(all_dfs) < 5000 and max_loops > 0:
         params = {'symbol': symbol.upper(), 'period': '15m', 'limit': 500}
@@ -71,7 +72,6 @@ def fetch_open_interest(symbol: str, days: int = 30):
     
     if all_dfs:
         full = pd.concat(all_dfs).drop_duplicates().sort_index()
-        # Make cutoff tz-naive to match pandas index
         cutoff = (end - timedelta(days=days)).replace(tzinfo=None)
         return full[full.index >= cutoff]
     
@@ -79,27 +79,43 @@ def fetch_open_interest(symbol: str, days: int = 30):
 
 # ================== MAIN ==================
 if __name__ == "__main__":
-    print("Fetching fresh BTC & ETH price + Open Interest data (last 30 days)...")
-    btc_price = fetch_klines('BTCUSDT')
-    eth_price = fetch_klines('ETHUSDT')
-    btc_oi = fetch_open_interest('BTCUSDT')
-    eth_oi = fetch_open_interest('ETHUSDT')
+    if len(sys.argv) == 1:
+        sym1, sym2 = "BTC", "ETH"
+        print("No arguments → using default BTC/ETH")
+    elif len(sys.argv) == 3:
+        sym1, sym2 = sys.argv[1].upper(), sys.argv[2].upper()
+    else:
+        print("Usage: python fetch_oi_standalone.py [SYMBOL1 SYMBOL2]")
+        print("Example: python fetch_oi_standalone.py cake btc")
+        sys.exit(1)
+
+    print(f"Fetching fresh {sym1} & {sym2} price + Open Interest data (last 30 days)...")
+    
+    s1_price = fetch_klines(f'{sym1}USDT')
+    s2_price = fetch_klines(f'{sym2}USDT')
+    s1_oi = fetch_open_interest(f'{sym1}USDT')
+    s2_oi = fetch_open_interest(f'{sym2}USDT')
 
     print("Merging into standalone dataset...")
-    combined = btc_price[['close']].rename(columns={'close': 'btc_close'}) \
-                .join(eth_price[['close']].rename(columns={'close': 'eth_close'}), how='inner') \
-                .join(btc_oi.rename(columns={'oi_value': 'btc_oi_value'}), how='left') \
-                .join(eth_oi.rename(columns={'oi_value': 'eth_oi_value'}), how='left')
-
-    combined[['btc_oi_value', 'eth_oi_value']] = combined[['btc_oi_value', 'eth_oi_value']].ffill()
+    base = sym1.lower()
+    quote = sym2.lower()
     
-    combined['btc_eth_price_ratio'] = combined['btc_close'] / combined['eth_close']
-    combined['btc_eth_oi_ratio'] = combined['btc_oi_value'] / combined['eth_oi_value']
-    combined['oi_ratio_24h_change'] = combined['btc_eth_oi_ratio'].shift(-96) - combined['btc_eth_oi_ratio']
-    combined['price_ratio_24h_change'] = combined['btc_eth_price_ratio'].shift(-96) - combined['btc_eth_price_ratio']
+    combined = s1_price[['close']].rename(columns={'close': f'{base}_close'}) \
+                .join(s2_price[['close']].rename(columns={'close': f'{quote}_close'}), how='inner') \
+                .join(s1_oi.rename(columns={'oi_value': f'{base}_oi_value'}), how='left') \
+                .join(s2_oi.rename(columns={'oi_value': f'{quote}_oi_value'}), how='left')
 
-    combined.to_csv("btc_eth_oi_standalone.csv")
+    combined[[f'{base}_oi_value', f'{quote}_oi_value']] = combined[[f'{base}_oi_value', f'{quote}_oi_value']].ffill()
+    
+    ratio_col = f'{base}_{quote}'
+    combined[f'{ratio_col}_price_ratio'] = combined[f'{base}_close'] / combined[f'{quote}_close']
+    combined[f'{ratio_col}_oi_ratio'] = combined[f'{base}_oi_value'] / combined[f'{quote}_oi_value']
+    combined['oi_ratio_24h_change'] = combined[f'{ratio_col}_oi_ratio'].shift(-96) - combined[f'{ratio_col}_oi_ratio']
+    combined['price_ratio_24h_change'] = combined[f'{ratio_col}_price_ratio'].shift(-96) - combined[f'{ratio_col}_price_ratio']
 
-    print(f"\n✅ SUCCESS! File created: btc_eth_oi_standalone.csv")
-    print(f"   • Latest BTC/ETH OI Ratio (USD): {combined['btc_eth_oi_ratio'].iloc[-1]:.3f}")
+    csv_filename = f"{base}_{quote}_oi_standalone.csv"
+    combined.to_csv(csv_filename)
+
+    print(f"\n✅ SUCCESS! File created: {csv_filename}")
+    print(f"   • Latest {sym1}/{sym2} OI Ratio (USD): {combined[f'{ratio_col}_oi_ratio'].iloc[-1]:.3f}")
     print(f"   • Total rows: {len(combined):,} (~30 days of 15m data)")
