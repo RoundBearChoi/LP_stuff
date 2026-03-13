@@ -1,11 +1,14 @@
 import sys
 import pandas as pd
 import matplotlib.pyplot as plt
+from config import DEFAULT_CSV_FILE   # ← NEW: now comes from config.json
 
 class PriceRatioChart:
     """Clean, reusable class to generate price ratio charts from your CSV."""
 
-    CSV_FILE = 'top100_hourly_1year_combined.csv'   # Your exact file (same folder)
+    # ==================== CSV SOURCE (NOW FROM CONFIG) ====================
+    CSV_FILE = DEFAULT_CSV_FILE         # Loaded from config.json → "default_csv_file"
+    # =====================================================================
 
     # ==================== TUNABLE SETTINGS (change these only) ====================
     MA_PERIOD = 168                     # hours (168 = 7 days)
@@ -17,7 +20,7 @@ class PriceRatioChart:
 
     def __init__(self):
         """Initialize with default settings."""
-        pass
+        print(f"📁 Using CSV file from config: {self.CSV_FILE}")
 
     def parse_arguments(self):
         """Parse command-line args or default to BTC/ETH."""
@@ -149,6 +152,7 @@ class PriceRatioChart:
         print(f"   MA period: {self.MA_PERIOD} hours")
         print(f"   Bands: ±{self.BAND_MULTIPLIER} standard deviations (red dashed)")
         print(f"   Line widths: ratio={self.RATIO_LINE_WIDTH}, MA={self.MA_LINE_WIDTH} (change at top)")
+        print(f"   CSV used: {self.CSV_FILE}")
         print("\n📊 Opening chart window now... CLOSE the window to exit the program.")
 
         plt.show()   # ← This shows the chart AND pauses the script
