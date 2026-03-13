@@ -6,7 +6,7 @@ from statsmodels.tsa.stattools import coint
 import os
 from dataclasses import dataclass
 from typing import Optional, Tuple
-from pandas.tseries.offsets import DateOffset
+from config import DEFAULT_MAX_MONTHS, DEFAULT_CSV_FILE
 
 
 @dataclass
@@ -31,14 +31,14 @@ class CointegrationResults:
 
 
 class CointegrationAnalyzer:
-    DEFAULT_CSV = "top100_hourly_1year_combined.csv"
+    DEFAULT_CSV = DEFAULT_CSV_FILE
     ROLLING_WINDOW_DAYS = 90
 
-    def __init__(self, sym1: str, sym2: str, csv_file: Optional[str] = None, max_months: int = 12):
+    def __init__(self, sym1: str, sym2: str, csv_file: Optional[str] = None, max_months: int = DEFAULT_MAX_MONTHS):
         self.sym1 = sym1.upper()
         self.sym2 = sym2.upper()
         self.csv_file = csv_file or self.DEFAULT_CSV
-        self.max_months = max_months   # ← NEW
+        self.max_months = max_months
         self.results: Optional[CointegrationResults] = None
 
     def _load_data(self) -> Tuple[pd.Series, pd.Series]:
@@ -48,9 +48,10 @@ class CointegrationAnalyzer:
 
         df = pd.read_csv(self.csv_file, parse_dates=['datetime'])
 
-        # === NEW: MAXIMUM TIMEFRAME FILTER ===
+        # === IMPROVED MAXIMUM TIMEFRAME FILTER (30.437 days per month) ===
         end_date = df['datetime'].max()
-        start_date = end_date - DateOffset(months=self.max_months)
+        days_back = int(self.max_months * 30.437)
+        start_date = end_date - pd.Timedelta(days=days_back)
         df = df[df['datetime'] >= start_date].copy()
         print(f"Filtered to last {self.max_months} months: {df['datetime'].min().date()} → {end_date.date()}")
         print(f"Rows after filter: {len(df):,}")
@@ -71,6 +72,7 @@ class CointegrationAnalyzer:
         return p1, p2
 
     def compute(self) -> CointegrationResults:
+        """Runs the full gold-standard analysis and prints the exact console block."""
         p1, p2 = self._load_data()
         log_p1 = np.log(p1)
         log_p2 = np.log(p2)
@@ -155,7 +157,7 @@ if __name__ == "__main__":
     csv_file = None
     sym1 = "ETH"
     sym2 = "BTC"
-    max_months = 12
+    max_months = DEFAULT_MAX_MONTHS
 
     if len(sys.argv) == 1:
         print(f"⚡ No symbols provided → Using default pair: ETH / BTC (last {max_months} months)")
@@ -176,8 +178,8 @@ if __name__ == "__main__":
             sym2 = args[2].upper()
         else:
             print(f"Usage: python {sys.argv[0]} [CSV_FILE] SYM1 SYM2 [max_months]")
-            print("   Example: python get_cointegration.py ETH SOL 6")
-            print("   No arguments → ETH/BTC last 12 months")
+            print("   Example: python get_cointegration.py ETH SOL 3")
+            print("   No arguments → ETH/BTC last 6 months")
             sys.exit(1)
 
     analyzer = CointegrationAnalyzer(sym1, sym2, csv_file, max_months)

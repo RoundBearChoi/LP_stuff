@@ -1,20 +1,23 @@
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
-import sys                               # ← THIS WAS MISSING
+import sys
 from get_cointegration import CointegrationAnalyzer
+from config import DEFAULT_MAX_MONTHS, DEFAULT_CSV_FILE
 
 
 class CointegrationChart:
     """Only responsible for visualization. All heavy lifting is done by the analyzer."""
 
-    def __init__(self, sym1: str, sym2: str, csv_file: str = None, max_months: int = 12):
+    def __init__(self, sym1: str, sym2: str, csv_file: str = None, max_months: int = DEFAULT_MAX_MONTHS):
         self.max_months = max_months
         self.analyzer = CointegrationAnalyzer(sym1, sym2, csv_file, max_months)
 
     def generate(self):
+        # === 1. Compute everything (one clean call) ===
         results = self.analyzer.compute()
 
+        # ====================== 5 CHARTS ======================
         fig, axs = plt.subplots(5, 1, figsize=(14, 28),
                                 sharex=True,
                                 gridspec_kw={'hspace': 0.48},
@@ -123,7 +126,7 @@ if __name__ == "__main__":
     csv_file = None
     sym1 = "ETH"
     sym2 = "BTC"
-    max_months = 12
+    max_months = DEFAULT_MAX_MONTHS
 
     if len(sys.argv) == 1:
         print(f"⚡ No symbols provided → Using default pair: ETH / BTC (last {max_months} months)")
@@ -144,8 +147,8 @@ if __name__ == "__main__":
             sym2 = args[2].upper()
         else:
             print(f"Usage: python {sys.argv[0]} [CSV_FILE] SYM1 SYM2 [max_months]")
-            print("   Example: python draw_cointegration_chart.py ETH SOL 6")
-            print("   No arguments → ETH/BTC last 12 months")
+            print("   Example: python draw_cointegration_chart.py ETH SOL 3")
+            print("   No arguments → ETH/BTC last 6 months")
             sys.exit(1)
 
     chart = CointegrationChart(sym1, sym2, csv_file, max_months)

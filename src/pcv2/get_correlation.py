@@ -3,7 +3,7 @@ import numpy as np
 import sys
 import warnings
 from pathlib import Path
-from pandas.tseries.offsets import DateOffset   # for clean month handling
+from config import DEFAULT_MAX_MONTHS, DEFAULT_CSV_FILE
 
 # Silence the pandas concat FutureWarning permanently
 warnings.filterwarnings("ignore", message="Sorting by default when concatenating all DatetimeIndex")
@@ -12,11 +12,11 @@ warnings.filterwarnings("ignore", message="Sorting by default when concatenating
 class CorrelationAnalyzer:
     """Computes industry-standard price correlation between two crypto symbols."""
 
-    def __init__(self, sym1: str, sym2: str, file_path: str = "top100_hourly_1year_combined.csv", max_months: int = 12):
+    def __init__(self, sym1: str, sym2: str, file_path: str = DEFAULT_CSV_FILE, max_months: int = DEFAULT_MAX_MONTHS):
         self.sym1 = sym1.upper()
         self.sym2 = sym2.upper()
         self.file_path = file_path
-        self.max_months = max_months   # ← NEW
+        self.max_months = max_months
 
     def run(self):
         """Main execution method — contains all original logic from main()."""
@@ -49,9 +49,10 @@ class CorrelationAnalyzer:
 
         df = df.dropna(subset=[time_col]).sort_values(time_col)
 
-        # === NEW: MAXIMUM TIMEFRAME FILTER ===
+        # === IMPROVED MAXIMUM TIMEFRAME FILTER (30.437 days per month) ===
         end_date = df[time_col].max()
-        start_date = end_date - DateOffset(months=self.max_months)
+        days_back = int(self.max_months * 30.437)
+        start_date = end_date - pd.Timedelta(days=days_back)
         df = df[df[time_col] >= start_date].copy()
         print(f"Filtered to last {self.max_months} months: {df[time_col].min().date()} → {end_date.date()}")
         print(f"Rows after filter: {len(df):,}")
@@ -109,15 +110,15 @@ class CorrelationAnalyzer:
 
 if __name__ == "__main__":
     if len(sys.argv) == 1:
-        print(f"No symbols provided — defaulting to ETH vs BTC (last 12 months)\n")
+        print(f"No symbols provided — defaulting to ETH vs BTC (last {DEFAULT_MAX_MONTHS} months)\n")
         sym1 = "ETH"
         sym2 = "BTC"
-        file_path = "top100_hourly_1year_combined.csv"
-        max_months = 12
+        file_path = DEFAULT_CSV_FILE
+        max_months = DEFAULT_MAX_MONTHS
 
     else:
         args = sys.argv[1:]
-        max_months = 12
+        max_months = DEFAULT_MAX_MONTHS
         if args and args[-1].isdigit():
             max_months = int(args.pop())
 
@@ -125,15 +126,15 @@ if __name__ == "__main__":
             print(f"No symbols provided — defaulting to ETH vs BTC (last {max_months} months)\n")
             sym1 = "ETH"
             sym2 = "BTC"
-            file_path = "top100_hourly_1year_combined.csv"
+            file_path = DEFAULT_CSV_FILE
         elif len(args) == 1:
             print("Usage: python get_correlation.py <symbol1> <symbol2> [csv_file] [max_months]")
-            print("Example: python get_correlation.py pump sol 6")
+            print("Example: python get_correlation.py pump sol 3")
             sys.exit(1)
         elif len(args) == 2:
             sym1 = args[0]
             sym2 = args[1]
-            file_path = "top100_hourly_1year_combined.csv"
+            file_path = DEFAULT_CSV_FILE
         elif len(args) == 3:
             sym1 = args[0]
             sym2 = args[1]
