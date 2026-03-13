@@ -1,4 +1,4 @@
 {
-  "default_max_months": 12,
+  "default_max_months": 6,
   "default_csv_file": "top100_hourly_1year_combined.csv"
 }
