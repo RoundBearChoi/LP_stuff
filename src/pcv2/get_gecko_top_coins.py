@@ -35,6 +35,7 @@ class TopNonStableCoinsFetcher:
         'kinesis-gold',   # KAU (gold-backed)
         'usx',            # USX
         'gho',
+        'ondo-us-dollar-yield',   # USDY (Ondo US Dollar Yield) – tokenized yield-bearing USD note
     }
 
     MAX_NAME_LEN = 19
