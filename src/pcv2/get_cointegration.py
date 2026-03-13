@@ -32,7 +32,7 @@ class CointegrationResults:
 
 class CointegrationAnalyzer:
     DEFAULT_CSV = DEFAULT_CSV_FILE
-    ROLLING_WINDOW_DAYS = 90
+    ROLLING_WINDOW_DAYS = 30          # ← CHANGED FROM 90 TO 30
 
     def __init__(self, sym1: str, sym2: str, csv_file: Optional[str] = None, max_months: int = DEFAULT_MAX_MONTHS):
         self.sym1 = sym1.upper()
@@ -120,7 +120,7 @@ class CointegrationAnalyzer:
         print(f"→ {verdict_console}")
 
         # === Rolling cointegration ===
-        print(f"\nComputing rolling cointegration (90-day windows, updated daily) on last {self.max_months} months...")
+        print(f"\nComputing rolling cointegration ({self.ROLLING_WINDOW_DAYS}-day windows, updated daily) on last {self.max_months} months...")
         window = self.ROLLING_WINDOW_DAYS * 24
         step = 24
         rolling_dates, rolling_betas, rolling_pvals = [], [], []

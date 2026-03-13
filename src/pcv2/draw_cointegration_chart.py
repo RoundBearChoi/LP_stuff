@@ -103,7 +103,7 @@ class CointegrationChart:
 
         ax_beta.set_ylabel('Rolling Beta', color='blue')
         ax_p.set_ylabel('Rolling Cointegration p-value', color='red')
-        ax_beta.set_title("5. Rolling Cointegration (90-day windows) — Beta & p-value")
+        ax_beta.set_title(f"5. Rolling Cointegration ({self.analyzer.ROLLING_WINDOW_DAYS}-day windows) — Beta & p-value")  # ← CHANGED (now dynamic)
         ax_beta.grid(True, alpha=0.3)
 
         lines1, labels1 = ax_beta.get_legend_handles_labels()
