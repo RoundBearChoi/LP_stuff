@@ -6,13 +6,16 @@ import sys
 from pathlib import Path
 from tqdm import tqdm
 import warnings
+from config import DEFAULT_MAX_MONTHS, DEFAULT_CSV_FILE
 
 warnings.filterwarnings("ignore")
 
+
 class AllPairsAnalyzer:
-    def __init__(self, file_path: str = "top100_hourly_1year_combined.csv", target_symbol: str = None):
+    def __init__(self, file_path: str = DEFAULT_CSV_FILE, target_symbol: str = None, max_months: int = DEFAULT_MAX_MONTHS):
         self.file_path = file_path
         self.target_symbol = target_symbol.upper() if target_symbol else None
+        self.max_months = max_months
         self.pivot = None
         self.symbols = None
 
@@ -40,6 +43,15 @@ class AllPairsAnalyzer:
             df[time_col] = pd.to_datetime(df[time_col], errors='coerce')
 
         df = df.dropna(subset=[time_col]).sort_values(time_col)
+
+        # === IMPROVED MAXIMUM TIMEFRAME FILTER (same as other scripts) ===
+        end_date = df[time_col].max()
+        days_back = int(self.max_months * 30.437)
+        start_date = end_date - pd.Timedelta(days=days_back)
+        df = df[df[time_col] >= start_date].copy()
+        print(f"Filtered to last {self.max_months} months: {df[time_col].min().date()} → {end_date.date()}")
+        print(f"Rows after filter: {len(df):,}")
+
         df = df.groupby([time_col, symbol_col])['close'].last().reset_index()
 
         self.pivot = df.pivot(index=time_col, columns=symbol_col, values='close')
@@ -56,6 +68,7 @@ class AllPairsAnalyzer:
         else:
             print(f"🚀 Full mode: all {len(self.symbols)*(len(self.symbols)-1)//2:,} unique pairs")
 
+    # compute_pair() is unchanged — exact same math as before
     def compute_pair(self, sym1: str, sym2: str):
         sub = self.pivot[[sym1, sym2]].dropna()
         n = len(sub)
@@ -81,7 +94,7 @@ class AllPairsAnalyzer:
                         "MODERATE" if abs_c > 0.4 else "WEAK")
             direction = "positive" if pearson_h > 0 else "negative"
 
-            # Cointegration (exact same as your get_cointegration.py)
+            # Cointegration (exact same as get_cointegration.py)
             log_p1 = np.log(sub[sym1])
             log_p2 = np.log(sub[sym2])
             X = add_constant(log_p2)
@@ -90,7 +103,6 @@ class AllPairsAnalyzer:
 
             _, p_value, _ = coint(log_p1, log_p2, autolag='AIC')
 
-            # Half-life
             spread = log_p1 - beta * log_p2
             lagged = spread.shift(1).dropna()
             delta = spread.diff().dropna()
@@ -102,7 +114,6 @@ class AllPairsAnalyzer:
                     half_life_hours = np.log(2) / kappa
                     half_life_days = round(half_life_hours / 24, 1)
 
-            # Verdict (exact wording from your original)
             if p_value < 0.01:
                 verdict = "STRONG COINTEGRATION (p < 0.01)"
             elif p_value < 0.05:
@@ -157,12 +168,12 @@ class AllPairsAnalyzer:
         if self.target_symbol:
             others = [s for s in self.symbols if s != self.target_symbol]
             pair_list = [(self.target_symbol, s) for s in sorted(others)]
-            output_file = f"{self.target_symbol}_vs_all_pairs.csv"
+            output_file = f"{self.target_symbol}_vs_all_pairs_{self.max_months}m.csv"
         else:
             pair_list = [(s1, s2) for i, s1 in enumerate(self.symbols) for s2 in self.symbols[i+1:]]
-            output_file = "all_pairs_cointegration_correlation.csv"
+            output_file = f"all_pairs_cointegration_correlation_{self.max_months}m.csv"
 
-        print(f"\n🚀 Computing {len(pair_list):,} pairs...")
+        print(f"\n🚀 Computing {len(pair_list):,} pairs on last {self.max_months} months...")
 
         results = []
         for sym1, sym2 in tqdm(pair_list, desc="Processing"):
@@ -179,19 +190,33 @@ class AllPairsAnalyzer:
         print("\nTop 10 best cointegrations (lowest p-value):")
         print(df.head(10)[['pair', 'overlap_days', 'overlap_hours', 'cointegration_pvalue', 'half_life_days', 'abs_corr', 'verdict']])
 
-if __name__ == "__main__":
-    csv_path = "top100_hourly_1year_combined.csv"
-    target = None
 
-    if len(sys.argv) == 3:
+if __name__ == "__main__":
+    csv_path = DEFAULT_CSV_FILE
+    target = None
+    max_months = DEFAULT_MAX_MONTHS
+
+    if len(sys.argv) == 4:
         csv_path = sys.argv[1]
         target = sys.argv[2]
+        if sys.argv[3].isdigit():
+            max_months = int(sys.argv[3])
+    elif len(sys.argv) == 3:
+        arg1, arg2 = sys.argv[1], sys.argv[2]
+        if len(arg1) <= 8 and arg1.replace('-','').isalnum():
+            target = arg1
+            csv_path = DEFAULT_CSV_FILE
+            if arg2.isdigit():
+                max_months = int(arg2)
+        else:
+            csv_path = arg1
+            target = arg2
     elif len(sys.argv) == 2:
         arg = sys.argv[1]
-        if len(arg) <= 8 and arg.replace('-','').isalnum():  # looks like a symbol
+        if len(arg) <= 8 and arg.replace('-','').isalnum():
             target = arg
         else:
             csv_path = arg
 
-    analyzer = AllPairsAnalyzer(csv_path, target)
+    analyzer = AllPairsAnalyzer(csv_path, target, max_months)
     analyzer.run()
