@@ -6,6 +6,8 @@ from statsmodels.tsa.stattools import coint
 import os
 from dataclasses import dataclass
 from typing import Optional, Tuple
+from pandas.tseries.offsets import DateOffset
+
 
 @dataclass
 class CointegrationResults:
@@ -32,10 +34,11 @@ class CointegrationAnalyzer:
     DEFAULT_CSV = "top100_hourly_1year_combined.csv"
     ROLLING_WINDOW_DAYS = 90
 
-    def __init__(self, sym1: str, sym2: str, csv_file: Optional[str] = None):
+    def __init__(self, sym1: str, sym2: str, csv_file: Optional[str] = None, max_months: int = 12):
         self.sym1 = sym1.upper()
         self.sym2 = sym2.upper()
         self.csv_file = csv_file or self.DEFAULT_CSV
+        self.max_months = max_months   # ← NEW
         self.results: Optional[CointegrationResults] = None
 
     def _load_data(self) -> Tuple[pd.Series, pd.Series]:
@@ -44,6 +47,14 @@ class CointegrationAnalyzer:
             sys.exit(1)
 
         df = pd.read_csv(self.csv_file, parse_dates=['datetime'])
+
+        # === NEW: MAXIMUM TIMEFRAME FILTER ===
+        end_date = df['datetime'].max()
+        start_date = end_date - DateOffset(months=self.max_months)
+        df = df[df['datetime'] >= start_date].copy()
+        print(f"Filtered to last {self.max_months} months: {df['datetime'].min().date()} → {end_date.date()}")
+        print(f"Rows after filter: {len(df):,}")
+
         df_pair = df[df['symbol'].isin([self.sym1, self.sym2])].copy()
         pivot = df_pair.pivot(index='datetime', columns='symbol', values='close').dropna()
 
@@ -60,7 +71,6 @@ class CointegrationAnalyzer:
         return p1, p2
 
     def compute(self) -> CointegrationResults:
-        """Runs the full gold-standard analysis and prints the exact console block."""
         p1, p2 = self._load_data()
         log_p1 = np.log(p1)
         log_p2 = np.log(p2)
@@ -101,15 +111,14 @@ class CointegrationAnalyzer:
             verdict_chart = "NO COINTEGRATION (p ≥ 0.10)"
             box_color = 'salmon'
 
-        # === Print the exact block you asked for ===
-        print("\n=== FULL-SAMPLE RESULTS (GOLD STANDARD) ===")
+        print(f"\n=== FULL-SAMPLE RESULTS (GOLD STANDARD) — LAST {self.max_months} MONTHS ===")
         print(f"Hedge ratio (beta): {beta:.4f}")
         print(f"Cointegration p-value: {p_value:.6f}")
         print(f"Half-life: {half_life_days:.1f} days")
         print(f"→ {verdict_console}")
 
         # === Rolling cointegration ===
-        print("\nComputing rolling cointegration (90-day windows, updated daily)...")
+        print(f"\nComputing rolling cointegration (90-day windows, updated daily) on last {self.max_months} months...")
         window = self.ROLLING_WINDOW_DAYS * 24
         step = 24
         rolling_dates, rolling_betas, rolling_pvals = [], [], []
@@ -142,27 +151,35 @@ class CointegrationAnalyzer:
         return self.results
 
 
-# ==================== STANDALONE CLI (now with ETH/BTC default) ====================
 if __name__ == "__main__":
-    if len(sys.argv) == 4:
-        csv_file = sys.argv[1]
-        sym1 = sys.argv[2]
-        sym2 = sys.argv[3]
-    elif len(sys.argv) == 3:
-        csv_file = None
-        sym1 = sys.argv[1]
-        sym2 = sys.argv[2]
-    elif len(sys.argv) == 1:
-        csv_file = None
-        sym1 = "ETH"
-        sym2 = "BTC"
-        print("⚡ No symbols provided → Using default pair: ETH / BTC")
-    else:
-        print(f"Usage: python {sys.argv[0]} [CSV_FILE] SYM1 SYM2")
-        print("   Example: python get_cointegration.py ETH SOL")
-        print("   No arguments → automatically defaults to ETH/BTC")
-        sys.exit(1)
+    csv_file = None
+    sym1 = "ETH"
+    sym2 = "BTC"
+    max_months = 12
 
-    analyzer = CointegrationAnalyzer(sym1, sym2, csv_file)
+    if len(sys.argv) == 1:
+        print(f"⚡ No symbols provided → Using default pair: ETH / BTC (last {max_months} months)")
+    else:
+        args = sys.argv[1:]
+        if args and args[-1].isdigit():
+            max_months = int(args.pop())
+
+        if len(args) == 0:
+            print(f"⚡ No symbols provided → Using default pair: ETH / BTC (last {max_months} months)")
+        elif len(args) == 2:
+            sym1 = args[0].upper()
+            sym2 = args[1].upper()
+            csv_file = None
+        elif len(args) == 3:
+            csv_file = args[0]
+            sym1 = args[1].upper()
+            sym2 = args[2].upper()
+        else:
+            print(f"Usage: python {sys.argv[0]} [CSV_FILE] SYM1 SYM2 [max_months]")
+            print("   Example: python get_cointegration.py ETH SOL 6")
+            print("   No arguments → ETH/BTC last 12 months")
+            sys.exit(1)
+
+    analyzer = CointegrationAnalyzer(sym1, sym2, csv_file, max_months)
     analyzer.compute()
-    print(f"\n✅ Analysis complete for {sym1}/{sym2}")
+    print(f"\n✅ Analysis complete for {sym1}/{sym2} (last {max_months} months)")

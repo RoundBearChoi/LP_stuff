@@ -3,6 +3,7 @@ import numpy as np
 import sys
 import warnings
 from pathlib import Path
+from pandas.tseries.offsets import DateOffset   # for clean month handling
 
 # Silence the pandas concat FutureWarning permanently
 warnings.filterwarnings("ignore", message="Sorting by default when concatenating all DatetimeIndex")
@@ -11,10 +12,11 @@ warnings.filterwarnings("ignore", message="Sorting by default when concatenating
 class CorrelationAnalyzer:
     """Computes industry-standard price correlation between two crypto symbols."""
 
-    def __init__(self, sym1: str, sym2: str, file_path: str = "top100_hourly_1year_combined.csv"):
+    def __init__(self, sym1: str, sym2: str, file_path: str = "top100_hourly_1year_combined.csv", max_months: int = 12):
         self.sym1 = sym1.upper()
         self.sym2 = sym2.upper()
         self.file_path = file_path
+        self.max_months = max_months   # ← NEW
 
     def run(self):
         """Main execution method — contains all original logic from main()."""
@@ -27,7 +29,7 @@ class CorrelationAnalyzer:
         df = pd.read_csv(self.file_path)
         print(f"Loaded {len(df):,} rows. Columns detected: {df.columns.tolist()}")
 
-        # Auto-detect time column (works with your 'datetime')
+        # Auto-detect time column
         time_candidates = ['time', 'timestamp', 'date', 'datetime', 'ts']
         time_col = next((col for col in time_candidates if col in df.columns), None)
         if not time_col:
@@ -46,6 +48,14 @@ class CorrelationAnalyzer:
             df[time_col] = pd.to_datetime(df[time_col], errors='coerce')
 
         df = df.dropna(subset=[time_col]).sort_values(time_col)
+
+        # === NEW: MAXIMUM TIMEFRAME FILTER ===
+        end_date = df[time_col].max()
+        start_date = end_date - DateOffset(months=self.max_months)
+        df = df[df[time_col] >= start_date].copy()
+        print(f"Filtered to last {self.max_months} months: {df[time_col].min().date()} → {end_date.date()}")
+        print(f"Rows after filter: {len(df):,}")
+
         df = df.groupby([time_col, symbol_col])['close'].last().reset_index()
 
         # Extract series
@@ -57,14 +67,11 @@ class CorrelationAnalyzer:
 
         print(f"Aligned overlapping hourly data points: {len(prices):,} (~{len(prices)/24/365:.2f} years)")
 
-        # === Clear date information (super useful for partial-history tokens) ===
         if len(prices) > 0:
             overlap_start = prices.index.min()
             overlap_end   = prices.index.max()
             days_overlap  = (overlap_end - overlap_start).days
             print(f"Overlap period          : {overlap_start.date()} → {overlap_end.date()} ({days_overlap} days)")
-            print(f"{self.sym1} full history     : {price1.index.min().date()} → {price1.index.max().date()} ({len(price1):,} hours)")
-            print(f"{self.sym2} full history     : {price2.index.min().date()} → {price2.index.max().date()} ({len(price2):,} hours)")
 
         if len(prices) < 500:
             print("⚠️  Warning: Very short overlapping period — results may be noisy.")
@@ -80,8 +87,6 @@ class CorrelationAnalyzer:
         daily_logret = np.log(daily_prices / daily_prices.shift(1)).dropna()
         daily_pearson = daily_logret[self.sym1].corr(daily_logret[self.sym2])
 
-        # === ADDED FOR draw_correlation_chart.py (makes data reusable) ===
-        # These four lines let the chart script access everything without re-computing
         self.prices = prices
         self.log_returns = log_returns
         self.daily_prices = daily_prices
@@ -89,7 +94,7 @@ class CorrelationAnalyzer:
 
         # Results
         print("\n" + "="*70)
-        print(f"INDUSTRY-STANDARD CORRELATION: {self.sym1} vs {self.sym2}")
+        print(f"INDUSTRY-STANDARD CORRELATION: {self.sym1} vs {self.sym2} (last {self.max_months} months)")
         print("="*70)
         print(f"Hourly Pearson (log returns) : {pearson_corr:6.4f}")
         print(f"Hourly Spearman (rank)       : {spearman_corr:6.4f}")
@@ -104,21 +109,38 @@ class CorrelationAnalyzer:
 
 if __name__ == "__main__":
     if len(sys.argv) == 1:
-        # === NEW: Requested fallback ===
-        print("No symbols provided — defaulting to ETH vs BTC\n")
+        print(f"No symbols provided — defaulting to ETH vs BTC (last 12 months)\n")
         sym1 = "ETH"
         sym2 = "BTC"
         file_path = "top100_hourly_1year_combined.csv"
-
-    elif len(sys.argv) < 3:
-        print("Usage: python get_correlation.py <symbol1> <symbol2> [csv_file]")
-        print("Example: python get_correlation.py pump sol")
-        sys.exit(1)
+        max_months = 12
 
     else:
-        sym1 = sys.argv[1]
-        sym2 = sys.argv[2]
-        file_path = sys.argv[3] if len(sys.argv) > 3 else "top100_hourly_1year_combined.csv"
+        args = sys.argv[1:]
+        max_months = 12
+        if args and args[-1].isdigit():
+            max_months = int(args.pop())
 
-    analyzer = CorrelationAnalyzer(sym1, sym2, file_path)
+        if len(args) == 0:
+            print(f"No symbols provided — defaulting to ETH vs BTC (last {max_months} months)\n")
+            sym1 = "ETH"
+            sym2 = "BTC"
+            file_path = "top100_hourly_1year_combined.csv"
+        elif len(args) == 1:
+            print("Usage: python get_correlation.py <symbol1> <symbol2> [csv_file] [max_months]")
+            print("Example: python get_correlation.py pump sol 6")
+            sys.exit(1)
+        elif len(args) == 2:
+            sym1 = args[0]
+            sym2 = args[1]
+            file_path = "top100_hourly_1year_combined.csv"
+        elif len(args) == 3:
+            sym1 = args[0]
+            sym2 = args[1]
+            file_path = args[2]
+        else:
+            print("Usage: python get_correlation.py <symbol1> <symbol2> [csv_file] [max_months]")
+            sys.exit(1)
+
+    analyzer = CorrelationAnalyzer(sym1, sym2, file_path, max_months)
     analyzer.run()

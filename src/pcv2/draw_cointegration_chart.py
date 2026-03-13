@@ -1,20 +1,20 @@
 import matplotlib.pyplot as plt
-import pandas as pd          # ← ADDED
-import numpy as np           # ← ADDED
+import pandas as pd
+import numpy as np
+import sys                               # ← THIS WAS MISSING
 from get_cointegration import CointegrationAnalyzer
 
 
 class CointegrationChart:
     """Only responsible for visualization. All heavy lifting is done by the analyzer."""
 
-    def __init__(self, sym1: str, sym2: str, csv_file: str = None):
-        self.analyzer = CointegrationAnalyzer(sym1, sym2, csv_file)
+    def __init__(self, sym1: str, sym2: str, csv_file: str = None, max_months: int = 12):
+        self.max_months = max_months
+        self.analyzer = CointegrationAnalyzer(sym1, sym2, csv_file, max_months)
 
     def generate(self):
-        # === 1. Compute everything (one clean call) ===
         results = self.analyzer.compute()
 
-        # ====================== 5 CHARTS ======================
         fig, axs = plt.subplots(5, 1, figsize=(14, 28),
                                 sharex=True,
                                 gridspec_kw={'hspace': 0.48},
@@ -88,8 +88,8 @@ class CointegrationChart:
         ax_p.plot(results.rolling_dates, results.rolling_pvals,
                   color='red', linewidth=2, label='Rolling Cointegration p-value')
 
-        dates_arr = pd.to_datetime(results.rolling_dates)          # ← now works
-        mask = np.array(results.rolling_pvals) < 0.05              # ← now works
+        dates_arr = pd.to_datetime(results.rolling_dates)
+        mask = np.array(results.rolling_pvals) < 0.05
         ax_p.fill_between(dates_arr, 0, 0.05, where=mask,
                           color='lightgreen', alpha=0.4,
                           label='Cointegrated window (p<0.05)')
@@ -108,29 +108,45 @@ class CointegrationChart:
         ax_beta.legend(lines1 + lines2, labels1 + labels2, loc='upper left', fontsize=10)
 
         fig.suptitle(f"COINTEGRATION ANALYSIS (GOLD STANDARD): {self.analyzer.sym1} vs {self.analyzer.sym2} — "
+                     f"LAST {self.max_months} MONTHS — "
                      f"{len(results.p1):,} hourly bars "
                      f"({results.p1.index[0].date()} to {results.p1.index[-1].date()})",
                      fontsize=15.5, y=0.965)
 
-        output_file = f"cointegration_{self.analyzer.sym1}_{self.analyzer.sym2}_with_rolling.png"
+        output_file = f"cointegration_{self.analyzer.sym1}_{self.analyzer.sym2}_{self.max_months}m_with_rolling.png"
         plt.savefig(output_file, dpi=200, bbox_inches='tight')
         plt.close(fig)
         print(f"\n✅ Saved: {output_file}")
 
 
 if __name__ == "__main__":
-    # Same CLI as before — no breaking changes!
-    import sys
-    if len(sys.argv) == 4:
-        csv_file, sym1, sym2 = sys.argv[1], sys.argv[2], sys.argv[3]
-    elif len(sys.argv) == 3:
-        csv_file, sym1, sym2 = None, sys.argv[1], sys.argv[2]
-    elif len(sys.argv) == 1:
-        csv_file, sym1, sym2 = None, "ETH", "BTC"
-        print("⚡ No symbols provided → Using default pair: ETH / BTC")
-    else:
-        print(f"Usage: python {sys.argv[0]} [CSV_FILE] SYM1 SYM2")
-        sys.exit(1)
+    csv_file = None
+    sym1 = "ETH"
+    sym2 = "BTC"
+    max_months = 12
 
-    chart = CointegrationChart(sym1, sym2, csv_file)
+    if len(sys.argv) == 1:
+        print(f"⚡ No symbols provided → Using default pair: ETH / BTC (last {max_months} months)")
+    else:
+        args = sys.argv[1:]
+        if args and args[-1].isdigit():
+            max_months = int(args.pop())
+
+        if len(args) == 0:
+            print(f"⚡ No symbols provided → Using default pair: ETH / BTC (last {max_months} months)")
+        elif len(args) == 2:
+            sym1 = args[0].upper()
+            sym2 = args[1].upper()
+            csv_file = None
+        elif len(args) == 3:
+            csv_file = args[0]
+            sym1 = args[1].upper()
+            sym2 = args[2].upper()
+        else:
+            print(f"Usage: python {sys.argv[0]} [CSV_FILE] SYM1 SYM2 [max_months]")
+            print("   Example: python draw_cointegration_chart.py ETH SOL 6")
+            print("   No arguments → ETH/BTC last 12 months")
+            sys.exit(1)
+
+    chart = CointegrationChart(sym1, sym2, csv_file, max_months)
     chart.generate()
