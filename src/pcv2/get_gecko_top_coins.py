@@ -24,7 +24,7 @@ class TopNonStableCoinsFetcher:
         'janus-henderson-anemoy-aaa-clo-fund',
         'ylds',
         'janus-henderson-anemoy-treasury-fund',
-        'eurc',
+        'euro-coin',
         
         # Newly added (March 2026):
         #'rain',           # RAIN
@@ -34,6 +34,7 @@ class TopNonStableCoinsFetcher:
         'a7a5',           # A7A5
         'kinesis-gold',   # KAU (gold-backed)
         'usx',            # USX
+        'gho',
     }
 
     MAX_NAME_LEN = 19
@@ -95,7 +96,7 @@ class TopNonStableCoinsFetcher:
             f.write(f"Excluded Coins Report (from top {len(excluded) + limit} fetched)\n")
             f.write(f"Generated: {timestamp}\n")
             f.write(f"Total skipped stablecoins: {skipped_stables}\n")
-            f.write(f"Total custom excluded (RWAs + euro + requested blacklist): {excluded_custom}\n")
+            f.write(f"Total custom excluded (manual blacklist): {excluded_custom}\n")
             f.write(f"Total excluded: {len(excluded)}\n\n")
 
             f.write(f"{'Orig Rank':<10} {'Name':<30} {'Symbol':<12} {'Price ({})':>14} "
@@ -169,7 +170,7 @@ class TopNonStableCoinsFetcher:
                 continue
             if coin_id in self.EXCLUDED_IDS:
                 excluded_custom += 1
-                excluded.append((i, coin, "Custom RWA/euro exclusion"))
+                excluded.append((i, coin, "Custom/manual blacklist"))
                 continue
             if 0.92 < price < 1.08 and ('usd' in symbol or 'usd' in name):
                 skipped_stables += 1
