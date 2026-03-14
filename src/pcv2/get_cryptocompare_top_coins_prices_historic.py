@@ -38,7 +38,7 @@ def get_top_symbols(n: int = 100) -> list:
     return symbols
 
 
-def fetch_crypto_hourly_1year(symbol: str, api_key: str) -> tuple[pd.DataFrame, str]:
+def fetch_crypto_hourly(symbol: str, months: int, api_key: str) -> tuple[pd.DataFrame, str]:
     """Smart fallback + partial data saving on timeout/connection errors"""
     symbol = symbol.upper().strip()
     url = "https://min-api.cryptocompare.com/data/v2/histohour"
@@ -69,7 +69,10 @@ def fetch_crypto_hourly_1year(symbol: str, api_key: str) -> tuple[pd.DataFrame, 
         
         all_data = []
         to_ts = int(datetime.now().timestamp())
-        target_start = int((datetime.now() - timedelta(days=390)).timestamp())
+        
+        # Dynamic target with buffer (~1 extra month)
+        buffer_days = int(months * 30.5) + 40
+        target_start = int((datetime.now() - timedelta(days=buffer_days)).timestamp())
         
         success = False
         for i in range(10):
@@ -131,13 +134,14 @@ def fetch_crypto_hourly_1year(symbol: str, api_key: str) -> tuple[pd.DataFrame, 
             break
     
     if not all_data:
-        raise ValueError(f"{symbol} has no hourly data on CryptoCompare (tried CCCAGG + 7 exchanges including Coinbase)")
+        raise ValueError(f"{symbol} has no hourly data on CryptoCompare (tried CCCAGG + exchanges)")
     
     df = pd.DataFrame(all_data)
     df['datetime'] = pd.to_datetime(df['time'], unit='s', utc=True)
     df = df.sort_values('time').reset_index(drop=True)
     
-    cutoff = pd.Timestamp(datetime.now() - timedelta(days=365), tz='UTC')
+    # Dynamic cutoff based on requested months
+    cutoff = pd.Timestamp(datetime.now() - timedelta(days=months * 30.5), tz='UTC')
     df = df[df['datetime'] >= cutoff].reset_index(drop=True)
     
     df = df[['datetime', 'open', 'high', 'low', 'close', 'volumefrom', 'volumeto']]
@@ -155,32 +159,44 @@ def fetch_crypto_hourly_1year(symbol: str, api_key: str) -> tuple[pd.DataFrame, 
         print(f"   🧹 Dropped {dropped:,} zero-price rows")
     
     actual_days = (df['datetime'].max() - df['datetime'].min()).days if not df.empty else 0
-    print(f"   ✅ {symbol}: {len(df):,} valid hourly candles ({actual_days} days) → {used_source}")
+    print(f"   ✅ {symbol}: {len(df):,} valid hourly candles (~{actual_days//30} months) → {used_source}")
     
     return df, used_source
 
 
 # ====================== RUN IT ======================
 if __name__ == "__main__":
-    # === Command line argument support (your requested feature) ===
+    # === Command line argument support ===
     n_coins = 100
+    months = 12
+
     if len(sys.argv) > 1:
         try:
             n_coins = int(sys.argv[1])
             if n_coins < 1 or n_coins > 2000:
                 raise ValueError
         except ValueError:
-            print("❌ Usage: python get_cryptocompare_top_coins_prices_historic.py [N]")
-            print("   N = number of top coins (default: 100)")
-            print("Example: python get_cryptocompare_top_coins_prices_historic.py 200")
+            print("❌ Usage: python get_cryptocompare_top_coins_prices_historic.py [N_COINS] [MONTHS]")
+            print("   N_COINS = number of top coins (default: 100)")
+            print("   MONTHS  = number of months of history (default: 12)")
+            print("Example: python get_cryptocompare_top_coins_prices_historic.py 3 24")
             sys.exit(1)
 
-    base_name = f"top{n_coins}_hourly_1year"
+    if len(sys.argv) > 2:
+        try:
+            months = int(sys.argv[2])
+            if months < 1 or months > 120:
+                raise ValueError
+        except ValueError:
+            print("❌ MONTHS must be an integer between 1 and 120")
+            sys.exit(1)
+
+    base_name = f"top{n_coins}_hourly_{months}months"
     giant_file = f"{base_name}_combined.csv"
     
-    print(f"🚀 CryptoCompare Top-{n_coins} → raw_data/ folder + GIANT combined CSV")
+    print(f"🚀 CryptoCompare Top-{n_coins} coins → {months} months history")
     print("   💡 Skips existing files (set FORCE_REDOWNLOAD = True to refresh)")
-    print("   ✨ Coinbase fixes + 3-part TXT backup + skip-download option\n")
+    print("   ✨ Coinbase fixes + 3-part TXT backup\n")
     
     # === DYNAMIC BACKUP FILES ===
     backup_files = [
@@ -247,7 +263,7 @@ if __name__ == "__main__":
         for i, symbol in enumerate(symbols, 1):
             print(f"[{i:3d}/{len(symbols)}] {symbol}")
             
-            individual_file = f"raw_data/{symbol.lower()}_hourly_1year_cryptocompare.csv"
+            individual_file = f"raw_data/{symbol.lower()}_hourly_{months}months_cryptocompare.csv"
             
             if os.path.exists(individual_file) and not FORCE_REDOWNLOAD:
                 print("   📂 File already exists → loading from disk")
@@ -265,7 +281,7 @@ if __name__ == "__main__":
                     print(f"   ⚠️  Could not load existing file ({e}). Re-downloading...\n")
             
             try:
-                df, used_source = fetch_crypto_hourly_1year(symbol, api_key)
+                df, used_source = fetch_crypto_hourly(symbol, months, api_key)
                 df['symbol'] = symbol
                 
                 df.to_csv(individual_file, index=False)
@@ -276,7 +292,7 @@ if __name__ == "__main__":
                 if "on " in used_source or "(partial" in used_source:
                     fallback_coins.append((symbol, used_source))
                 
-                print(f"   💾 Saved → raw_data/{symbol.lower()}_hourly_1year_cryptocompare.csv\n")
+                print(f"   💾 Saved → raw_data/{symbol.lower()}_hourly_{months}months_cryptocompare.csv\n")
             except Exception as e:
                 print(f"   ❌ Skipped: {e}\n")
                 failed.append(symbol)

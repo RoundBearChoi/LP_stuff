@@ -1,0 +1,10 @@
+Top 3 Non-Stablecoins by Market Cap (USD)
+Generated: 2026-03-14 11:37:54 KST
+Skipped stablecoins: 1
+Excluded additional coins: 0
+
+Rank Name                   Symbol              Price (USD)   Market Cap    24h %
+---------------------------------------------------------------------------------------------------
+1    Bitcoin                BTC             $  70,827.00        $1.416T     -0.66%
+2    Ethereum               ETH             $   2,092.75       $252.55B     -0.86%
+3    BNB                    BNB             $     656.08        $89.46B     -0.57%
