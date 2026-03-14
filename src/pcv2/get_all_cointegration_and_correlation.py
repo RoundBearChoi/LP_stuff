@@ -6,7 +6,6 @@ import sys
 from pathlib import Path
 from tqdm import tqdm
 import warnings
-#from config import DEFAULT_MAX_MONTHS, DEFAULT_CSV_FILE
 from config import DEFAULT_COINTEGRATION_CORRELATION_MONTHS as DEFAULT_MAX_MONTHS, DEFAULT_CSV_FILE
 
 warnings.filterwarnings("ignore")
@@ -67,7 +66,7 @@ class AllPairsAnalyzer:
                 sys.exit(1)
             print(f"🔍 Quick mode activated: {self.target_symbol} vs all others")
         else:
-            print(f"🚀 Full mode: all {len(self.symbols)*(len(self.symbols)-1)//2:,} unique pairs")
+            print(f"🚀 Full mode: all {len(self.symbols)*(len(self.symbols)-1):,} ordered pairs (both directions)")
 
     # compute_pair() is unchanged — exact same math as before
     def compute_pair(self, sym1: str, sym2: str):
@@ -171,8 +170,9 @@ class AllPairsAnalyzer:
             pair_list = [(self.target_symbol, s) for s in sorted(others)]
             output_file = f"{self.target_symbol}_vs_all_pairs_{self.max_months}m.csv"
         else:
-            pair_list = [(s1, s2) for i, s1 in enumerate(self.symbols) for s2 in self.symbols[i+1:]]
-            output_file = f"all_pairs_cointegration_correlation_{self.max_months}m.csv"
+            # === BOTH DIRECTIONS (as requested) ===
+            pair_list = [(s1, s2) for s1 in self.symbols for s2 in self.symbols if s1 != s2]
+            output_file = f"all_pairs_cointegration_correlation_both_directions_{self.max_months}m.csv"
 
         print(f"\n🚀 Computing {len(pair_list):,} pairs on last {self.max_months} months...")
 
