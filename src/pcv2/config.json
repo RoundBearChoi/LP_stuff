@@ -1,4 +1,5 @@
 {
-  "default_max_months": 12,
+  "cointegration_correlation_months": 10,
+  "chart_months": 12,
   "default_csv_file": "top200_hourly_1year_combined.csv"
 }

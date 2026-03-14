@@ -6,7 +6,8 @@ from statsmodels.tsa.stattools import coint
 import os
 from dataclasses import dataclass
 from typing import Optional, Tuple
-from config import DEFAULT_MAX_MONTHS, DEFAULT_CSV_FILE
+#from config import DEFAULT_MAX_MONTHS, DEFAULT_CSV_FILE
+from config import DEFAULT_COINTEGRATION_CORRELATION_MONTHS as DEFAULT_MAX_MONTHS, DEFAULT_CSV_FILE
 
 
 @dataclass

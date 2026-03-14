@@ -3,7 +3,8 @@ import numpy as np
 import sys
 import warnings
 from pathlib import Path
-from config import DEFAULT_MAX_MONTHS, DEFAULT_CSV_FILE
+#from config import DEFAULT_MAX_MONTHS, DEFAULT_CSV_FILE
+from config import DEFAULT_COINTEGRATION_CORRELATION_MONTHS as DEFAULT_MAX_MONTHS, DEFAULT_CSV_FILE
 
 # Silence the pandas concat FutureWarning permanently
 warnings.filterwarnings("ignore", message="Sorting by default when concatenating all DatetimeIndex")

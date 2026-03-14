@@ -3,7 +3,8 @@ import pandas as pd
 import numpy as np
 import sys
 from get_cointegration import CointegrationAnalyzer
-from config import DEFAULT_MAX_MONTHS, DEFAULT_CSV_FILE
+#from config import DEFAULT_MAX_MONTHS, DEFAULT_CSV_FILE
+from config import DEFAULT_COINTEGRATION_CORRELATION_MONTHS as DEFAULT_MAX_MONTHS, DEFAULT_CSV_FILE
 
 
 class CointegrationChart:

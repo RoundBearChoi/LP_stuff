@@ -1,7 +1,7 @@
 import sys
 import pandas as pd
 import matplotlib.pyplot as plt
-from config import DEFAULT_CSV_FILE, DEFAULT_MAX_MONTHS
+from config import DEFAULT_CSV_FILE, DEFAULT_CHART_MONTHS as DEFAULT_MAX_MONTHS #separate months vs other scripts
 
 class PriceRatioChart:
     """Clean, reusable class to generate price ratio charts from your CSV."""
