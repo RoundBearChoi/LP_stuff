@@ -63,7 +63,8 @@ class TopNonStableCoinsFetcher:
         'just',                                         # tron
         'rain',                                         # too new
         'adi-token',                                    # institutional gov focused
-        'xrp',                                          # too centralized
+        'ripple',                                       # too centralized
+        'mantle',                                       # no data on cryptocompare
     }
     
     MAX_NAME_LEN = 19
