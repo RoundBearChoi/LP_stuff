@@ -17,8 +17,8 @@ class CointegrationChart:
         # === 1. Compute everything (one clean call) ===
         results = self.analyzer.compute()
 
-        # === NEW: Prepare method strings for filename & title ===
-        method_filename = results.method_used.lower().replace('_', '-')
+        # === NEW: Prepare method strings (filename now uses _ per your request) ===
+        method_filename = results.method_used.lower()                    # ← CHANGED: engle_granger (no hyphen)
         method_display = results.method_used.replace('_', ' ').title().replace(' ', '-')
 
         # ====================== 5 CHARTS ======================
@@ -29,7 +29,7 @@ class CointegrationChart:
 
         fig.subplots_adjust(top=0.905, bottom=0.05, left=0.07, right=0.93, hspace=0.48)
 
-        # CHART 1 – Normalized Prices + Verdict Box
+        # CHART 1 – Normalized Prices + Verdict Box (unchanged)
         norm1 = results.p1 / results.p1.iloc[0] * 100
         norm2 = results.p2 / results.p2.iloc[0] * 100
         axs[0].plot(norm1.index, norm1, label=self.analyzer.sym1, linewidth=2)
@@ -114,7 +114,7 @@ class CointegrationChart:
         lines2, labels2 = ax_p.get_legend_handles_labels()
         ax_beta.legend(lines1 + lines2, labels1 + labels2, loc='upper left', fontsize=10)
 
-        # === UPDATED SUPTITLE + FILENAME ===
+        # === UPDATED SUPTITLE + FILENAME (only filename uses _) ===
         fig.suptitle(f"COINTEGRATION ANALYSIS ({method_display}): "
                      f"{self.analyzer.sym1} vs {self.analyzer.sym2} — "
                      f"LAST {self.max_months} MONTHS — "
@@ -129,7 +129,7 @@ class CointegrationChart:
 
 
 if __name__ == "__main__":
-    # (CLI parsing unchanged – exactly as before)
+    # (CLI parsing unchanged)
     csv_file = None
     sym1 = "ETH"
     sym2 = "BTC"
