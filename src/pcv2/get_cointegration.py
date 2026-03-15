@@ -6,7 +6,7 @@ from statsmodels.tsa.stattools import coint
 import os
 from dataclasses import dataclass
 from typing import Optional, Tuple
-#from config import DEFAULT_MAX_MONTHS, DEFAULT_CSV_FILE
+from engler_granger_cointegration import compute_engler_granger_cointegration
 from config import DEFAULT_COINTEGRATION_CORRELATION_MONTHS as DEFAULT_MAX_MONTHS, DEFAULT_CSV_FILE
 
 
@@ -33,7 +33,7 @@ class CointegrationResults:
 
 class CointegrationAnalyzer:
     DEFAULT_CSV = DEFAULT_CSV_FILE
-    ROLLING_WINDOW_DAYS = 90         # ← adjust days
+    ROLLING_WINDOW_DAYS = 90
 
     def __init__(self, sym1: str, sym2: str, csv_file: Optional[str] = None, max_months: int = DEFAULT_MAX_MONTHS):
         self.sym1 = sym1.upper()
@@ -78,49 +78,25 @@ class CointegrationAnalyzer:
         log_p1 = np.log(p1)
         log_p2 = np.log(p2)
 
-        # === Beta & spread ===
-        X = add_constant(log_p2)
-        model = OLS(log_p1, X).fit()
-        beta = model.params.iloc[1]
-        spread = log_p1 - beta * log_p2
-        zscore = (spread - spread.mean()) / spread.std()
+        # === NOW FROM THE CENTRAL ENGLE-GRANGER MODULE ===
+        eg = compute_engler_granger_cointegration(p1, p2)
+        beta = eg.beta
+        spread = eg.spread
+        zscore = eg.zscore
+        p_value = eg.p_value
+        half_life_days = eg.half_life_days
+        verdict_console = eg.verdict_console
+        verdict_chart = eg.verdict_chart
+        box_color = eg.box_color
 
-        # === Cointegration test ===
-        _, p_value, _ = coint(log_p1, log_p2, autolag='AIC')
-
-        # === Half-life ===
-        lagged = spread.shift(1).dropna()
-        delta = spread.diff().dropna()
-        ou_model = OLS(delta, add_constant(lagged)).fit()
-        kappa = -ou_model.params.iloc[1]
-        half_life_hours = np.log(2) / kappa if kappa > 1e-8 else float('inf')
-        half_life_days = half_life_hours / 24
-
-        # === Verdict ===
-        if p_value < 0.01:
-            verdict_console = "✅ STRONG COINTEGRATION (p < 0.01)"
-            verdict_chart = "STRONG COINTEGRATION (p < 0.01)"
-            box_color = 'lime'
-        elif p_value < 0.05:
-            verdict_console = "✅ MODERATE COINTEGRATION (p < 0.05)"
-            verdict_chart = "MODERATE COINTEGRATION (p < 0.05)"
-            box_color = 'lightgreen'
-        elif p_value < 0.10:
-            verdict_console = "⚠️ WEAK / MARGINAL (p < 0.10)"
-            verdict_chart = "WEAK / MARGINAL (p < 0.10)"
-            box_color = 'yellow'
-        else:
-            verdict_console = "❌ NO COINTEGRATION (p ≥ 0.10)"
-            verdict_chart = "NO COINTEGRATION (p ≥ 0.10)"
-            box_color = 'salmon'
-
+        # === Verdict print (unchanged) ===
         print(f"\n=== FULL-SAMPLE RESULTS (GOLD STANDARD) — LAST {self.max_months} MONTHS ===")
         print(f"Hedge ratio (beta): {beta:.4f}")
         print(f"Cointegration p-value: {p_value:.6f}")
         print(f"Half-life: {half_life_days:.1f} days")
         print(f"→ {verdict_console}")
 
-        # === Rolling cointegration ===
+        # === Rolling cointegration (unchanged — still uses raw OLS+coint) ===
         print(f"\nComputing rolling cointegration ({self.ROLLING_WINDOW_DAYS}-day windows, updated daily) on last {self.max_months} months...")
         window = self.ROLLING_WINDOW_DAYS * 24
         step = 24
@@ -136,7 +112,7 @@ class CointegrationAnalyzer:
 
         print(f"Rolling windows computed: {len(rolling_dates)}")
 
-        # === Ratio stats ===
+        # === Ratio stats (unchanged) ===
         ratio = p1 / p2
         ratio_rolling_mean = ratio.rolling(window=720, min_periods=1).mean()
         ratio_rolling_std = ratio.rolling(window=720, min_periods=1).std()

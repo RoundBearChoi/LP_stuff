@@ -6,6 +6,7 @@ import sys
 from pathlib import Path
 from tqdm import tqdm
 import warnings
+from engler_granger_cointegration import compute_engler_granger_cointegration
 from config import DEFAULT_COINTEGRATION_CORRELATION_MONTHS as DEFAULT_MAX_MONTHS, DEFAULT_CSV_FILE
 
 warnings.filterwarnings("ignore")
@@ -44,7 +45,7 @@ class AllPairsAnalyzer:
 
         df = df.dropna(subset=[time_col]).sort_values(time_col)
 
-        # === IMPROVED MAXIMUM TIMEFRAME FILTER (same as other scripts) ===
+        # === IMPROVED MAXIMUM TIMEFRAME FILTER ===
         end_date = df[time_col].max()
         days_back = int(self.max_months * 30.437)
         start_date = end_date - pd.Timedelta(days=days_back)
@@ -68,7 +69,6 @@ class AllPairsAnalyzer:
         else:
             print(f"🚀 Full mode: all {len(self.symbols)*(len(self.symbols)-1):,} ordered pairs (both directions)")
 
-    # compute_pair() is unchanged — exact same math as before
     def compute_pair(self, sym1: str, sym2: str):
         sub = self.pivot[[sym1, sym2]].dropna()
         n = len(sub)
@@ -94,25 +94,11 @@ class AllPairsAnalyzer:
                         "MODERATE" if abs_c > 0.4 else "WEAK")
             direction = "positive" if pearson_h > 0 else "negative"
 
-            # Cointegration (exact same as get_cointegration.py)
-            log_p1 = np.log(sub[sym1])
-            log_p2 = np.log(sub[sym2])
-            X = add_constant(log_p2)
-            model = OLS(log_p1, X).fit()
-            beta = model.params.iloc[1]
-
-            _, p_value, _ = coint(log_p1, log_p2, autolag='AIC')
-
-            spread = log_p1 - beta * log_p2
-            lagged = spread.shift(1).dropna()
-            delta = spread.diff().dropna()
-            half_life_days = None
-            if len(lagged) > 5:
-                ou_model = OLS(delta, add_constant(lagged)).fit()
-                kappa = -ou_model.params.iloc[1]
-                if kappa > 1e-8:
-                    half_life_hours = np.log(2) / kappa
-                    half_life_days = round(half_life_hours / 24, 1)
+            # === NOW USING CENTRAL ENGLE-GRANGER MODULE ===
+            eg = compute_engler_granger_cointegration(sub[sym1], sub[sym2])
+            beta = eg.beta
+            p_value = eg.p_value
+            half_life_days = eg.half_life_days
 
             if p_value < 0.01:
                 verdict = "STRONG COINTEGRATION (p < 0.01)"
@@ -170,7 +156,6 @@ class AllPairsAnalyzer:
             pair_list = [(self.target_symbol, s) for s in sorted(others)]
             output_file = f"{self.target_symbol}_vs_all_pairs_{self.max_months}m.csv"
         else:
-            # === BOTH DIRECTIONS (as requested) ===
             pair_list = [(s1, s2) for s1 in self.symbols for s2 in self.symbols if s1 != s2]
             output_file = f"all_pairs_cointegration_correlation_both_directions_{self.max_months}m.csv"
 
