@@ -1,7 +1,7 @@
 {
-  "cointegration_correlation_months": 24,
-  "chart_months": 24,
-  "default_csv_file": "top100_hourly_24months_combined.csv",
+  "cointegration_correlation_months": 44,
+  "chart_months": 44,
+  "default_csv_file": "top100_hourly_44months_combined.csv",
   "get_both_directions_on_cointegration": true,
   "cointegration_calculation_method": "engle_granger"
 }

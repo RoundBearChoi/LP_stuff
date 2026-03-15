@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 import sys
+import matplotlib.dates as mdates                     # ← NEW: for clean date formatting on all charts
 from get_cointegration import CointegrationAnalyzer
 from config import DEFAULT_COINTEGRATION_CORRELATION_MONTHS as DEFAULT_MAX_MONTHS, DEFAULT_CSV_FILE
 
@@ -24,10 +25,10 @@ class CointegrationChart:
         # ====================== 5 CHARTS ======================
         fig, axs = plt.subplots(5, 1, figsize=(14, 28),
                                 sharex=True,
-                                gridspec_kw={'hspace': 0.48},
+                                gridspec_kw={'hspace': 0.62},          # ← INCREASED for date labels
                                 constrained_layout=False)
 
-        fig.subplots_adjust(top=0.905, bottom=0.05, left=0.07, right=0.93, hspace=0.48)
+        fig.subplots_adjust(top=0.905, bottom=0.05, left=0.07, right=0.93, hspace=0.62)
 
         # CHART 1 – Normalized Prices + Verdict Box (unchanged)
         norm1 = results.p1 / results.p1.iloc[0] * 100
@@ -113,6 +114,18 @@ class CointegrationChart:
         lines1, labels1 = ax_beta.get_legend_handles_labels()
         lines2, labels2 = ax_p.get_legend_handles_labels()
         ax_beta.legend(lines1 + lines2, labels1 + labels2, loc='upper left', fontsize=10)
+
+        # ================== SHOW DATES ON EVERY CHART ==================
+        # Force x-tick labels visible on all 5 panels + clean formatting
+        # (matplotlib hides them by default when sharex=True)
+        for i, ax in enumerate(axs):
+            ax.tick_params(axis='x', labelbottom=True)
+            plt.setp(ax.get_xticklabels(), rotation=35, ha='right')
+            ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
+        
+        # Slightly smaller font on the top 4 charts (keeps visual weight balanced)
+        for ax in axs[:-1]:
+            plt.setp(ax.get_xticklabels(), fontsize=9.5)
 
         # === UPDATED SUPTITLE + FILENAME (only filename uses _) ===
         fig.suptitle(f"COINTEGRATION ANALYSIS ({method_display}): "
