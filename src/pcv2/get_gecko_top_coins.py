@@ -63,6 +63,7 @@ class TopNonStableCoinsFetcher:
         'just',                                         # tron
         'rain',                                         # too new
         'adi-token',                                    # institutional gov focused
+        'xrp',                                          # too centralized
     }
     
     MAX_NAME_LEN = 19
