@@ -6,7 +6,7 @@ from statsmodels.tsa.stattools import coint
 import os
 from dataclasses import dataclass
 from typing import Optional, Tuple
-from engler_granger_cointegration import compute_engler_granger_cointegration
+from cointegration_engine import compute_cointegration, CointegrationMethod
 from config import DEFAULT_COINTEGRATION_CORRELATION_MONTHS as DEFAULT_MAX_MONTHS, DEFAULT_CSV_FILE
 
 
@@ -75,11 +75,11 @@ class CointegrationAnalyzer:
     def compute(self) -> CointegrationResults:
         """Runs the full gold-standard analysis and prints the exact console block."""
         p1, p2 = self._load_data()
-        log_p1 = np.log(p1)
-        log_p2 = np.log(p2)
 
-        # === NOW FROM THE CENTRAL ENGLE-GRANGER MODULE ===
-        eg = compute_engler_granger_cointegration(p1, p2)
+        # === NOW FROM THE CENTRAL COINTEGRATION ENGINE ===
+        # Change ENGLE_GRANGER → JOHANSEN anytime you want to test the new method
+        eg = compute_cointegration(p1, p2, method=CointegrationMethod.ENGLE_GRANGER)
+
         beta = eg.beta
         spread = eg.spread
         zscore = eg.zscore
@@ -101,6 +101,9 @@ class CointegrationAnalyzer:
         window = self.ROLLING_WINDOW_DAYS * 24
         step = 24
         rolling_dates, rolling_betas, rolling_pvals = [], [], []
+
+        log_p1 = np.log(p1)
+        log_p2 = np.log(p2)
 
         for i in range(0, len(log_p1) - window + 1, step):
             win1, win2 = log_p1.iloc[i:i+window], log_p2.iloc[i:i+window]

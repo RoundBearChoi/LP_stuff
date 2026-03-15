@@ -19,7 +19,7 @@ class EngleGrangerResults:
     box_color: str
 
 
-def compute_engler_granger_cointegration(p1: pd.Series, p2: pd.Series) -> EngleGrangerResults:
+def compute_engle_granger_cointegration(p1: pd.Series, p2: pd.Series) -> EngleGrangerResults:
     """Core Engle-Granger cointegration + half-life.
     Used by get_cointegration.py, get_all_cointegration_and_correlation.py,
     and any future scripts."""

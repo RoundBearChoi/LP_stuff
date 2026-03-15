@@ -6,7 +6,7 @@ import sys
 from pathlib import Path
 from tqdm import tqdm
 import warnings
-from engler_granger_cointegration import compute_engler_granger_cointegration
+from engle_granger_cointegration import compute_engle_granger_cointegration
 from config import DEFAULT_COINTEGRATION_CORRELATION_MONTHS as DEFAULT_MAX_MONTHS, DEFAULT_CSV_FILE
 
 warnings.filterwarnings("ignore")
@@ -95,7 +95,7 @@ class AllPairsAnalyzer:
             direction = "positive" if pearson_h > 0 else "negative"
 
             # === NOW USING CENTRAL ENGLE-GRANGER MODULE ===
-            eg = compute_engler_granger_cointegration(sub[sym1], sub[sym2])
+            eg = compute_engle_granger_cointegration(sub[sym1], sub[sym2])
             beta = eg.beta
             p_value = eg.p_value
             half_life_days = eg.half_life_days
