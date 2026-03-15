@@ -7,16 +7,23 @@ from pathlib import Path
 from tqdm import tqdm
 import warnings
 from cointegration_engine import compute_cointegration, CointegrationMethod
-from config import DEFAULT_COINTEGRATION_CORRELATION_MONTHS as DEFAULT_MAX_MONTHS, DEFAULT_CSV_FILE
+from config import (
+    DEFAULT_COINTEGRATION_CORRELATION_MONTHS as DEFAULT_MAX_MONTHS,
+    DEFAULT_CSV_FILE,
+    DEFAULT_GET_BOTH_DIRECTIONS
+)
 
 warnings.filterwarnings("ignore")
 
 
 class AllPairsAnalyzer:
-    def __init__(self, file_path: str = DEFAULT_CSV_FILE, target_symbol: str = None, max_months: int = DEFAULT_MAX_MONTHS):
+    def __init__(self, file_path: str = DEFAULT_CSV_FILE, target_symbol: str = None,
+                 max_months: int = DEFAULT_MAX_MONTHS,
+                 get_both_directions: bool = DEFAULT_GET_BOTH_DIRECTIONS):
         self.file_path = file_path
         self.target_symbol = target_symbol.upper() if target_symbol else None
         self.max_months = max_months
+        self.get_both_directions = get_both_directions
         self.pivot = None
         self.symbols = None
 
@@ -67,7 +74,8 @@ class AllPairsAnalyzer:
                 sys.exit(1)
             print(f"🔍 Quick mode activated: {self.target_symbol} vs all others")
         else:
-            print(f"🚀 Full mode: all {len(self.symbols)*(len(self.symbols)-1):,} ordered pairs (both directions)")
+            direction_text = "BOTH directions" if self.get_both_directions else "ONE direction (s1 < s2)"
+            print(f"🚀 Full mode: {direction_text}")
 
     def compute_pair(self, sym1: str, sym2: str):
         sub = self.pivot[[sym1, sym2]].dropna()
@@ -95,7 +103,6 @@ class AllPairsAnalyzer:
             direction = "positive" if pearson_h > 0 else "negative"
 
             # === NOW USING THE CENTRAL COINTEGRATION ENGINE ===
-            # Change ENGLE_GRANGER → JOHANSEN anytime you want to test the new method
             eg = compute_cointegration(sub[sym1], sub[sym2], method=CointegrationMethod.ENGLE_GRANGER)
 
             beta = eg.beta
@@ -158,10 +165,16 @@ class AllPairsAnalyzer:
             pair_list = [(self.target_symbol, s) for s in sorted(others)]
             output_file = f"{self.target_symbol}_vs_all_pairs_{self.max_months}m.csv"
         else:
-            pair_list = [(s1, s2) for s1 in self.symbols for s2 in self.symbols if s1 != s2]
-            output_file = f"all_pairs_cointegration_correlation_both_directions_{self.max_months}m.csv"
+            if self.get_both_directions:
+                pair_list = [(s1, s2) for s1 in self.symbols for s2 in self.symbols if s1 != s2]
+                output_file = f"all_pairs_cointegration_correlation_both_directions_{self.max_months}m.csv"
+            else:
+                # One direction only (alphabetical) — halves computation
+                pair_list = [(s1, s2) for s1 in self.symbols for s2 in self.symbols if s1 < s2]
+                output_file = f"all_pairs_cointegration_correlation_one_direction_{self.max_months}m.csv"
 
-        print(f"\n🚀 Computing {len(pair_list):,} pairs on last {self.max_months} months...")
+        print(f"\n🚀 Computing {len(pair_list):,} pairs on last {self.max_months} months "
+              f"(get_both_directions_on_cointegration = {self.get_both_directions})...")
 
         results = []
         for sym1, sym2 in tqdm(pair_list, desc="Processing"):
@@ -206,5 +219,5 @@ if __name__ == "__main__":
         else:
             csv_path = arg
 
-    analyzer = AllPairsAnalyzer(csv_path, target, max_months)
+    analyzer = AllPairsAnalyzer(csv_path, target, max_months, DEFAULT_GET_BOTH_DIRECTIONS)
     analyzer.run()
