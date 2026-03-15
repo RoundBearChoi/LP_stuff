@@ -3,8 +3,12 @@ import pandas as pd
 import os
 from dataclasses import dataclass
 from typing import Optional, Tuple
-from cointegration_engine import compute_cointegration, CointegrationMethod
-from config import DEFAULT_COINTEGRATION_CORRELATION_MONTHS as DEFAULT_MAX_MONTHS, DEFAULT_CSV_FILE
+from cointegration_engine import compute_cointegration
+from config import (
+    DEFAULT_COINTEGRATION_CORRELATION_MONTHS as DEFAULT_MAX_MONTHS,
+    DEFAULT_CSV_FILE,
+    DEFAULT_COINTEGRATION_METHOD          # ← NEW
+)
 
 
 @dataclass
@@ -74,7 +78,7 @@ class CointegrationAnalyzer:
         p1, p2 = self._load_data()
 
         # === FULL-SAMPLE RESULTS — USING CENTRAL ENGINE ===
-        eg = compute_cointegration(p1, p2, method=CointegrationMethod.ENGLE_GRANGER)
+        eg = compute_cointegration(p1, p2, method=DEFAULT_COINTEGRATION_METHOD)   # ← UPDATED
 
         beta = eg.beta
         spread = eg.spread
@@ -84,7 +88,7 @@ class CointegrationAnalyzer:
         verdict_console = eg.verdict_console
         verdict_chart = eg.verdict_chart
         box_color = eg.box_color
-        method_used = eg.method_used.value          # ← NEW (captured once)
+        method_used = eg.method_used.value
 
         # === Verdict print (unchanged) ===
         print(f"\n=== FULL-SAMPLE RESULTS — LAST {self.max_months} MONTHS ===")
@@ -104,13 +108,13 @@ class CointegrationAnalyzer:
         for i in range(0, len(p1) - window + 1, step):
             win1 = p1.iloc[i:i + window]
             win2 = p2.iloc[i:i + window]
-            eg_win = compute_cointegration(win1, win2, method=CointegrationMethod.ENGLE_GRANGER)
+            eg_win = compute_cointegration(win1, win2, method=DEFAULT_COINTEGRATION_METHOD)   # ← UPDATED
             rolling_betas.append(eg_win.beta)
             rolling_pvals.append(eg_win.p_value)
             rolling_dates.append(p1.index[i + window - 1])
 
         print(f"Rolling windows computed: {len(rolling_dates):,} "
-              f"(method: {method_used})")               # ← updated for clarity
+              f"(method: {method_used})")
 
         # === Ratio stats (unchanged) ===
         ratio = p1 / p2
@@ -126,7 +130,7 @@ class CointegrationAnalyzer:
             rolling_pvals=rolling_pvals,
             ratio=ratio, ratio_rolling_mean=ratio_rolling_mean,
             ratio_rolling_std=ratio_rolling_std,
-            method_used=method_used                      # ← NEW
+            method_used=method_used
         )
         return self.results
 

@@ -6,11 +6,12 @@ import sys
 from pathlib import Path
 from tqdm import tqdm
 import warnings
-from cointegration_engine import compute_cointegration, CointegrationMethod
+from cointegration_engine import compute_cointegration
 from config import (
     DEFAULT_COINTEGRATION_CORRELATION_MONTHS as DEFAULT_MAX_MONTHS,
     DEFAULT_CSV_FILE,
-    DEFAULT_GET_BOTH_DIRECTIONS
+    DEFAULT_GET_BOTH_DIRECTIONS,
+    DEFAULT_COINTEGRATION_METHOD      # ← NEW
 )
 
 warnings.filterwarnings("ignore")
@@ -27,9 +28,9 @@ class AllPairsAnalyzer:
         self.pivot = None
         self.symbols = None
         
-        # === NEW: Method tracking (future-proof — change here when you add Johansen) ===
-        self.method = CointegrationMethod.ENGLE_GRANGER
-        self.method_filename = self.method.value.lower()   # "engle_granger"
+        # === Use config method (replaces old hardcoded ENGLE_GRANGER) ===
+        self.method = DEFAULT_COINTEGRATION_METHOD
+        self.method_filename = self.method.value.lower()
 
     def load_data(self):
         if not Path(self.file_path).exists():
@@ -139,7 +140,7 @@ class AllPairsAnalyzer:
                 'beta': round(beta, 4),
                 'half_life_days': half_life_days,
                 'verdict': verdict,
-                'method': eg.method_used.value                    # ← NEW (for CSV)
+                'method': eg.method_used.value
             }
 
         except Exception as e:
