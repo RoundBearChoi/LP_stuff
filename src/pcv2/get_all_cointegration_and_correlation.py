@@ -26,6 +26,10 @@ class AllPairsAnalyzer:
         self.get_both_directions = get_both_directions
         self.pivot = None
         self.symbols = None
+        
+        # === NEW: Method tracking (future-proof — change here when you add Johansen) ===
+        self.method = CointegrationMethod.ENGLE_GRANGER
+        self.method_filename = self.method.value.lower()   # "engle_granger"
 
     def load_data(self):
         if not Path(self.file_path).exists():
@@ -102,8 +106,8 @@ class AllPairsAnalyzer:
                         "MODERATE" if abs_c > 0.4 else "WEAK")
             direction = "positive" if pearson_h > 0 else "negative"
 
-            # === NOW USING THE CENTRAL COINTEGRATION ENGINE ===
-            eg = compute_cointegration(sub[sym1], sub[sym2], method=CointegrationMethod.ENGLE_GRANGER)
+            # === CENTRAL ENGINE CALL ===
+            eg = compute_cointegration(sub[sym1], sub[sym2], method=self.method)
 
             beta = eg.beta
             p_value = eg.p_value
@@ -134,7 +138,8 @@ class AllPairsAnalyzer:
                 'cointegration_pvalue': round(p_value, 6),
                 'beta': round(beta, 4),
                 'half_life_days': half_life_days,
-                'verdict': verdict
+                'verdict': verdict,
+                'method': eg.method_used.value                    # ← NEW (for CSV)
             }
 
         except Exception as e:
@@ -154,7 +159,8 @@ class AllPairsAnalyzer:
                 'cointegration_pvalue': None,
                 'beta': None,
                 'half_life_days': None,
-                'verdict': f"ERROR: {str(e)[:80]}"
+                'verdict': f"ERROR: {str(e)[:80]}",
+                'method': self.method.value
             }
 
     def run(self):
@@ -163,18 +169,17 @@ class AllPairsAnalyzer:
         if self.target_symbol:
             others = [s for s in self.symbols if s != self.target_symbol]
             pair_list = [(self.target_symbol, s) for s in sorted(others)]
-            output_file = f"{self.target_symbol}_vs_all_pairs_{self.max_months}m.csv"
+            output_file = f"{self.target_symbol}_vs_all_pairs_{self.method_filename}_{self.max_months}m.csv"
         else:
             if self.get_both_directions:
                 pair_list = [(s1, s2) for s1 in self.symbols for s2 in self.symbols if s1 != s2]
-                output_file = f"all_pairs_cointegration_correlation_both_directions_{self.max_months}m.csv"
+                output_file = f"all_pairs_cointegration_correlation_{self.method_filename}_both_directions_{self.max_months}m.csv"
             else:
-                # One direction only (alphabetical) — halves computation
                 pair_list = [(s1, s2) for s1 in self.symbols for s2 in self.symbols if s1 < s2]
-                output_file = f"all_pairs_cointegration_correlation_one_direction_{self.max_months}m.csv"
+                output_file = f"all_pairs_cointegration_correlation_{self.method_filename}_one_direction_{self.max_months}m.csv"
 
         print(f"\n🚀 Computing {len(pair_list):,} pairs on last {self.max_months} months "
-              f"(get_both_directions_on_cointegration = {self.get_both_directions})...")
+              f"(method = {self.method.value})...")
 
         results = []
         for sym1, sym2 in tqdm(pair_list, desc="Processing"):
@@ -188,11 +193,14 @@ class AllPairsAnalyzer:
         df.to_csv(output_file, index=False)
         
         print(f"\n✅ Saved {len(df):,} rows to → {output_file}")
+        print(f"   Method used: {self.method.value}")
         print("\nTop 10 best cointegrations (lowest p-value):")
-        print(df.head(10)[['pair', 'overlap_days', 'overlap_hours', 'cointegration_pvalue', 'half_life_days', 'abs_corr', 'verdict']])
+        print(df.head(10)[['pair', 'overlap_days', 'overlap_hours', 'cointegration_pvalue', 
+                           'half_life_days', 'abs_corr', 'verdict', 'method']])
 
 
 if __name__ == "__main__":
+    # CLI parsing unchanged
     csv_path = DEFAULT_CSV_FILE
     target = None
     max_months = DEFAULT_MAX_MONTHS
