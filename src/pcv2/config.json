@@ -1,6 +1,6 @@
 {
-  "cointegration_correlation_months": 18,
-  "chart_months": 18,
+  "cointegration_correlation_months": 12,
+  "chart_months": 12,
   "default_csv_file": "top100_hourly_44months_combined.csv",
   "get_both_directions_on_cointegration": false,
   "cointegration_calculation_method": "johansen"

@@ -65,6 +65,7 @@ class TopNonStableCoinsFetcher:
         'mantle',                                       # no data on cryptocompare
         'apenft',                                       # tron
         'iota',                                         # no data on cryptocompare
+        'sun-token',                                    # tron
     }
     
     MAX_NAME_LEN = 19
