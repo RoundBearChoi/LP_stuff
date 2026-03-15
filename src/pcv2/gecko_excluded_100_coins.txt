@@ -1,5 +1,5 @@
 Excluded Coins Report (from top 146 fetched)
-Generated: 2026-03-15 23:01:08 KST
+Generated: 2026-03-15 23:02:58 KST
 Total skipped stablecoins: 19
 Total custom excluded (manual blacklist): 27
 Total excluded: 46
@@ -7,7 +7,7 @@ Total excluded: 46
 Orig Rank  Name                           Symbol           Price (USD)      Market Cap Reason                        
 --------------------------------------------------------------------------------------------------------------
 3          Tether                         USDT         $       1.00          $184.08B   Major stablecoin ID           
-5          XRP                            XRP          $       1.42           $87.05B   Custom/manual blacklist       
+5          XRP                            XRP          $       1.42           $87.07B   Custom/manual blacklist       
 6          USDC                           USDC         $       1.00           $79.17B   Major stablecoin ID           
 8          TRON                           TRX          $       0.30           $28.23B   Custom/manual blacklist       
 9          Figure Heloc                   FIGR_HELOC   $       1.00           $15.89B   Custom/manual blacklist       
@@ -16,10 +16,10 @@ Orig Rank  Name                           Symbol           Price (USD)      Mark
 22         USD1                           USD1         $       1.00            $4.59B   Dynamic USD-pegged stable     
 23         Dai                            DAI          $       1.00            $4.30B   Major stablecoin ID           
 24         Rain                           RAIN         $       0.01            $4.29B   Custom/manual blacklist       
-27         PayPal USD                     PYUSD        $       1.00            $4.13B   Major stablecoin ID           
-35         Tether Gold                    XAUT         $   4,974.76            $2.81B   Custom/manual blacklist       
+28         PayPal USD                     PYUSD        $       1.00            $4.13B   Major stablecoin ID           
+35         Tether Gold                    XAUT         $   4,974.86            $2.81B   Custom/manual blacklist       
 36         Mantle                         MNT          $       0.78            $2.57B   Custom/manual blacklist       
-39         PAX Gold                       PAXG         $   5,011.61            $2.51B   Custom/manual blacklist       
+39         PAX Gold                       PAXG         $   5,009.19            $2.51B   Custom/manual blacklist       
 42         Circle USYC                    USYC         $       1.12            $2.31B   Custom/manual blacklist       
 44         BlackRock USD In...            BUIDL        $       1.00            $2.00B   Dynamic USD-pegged stable     
 46         Global Dollar                  USDG         $       1.00            $1.77B   Dynamic USD-pegged stable     
@@ -29,12 +29,12 @@ Orig Rank  Name                           Symbol           Price (USD)      Mark
 58         Ondo US Dollar Y...            USDY         $       1.12            $1.31B   Custom/manual blacklist       
 63         Superstate Short...            USTB         $      11.02            $1.11B   Custom/manual blacklist       
 68         Spiko EU T-Bills...            EUTBL        $       1.20           $978.1M   Custom/manual blacklist       
-72         Official Trump                 TRUMP        $       3.96           $917.6M   Custom/manual blacklist       
-76         USDtb                          USDTB        $       1.00           $835.5M   Dynamic USD-pegged stable     
+72         Official Trump                 TRUMP        $       3.97           $923.5M   Custom/manual blacklist       
+76         USDtb                          USDTB        $       1.00           $835.6M   Dynamic USD-pegged stable     
 79         Janus Henderson ...            JTRSY        $       1.10           $764.2M   Custom/manual blacklist       
 80         USDD                           USDD         $       1.00           $761.9M   Major stablecoin ID           
 83         OUSG                           OUSG         $     114.58           $723.4M   Custom/manual blacklist       
-91         YLDS                           YLDS         $       1.00           $595.6M   Custom/manual blacklist       
+91         YLDS                           YLDS         $       1.00           $595.5M   Custom/manual blacklist       
 92         GHO                            GHO          $       1.00           $584.1M   Custom/manual blacklist       
 93         Usual USD                      USD0         $       1.00           $562.0M   Dynamic USD-pegged stable     
 96         TrueUSD                        TUSD         $       1.00           $494.1M   Major stablecoin ID           
@@ -46,9 +46,9 @@ Orig Rank  Name                           Symbol           Price (USD)      Mark
 118        ADI                            ADI          $       3.90           $379.4M   Custom/manual blacklist       
 119        First Digital USD              FDUSD        $       1.00           $374.7M   Major stablecoin ID           
 120        USX                            USX          $       1.00           $371.5M   Custom/manual blacklist       
-122        BitTorrent                     BTT          $       0.00           $351.3M   Custom/manual blacklist       
+123        BitTorrent                     BTT          $       0.00           $348.3M   Custom/manual blacklist       
 125        AINFT                          NFT          $       0.00           $331.4M   Custom/manual blacklist       
 126        USDai                          USDAI        $       1.00           $329.4M   Dynamic USD-pegged stable     
 127        PRIME                          PRIME        $       1.03           $325.3M   Custom/manual blacklist       
-142        IOTA                           IOTA         $       0.06           $274.7M   Custom/manual blacklist       
-144        Legacy Frax Dollar             FRAX         $       0.99           $274.0M   Major stablecoin ID           
+142        IOTA                           IOTA         $       0.06           $274.9M   Custom/manual blacklist       
+144        Legacy Frax Dollar             FRAX         $       0.99           $273.9M   Major stablecoin ID           
