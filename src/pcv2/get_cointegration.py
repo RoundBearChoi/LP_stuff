@@ -26,6 +26,7 @@ class CointegrationResults:
     ratio: pd.Series
     ratio_rolling_mean: pd.Series
     ratio_rolling_std: pd.Series
+    method_used: str          # ← NEW: e.g. "ENGLE_GRANGER" or "JOHANSEN"
 
 
 class CointegrationAnalyzer:
@@ -83,6 +84,7 @@ class CointegrationAnalyzer:
         verdict_console = eg.verdict_console
         verdict_chart = eg.verdict_chart
         box_color = eg.box_color
+        method_used = eg.method_used.value          # ← NEW (captured once)
 
         # === Verdict print (unchanged) ===
         print(f"\n=== FULL-SAMPLE RESULTS — LAST {self.max_months} MONTHS ===")
@@ -91,7 +93,7 @@ class CointegrationAnalyzer:
         print(f"Half-life: {half_life_days:.1f} days")
         print(f"→ {verdict_console}")
 
-        # === ROLLING COINTEGRATION — NOW FULLY CENTRALIZED IN THE ENGINE ===
+        # === ROLLING COINTEGRATION ===
         print(f"\nComputing rolling cointegration ({self.ROLLING_WINDOW_DAYS}-day windows, updated daily) "
               f"on last {self.max_months} months...")
 
@@ -102,16 +104,13 @@ class CointegrationAnalyzer:
         for i in range(0, len(p1) - window + 1, step):
             win1 = p1.iloc[i:i + window]
             win2 = p2.iloc[i:i + window]
-
-            # One clean engine call per window — exactly like full-sample
             eg_win = compute_cointegration(win1, win2, method=CointegrationMethod.ENGLE_GRANGER)
-
             rolling_betas.append(eg_win.beta)
             rolling_pvals.append(eg_win.p_value)
             rolling_dates.append(p1.index[i + window - 1])
 
         print(f"Rolling windows computed: {len(rolling_dates):,} "
-              f"(method: {eg.method_used.value})")
+              f"(method: {method_used})")               # ← updated for clarity
 
         # === Ratio stats (unchanged) ===
         ratio = p1 / p2
@@ -126,12 +125,14 @@ class CointegrationAnalyzer:
             rolling_dates=rolling_dates, rolling_betas=rolling_betas,
             rolling_pvals=rolling_pvals,
             ratio=ratio, ratio_rolling_mean=ratio_rolling_mean,
-            ratio_rolling_std=ratio_rolling_std
+            ratio_rolling_std=ratio_rolling_std,
+            method_used=method_used                      # ← NEW
         )
         return self.results
 
 
 if __name__ == "__main__":
+    # (CLI parsing unchanged – exactly as before)
     csv_file = None
     sym1 = "ETH"
     sym2 = "BTC"
@@ -157,7 +158,6 @@ if __name__ == "__main__":
         else:
             print(f"Usage: python {sys.argv[0]} [CSV_FILE] SYM1 SYM2 [max_months]")
             print("   Example: python get_cointegration.py ETH SOL 3")
-            print("   No arguments → ETH/BTC last 6 months")
             sys.exit(1)
 
     analyzer = CointegrationAnalyzer(sym1, sym2, csv_file, max_months)

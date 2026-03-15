@@ -3,7 +3,6 @@ import pandas as pd
 import numpy as np
 import sys
 from get_cointegration import CointegrationAnalyzer
-#from config import DEFAULT_MAX_MONTHS, DEFAULT_CSV_FILE
 from config import DEFAULT_COINTEGRATION_CORRELATION_MONTHS as DEFAULT_MAX_MONTHS, DEFAULT_CSV_FILE
 
 
@@ -17,6 +16,10 @@ class CointegrationChart:
     def generate(self):
         # === 1. Compute everything (one clean call) ===
         results = self.analyzer.compute()
+
+        # === NEW: Prepare method strings for filename & title ===
+        method_filename = results.method_used.lower().replace('_', '-')
+        method_display = results.method_used.replace('_', ' ').title().replace(' ', '-')
 
         # ====================== 5 CHARTS ======================
         fig, axs = plt.subplots(5, 1, figsize=(14, 28),
@@ -45,7 +48,7 @@ class CointegrationChart:
                     bbox=dict(boxstyle="round,pad=1.0", facecolor=results.box_color,
                               alpha=0.95, edgecolor='black'))
 
-        # CHART 2 – Price Ratio
+        # CHART 2 – Price Ratio (unchanged)
         axs[1].plot(results.ratio.index, results.ratio,
                     label=f"{self.analyzer.sym1}/{self.analyzer.sym2} Ratio",
                     color='purple', linewidth=2)
@@ -59,7 +62,7 @@ class CointegrationChart:
         axs[1].legend()
         axs[1].grid(True, alpha=0.3)
 
-        # CHART 3 – Spread
+        # CHART 3 – Spread (unchanged)
         axs[2].plot(results.spread.index, results.spread, label='Spread',
                     color='blue', linewidth=2)
         axs[2].axhline(results.spread.mean(), color='red', linestyle='--', label='Mean')
@@ -71,7 +74,7 @@ class CointegrationChart:
         axs[2].legend()
         axs[2].grid(True, alpha=0.3)
 
-        # CHART 4 – Z-Score
+        # CHART 4 – Z-Score (unchanged)
         axs[3].plot(results.zscore.index, results.zscore, label='Z-Score',
                     color='darkgreen', linewidth=2)
         axs[3].axhline(0, color='black', linestyle='--')
@@ -84,7 +87,7 @@ class CointegrationChart:
         axs[3].grid(True, alpha=0.3)
         axs[3].set_ylim(-5, 5)
 
-        # CHART 5 – Rolling Beta & p-value
+        # CHART 5 – Rolling Beta & p-value (unchanged)
         ax_beta = axs[4]
         ax_p = ax_beta.twinx()
         ax_beta.plot(results.rolling_dates, results.rolling_betas,
@@ -104,26 +107,29 @@ class CointegrationChart:
 
         ax_beta.set_ylabel('Rolling Beta', color='blue')
         ax_p.set_ylabel('Rolling Cointegration p-value', color='red')
-        ax_beta.set_title(f"5. Rolling Cointegration ({self.analyzer.ROLLING_WINDOW_DAYS}-day windows) — Beta & p-value")  # ← CHANGED (now dynamic)
+        ax_beta.set_title(f"5. Rolling Cointegration ({self.analyzer.ROLLING_WINDOW_DAYS}-day windows) — Beta & p-value")
         ax_beta.grid(True, alpha=0.3)
 
         lines1, labels1 = ax_beta.get_legend_handles_labels()
         lines2, labels2 = ax_p.get_legend_handles_labels()
         ax_beta.legend(lines1 + lines2, labels1 + labels2, loc='upper left', fontsize=10)
 
-        fig.suptitle(f"COINTEGRATION ANALYSIS: {self.analyzer.sym1} vs {self.analyzer.sym2} — "
+        # === UPDATED SUPTITLE + FILENAME ===
+        fig.suptitle(f"COINTEGRATION ANALYSIS ({method_display}): "
+                     f"{self.analyzer.sym1} vs {self.analyzer.sym2} — "
                      f"LAST {self.max_months} MONTHS — "
                      f"{len(results.p1):,} hourly bars "
                      f"({results.p1.index[0].date()} to {results.p1.index[-1].date()})",
                      fontsize=15.5, y=0.965)
 
-        output_file = f"cointegration_{self.analyzer.sym1}_{self.analyzer.sym2}_{self.max_months}m_with_rolling.png"
+        output_file = f"cointegration_{self.analyzer.sym1}_{self.analyzer.sym2}_{method_filename}_{self.max_months}m_with_rolling.png"
         plt.savefig(output_file, dpi=200, bbox_inches='tight')
         plt.close(fig)
-        print(f"\n✅ Saved: {output_file}")
+        print(f"\n✅ Saved: {output_file}  (method: {method_display})")
 
 
 if __name__ == "__main__":
+    # (CLI parsing unchanged – exactly as before)
     csv_file = None
     sym1 = "ETH"
     sym2 = "BTC"
@@ -149,7 +155,6 @@ if __name__ == "__main__":
         else:
             print(f"Usage: python {sys.argv[0]} [CSV_FILE] SYM1 SYM2 [max_months]")
             print("   Example: python draw_cointegration_chart.py ETH SOL 3")
-            print("   No arguments → ETH/BTC last 6 months")
             sys.exit(1)
 
     chart = CointegrationChart(sym1, sym2, csv_file, max_months)
