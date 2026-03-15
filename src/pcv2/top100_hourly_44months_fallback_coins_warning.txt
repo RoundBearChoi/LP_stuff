@@ -1,0 +1,6 @@
+FALLBACK COINS REPORT
+• RAIN → USDT on KuCoin
+• MNT → USD on Coinbase (as MANTLE)
+• PEPE → USD CCCAGG (partial - timeout)
+• FTN → USD CCCAGG (partial - timeout)
+• ADI → USDT on KuCoin
