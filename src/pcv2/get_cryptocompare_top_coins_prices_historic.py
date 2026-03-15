@@ -9,6 +9,7 @@ import math
 
 # ====================== CONFIG ======================
 FORCE_REDOWNLOAD = False  # ← Change to True only when you want fresh data for everything
+NUM_BACKUP_PARTS = 5      # ← CHANGE THIS to 3, 5, 7, 10... whenever you want
 # ===================================================
 
 # Coinbase ticker overrides
@@ -205,14 +206,12 @@ if __name__ == "__main__":
     
     # === DYNAMIC BACKUP FILES ===
     backup_files = [
-        f"{base_name}_combined_backup_1.txt",
-        f"{base_name}_combined_backup_2.txt",
-        f"{base_name}_combined_backup_3.txt"
+        f"{base_name}_combined_backup_{i+1}.txt" for i in range(NUM_BACKUP_PARTS)
     ]
     
     use_backup = False
     if all(os.path.exists(f) for f in backup_files):
-        print("📂 Backup files detected!")
+        print(f"📂 {NUM_BACKUP_PARTS}-part backup files detected!")
         choice = input("   Skip download and load data from backup instead? (y/n): ").strip().lower()
         if choice in ['y', 'yes', '']:
             use_backup = True
@@ -224,7 +223,7 @@ if __name__ == "__main__":
     combined = None
     
     if use_backup:
-        print("✅ Loading data from 3-part backup...")
+        print(f"✅ Loading data from {NUM_BACKUP_PARTS}-part backup...")
         try:
             dfs = [pd.read_csv(f) for f in backup_files]
             combined = pd.concat(dfs, ignore_index=True)
@@ -237,8 +236,8 @@ if __name__ == "__main__":
             print(f"   Giant CSV saved → {giant_file}")
             
             n = len(combined)
-            chunk_size = (n + 2) // 3
-            for i in range(3):
+            chunk_size = (n + NUM_BACKUP_PARTS - 1) // NUM_BACKUP_PARTS
+            for i in range(NUM_BACKUP_PARTS):
                 start = i * chunk_size
                 end = min(start + chunk_size, n)
                 chunk = combined.iloc[start:end]
@@ -304,9 +303,9 @@ if __name__ == "__main__":
             
             time.sleep(1.8)
         
-        # ====================== CREATE GIANT CSV + 3-PART BACKUP ======================
+        # ====================== CREATE GIANT CSV + 5-PART BACKUP ======================
         if all_dfs:
-            print("🔄 Creating ONE GIANT combined CSV + 3-part TXT backup...")
+            print("🔄 Creating ONE GIANT combined CSV + 5-part TXT backup...")
             combined = pd.concat(all_dfs, ignore_index=True)
             combined = combined[['datetime', 'symbol', 'open', 'high', 'low', 'close', 'volumefrom', 'volumeto']]
             combined = combined.sort_values(['symbol', 'datetime']).reset_index(drop=True)
@@ -314,10 +313,10 @@ if __name__ == "__main__":
             combined.to_csv(giant_file, index=False)
             
             n = len(combined)
-            chunk_size = (n + 2) // 3
-            print(f"   📋 Splitting into 3 backup files (~{chunk_size:,} rows each)...")
+            chunk_size = (n + NUM_BACKUP_PARTS - 1) // NUM_BACKUP_PARTS
+            print(f"   📋 Splitting into {NUM_BACKUP_PARTS} backup files (~{chunk_size:,} rows each)...")
             
-            for i in range(3):
+            for i in range(NUM_BACKUP_PARTS):
                 start = i * chunk_size
                 end = min(start + chunk_size, n)
                 chunk = combined.iloc[start:end]
@@ -350,6 +349,6 @@ if __name__ == "__main__":
     print("\n📂 Final structure:")
     print("   • raw_data/                          ← individual CSVs")
     print(f"   • {giant_file}")
-    for i in range(1, 4):
+    for i in range(1, NUM_BACKUP_PARTS + 1):
         print(f"   • {base_name}_combined_backup_{i}.txt")
     print(f"   • {base_name}_fallback_coins_warning.txt (if any)")
