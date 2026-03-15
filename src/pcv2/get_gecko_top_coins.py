@@ -56,7 +56,13 @@ class TopNonStableCoinsFetcher:
         'tether-gold',
         'official-trump',                               # too political
         'ainft',                                        # flagship tron ai
-        'hastra-prime'                                  # linear price history
+        'nft',
+        'hastra-prime',                                 # linear price history
+        'tron',
+        'bittorrent',                                   # tron
+        'just',                                         # tron
+        'rain',                                         # too new
+        'adi-token',                                    # institutional gov focused
     }
     
     MAX_NAME_LEN = 19

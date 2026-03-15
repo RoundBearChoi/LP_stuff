@@ -12,12 +12,6 @@ FORCE_REDOWNLOAD = False  # ← Change to True only when you want fresh data for
 NUM_BACKUP_PARTS = 5      # ← CHANGE THIS to 3, 5, 7, 10... whenever you want
 # ===================================================
 
-# Coinbase ticker overrides
-COINBASE_SYMBOL_MAP = {
-    'MNT': 'MANTLE',
-    'PI': 'PI',
-}
-
 
 def get_top_symbols(n: int = 100) -> list:
     """Robust parser — now correctly includes M (MemeCore)."""
@@ -40,106 +34,75 @@ def get_top_symbols(n: int = 100) -> list:
     return symbols
 
 
-def fetch_crypto_hourly(symbol: str, months: int, api_key: str, fetch_all: bool = False) -> tuple[pd.DataFrame, str]:
-    """Smart fallback + partial data saving.
-    Dynamic batches = any number of months (1-240) now works perfectly."""
+def fetch_crypto_hourly(symbol: str, months: int, api_key: str, fetch_all: bool = False) -> pd.DataFrame:
+    """Simplified version — ONLY tries USD CCCAGG.
+    No fallbacks, no exchanges, no partial saves. Fail fast → skip coin."""
     symbol = symbol.upper().strip()
     url = "https://min-api.cryptocompare.com/data/v2/histohour"
     
-    attempts = [
-        ('USD', None), ('USDT', None),
-        ('USDT', 'Binance'), ('USDT', 'Bybit'), ('USDT', 'OKX'),
-        ('USDT', 'Gate.io'), ('USDT', 'KuCoin'),
-        ('USD', 'Coinbase'), ('USDT', 'Coinbase'),
-    ]
+    print(f"   🚀 Fetching {symbol} (USD CCCAGG)...")
     
     all_data = []
-    used_source = None
-    is_partial = False
+    to_ts = int(datetime.now().timestamp())
     
-    for base, exchange in attempts:
-        fsym = COINBASE_SYMBOL_MAP.get(symbol, symbol) if exchange == 'Coinbase' else symbol
-        source_name = f"{base} CCCAGG" if exchange is None else f"{base} on {exchange}"
-        if fsym != symbol:
-            source_name += f" (as {fsym})"
+    if fetch_all:
+        target_start = int(datetime(2010, 1, 1).timestamp())
+        max_batches = 80
+        print(f"   📜 FULL HISTORY MODE for {symbol}...")
+    else:
+        hours_needed = months * 30.5 * 24 + 1000
+        batches_needed = math.ceil(hours_needed / 2000) + 5
+        max_batches = max(15, min(70, batches_needed))
+        buffer_days = int(months * 30.5) + 40
+        target_start = int((datetime.now() - timedelta(days=buffer_days)).timestamp())
+        print(f"   📅 Requesting {months} months → will use up to {max_batches} batches")
+    
+    for i in range(max_batches):
+        params = {
+            'fsym': symbol,
+            'tsym': 'USD',
+            'limit': 2000,
+            'toTs': to_ts,
+            'api_key': api_key.strip()
+        }
         
-        print(f"   🚀 Fetching {symbol} (trying {source_name})...")
-        
-        all_data = []
-        to_ts = int(datetime.now().timestamp())
-        
-        if fetch_all:
-            target_start = int(datetime(2010, 1, 1).timestamp())
-            max_batches = 80
-            print(f"   📜 FULL HISTORY MODE for {symbol}...")
-        else:
-            hours_needed = months * 30.5 * 24 + 1000
-            batches_needed = math.ceil(hours_needed / 2000) + 5
-            max_batches = max(15, min(70, batches_needed))
-            buffer_days = int(months * 30.5) + 40
-            target_start = int((datetime.now() - timedelta(days=buffer_days)).timestamp())
-            print(f"   📅 Requesting {months} months → will use up to {max_batches} batches")
-        
-        success = False
-        for i in range(max_batches):
-            params = {
-                'fsym': fsym,
-                'tsym': base,
-                'limit': 2000,
-                'toTs': to_ts,
-                'api_key': api_key.strip()
-            }
-            if exchange:
-                params['e'] = exchange
-            
-            try:
-                response = requests.get(url, params=params, timeout=45)
-            except (Timeout, ReadTimeout, ConnectionError) as e:
-                print(f"   ⚠️  Timeout during batch {i+1} - saving partial data collected so far")
-                if all_data:
-                    is_partial = True
-                    success = True
-                    break
-                else:
-                    raise
-            except RequestException as e:
+        try:
+            response = requests.get(url, params=params, timeout=45)
+        except (Timeout, ReadTimeout, ConnectionError) as e:
+            print(f"   ⚠️  Timeout during batch {i+1}")
+            if not all_data:
                 raise
-            
-            if response.status_code != 200:
-                raise ConnectionError(f"HTTP {response.status_code} for {symbol}")
-            
-            data = response.json()
-            if data.get('Response') != 'Success':
-                msg = data.get('Message', 'Unknown error')
-                print(f"   ⚠️  {source_name}: {msg}")
-                if "CCCAGG market does not exist" in msg and exchange is None:
-                    break
-                if not all_data and exchange is not None:
-                    break
-                raise Exception(f"API error for {symbol}: {msg}")
-            
-            batch = data['Data']['Data']
-            if not batch:
-                break
-                
-            all_data.extend(batch)
-            
-            oldest_ts = batch[0]['time']
-            to_ts = oldest_ts - 1
-            
-            print(f"     Batch {i+1}: +{len(batch):,} records | Oldest: {datetime.fromtimestamp(oldest_ts)}")
-            
-            if oldest_ts < target_start:
-                success = True
-                break
-            time.sleep(0.65)
+            break  # we have some data → we'll use what we got
+        except RequestException as e:
+            raise
         
-        if success or all_data:
-            used_source = source_name + (" (partial - timeout)" if is_partial else "")
+        if response.status_code != 200:
+            raise ConnectionError(f"HTTP {response.status_code} for {symbol}")
+        
+        data = response.json()
+        if data.get('Response') != 'Success':
+            msg = data.get('Message', 'Unknown error')
+            print(f"   ⚠️  CCCAGG: {msg}")
+            raise Exception(f"API error for {symbol}: {msg}")
+        
+        batch = data['Data']['Data']
+        if not batch:
             break
+            
+        all_data.extend(batch)
+        
+        oldest_ts = batch[0]['time']
+        to_ts = oldest_ts - 1
+        
+        print(f"     Batch {i+1}: +{len(batch):,} records | Oldest: {datetime.fromtimestamp(oldest_ts)}")
+        
+        if oldest_ts < target_start:
+            break
+            
+        time.sleep(0.65)
     
     if not all_data:
-        raise ValueError(f"{symbol} has no hourly data on CryptoCompare (tried CCCAGG + exchanges)")
+        raise ValueError(f"{symbol} has no hourly data on CryptoCompare (USD CCCAGG)")
     
     df = pd.DataFrame(all_data)
     df['datetime'] = pd.to_datetime(df['time'], unit='s', utc=True)
@@ -151,6 +114,7 @@ def fetch_crypto_hourly(symbol: str, months: int, api_key: str, fetch_all: bool 
     
     df = df[['datetime', 'open', 'high', 'low', 'close', 'volumefrom', 'volumeto']]
     
+    # Clean zero-price rows
     original_rows = len(df)
     df = df[(df['open'] > 0) & (df['high'] > 0) & (df['low'] > 0) & (df['close'] > 0)].reset_index(drop=True)
     dropped = original_rows - len(df)
@@ -159,9 +123,9 @@ def fetch_crypto_hourly(symbol: str, months: int, api_key: str, fetch_all: bool 
     
     actual_days = (df['datetime'].max() - df['datetime'].min()).days if not df.empty else 0
     actual_years = actual_days / 365.25
-    print(f"   ✅ {symbol}: {len(df):,} valid hourly candles (~{actual_years:.1f} years) → {used_source}")
+    print(f"   ✅ {symbol}: {len(df):,} valid hourly candles (~{actual_years:.1f} years)")
     
-    return df, used_source
+    return df
 
 
 # ====================== RUN IT ======================
@@ -178,8 +142,6 @@ if __name__ == "__main__":
         except ValueError:
             print("❌ Usage: python get_cryptocompare_top_coins_prices_historic.py [N_COINS] [MONTHS]")
             print("   MONTHS = 0 for FULL HISTORY, or 1–240")
-            print("Example: python ... 100 44")
-            print("         python ... 100 0     ← full history")
             sys.exit(1)
 
     if len(sys.argv) > 2:
@@ -218,11 +180,11 @@ if __name__ == "__main__":
     
     all_dfs = []
     success = 0
-    failed = []
-    fallback_coins = []
+    skipped = []
     combined = None
     
     if use_backup:
+        # ... (backup loading code unchanged - kept exactly as before)
         print(f"✅ Loading data from {NUM_BACKUP_PARTS}-part backup...")
         try:
             dfs = [pd.read_csv(f) for f in backup_files]
@@ -285,7 +247,7 @@ if __name__ == "__main__":
                     print(f"   ⚠️  Could not load existing file ({e}). Re-downloading...\n")
             
             try:
-                df, used_source = fetch_crypto_hourly(symbol, months, api_key, fetch_all=fetch_all)
+                df = fetch_crypto_hourly(symbol, months, api_key, fetch_all=fetch_all)
                 df['symbol'] = symbol
                 
                 df.to_csv(individual_file, index=False)
@@ -293,19 +255,16 @@ if __name__ == "__main__":
                 all_dfs.append(df)
                 success += 1
                 
-                if "on " in used_source or "(partial" in used_source:
-                    fallback_coins.append((symbol, used_source))
-                
                 print(f"   💾 Saved → {individual_file}\n")
             except Exception as e:
                 print(f"   ❌ Skipped: {e}\n")
-                failed.append(symbol)
+                skipped.append(symbol)
             
             time.sleep(1.8)
         
-        # ====================== CREATE GIANT CSV + 5-PART BACKUP ======================
+        # ====================== CREATE GIANT CSV + BACKUP ======================
         if all_dfs:
-            print("🔄 Creating ONE GIANT combined CSV + 5-part TXT backup...")
+            print("🔄 Creating ONE GIANT combined CSV + backup...")
             combined = pd.concat(all_dfs, ignore_index=True)
             combined = combined[['datetime', 'symbol', 'open', 'high', 'low', 'close', 'volumefrom', 'volumeto']]
             combined = combined.sort_values(['symbol', 'datetime']).reset_index(drop=True)
@@ -324,31 +283,28 @@ if __name__ == "__main__":
                 chunk.to_csv(backup_file, index=False)
                 print(f"      • Part {i+1}: {backup_file} ({len(chunk):,} rows)")
 
-    # ====================== FINAL SUMMARY ======================
+    # ====================== FINAL SUMMARY + SKIPPED FILE ======================
     print(f"\n🎉 FINISHED!")
     print(f"   Giant file saved → {giant_file}")
     if combined is not None:
         print(f"   Total rows: {len(combined):,} (≈ {len(combined)//max(success,1):,} hours × {success} coins)")
     print(f"   Successfully processed: {success} coins")
     
-    if failed:
-        print(f"\n⚠️  Failed coins ({len(failed)}): {', '.join(failed)}")
-    
-    if fallback_coins:
-        print("\n⚠️  WARNING: Some coins used exchange-specific or partial data:")
-        for sym, src in fallback_coins:
-            print(f"   • {sym} → {src}")
-        
-        fallback_warning = f"{base_name}_fallback_coins_warning.txt"
-        with open(fallback_warning, "w", encoding="utf-8") as f:
-            f.write("FALLBACK COINS REPORT\n")
-            for sym, src in fallback_coins:
-                f.write(f"• {sym} → {src}\n")
-        print(f"   💾 Warning report saved → {fallback_warning}")
+    if skipped:
+        skipped_file = f"{base_name}_skipped_coins.txt"
+        with open(skipped_file, "w", encoding="utf-8") as f:
+            f.write(f"SKIPPED COINS ({len(skipped)})\n")
+            f.write("These coins had no data on CryptoCompare USD CCCAGG.\n")
+            f.write("=" * 50 + "\n")
+            for s in skipped:
+                f.write(f"{s}\n")
+        print(f"\n⚠️  Skipped {len(skipped)} coins → saved to {skipped_file}")
+        print("   You can re-run with just these symbols later if needed.")
     
     print("\n📂 Final structure:")
     print("   • raw_data/                          ← individual CSVs")
     print(f"   • {giant_file}")
     for i in range(1, NUM_BACKUP_PARTS + 1):
         print(f"   • {base_name}_combined_backup_{i}.txt")
-    print(f"   • {base_name}_fallback_coins_warning.txt (if any)")
+    if skipped:
+        print(f"   • {base_name}_skipped_coins.txt")
