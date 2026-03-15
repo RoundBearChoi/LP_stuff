@@ -78,7 +78,7 @@ class CorrelationAnalyzer:
         if len(prices) < 500:
             print("⚠️  Warning: Very short overlapping period — results may be noisy.")
 
-        # Log returns (industry gold standard)
+        # Log returns
         log_returns = np.log(prices / prices.shift(1)).dropna()
 
         pearson_corr = log_returns[self.sym1].corr(log_returns[self.sym2], method='pearson')

@@ -6,7 +6,7 @@ import sys
 from pathlib import Path
 from tqdm import tqdm
 import warnings
-from engle_granger_cointegration import compute_engle_granger_cointegration
+from cointegration_engine import compute_cointegration, CointegrationMethod
 from config import DEFAULT_COINTEGRATION_CORRELATION_MONTHS as DEFAULT_MAX_MONTHS, DEFAULT_CSV_FILE
 
 warnings.filterwarnings("ignore")
@@ -94,8 +94,10 @@ class AllPairsAnalyzer:
                         "MODERATE" if abs_c > 0.4 else "WEAK")
             direction = "positive" if pearson_h > 0 else "negative"
 
-            # === NOW USING CENTRAL ENGLE-GRANGER MODULE ===
-            eg = compute_engle_granger_cointegration(sub[sym1], sub[sym2])
+            # === NOW USING THE CENTRAL COINTEGRATION ENGINE ===
+            # Change ENGLE_GRANGER → JOHANSEN anytime you want to test the new method
+            eg = compute_cointegration(sub[sym1], sub[sym2], method=CointegrationMethod.ENGLE_GRANGER)
+
             beta = eg.beta
             p_value = eg.p_value
             half_life_days = eg.half_life_days

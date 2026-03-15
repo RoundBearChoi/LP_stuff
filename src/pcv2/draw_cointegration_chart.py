@@ -111,7 +111,7 @@ class CointegrationChart:
         lines2, labels2 = ax_p.get_legend_handles_labels()
         ax_beta.legend(lines1 + lines2, labels1 + labels2, loc='upper left', fontsize=10)
 
-        fig.suptitle(f"COINTEGRATION ANALYSIS (GOLD STANDARD): {self.analyzer.sym1} vs {self.analyzer.sym2} — "
+        fig.suptitle(f"COINTEGRATION ANALYSIS: {self.analyzer.sym1} vs {self.analyzer.sym2} — "
                      f"LAST {self.max_months} MONTHS — "
                      f"{len(results.p1):,} hourly bars "
                      f"({results.p1.index[0].date()} to {results.p1.index[-1].date()})",

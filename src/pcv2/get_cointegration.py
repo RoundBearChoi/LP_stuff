@@ -73,7 +73,6 @@ class CointegrationAnalyzer:
         return p1, p2
 
     def compute(self) -> CointegrationResults:
-        """Runs the full gold-standard analysis and prints the exact console block."""
         p1, p2 = self._load_data()
 
         # === NOW FROM THE CENTRAL COINTEGRATION ENGINE ===
@@ -90,7 +89,7 @@ class CointegrationAnalyzer:
         box_color = eg.box_color
 
         # === Verdict print (unchanged) ===
-        print(f"\n=== FULL-SAMPLE RESULTS (GOLD STANDARD) — LAST {self.max_months} MONTHS ===")
+        print(f"\n=== FULL-SAMPLE RESULTS — LAST {self.max_months} MONTHS ===")
         print(f"Hedge ratio (beta): {beta:.4f}")
         print(f"Cointegration p-value: {p_value:.6f}")
         print(f"Half-life: {half_life_days:.1f} days")
