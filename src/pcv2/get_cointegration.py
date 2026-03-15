@@ -1,8 +1,5 @@
 import sys
 import pandas as pd
-import numpy as np
-from statsmodels.api import OLS, add_constant
-from statsmodels.tsa.stattools import coint
 import os
 from dataclasses import dataclass
 from typing import Optional, Tuple
@@ -75,8 +72,7 @@ class CointegrationAnalyzer:
     def compute(self) -> CointegrationResults:
         p1, p2 = self._load_data()
 
-        # === NOW FROM THE CENTRAL COINTEGRATION ENGINE ===
-        # Change ENGLE_GRANGER → JOHANSEN anytime you want to test the new method
+        # === FULL-SAMPLE RESULTS — USING CENTRAL ENGINE ===
         eg = compute_cointegration(p1, p2, method=CointegrationMethod.ENGLE_GRANGER)
 
         beta = eg.beta
@@ -95,24 +91,27 @@ class CointegrationAnalyzer:
         print(f"Half-life: {half_life_days:.1f} days")
         print(f"→ {verdict_console}")
 
-        # === Rolling cointegration (unchanged — still uses raw OLS+coint) ===
-        print(f"\nComputing rolling cointegration ({self.ROLLING_WINDOW_DAYS}-day windows, updated daily) on last {self.max_months} months...")
+        # === ROLLING COINTEGRATION — NOW FULLY CENTRALIZED IN THE ENGINE ===
+        print(f"\nComputing rolling cointegration ({self.ROLLING_WINDOW_DAYS}-day windows, updated daily) "
+              f"on last {self.max_months} months...")
+
         window = self.ROLLING_WINDOW_DAYS * 24
         step = 24
         rolling_dates, rolling_betas, rolling_pvals = [], [], []
 
-        log_p1 = np.log(p1)
-        log_p2 = np.log(p2)
+        for i in range(0, len(p1) - window + 1, step):
+            win1 = p1.iloc[i:i + window]
+            win2 = p2.iloc[i:i + window]
 
-        for i in range(0, len(log_p1) - window + 1, step):
-            win1, win2 = log_p1.iloc[i:i+window], log_p2.iloc[i:i+window]
-            beta_win = OLS(win1, add_constant(win2)).fit().params.iloc[1]
-            _, pval_win, _ = coint(win1, win2, autolag='AIC')
-            rolling_betas.append(beta_win)
-            rolling_pvals.append(pval_win)
-            rolling_dates.append(log_p1.index[i + window - 1])
+            # One clean engine call per window — exactly like full-sample
+            eg_win = compute_cointegration(win1, win2, method=CointegrationMethod.ENGLE_GRANGER)
 
-        print(f"Rolling windows computed: {len(rolling_dates)}")
+            rolling_betas.append(eg_win.beta)
+            rolling_pvals.append(eg_win.p_value)
+            rolling_dates.append(p1.index[i + window - 1])
+
+        print(f"Rolling windows computed: {len(rolling_dates):,} "
+              f"(method: {eg.method_used.value})")
 
         # === Ratio stats (unchanged) ===
         ratio = p1 / p2
