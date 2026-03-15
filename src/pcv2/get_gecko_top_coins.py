@@ -35,28 +35,28 @@ class TopNonStableCoinsFetcher:
         'ylds',
         'janus-henderson-anemoy-treasury-fund',
         'euro-coin',
-        
-        # Newly added (March 2026):
-        #'rain',                    # RAIN
-        #'mantle',                  # MNT (Mantle L2)
-        #'pi-network',              # PI (Pi Network)
-        'ousg',                     # OUSG (tokenized T-bills)
-        'a7a5',                     # A7A5
-        'kinesis-gold',             # KAU (gold-backed)
-        'usx',                      # USX
-        'gho',                      # overcollateralized stablecoin backed by assets
-        'ondo-us-dollar-yield',     # USDY (Ondo US Dollar Yield) – tokenized yield-bearing USD note
-        'spiko-us-t-bills-money-market-fund',  # Spiko US T-Bills Money Market Fund (USTBL) – tokenized T-bills MMF
-        'fidelity-digital-interest-token',  # FDIT (Fidelity Digital Interest Token) – Fidelity tokenized Treasury money market fund
-        'tradable-na-rent-financing-platform-sstn',  # PC0000031 (Tradable NA Rent Financing Platform SSTN)
-        'the9bit',                  # 9BIT (The9bit) – Solana ecosystem token (Gaming Marketplace / GameFi category)
-        'blockchain-capital',       # BCAP (Blockchain Capital) – old tokenized VC fund token
-        'thetrumptoken',            # GREAT (TheTrumpToken) – Trump-themed PolitiFi / Solana meme coin
-        'theo-short-duration-us-treasury-fund',  # THBILL (Theo Short Duration US Treasury Fund)
-        'onyc',                     # ONYC (Onchain Yield Coin) – tokenized yield-generating asset on Solana
-        'apollo-diversified-credit-securitize-fund',  # ACRED (Apollo Diversified Credit Securitize Fund)
-        'cash-4',                   # CASH (CASH) – fully backed USD stablecoin by Bridge and Phantom
-        'gmt-token',                # GOMINING (GoMining Token) – Bitcoin mining utility token
+        'ousg',                                         # OUSG (tokenized T-bills)
+        'a7a5',                                         # linear price history
+        'kinesis-gold',
+        'usx',                                          # stablecoin
+        'gho',                                          # overcollateralized stablecoin backed by assets
+        'ondo-us-dollar-yield',                         # tokenized yield-bearing USD note
+        'spiko-us-t-bills-money-market-fund',           # tokenized T-bills MMF
+        'fidelity-digital-interest-token',              # Fidelity tokenized Treasury money market fund
+        'tradable-na-rent-financing-platform-sstn',     # PC0000031 (Tradable NA Rent Financing Platform SSTN)
+        'the9bit',                                      # centralized manipulation
+        'blockchain-capital',                           # linear price history
+        'thetrumptoken',                                # too political
+        'theo-short-duration-us-treasury-fund',         # US Treasury Fund
+        'onyc',                                         # tokenized yield-generating asset on Solana
+        'apollo-diversified-credit-securitize-fund',    # ACRED (Apollo Diversified Credit Securitize Fund)
+        'cash-4',                                       # USD stablecoin by Bridge and Phantom
+        'gmt-token',
+        'pax-gold',
+        'tether-gold',
+        'official-trump',                               # too political
+        'ainft',                                        # flagship tron ai
+        'hastra-prime'                                  # linear price history
     }
     
     MAX_NAME_LEN = 19
