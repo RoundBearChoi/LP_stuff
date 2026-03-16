@@ -8,8 +8,8 @@ from requests.exceptions import RequestException, Timeout, ConnectionError, Read
 import math
 
 # ====================== CONFIG ======================
-FORCE_REDOWNLOAD = False  # ← Change to True only when you want fresh data for everything
-NUM_BACKUP_PARTS = 5      # ← CHANGE THIS to 3, 5, 7, 10... whenever you want
+FORCE_REDOWNLOAD = False     # ← Change to True only when you want fresh data for everything
+NUM_BACKUP_PARTS = 10        # ← CHANGE THIS to 3, 5, 7, 10... whenever you want
 # ===================================================
 
 
