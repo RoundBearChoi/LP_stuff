@@ -1,4 +1,0 @@
-FALLBACK COINS REPORT
-• RAIN → USDT on KuCoin
-• MNT → USD on Coinbase (as MANTLE)
-• ADI → USDT on KuCoin

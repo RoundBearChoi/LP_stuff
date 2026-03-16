@@ -6,13 +6,6 @@ import time
 import os
 
 class TopNonStableCoinsFetcher:
-    """
-    Fetches top non-stablecoins from CoinGecko by market cap.
-    Now uses multi-page pagination to GUARANTEE exactly the requested number
-    of coins (e.g. always 200), even after skipping stables and custom exclusions.
-    Interactive API key prompt + automatic retry on 429.
-    Main list is ultra-clean (no custom exclusion list/note).
-    """
     STABLE_IDS = {
         'tether',
         'usd-coin',
@@ -35,6 +28,7 @@ class TopNonStableCoinsFetcher:
         'ylds',
         'janus-henderson-anemoy-treasury-fund',
         'euro-coin',
+        'eur-coinvertible',
         'ousg',                                         # OUSG (tokenized T-bills)
         'a7a5',                                         # linear price history
         'kinesis-gold',
@@ -42,8 +36,9 @@ class TopNonStableCoinsFetcher:
         'gho',                                          # overcollateralized stablecoin backed by assets
         'ondo-us-dollar-yield',                         # tokenized yield-bearing USD note
         'spiko-us-t-bills-money-market-fund',           # tokenized T-bills MMF
-        'fidelity-digital-interest-token',              # Fidelity tokenized Treasury money market fund
-        'tradable-na-rent-financing-platform-sstn',     # PC0000031 (Tradable NA Rent Financing Platform SSTN)
+        'fidelity-digital-interest-token',              # money market fund
+        'tradable-na-rent-financing-platform-sstn',     
+        'tradable-singapore-fintech-ssl-2',
         'the9bit',                                      # centralized manipulation
         'blockchain-capital',                           # linear price history
         'thetrumptoken',                                # too political
@@ -66,6 +61,23 @@ class TopNonStableCoinsFetcher:
         'apenft',                                       # tron
         'iota',                                         # no data on cryptocompare
         'sun-token',                                    # tron
+        'tesla-xstock',                                 # don't want stocks
+        'pleasing-gold',
+        'yearn-finance',
+        'brz',                                          # brazil peg
+        'mbg-by-multibank-group',                       # don't like banks
+        'vaneck-treasury-fund',
+        'bianrensheng',                                 # chinese
+        'usdx',
+        'anchored-coins-eur',
+        'sygnum-fiusd-liquidity-fund',
+        'midas-mtbill',
+        'usd',                                          # overnight-fi-usd
+        'resolv-rlp',                                   # resolv-liquidity-provider-token
+        'tronbank',
+        'verified-emeralds',
+        'stasis-eurs',
+        'societe-generale-forge',
     }
     
     MAX_NAME_LEN = 19

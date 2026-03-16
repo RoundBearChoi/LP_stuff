@@ -1,9 +1,0 @@
-Excluded Coins Report (from top 4 fetched)
-Generated: 2026-03-14 11:37:54 KST
-Total skipped stablecoins: 1
-Total custom excluded (manual blacklist): 0
-Total excluded: 1
-
-Orig Rank  Name                           Symbol           Price (USD)      Market Cap Reason                        
---------------------------------------------------------------------------------------------------------------
-3          Tether                         USDT         $       1.00          $184.02B   Major stablecoin ID           
