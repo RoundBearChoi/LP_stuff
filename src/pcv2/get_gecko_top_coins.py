@@ -6,82 +6,49 @@ import time
 import os
 
 class TopNonStableCoinsFetcher:
-    STABLE_IDS = {
-        'tether',
-        'usd-coin',
-        'usds',
-        'ethena-usde',
-        'dai',
-        'paypal-usd',
-        'first-digital-usd',
-        'true-usd',
-        'usdd',
-        'frax'
+    # === ONE GIANT BLACKLIST (161 unique IDs) ===
+    BLACKLISTED_IDS = {
+        'a7a5', 'adi-token', 'affine', 'alphabet-class-a-ondo-tokenized-stock', 'america',
+        'anchored-coins-eur', 'apenft', 'apollo-diversified-credit-securitize-fund', 'atomone',
+        'atoshi', 'aztec', 'babyboomtoken', 'basedhype', 'bianrensheng', 'bim', 'bitdca',
+        'bitlayer', 'bittorrent', 'bitway', 'blockchain-capital', 'bnb48-club-token', 'bold-2',
+        'botxcoin', 'brz', 'burnedfi', 'cash-4', 'changenow', 'chutes',
+        'circle-internet-group-ondo-tokenized-stock', 'coincollect', 'collect-on-fanable',
+        'conscious-token', 'crown-brlv', 'dacxi', 'dai', 'diem', 'dola-usd', 'ethena-usde',
+        'eur-coinvertible', 'euro-coin', 'eutbl', 'exod', 'fidelity-digital-dollar',
+        'fidelity-digital-interest-token', 'figure-heloc', 'first-digital-usd', 'flying-tulip',
+        'frax', 'fx-usd-saving', 'gama-token', 'gamer-tag', 'gho', 'glidr', 'gmt-token',
+        'grx-chain', 'hashnote-usyc', 'hastra-prime', 'helder', 'hippius',
+        'infinifi-locked-iusd-1week', 'ini', 'iota', 'iota-2', 'ium',
+        'janus-henderson-anemoy-aaa-clo-fund', 'janus-henderson-anemoy-treasury-fund', 'just',
+        'kelp-gain', 'kinesis-gold', 'kinetiq', 'liquity-bold-2', 'lium', 'luxxcoin',
+        'mag7-ssi', 'mai', 'main-street-yield', 'mantle', 'mantra', 'mbg-by-multibank-group',
+        'meta-2-2', 'micron-technology-ondo-tokenized-stock', 'midas-mf-one', 'midas-mhyper',
+        'midas-mtbill', 'mindwavedao', 'monerium-eur-money', 'monerium-eur-money-2',
+        'nest-basis-vault', 'nirvana-ana-2', 'nkyc-token', 'noon-usn', 'official-trump',
+        'ondo-us-dollar-yield', 'onyc', 'ousg', 'palladium-network', 'pax-gold', 'paypal-usd',
+        'pleasing-gold', 'polymtrade', 'proprietary-trading-network', 'rain', 'ravedao',
+        'resolv-rlp', 'resolv-usr', 'ridges-ai', 'ripple', 'robo-token-2', 'rollbit-coin',
+        'ronin', 'ryze', 'score', 'securitize-tokenized-aaa-clo-fund', 'sentient', 'shuffle-2',
+        'singularry', 'snowbank', 'societe-generale-forge',
+        'spdr-s-p-500-etf-ondo-tokenized-etf', 'spiko-us-t-bills-money-market-fund',
+        'stasis-eurs', 'stronghold', 'sun-token',
+        'superstate-short-duration-us-government-securities-fund-ustb',
+        'sygnum-fiusd-liquidity-fund', 'targon', 'tcy', 'tdccp', 'templar', 'temple',
+        'tesla-xstock', 'tether', 'tether-gold', 'the-grays-currency', 'the9bit',
+        'theo-short-duration-us-treasury-fund', 'thetrumptoken',
+        'tradable-na-rent-financing-platform-sstn', 'tradable-singapore-fintech-ssl-2', 'tria',
+        'tron', 'tronbank', 'true-usd', 'tx', 'unit-plasma', 'unit-pump', 'unitywallet-token',
+        'usd', 'usd-coin', 'usdd', 'usds', 'usdx', 'ustbl', 'usx', 'vaneck-treasury-fund',
+        'verified-emeralds', 'war-2', 'wojak-finance', 'would', 'yearn-finance', 'ylds'
     }
 
-    EXCLUDED_IDS = {
-        'figure-heloc',
-        'hashnote-usyc',
-        'superstate-short-duration-us-government-securities-fund-ustb',
-        'eutbl',
-        'janus-henderson-anemoy-aaa-clo-fund',
-        'ylds',
-        'janus-henderson-anemoy-treasury-fund',
-        'euro-coin',
-        'eur-coinvertible',
-        'ousg',                                         # OUSG (tokenized T-bills)
-        'a7a5',                                         # linear price history
-        'kinesis-gold',
-        'usx',                                          # stablecoin
-        'gho',                                          # overcollateralized stablecoin backed by assets
-        'ondo-us-dollar-yield',                         # tokenized yield-bearing USD note
-        'spiko-us-t-bills-money-market-fund',           # tokenized T-bills MMF
-        'fidelity-digital-interest-token',              # money market fund
-        'tradable-na-rent-financing-platform-sstn',     
-        'tradable-singapore-fintech-ssl-2',
-        'the9bit',                                      # centralized manipulation
-        'blockchain-capital',                           # linear price history
-        'thetrumptoken',                                # too political
-        'theo-short-duration-us-treasury-fund',         # US Treasury Fund
-        'onyc',                                         # tokenized yield-generating asset on Solana
-        'apollo-diversified-credit-securitize-fund',    # ACRED (Apollo Diversified Credit Securitize Fund)
-        'cash-4',                                       # USD stablecoin by Bridge and Phantom
-        'gmt-token',
-        'pax-gold',
-        'tether-gold',
-        'official-trump',                               # too political
-        'hastra-prime',                                 # linear price history
-        'tron',
-        'bittorrent',                                   # tron
-        'just',                                         # tron
-        'rain',                                         # too new
-        'adi-token',                                    # institutional gov focused
-        'ripple',                                       # too centralized
-        'mantle',                                       # no data on cryptocompare
-        'apenft',                                       # tron
-        'iota',                                         # no data on cryptocompare
-        'sun-token',                                    # tron
-        'tesla-xstock',                                 # don't want stocks
-        'pleasing-gold',
-        'yearn-finance',
-        'brz',                                          # brazil peg
-        'mbg-by-multibank-group',                       # don't like banks
-        'vaneck-treasury-fund',
-        'bianrensheng',                                 # chinese
-        'usdx',
-        'anchored-coins-eur',
-        'sygnum-fiusd-liquidity-fund',
-        'midas-mtbill',
-        'usd',                                          # overnight-fi-usd
-        'resolv-rlp',                                   # resolv-liquidity-provider-token
-        'tronbank',
-        'verified-emeralds',
-        'stasis-eurs',
-        'societe-generale-forge',
-        'mag7-ssi',
-        'midas-mf-one',
+    # Tiny helper for nice reporting only (former major stables)
+    KNOWN_STABLES = {
+        'tether', 'usd-coin', 'usds', 'ethena-usde', 'dai',
+        'paypal-usd', 'first-digital-usd', 'true-usd', 'usdd', 'frax'
     }
-    
+
     MAX_NAME_LEN = 19
     MAX_SYMBOL_LEN = 12
 
@@ -141,8 +108,8 @@ class TopNonStableCoinsFetcher:
             f.write(f"Excluded Coins Report (from top {len(excluded) + limit} fetched)\n")
             f.write(f"Generated: {timestamp}\n")
             f.write(f"Total skipped stablecoins: {skipped_stables}\n")
-            f.write(f"Total custom excluded (manual blacklist): {excluded_custom}\n")
-            f.write(f"Total excluded: {len(excluded)}\n\n")
+            f.write(f"Total custom excluded: {excluded_custom}\n")
+            f.write(f"Total blacklisted: {len(excluded)}\n\n")
 
             f.write(f"{'Orig Rank':<10} {'Name':<30} {'Symbol':<12} {'Price ({})':>14} "
                     f"{'Market Cap':>15} {'Reason':<30}\n".format(self.vs_currency))
@@ -218,14 +185,17 @@ class TopNonStableCoinsFetcher:
                 symbol = coin.get('symbol', '').lower()
                 name = coin.get('name', '').lower()
 
-                if coin_id in self.STABLE_IDS:
-                    skipped_stables += 1
-                    excluded.append((global_rank, coin, "Major stablecoin ID"))
+                # === SINGLE GIANT BLACKLIST CHECK ===
+                if coin_id in self.BLACKLISTED_IDS:
+                    reason = "Stablecoin" if coin_id in self.KNOWN_STABLES else "Blacklisted"
+                    if coin_id in self.KNOWN_STABLES:
+                        skipped_stables += 1
+                    else:
+                        excluded_custom += 1
+                    excluded.append((global_rank, coin, reason))
                     continue
-                if coin_id in self.EXCLUDED_IDS:
-                    excluded_custom += 1
-                    excluded.append((global_rank, coin, "Custom/manual blacklist"))
-                    continue
+
+                # Dynamic USD-pegged stable (catches new ones not yet blacklisted)
                 if 0.92 < price < 1.08 and ('usd' in symbol or 'usd' in name):
                     skipped_stables += 1
                     excluded.append((global_rank, coin, "Dynamic USD-pegged stable"))
@@ -239,11 +209,10 @@ class TopNonStableCoinsFetcher:
             page += 1
 
         print(f"✅ Fetched {global_rank} raw coins across {page-1} page(s) • "
-              f"Skipped {skipped_stables} stablecoins • "
-              f"Excluded {excluded_custom} custom coins • "
+              f"Blacklisted {skipped_stables + excluded_custom} coins • "
               f"Returning exactly {len(filtered)} non-stables\n")
 
-        # Console preview
+        # Console preview (unchanged)
         print(f"{'Rank':<4} {'Name':<22} {'Symbol':<15} {'Price':>12} {'Market Cap':>18}")
         print("-" * 89)
         for rank, coin in enumerate(filtered[:5], 1):
@@ -265,8 +234,9 @@ class TopNonStableCoinsFetcher:
         with open(filename, "w", encoding="utf-8") as f:
             f.write(f"Top {limit} Non-Stablecoins by Market Cap ({self.vs_currency})\n")
             f.write(f"Generated: {timestamp}\n")
-            f.write(f"Skipped stablecoins: {skipped_stables}\n")
-            f.write(f"Excluded additional coins: {excluded_custom}\n\n")
+            f.write(f"Blacklisted stablecoins: {skipped_stables}\n")
+            f.write(f"Blacklisted custom coins: {excluded_custom}\n")
+            f.write(f"Total blacklisted: {skipped_stables + excluded_custom}\n\n")
             
             f.write(f"{'Rank':<4} {'Name':<22} {'Symbol':<15} {'Price ({})':>14} {'Market Cap':>12} {'24h %':>8}\n"
                     .format(self.vs_currency))
