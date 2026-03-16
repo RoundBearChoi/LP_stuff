@@ -14,23 +14,54 @@ NUM_BACKUP_PARTS = 5      # ← CHANGE THIS to 3, 5, 7, 10... whenever you want
 
 
 def get_top_symbols(n: int = 100) -> list:
-    """Robust parser — now correctly includes M (MemeCore)."""
+    """Robust parser + FULL DEBUG OUTPUT for every rejected symbol/line.
+    Now tells you exactly where we failed to parse (MF-ONE, MAG7.SSI, etc.)."""
     txt_file = f"gecko_top_{n}_non_stable_coins.txt"
     symbols = []
+    rejected = []
+    
+    print(f"🔍 Parsing {txt_file} for top {n} coins...")
+    
     with open(txt_file, "r", encoding="utf-8") as f:
-        for line in f:
-            line = line.strip()
-            if not line or not line[0].isdigit():
+        for line_num, line in enumerate(f, 1):
+            original_line = line.strip()
+            if not original_line or not original_line[0].isdigit():
                 continue
-            parts = line.split()
+            
+            parts = original_line.split()
+            symbol = None
             for i, part in enumerate(parts):
                 if part.startswith("$"):
                     if i > 0:
-                        symbol = parts[i-1]
-                        if symbol.isalnum() and len(symbol) >= 1 and symbol.isupper():
-                            if symbol not in symbols:
-                                symbols.append(symbol)
+                        symbol = parts[i-1].strip()
                     break
+            
+            if symbol:
+                # === ORIGINAL STRICT FILTER (kept for safety) ===
+                if symbol.isalnum() and len(symbol) >= 1 and symbol.isupper():
+                    if symbol not in symbols:
+                        symbols.append(symbol)
+                else:
+                    rejected.append((symbol, original_line, line_num))
+            else:
+                rejected.append(("NO_$_FOUND", original_line, line_num))
+    
+    # ====================== DEBUG OUTPUT ======================
+    print(f"✅ Successfully parsed: {len(symbols)} symbols")
+    
+    if rejected:
+        print(f"⚠️  {len(rejected)} entries FAILED parsing:")
+        for i, (sym, line, num) in enumerate(rejected, 1):
+            print(f"   {i:2d}. Line {num:3d} | Rejected symbol: '{sym}'")
+            print(f"       Full line: {line[:120]}{'...' if len(line)>120 else ''}")
+        print("\n💡 Tip: These usually contain '.', '-', or other punctuation.")
+    
+    # OPTIONAL: Switch to fully permissive 2026 mode (uncomment the next 3 lines)
+    # if symbol and len(symbol) >= 1 and symbol.isupper():  # allows . - numbers etc.
+    #     if symbol not in symbols:
+    #         symbols.append(symbol)
+    # (then you can delete the strict if/else above)
+    
     return symbols
 
 
@@ -72,7 +103,7 @@ def fetch_crypto_hourly(symbol: str, months: int, api_key: str, fetch_all: bool 
             print(f"   ⚠️  Timeout during batch {i+1}")
             if not all_data:
                 raise
-            break  # we have some data → we'll use what we got
+            break
         except RequestException as e:
             raise
         
@@ -184,7 +215,6 @@ if __name__ == "__main__":
     combined = None
     
     if use_backup:
-        # ... (backup loading code unchanged - kept exactly as before)
         print(f"✅ Loading data from {NUM_BACKUP_PARTS}-part backup...")
         try:
             dfs = [pd.read_csv(f) for f in backup_files]

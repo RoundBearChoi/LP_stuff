@@ -78,6 +78,8 @@ class TopNonStableCoinsFetcher:
         'verified-emeralds',
         'stasis-eurs',
         'societe-generale-forge',
+        'mag7-ssi',
+        'midas-mf-one',
     }
     
     MAX_NAME_LEN = 19
