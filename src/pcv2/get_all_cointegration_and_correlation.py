@@ -11,7 +11,7 @@ from config import (
     DEFAULT_COINTEGRATION_CORRELATION_MONTHS as DEFAULT_MAX_MONTHS,
     DEFAULT_CSV_FILE,
     DEFAULT_GET_BOTH_DIRECTIONS,
-    DEFAULT_COINTEGRATION_METHOD      # ← NEW
+    DEFAULT_COINTEGRATION_METHOD
 )
 
 warnings.filterwarnings("ignore")
@@ -28,7 +28,6 @@ class AllPairsAnalyzer:
         self.pivot = None
         self.symbols = None
         
-        # === Use config method (replaces old hardcoded ENGLE_GRANGER) ===
         self.method = DEFAULT_COINTEGRATION_METHOD
         self.method_filename = self.method.value.lower()
 
@@ -170,14 +169,14 @@ class AllPairsAnalyzer:
         if self.target_symbol:
             others = [s for s in self.symbols if s != self.target_symbol]
             pair_list = [(self.target_symbol, s) for s in sorted(others)]
-            output_file = f"{self.target_symbol}_vs_all_pairs_{self.method_filename}_{self.max_months}m.csv"
+            output_file = f"{self.target_symbol}_vs_all_pairs_{self.method_filename}_{self.max_months}m_top{len(pair_list)}.csv"
         else:
             if self.get_both_directions:
                 pair_list = [(s1, s2) for s1 in self.symbols for s2 in self.symbols if s1 != s2]
-                output_file = f"all_pairs_cointegration_correlation_{self.method_filename}_both_directions_{self.max_months}m.csv"
+                output_file = f"all_pairs_cointegration_correlation_{self.method_filename}_both_directions_{self.max_months}m_top{len(pair_list)}.csv"
             else:
                 pair_list = [(s1, s2) for s1 in self.symbols for s2 in self.symbols if s1 < s2]
-                output_file = f"all_pairs_cointegration_correlation_{self.method_filename}_one_direction_{self.max_months}m.csv"
+                output_file = f"all_pairs_cointegration_correlation_{self.method_filename}_one_direction_{self.max_months}m_top{len(pair_list)}.csv"
 
         print(f"\n🚀 Computing {len(pair_list):,} pairs on last {self.max_months} months "
               f"(method = {self.method.value})...")
