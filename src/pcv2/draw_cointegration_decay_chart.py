@@ -3,16 +3,14 @@ import pandas as pd
 import numpy as np
 import sys
 import os
-import matplotlib.dates as mdates
 from cointegration_engine import compute_cointegration
 from config import DEFAULT_CHART_MONTHS, DEFAULT_CSV_FILE, DEFAULT_COINTEGRATION_METHOD
 
 
 class CointegrationDecayChart:
-    """Simplified p-value decay scan:
-    - Top: normalized prices over full chart_months
-    - Bottom: cointegration p-value for every lookback from 1 month → chart_months
-    No rolling windows, no spread/z-score — pure & clean.
+    """P-value DECAY scan — now with true reversal:
+    Bottom chart: 44m (LEFT) → 1m (RIGHT)
+    Top chart unchanged.
     """
 
     def __init__(self, sym1: str, sym2: str, csv_file: str = None,
@@ -51,10 +49,8 @@ class CointegrationDecayChart:
 
     def _compute_lookback_pvalues(self, p1_full: pd.Series, p2_full: pd.Series):
         results = []
-        method_name = DEFAULT_COINTEGRATION_METHOD.value
-
         print(f"\nComputing cointegration p-values (1–{self.chart_months} months) "
-              f"using {method_name}...")
+              f"using {DEFAULT_COINTEGRATION_METHOD.value}...")
 
         for m in range(1, self.chart_months + 1):
             hours_back = int(m * 30.437 * 24)
@@ -62,7 +58,6 @@ class CointegrationDecayChart:
             p2_win = p2_full.iloc[-hours_back:]
 
             if len(p1_win) < 200:
-                print(f"  ⚠️ {m:2d} months: too few bars ({len(p1_win)}), skipped")
                 continue
 
             eg = compute_cointegration(p1_win, p2_win, method=DEFAULT_COINTEGRATION_METHOD)
@@ -83,17 +78,18 @@ class CointegrationDecayChart:
         p1, p2 = self._load_data()
         lookback_results = self._compute_lookback_pvalues(p1, p2)
 
-        # Prepare plot data
-        months = [r['months'] for r in lookback_results]
-        pvals = [r['p_value'] for r in lookback_results]
+        # Save full-period result BEFORE any reversal (fixes the weird half-life bug)
+        full = lookback_results[-1]
 
-        # Normalized prices (full period)
+        # Data for plotting (still ascending for correct fill_between)
+        months = [r['months'] for r in lookback_results]   # 1 → 44
+        pvals  = [r['p_value'] for r in lookback_results]
+
+        # Normalized prices
         norm1 = p1 / p1.iloc[0] * 100
         norm2 = p2 / p2.iloc[0] * 100
 
-        # === FIGURE ===
-        fig, axs = plt.subplots(2, 1, figsize=(14, 11),
-                                gridspec_kw={'hspace': 0.38})
+        fig, axs = plt.subplots(2, 1, figsize=(14, 11), gridspec_kw={'hspace': 0.38})
 
         # ==================== CHART 1: NORMALIZED PRICES ====================
         axs[0].plot(norm1.index, norm1, label=self.sym1, linewidth=2.2)
@@ -102,8 +98,6 @@ class CointegrationDecayChart:
         axs[0].legend(loc='upper left')
         axs[0].grid(True, alpha=0.3)
 
-        # Nice summary box
-        full = lookback_results[-1]
         method_display = DEFAULT_COINTEGRATION_METHOD.value.replace('_', ' ').title()
         axs[0].text(0.02, 0.82,
                     f"Method: {method_display}\n"
@@ -115,7 +109,7 @@ class CointegrationDecayChart:
                     bbox=dict(boxstyle="round,pad=1", facecolor="#e6f3ff",
                               edgecolor='navy', alpha=0.95))
 
-        # ==================== CHART 2: P-VALUE SWEEP ====================
+        # ==================== CHART 2: P-VALUE DECAY (44m LEFT → 1m RIGHT) ====================
         ax = axs[1]
         ax.plot(months, pvals, marker='o', markersize=5, linewidth=2.8,
                 color='purple', label='Cointegration p-value')
@@ -129,15 +123,24 @@ class CointegrationDecayChart:
                         color='lightgreen', alpha=0.45,
                         label='Cointegrated')
 
-        ax.set_title(f"2. Cointegration p-value by Lookback Period (1–{self.chart_months} months)")
-        ax.set_xlabel("Lookback Period (months)")
+        ax.set_title(f"2. Cointegration p-value DECAY Scan ({self.chart_months}m → 1 month)")
+        ax.set_xlabel("Lookback Period (months) — longest (left) → shortest (right)")
         ax.set_ylabel("p-value")
         ax.set_ylim(0, 1.05)
         ax.grid(True, alpha=0.3)
         ax.legend(fontsize=11)
-        ax.set_xticks(range(0, self.chart_months + 1, max(1, self.chart_months // 8)))
 
-        # ==================== SAVE (NEW FILENAME FORMAT) ====================
+        # === DESCENDING TICKS (44, 40, ..., 1) ===
+        step = max(4, self.chart_months // 8)
+        ticks = list(range(self.chart_months, 0, -step))
+        if 1 not in ticks:
+            ticks.append(1)
+        ax.set_xticks(ticks)
+
+        # === THE MAGIC: REVERSE THE AXIS SO 44 IS ON THE LEFT ===
+        ax.invert_xaxis()
+
+        # ==================== SAVE ====================
         fig.suptitle(f"COINTEGRATION P-VALUE DECAY SCAN — {self.sym1} vs {self.sym2}\n"
                      f"Method: {method_display} | Last {self.chart_months} months",
                      fontsize=15.5, y=0.96)
