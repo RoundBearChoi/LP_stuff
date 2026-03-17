@@ -7,7 +7,7 @@ from cointegration_engine import compute_cointegration
 from config import (
     DEFAULT_COINTEGRATION_CORRELATION_MONTHS as DEFAULT_MAX_MONTHS,
     DEFAULT_CSV_FILE,
-    DEFAULT_COINTEGRATION_METHOD          # ← NEW
+    DEFAULT_COINTEGRATION_METHOD
 )
 
 
@@ -30,18 +30,20 @@ class CointegrationResults:
     ratio: pd.Series
     ratio_rolling_mean: pd.Series
     ratio_rolling_std: pd.Series
-    method_used: str          # ← NEW: e.g. "ENGLE_GRANGER" or "JOHANSEN"
+    method_used: str
 
 
 class CointegrationAnalyzer:
     DEFAULT_CSV = DEFAULT_CSV_FILE
     ROLLING_WINDOW_DAYS = 90
 
-    def __init__(self, sym1: str, sym2: str, csv_file: Optional[str] = None, max_months: int = DEFAULT_MAX_MONTHS):
+    def __init__(self, sym1: str, sym2: str, csv_file: Optional[str] = None, 
+                 max_months: int = DEFAULT_MAX_MONTHS, compute_rolling: bool = True):
         self.sym1 = sym1.upper()
         self.sym2 = sym2.upper()
         self.csv_file = csv_file or self.DEFAULT_CSV
         self.max_months = max_months
+        self.compute_rolling = compute_rolling          # ← NEW
         self.results: Optional[CointegrationResults] = None
 
     def _load_data(self) -> Tuple[pd.Series, pd.Series]:
@@ -51,7 +53,6 @@ class CointegrationAnalyzer:
 
         df = pd.read_csv(self.csv_file, parse_dates=['datetime'])
 
-        # === IMPROVED MAXIMUM TIMEFRAME FILTER (30.437 days per month) ===
         end_date = df['datetime'].max()
         days_back = int(self.max_months * 30.437)
         start_date = end_date - pd.Timedelta(days=days_back)
@@ -77,9 +78,8 @@ class CointegrationAnalyzer:
     def compute(self) -> CointegrationResults:
         p1, p2 = self._load_data()
 
-        # === FULL-SAMPLE RESULTS — USING CENTRAL ENGINE ===
-        eg = compute_cointegration(p1, p2, method=DEFAULT_COINTEGRATION_METHOD)   # ← UPDATED
-
+        # === FULL-SAMPLE RESULTS ===
+        eg = compute_cointegration(p1, p2, method=DEFAULT_COINTEGRATION_METHOD)
         beta = eg.beta
         spread = eg.spread
         zscore = eg.zscore
@@ -90,33 +90,34 @@ class CointegrationAnalyzer:
         box_color = eg.box_color
         method_used = eg.method_used.value
 
-        # === Verdict print (unchanged) ===
         print(f"\n=== FULL-SAMPLE RESULTS — LAST {self.max_months} MONTHS ===")
         print(f"Hedge ratio (beta): {beta:.4f}")
         print(f"Cointegration p-value: {p_value:.6f}")
         print(f"Half-life: {half_life_days:.1f} days")
         print(f"→ {verdict_console}")
 
-        # === ROLLING COINTEGRATION ===
-        print(f"\nComputing rolling cointegration ({self.ROLLING_WINDOW_DAYS}-day windows, updated daily) "
-              f"on last {self.max_months} months...")
-
-        window = self.ROLLING_WINDOW_DAYS * 24
-        step = 24
+        # === ROLLING COINTEGRATION (OPTIONAL) ===
         rolling_dates, rolling_betas, rolling_pvals = [], [], []
+        if self.compute_rolling:
+            print(f"\nComputing rolling cointegration ({self.ROLLING_WINDOW_DAYS}-day windows, updated daily) "
+                  f"on last {self.max_months} months...")
+            window = self.ROLLING_WINDOW_DAYS * 24
+            step = 24
 
-        for i in range(0, len(p1) - window + 1, step):
-            win1 = p1.iloc[i:i + window]
-            win2 = p2.iloc[i:i + window]
-            eg_win = compute_cointegration(win1, win2, method=DEFAULT_COINTEGRATION_METHOD)   # ← UPDATED
-            rolling_betas.append(eg_win.beta)
-            rolling_pvals.append(eg_win.p_value)
-            rolling_dates.append(p1.index[i + window - 1])
+            for i in range(0, len(p1) - window + 1, step):
+                win1 = p1.iloc[i:i + window]
+                win2 = p2.iloc[i:i + window]
+                eg_win = compute_cointegration(win1, win2, method=DEFAULT_COINTEGRATION_METHOD)
+                rolling_betas.append(eg_win.beta)
+                rolling_pvals.append(eg_win.p_value)
+                rolling_dates.append(p1.index[i + window - 1])
 
-        print(f"Rolling windows computed: {len(rolling_dates):,} "
-              f"(method: {method_used})")
+            print(f"Rolling windows computed: {len(rolling_dates):,} "
+                  f"(method: {method_used})")
+        else:
+            print("\n⚡ Rolling cointegration skipped (compute_rolling=False)")
 
-        # === Ratio stats (unchanged) ===
+        # === Ratio stats ===
         ratio = p1 / p2
         ratio_rolling_mean = ratio.rolling(window=720, min_periods=1).mean()
         ratio_rolling_std = ratio.rolling(window=720, min_periods=1).std()
@@ -136,34 +137,33 @@ class CointegrationAnalyzer:
 
 
 if __name__ == "__main__":
-    # (CLI parsing unchanged – exactly as before)
     csv_file = None
     sym1 = "ETH"
     sym2 = "BTC"
     max_months = DEFAULT_MAX_MONTHS
+    compute_rolling = True
 
-    if len(sys.argv) == 1:
-        print(f"⚡ No symbols provided → Using default pair: ETH / BTC (last {max_months} months)")
-    else:
+    if len(sys.argv) > 1:
         args = sys.argv[1:]
+        # Optional rolling flag at the end
+        if args and args[-1].lower() in ['true', 'false', '1', '0', 'yes', 'no']:
+            compute_rolling = args.pop().lower() in ['true', '1', 'yes']
+        # Optional max_months
         if args and args[-1].isdigit():
             max_months = int(args.pop())
 
-        if len(args) == 0:
-            print(f"⚡ No symbols provided → Using default pair: ETH / BTC (last {max_months} months)")
-        elif len(args) == 2:
+        if len(args) == 2:
             sym1 = args[0].upper()
             sym2 = args[1].upper()
-            csv_file = None
         elif len(args) == 3:
             csv_file = args[0]
             sym1 = args[1].upper()
             sym2 = args[2].upper()
         else:
-            print(f"Usage: python {sys.argv[0]} [CSV_FILE] SYM1 SYM2 [max_months]")
-            print("   Example: python get_cointegration.py ETH SOL 3")
+            print("Usage: python get_cointegration.py [CSV_FILE] SYM1 SYM2 [max_months] [true/false]")
+            print("Example: python get_cointegration.py ETH SOL 3 false")
             sys.exit(1)
 
-    analyzer = CointegrationAnalyzer(sym1, sym2, csv_file, max_months)
+    analyzer = CointegrationAnalyzer(sym1, sym2, csv_file, max_months, compute_rolling)
     analyzer.compute()
-    print(f"\n✅ Analysis complete for {sym1}/{sym2} (last {max_months} months)")
+    print(f"\n✅ Analysis complete for {sym1}/{sym2} (rolling={'ON' if compute_rolling else 'OFF'})")

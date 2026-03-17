@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 import sys
-import matplotlib.dates as mdates                     # ← NEW: for clean date formatting on all charts
+import matplotlib.dates as mdates
 from get_cointegration import CointegrationAnalyzer
 from config import DEFAULT_COINTEGRATION_CORRELATION_MONTHS as DEFAULT_MAX_MONTHS, DEFAULT_CSV_FILE
 
@@ -10,22 +10,21 @@ from config import DEFAULT_COINTEGRATION_CORRELATION_MONTHS as DEFAULT_MAX_MONTH
 class CointegrationChart:
     """Only responsible for visualization. All heavy lifting is done by the analyzer."""
 
-    def __init__(self, sym1: str, sym2: str, csv_file: str = None, max_months: int = DEFAULT_MAX_MONTHS):
+    def __init__(self, sym1: str, sym2: str, csv_file: str = None, 
+                 max_months: int = DEFAULT_MAX_MONTHS, compute_rolling: bool = True):
         self.max_months = max_months
-        self.analyzer = CointegrationAnalyzer(sym1, sym2, csv_file, max_months)
+        self.compute_rolling = compute_rolling                     # ← NEW
+        self.analyzer = CointegrationAnalyzer(sym1, sym2, csv_file, max_months, compute_rolling)
 
     def generate(self):
-        # === 1. Compute everything (one clean call) ===
         results = self.analyzer.compute()
 
-        # === NEW: Prepare method strings (filename now uses _ per your request) ===
-        method_filename = results.method_used.lower()                    # ← CHANGED: engle_granger (no hyphen)
+        method_filename = results.method_used.lower()
         method_display = results.method_used.replace('_', ' ').title().replace(' ', '-')
 
-        # ====================== 5 CHARTS ======================
         fig, axs = plt.subplots(5, 1, figsize=(14, 28),
                                 sharex=True,
-                                gridspec_kw={'hspace': 0.62},          # ← INCREASED for date labels
+                                gridspec_kw={'hspace': 0.62},
                                 constrained_layout=False)
 
         fig.subplots_adjust(top=0.905, bottom=0.05, left=0.07, right=0.93, hspace=0.62)
@@ -88,70 +87,80 @@ class CointegrationChart:
         axs[3].grid(True, alpha=0.3)
         axs[3].set_ylim(-5, 5)
 
-        # CHART 5 – Rolling Beta & p-value (unchanged)
+        # ==================== CHART 5 – ROLLING (NOW OPTIONAL) ====================
         ax_beta = axs[4]
-        ax_p = ax_beta.twinx()
-        ax_beta.plot(results.rolling_dates, results.rolling_betas,
-                     color='blue', linewidth=2, label='Rolling Beta (hedge ratio)')
-        ax_p.plot(results.rolling_dates, results.rolling_pvals,
-                  color='red', linewidth=2, label='Rolling Cointegration p-value')
+        if self.compute_rolling and results.rolling_dates:
+            ax_p = ax_beta.twinx()
+            ax_beta.plot(results.rolling_dates, results.rolling_betas,
+                         color='blue', linewidth=2, label='Rolling Beta (hedge ratio)')
+            ax_p.plot(results.rolling_dates, results.rolling_pvals,
+                      color='red', linewidth=2, label='Rolling Cointegration p-value')
 
-        dates_arr = pd.to_datetime(results.rolling_dates)
-        mask = np.array(results.rolling_pvals) < 0.05
-        ax_p.fill_between(dates_arr, 0, 0.05, where=mask,
-                          color='lightgreen', alpha=0.4,
-                          label='Cointegrated window (p<0.05)')
+            dates_arr = pd.to_datetime(results.rolling_dates)
+            mask = np.array(results.rolling_pvals) < 0.05
+            ax_p.fill_between(dates_arr, 0, 0.05, where=mask,
+                              color='lightgreen', alpha=0.4,
+                              label='Cointegrated window (p<0.05)')
 
-        ax_p.axhline(0.01, color='darkgreen', linestyle='--', alpha=0.7)
-        ax_p.axhline(0.05, color='green', linestyle='--', linewidth=2, label='p=0.05 threshold')
-        ax_p.axhline(0.10, color='orange', linestyle='--', alpha=0.7)
+            ax_p.axhline(0.01, color='darkgreen', linestyle='--', alpha=0.7)
+            ax_p.axhline(0.05, color='green', linestyle='--', linewidth=2, label='p=0.05 threshold')
+            ax_p.axhline(0.10, color='orange', linestyle='--', alpha=0.7)
 
-        ax_beta.set_ylabel('Rolling Beta', color='blue')
-        ax_p.set_ylabel('Rolling Cointegration p-value', color='red')
-        ax_beta.set_title(f"5. Rolling Cointegration ({self.analyzer.ROLLING_WINDOW_DAYS}-day windows) — Beta & p-value")
-        ax_beta.grid(True, alpha=0.3)
+            ax_beta.set_ylabel('Rolling Beta', color='blue')
+            ax_p.set_ylabel('Rolling Cointegration p-value', color='red')
+            ax_beta.set_title(f"5. Rolling Cointegration ({self.analyzer.ROLLING_WINDOW_DAYS}-day windows) — Beta & p-value")
+            ax_beta.grid(True, alpha=0.3)
 
-        lines1, labels1 = ax_beta.get_legend_handles_labels()
-        lines2, labels2 = ax_p.get_legend_handles_labels()
-        ax_beta.legend(lines1 + lines2, labels1 + labels2, loc='upper left', fontsize=10)
+            lines1, labels1 = ax_beta.get_legend_handles_labels()
+            lines2, labels2 = ax_p.get_legend_handles_labels()
+            ax_beta.legend(lines1 + lines2, labels1 + labels2, loc='upper left', fontsize=10)
+        else:
+            # Disabled panel (clean visual feedback)
+            ax_beta.text(0.5, 0.5,
+                         "ROLLING COINTEGRATION\n\n"
+                         "DISABLED\n\n"
+                         "(compute_rolling=False)",
+                         transform=ax_beta.transAxes, ha='center', va='center',
+                         fontsize=14, fontweight='bold', color='#555555')
+            ax_beta.set_title("5. Rolling Cointegration — DISABLED")
+            ax_beta.set_facecolor('#f8f8f8')
 
         # ================== SHOW DATES ON EVERY CHART ==================
-        # Force x-tick labels visible on all 5 panels + clean formatting
-        # (matplotlib hides them by default when sharex=True)
         for i, ax in enumerate(axs):
             ax.tick_params(axis='x', labelbottom=True)
             plt.setp(ax.get_xticklabels(), rotation=35, ha='right')
             ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
         
-        # Slightly smaller font on the top 4 charts (keeps visual weight balanced)
         for ax in axs[:-1]:
             plt.setp(ax.get_xticklabels(), fontsize=9.5)
 
-        # === UPDATED SUPTITLE + FILENAME (only filename uses _) ===
+        # === UPDATED SUPTITLE + FILENAME ===
+        rolling_status = "WITH ROLLING" if self.compute_rolling else "NO ROLLING"
         fig.suptitle(f"COINTEGRATION ANALYSIS ({method_display}): "
                      f"{self.analyzer.sym1} vs {self.analyzer.sym2} — "
-                     f"LAST {self.max_months} MONTHS — "
+                     f"LAST {self.max_months} MONTHS — {rolling_status} — "
                      f"{len(results.p1):,} hourly bars "
                      f"({results.p1.index[0].date()} to {results.p1.index[-1].date()})",
                      fontsize=15.5, y=0.965)
 
-        output_file = f"cointegration_{self.analyzer.sym1}_{self.analyzer.sym2}_{method_filename}_{self.max_months}m_with_rolling.png"
+        rolling_tag = "with_rolling" if self.compute_rolling else "no_rolling"
+        output_file = f"cointegration_{self.analyzer.sym1}_{self.analyzer.sym2}_{method_filename}_{self.max_months}m_{rolling_tag}.png"
         plt.savefig(output_file, dpi=200, bbox_inches='tight')
         plt.close(fig)
-        print(f"\n✅ Saved: {output_file}  (method: {method_display})")
+        print(f"\n✅ Saved: {output_file}  (rolling={'ON' if self.compute_rolling else 'OFF'})")
 
 
 if __name__ == "__main__":
-    # (CLI parsing unchanged)
     csv_file = None
     sym1 = "ETH"
     sym2 = "BTC"
     max_months = DEFAULT_MAX_MONTHS
+    compute_rolling = True
 
-    if len(sys.argv) == 1:
-        print(f"⚡ No symbols provided → Using default pair: ETH / BTC (last {max_months} months)")
-    else:
+    if len(sys.argv) > 1:
         args = sys.argv[1:]
+        if args and args[-1].lower() in ['true', 'false', '1', '0', 'yes', 'no']:
+            compute_rolling = args.pop().lower() in ['true', '1', 'yes']
         if args and args[-1].isdigit():
             max_months = int(args.pop())
 
@@ -160,15 +169,14 @@ if __name__ == "__main__":
         elif len(args) == 2:
             sym1 = args[0].upper()
             sym2 = args[1].upper()
-            csv_file = None
         elif len(args) == 3:
             csv_file = args[0]
             sym1 = args[1].upper()
             sym2 = args[2].upper()
         else:
-            print(f"Usage: python {sys.argv[0]} [CSV_FILE] SYM1 SYM2 [max_months]")
-            print("   Example: python draw_cointegration_chart.py ETH SOL 3")
+            print(f"Usage: python {sys.argv[0]} [CSV_FILE] SYM1 SYM2 [max_months] [true/false]")
+            print("   Example: python draw_cointegration_chart.py ETH SOL 3 false")
             sys.exit(1)
 
-    chart = CointegrationChart(sym1, sym2, csv_file, max_months)
+    chart = CointegrationChart(sym1, sym2, csv_file, max_months, compute_rolling)
     chart.generate()
