@@ -21,12 +21,11 @@ class AeroPriceFetcher:
         candles_per_day = 24 * 60 // tf_minutes
         expected_candles = int(self.weeks * 7 * candles_per_day * 0.95)
         
-        # NEW: Hard cutoff so we stop exactly at 3 weeks
-        target_date = datetime.now(timezone.utc) - timedelta(weeks=self.weeks + 0.3)  # tiny buffer
+        target_date = datetime.now(timezone.utc) - timedelta(weeks=self.weeks + 0.2)
         target_since = int(target_date.timestamp())
         
         print(f"🎯 Target: {self.timeframe} candles for {self.weeks} weeks (~{expected_candles:,} candles)")
-        print(f"📍 Will stop at ~{target_date.date()}")
+        print(f"📍 Will stop around {target_date.date()}")
         print(f"📍 Using Aerodrome pool: {self.pool_address}")
         print("⚠️  Smart early-stop + rate-limit handling enabled")
 
@@ -56,7 +55,7 @@ class AeroPriceFetcher:
                     time.sleep(wait_time)
                     retries += 1
                     if retries > max_retries:
-                        print("  ⚠️  Max retries reached — stopping (we have enough data).")
+                        print("  ⚠️  Max retries reached — stopping.")
                         break
                     continue
 
@@ -73,7 +72,6 @@ class AeroPriceFetcher:
                 oldest_ts = ohlcv_list[-1][0]
                 oldest_dt = datetime.fromtimestamp(oldest_ts, tz=timezone.utc)
 
-                # NEW: Early stop when we reach requested period
                 if oldest_ts < target_since:
                     print(f"  ✅ Reached {self.weeks}-week target (oldest: {oldest_dt.date()}). Stopping.")
                     break
@@ -85,7 +83,7 @@ class AeroPriceFetcher:
                 if len(ohlcv_list) < self.limit - 100:
                     break
 
-                time.sleep(10)  # polite pacing
+                time.sleep(10)
 
             except Exception as e:
                 print(f"  ❌ Error: {e}")
@@ -95,15 +93,21 @@ class AeroPriceFetcher:
             print("❌ No data received.")
             return None
 
-        # Build clean DataFrame
+        # Build DataFrame with proper timezone handling
         df = pd.DataFrame(all_ohlcv, columns=['timestamp', 'open', 'high', 'low', 'close', 'volume'])
         df = df.drop_duplicates(subset=['timestamp'])
         df = df.sort_values('timestamp')
-        df['datetime'] = pd.to_datetime(df['timestamp'], unit='s')
+        
+        # Make index UTC-aware for correct trimming
+        df['datetime'] = pd.to_datetime(df['timestamp'], unit='s', utc=True)
         df = df.set_index('datetime').drop(columns=['timestamp'])
 
-        # Safety trim to requested period
-        df = df[df.index >= target_date - timedelta(days=1)]
+        # Safety trim (both now aware)
+        cutoff = target_date - timedelta(days=1)
+        df = df[df.index >= cutoff]
+
+        # Convert back to naive so it works perfectly with draw_chart.py
+        df.index = df.index.tz_convert(None)
 
         print(f"\n✅ DONE! {len(df):,} {self.timeframe} candles")
         print(f"Period: {df.index[0].date()} → {df.index[-1].date()}")
