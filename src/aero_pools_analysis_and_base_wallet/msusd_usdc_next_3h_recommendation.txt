@@ -1,15 +1,15 @@
 MSUSD-USDC Pool – Dynamic Next 3H Recommendation (KST)
 =================================================================
 
-Generated : 2026-03-08 11:04:23 KST
-Day       : Sunday
-Next 3h   : 12-15
-Median    : 0.481%
+Generated : 2026-03-19 10:50:16 KST
+Day       : Thursday
+Next 3h   : 09-12
+Median    : 0.671%
 
 Suggested range width (±):
-   Aggressive → ±0.6%
-   Balanced   → ±0.8%   ← recommended
-   Safe       → ±0.9%
+   Aggressive → ±0.9%
+   Balanced   → ±1.1%   ← recommended
+   Safe       → ±1.2%
 
 Multiplier explanation:
 • Balanced   = Median × 1.60

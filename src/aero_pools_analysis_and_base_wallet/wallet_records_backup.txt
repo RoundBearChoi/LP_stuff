@@ -1,6 +1,6 @@
 === WALLET RECORDS BACKUP (Latest 100 Entries) ===
-Last updated: 2026-03-08 12:50:10 KST
-Entries: 19 (max 100)
+Last updated: 2026-03-19 10:53:14 KST
+Entries: 22 (max 100)
 ============================================================
 
 === ENTRY 001 ===
@@ -192,4 +192,34 @@ cbbtc_balance=0.1964311
 btc_price_usd=67,043.00
 eth_price_usd=1,949.57
 btc-equivalent=0.19653360
+
+=== ENTRY 020 ===
+timestamp_kst=2026-03-19 10:38:40 KST
+wallet_address=0xC6869E01c4A9F3c982D63eEC8A104cA141ECC187
+eth_balance=0.00351068156891309
+weth_balance=0
+cbbtc_balance=0.22710118
+btc_price_usd=71,091.00
+eth_price_usd=2,196.00
+btc-equivalent=0.22720962
+
+=== ENTRY 021 ===
+timestamp_kst=2026-03-19 10:52:36 KST
+wallet_address=0xC6869E01c4A9F3c982D63eEC8A104cA141ECC187
+eth_balance=0.00351068156891309
+weth_balance=0
+cbbtc_balance=0.22710118
+btc_price_usd=71,137.00
+eth_price_usd=2,199.05
+btc-equivalent=0.22720971
+
+=== ENTRY 022 ===
+timestamp_kst=2026-03-19 10:53:14 KST
+wallet_address=0xC6869E01c4A9F3c982D63eEC8A104cA141ECC187
+eth_balance=0.00351068156891309
+weth_balance=0
+cbbtc_balance=0.22710118
+btc_price_usd=71,137.00
+eth_price_usd=2,199.05
+btc-equivalent=0.22720971
 
