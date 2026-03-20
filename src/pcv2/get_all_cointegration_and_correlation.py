@@ -187,8 +187,27 @@ class AllPairsAnalyzer:
             if res:
                 results.append(res)
 
+        # ===================================================================
+        # === NEW: METHOD-SPECIFIC SORTING (exactly as you requested) ===
+        # ===================================================================
         df = pd.DataFrame(results)
-        df = df.sort_values(['cointegration_pvalue', 'abs_corr'], ascending=[True, False]).reset_index(drop=True)
+        
+        if getattr(self.method, 'value', '').lower() == 'johansen':
+            # Johansen → p-value first, then shortest half-life (most tradable first)
+            df['half_life_days'] = pd.to_numeric(df['half_life_days'], errors='coerce')
+            df = df.sort_values(
+                ['cointegration_pvalue', 'half_life_days'],
+                ascending=[True, True],
+                na_position='last'          # errors / non-cointegrated pairs go to bottom
+            ).reset_index(drop=True)
+            print("📊 Johansen sorting applied: p-value → half_life_days (ascending)")
+        else:
+            # Everything else (Engle-Granger, etc.) keeps original behavior
+            df = df.sort_values(
+                ['cointegration_pvalue', 'abs_corr'],
+                ascending=[True, False]
+            ).reset_index(drop=True)
+            print(f"📊 Default sorting applied for {self.method.value}")
 
         df.to_csv(output_file, index=False)
         
