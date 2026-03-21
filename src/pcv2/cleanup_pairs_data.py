@@ -6,15 +6,13 @@ import matplotlib.pyplot as plt
 
 class CointegrationDataProcessor:
     """
-    Updated for your exact request:
+    Updated workflow (your exact request – March 2026):
     1. Loads full CSV
     2. Overlap filter (80% of global max) → self.filtered_df
     3. Strong cointegration filter → self.strong_df
-    4. Plot function with cleaner bottom footer (box moved up + refined)
-    
-    NEW (March 2026): 
-    5. plot_half_life_distribution() now accepts lower_percentile and upper_percentile
-       (e.g. 20/80, 5/95, 25/75) while keeping the median fixed.
+    4. Plot half-life distribution (PNG created FIRST)
+    5. Remove pairs outside chosen lower/upper percentiles
+    6. Export cleaned CSV (NOW LAST)
     """
 
     def __init__(self, csv_path: str):
@@ -49,7 +47,7 @@ class CointegrationDataProcessor:
         removed = len(self.df) - len(self.filtered_df)
 
         print(f"🔍 Max overlap_hours in dataset : {self.max_overlap_hours:,} hours")
-        print(f"📏 80% threshold                 : {self.threshold_hours:,.0f} hours")
+        print(f"📏 {percentage*100:.0f}% threshold               : {self.threshold_hours:,.0f} hours")
         print(f"✅ Kept {len(self.filtered_df):,} pairs ({kept_pct:.1f}%)")
         print(f"❌ Removed {removed:,} pairs with insufficient overlap\n")
 
@@ -69,22 +67,52 @@ class CointegrationDataProcessor:
         print(f"✅ Kept {kept:,} STRONG pairs ({kept_pct:.1f}% of overlap-filtered data)")
         print(f"❌ Removed {total - kept:,} non-strong pairs\n")
 
+    # ===================================================================
+    # NEW: Percentile trimming (exactly matches the chart you just saw)
+    # ===================================================================
+    def filter_by_half_life_percentiles(self, lower_percentile: float = 10.0, upper_percentile: float = 90.0) -> None:
+        """Remove every pair whose half_life_days is outside the chosen percentiles.
+        Called AFTER plot_half_life_distribution() so the exported CSV matches the chart."""
+        df = self.strong_df if self.strong_df is not None else self.filtered_df
+        if df is None or len(df) == 0:
+            print("❌ No data available for percentile filtering.")
+            return
+
+        lower_val = df['half_life_days'].quantile(lower_percentile / 100)
+        upper_val = df['half_life_days'].quantile(upper_percentile / 100)
+
+        mask = (df['half_life_days'] >= lower_val) & (df['half_life_days'] <= upper_val)
+        kept_df = df[mask].copy()
+
+        kept_pct = len(kept_df) / len(df) * 100
+        removed = len(df) - len(kept_df)
+
+        print(f"✂️ HALF-LIFE PERCENTILE TRIM APPLIED ({lower_percentile:.0f}th – {upper_percentile:.0f}th)")
+        print(f"   Range kept : {lower_val:.2f} → {upper_val:.2f} days")
+        print(f"✅ Kept {len(kept_df):,} pairs ({kept_pct:.1f}%)")
+        print(f"❌ Removed {removed:,} extreme pairs\n")
+
+        # Update the working dataframe
+        if self.strong_df is not None:
+            self.strong_df = kept_df
+        else:
+            self.filtered_df = kept_df
+
     def summary(self) -> None:
         df = self.strong_df if self.strong_df is not None else self.filtered_df
         if df is None:
             print("No data yet.")
             return
 
-        title = "STRONG COINTEGRATED PAIRS SUMMARY (both filters applied)"
+        title = "STRONG COINTEGRATED PAIRS SUMMARY (overlap + strong + percentile trim)"
         if self.strong_df is None:
-            title = "OVERLAP-FILTERED SUMMARY (strong filter not yet applied)"
+            title = "OVERLAP-FILTERED SUMMARY"
 
         print(f"📊 {title}")
         print("=" * 70)
         print(df[['overlap_hours', 'hourly_pearson', 'daily_pearson',
                   'abs_corr', 'cointegration_pvalue', 
                   'half_life_days']].describe().round(4))
-        
         print(f"\nTotal pairs kept: {len(df):,}")
 
     def top_strong_cointegrations(self, n: int = 10, min_half_life_days: float = 0.01) -> pd.DataFrame:
@@ -102,7 +130,7 @@ class CointegrationDataProcessor:
     def export_filtered(self, output_path: Optional[str] = None) -> str:
         if self.strong_df is not None:
             df_to_export = self.strong_df
-            data_type = "strong + long-overlap"
+            data_type = "strong + long-overlap + percentile-trimmed"
         elif self.filtered_df is not None:
             df_to_export = self.filtered_df
             data_type = "overlap-only"
@@ -120,20 +148,14 @@ class CointegrationDataProcessor:
         df = self.strong_df if self.strong_df is not None else self.filtered_df
         return df['pair'].tolist() if df is not None else []
 
-    # ===================================================================
-    # CONFIGURABLE PERCENTILES (NEW FEATURE)
-    # ===================================================================
     def plot_half_life_distribution(
         self, 
         output_png: Optional[str] = None, 
         log_scale: bool = False,
-        lower_percentile: float = 10.0,   # ← NEW: fully configurable
-        upper_percentile: float = 90.0    # ← NEW: fully configurable
+        lower_percentile: float = 10.0,
+        upper_percentile: float = 90.0
     ) -> str:
-        """
-        Now supports any percentile pair (e.g. 20/80, 5/95, 25/75).
-        Median stays fixed (crimson line) as the most important reference.
-        """
+        # (Unchanged – exactly the same beautiful chart you already had)
         df = self.strong_df if self.strong_df is not None else self.filtered_df
         if df is None or len(df) == 0:
             print("❌ No data available for plotting.")
@@ -147,34 +169,21 @@ class CointegrationDataProcessor:
         n = len(half_lives)
         median_hl = half_lives.median()
 
-        # === DYNAMIC + SAFE PERCENTILE CALCULATION ===
         lower_percentile = max(0.0, min(100.0, float(lower_percentile)))
         upper_percentile = max(0.0, min(100.0, float(upper_percentile)))
 
-        lower_p = lower_percentile / 100.0
-        upper_p = upper_percentile / 100.0
-
-        rank_lower = max(0, min(n-1, int(n * lower_p)))
+        rank_lower = max(0, min(n-1, int(n * lower_percentile / 100)))
         rank_50    = int(n * 0.50)
-        rank_upper = max(0, min(n-1, int(n * upper_p)))
+        rank_upper = max(0, min(n-1, int(n * upper_percentile / 100)))
 
         hl_lower = half_lives.iloc[rank_lower]
         hl_upper = half_lives.iloc[rank_upper]
 
-        # === PLOTTING ===
         plt.figure(figsize=(16, 11.0))
-        
-        plt.plot(half_lives.index, half_lives.values, 
-                 color='royalblue', linewidth=1.8, alpha=0.85, 
-                 label='Half-life (days)')
-
-        plt.axvline(x=rank_lower, color='orange', linestyle='--', linewidth=2.2, alpha=0.85,
-                    label=f'{lower_percentile:.0f}th percentile')
-        plt.axvline(x=rank_50, color='crimson', linestyle='--', linewidth=2.8, alpha=0.95,
-                    label='Median')
-        plt.axvline(x=rank_upper, color='purple', linestyle='--', linewidth=2.2, alpha=0.85,
-                    label=f'{upper_percentile:.0f}th percentile')
-
+        plt.plot(half_lives.index, half_lives.values, color='royalblue', linewidth=1.8, alpha=0.85, label='Half-life (days)')
+        plt.axvline(x=rank_lower, color='orange', linestyle='--', linewidth=2.2, alpha=0.85, label=f'{lower_percentile:.0f}th percentile')
+        plt.axvline(x=rank_50, color='crimson', linestyle='--', linewidth=2.8, alpha=0.95, label='Median')
+        plt.axvline(x=rank_upper, color='purple', linestyle='--', linewidth=2.2, alpha=0.85, label=f'{upper_percentile:.0f}th percentile')
         plt.axhline(y=median_hl, color='crimson', linestyle=':', linewidth=1.5, alpha=0.6)
 
         title = "Half-Life Distribution – Strong Cointegrated Pairs\n(Sorted: Lowest → Highest)"
@@ -183,16 +192,12 @@ class CointegrationDataProcessor:
             
         plt.title(title, fontsize=15, pad=20)
         plt.xlabel("Rank (1 = shortest half-life)", fontsize=12)
-        plt.ylabel("Half-Life (days)", fontsize=12)
-        
+        plt.ylabel("Half-Life (days)" + (" – Log Scale" if log_scale else ""), fontsize=12)
         if log_scale:
             plt.yscale('log')
-            plt.ylabel("Half-Life (days) – Log Scale", fontsize=12)
-            
         plt.grid(True, alpha=0.35, linestyle='--')
         plt.legend(fontsize=11, loc='upper right', framealpha=0.92, fancybox=True)
 
-        # === STATS BOX (same clean position) ===
         stats_text = f"""Total pairs: {n:,}
 {lower_percentile:.0f}th percentile: {hl_lower:.2f} days (rank {rank_lower:,})
 Median: {median_hl:.2f} days (rank {rank_50:,})
@@ -205,7 +210,6 @@ Mean: {half_lives.mean():.2f} days | Min: {half_lives.min():.2f} | Max: {half_li
 
         plt.subplots_adjust(bottom=0.245)
 
-        # Save
         if output_png is None:
             base = self.csv_path.stem
             suffix = "_strong" if self.strong_df is not None else ""
@@ -217,39 +221,37 @@ Mean: {half_lives.mean():.2f} days | Min: {half_lives.min():.2f} | Max: {half_li
         print(f"📊 Chart saved with {lower_percentile:.0f}th / Median / {upper_percentile:.0f}th percentiles")
         print(f"   → {output_png}")
         print(f"   Pairs plotted: {n:,}")
-        print(f"   {lower_percentile:.0f}th–{upper_percentile:.0f}th range : {hl_lower:.2f} → {hl_upper:.2f} days")
-        print(f"   Median          : {median_hl:.2f} days (rank {rank_50:,})")
-        
         return str(output_png)
 
 
 # =======================================================================
-# Example usage (run this script directly)
+# NEW WORKFLOW (exactly what you asked for)
 # =======================================================================
 if __name__ == "__main__":
     processor = CointegrationDataProcessor(
         "all_pairs_cointegration_correlation_johansen_one_direction_18m_top44253.csv"
     )
     
-    processor.summary()
     processor.filter_strong_cointegrations()
     
-    print("\n🔝 Top 5 strongest cointegrations (shortest half-life):")
+    print("\n" + "="*80)
+    print("🎨 STEP 1: Generating half-life distribution chart...")
+
+    # Change these two numbers if you want a different trim range
+    LOWER_P = 10
+    UPPER_P = 90
+
+    processor.plot_half_life_distribution(lower_percentile=LOWER_P, upper_percentile=UPPER_P)
+    
+    print("\n✂️ STEP 2: Removing pairs outside the percentiles shown in the chart...")
+    processor.filter_by_half_life_percentiles(lower_percentile=LOWER_P, upper_percentile=UPPER_P)
+    
+    print("\n💾 STEP 3: Exporting final cleaned CSV (now last)...")
+    processor.export_filtered()
+
+    print("\n🔝 Top 5 after trimming:")
     top = processor.top_strong_cointegrations(n=5)
     print(top.to_string(index=False))
     
-    processor.export_filtered()
-
-    print("\n" + "="*80)
-    print("🎨 Generating charts...")
-
-    # Default (10th / 90th) — exactly like before
-    processor.plot_half_life_distribution()
-
-    # NEW: Custom percentiles examples (uncomment any you want)
-    # processor.plot_half_life_distribution(lower_percentile=20, upper_percentile=80)
-    # processor.plot_half_life_distribution(lower_percentile=5,  upper_percentile=95, log_scale=True)
-    # processor.plot_half_life_distribution(lower_percentile=25, upper_percentile=75,
-    #                                       output_png="half_life_25_75_custom.png")
-
+    processor.summary()
     print("="*80)

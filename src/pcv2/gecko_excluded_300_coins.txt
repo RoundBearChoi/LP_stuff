@@ -1,141 +1,140 @@
-Excluded Coins Report (from top 433 fetched)
-Generated: 2026-03-19 12:02:54 KST
+Excluded Coins Report (from top 432 fetched)
+Generated: 2026-03-21 12:45:24 KST
 Total skipped stablecoins: 48
-Total custom excluded: 85
-Total blacklisted: 133
+Total custom excluded: 84
+Total blacklisted: 132
 
 Orig Rank  Name                           Symbol           Price (USD)      Market Cap Reason                        
 --------------------------------------------------------------------------------------------------------------
-3          Tether                         USDT         $       1.00          $184.10B   Stablecoin                    
-4          XRP                            XRP          $       1.46           $89.27B   Blacklisted                   
-6          USDC                           USDC         $       1.00           $79.43B   Stablecoin                    
-8          TRON                           TRX          $       0.30           $28.78B   Blacklisted                   
-9          Figure Heloc                   FIGR_HELOC   $       1.02           $16.24B   Blacklisted                   
-12         USDS                           USDS         $       1.00           $11.56B   Stablecoin                    
+3          Tether                         USDT         $       1.00          $184.15B   Stablecoin                    
+4          XRP                            XRP          $       1.45           $88.71B   Blacklisted                   
+6          USDC                           USDC         $       1.00           $79.05B   Stablecoin                    
+8          TRON                           TRX          $       0.31           $29.20B   Blacklisted                   
+9          Figure Heloc                   FIGR_HELOC   $       1.03           $16.30B   Blacklisted                   
+12         USDS                           USDS         $       1.00           $11.53B   Stablecoin                    
 19         Ethena USDe                    USDE         $       1.00            $5.92B   Stablecoin                    
-22         USD1                           USD1         $       1.00            $4.50B   Dynamic USD-pegged stable     
-23         Dai                            DAI          $       1.00            $4.31B   Stablecoin                    
-25         Rain                           RAIN         $       0.01            $4.27B   Blacklisted                   
-29         PayPal USD                     PYUSD        $       1.00            $4.10B   Stablecoin                    
-35         Tether Gold                    XAUT         $   4,836.71            $2.73B   Blacklisted                   
-39         Mantle                         MNT          $       0.77            $2.52B   Blacklisted                   
-40         PAX Gold                       PAXG         $   4,847.36            $2.43B   Blacklisted                   
-41         Circle USYC                    USYC         $       1.12            $2.41B   Blacklisted                   
+22         USD1                           USD1         $       1.00            $4.42B   Dynamic USD-pegged stable     
+24         Dai                            DAI          $       1.00            $4.31B   Stablecoin                    
+25         Rain                           RAIN         $       0.01            $4.17B   Blacklisted                   
+27         PayPal USD                     PYUSD        $       1.00            $4.07B   Stablecoin                    
+37         Tether Gold                    XAUT         $   4,500.86            $2.54B   Blacklisted                   
+39         Mantle                         MNT          $       0.75            $2.46B   Blacklisted                   
+40         Circle USYC                    USYC         $       1.12            $2.45B   Blacklisted                   
+42         PAX Gold                       PAXG         $   4,517.18            $2.27B   Blacklisted                   
 43         BlackRock USD In...            BUIDL        $       1.00            $2.01B   Dynamic USD-pegged stable     
-46         Global Dollar                  USDG         $       1.00            $1.77B   Dynamic USD-pegged stable     
-48         Falcon USD                     USDF         $       1.00            $1.75B   Dynamic USD-pegged stable     
+46         Global Dollar                  USDG         $       1.00            $1.78B   Dynamic USD-pegged stable     
+47         Falcon USD                     USDF         $       1.00            $1.75B   Dynamic USD-pegged stable     
 53         Ripple USD                     RLUSD        $       1.00            $1.53B   Dynamic USD-pegged stable     
-58         BFUSD                          BFUSD        $       1.00            $1.32B   Dynamic USD-pegged stable     
-59         Ondo US Dollar Y...            USDY         $       1.12            $1.32B   Blacklisted                   
-63         Superstate Short...            USTB         $      11.02            $1.09B   Blacklisted                   
-69         Spiko EU T-Bills...            EUTBL        $       1.20            $1.02B   Blacklisted                   
-75         Janus Henderson ...            JTRSY        $       1.10           $864.6M   Blacklisted                   
-76         USDtb                          USDTB        $       1.00           $835.8M   Dynamic USD-pegged stable     
-77         Official Trump                 TRUMP        $       3.49           $812.3M   Blacklisted                   
-78         Provenance Block...            HASH         $       0.01           $804.3M   Blacklisted                   
-82         USDD                           USDD         $       1.00           $752.9M   Stablecoin                    
-83         OUSG                           OUSG         $     114.63           $721.7M   Blacklisted                   
-91         GHO                            GHO          $       1.00           $583.8M   Blacklisted                   
-93         YLDS                           YLDS         $       1.00           $570.5M   Blacklisted                   
-95         Usual USD                      USD0         $       1.00           $560.6M   Dynamic USD-pegged stable     
-98         JUST                           JST          $       0.06           $513.5M   Blacklisted                   
-100        TrueUSD                        TUSD         $       1.00           $494.4M   Stablecoin                    
-107        A7A5                           A7A5         $       0.01           $462.9M   Blacklisted                   
-110        EURC                           EURC         $       1.15           $432.2M   Blacklisted                   
-113        Janus Henderson ...            JAAA         $       1.03           $418.3M   Blacklisted                   
-115        First Digital USD              FDUSD        $       1.00           $384.6M   Stablecoin                    
-117        Kinesis Gold                   KAU          $     156.25           $372.8M   Blacklisted                   
-118        USX                            USX          $       1.00           $368.9M   Blacklisted                   
-122        BitTorrent                     BTT          $       0.00           $336.8M   Blacklisted                   
-123        PRIME                          PRIME        $       1.03           $330.4M   Blacklisted                   
-124        AINFT                          NFT          $       0.00           $329.6M   Blacklisted                   
-125        USDai                          USDAI        $       1.00           $325.8M   Dynamic USD-pegged stable     
-126        Sun Token                      SUN          $       0.02           $324.3M   Blacklisted                   
-130        ADI                            ADI          $       3.14           $306.0M   Blacklisted                   
-141        IOTA                           IOTA         $       0.06           $274.8M   Blacklisted                   
-142        Legacy Frax Dollar             FRAX         $       0.99           $273.9M   Stablecoin                    
-152        crvUSD                         CRVUSD       $       1.00           $255.5M   Dynamic USD-pegged stable     
-153        TheTrumpToken                  GREAT        $      12.15           $255.1M   Blacklisted                   
-164        USDa                           USDA         $       0.98           $217.2M   Dynamic USD-pegged stable     
-166        AUSD                           AUSD         $       1.00           $216.4M   Dynamic USD-pegged stable     
-169        Blockchain Capital             BCAP         $      22.99           $209.5M   Blacklisted                   
-173        The9bit                        9BIT         $       0.03           $205.9M   Blacklisted                   
-174        Neutrl USD                     NUSD         $       1.00           $204.9M   Dynamic USD-pegged stable     
-180        Spiko US T-Bills...            USTBL        $       1.08           $193.2M   Blacklisted                   
-183        Re Protocol reUSD              REUSD        $       1.07           $189.8M   Dynamic USD-pegged stable     
-184        Tradable NA Rent...            PC0000031    $       1.00           $189.5M   Blacklisted                   
-192        Fidelity Digital...            FDIT         $       1.00           $178.0M   Blacklisted                   
-196        InfiniFi USD                   IUSD         $       1.00           $174.6M   Dynamic USD-pegged stable     
-201        KOGE                           KOGE         $      48.00           $162.2M   Blacklisted                   
-203        Flying Tulip                   FT           $       0.10           $162.1M   Blacklisted                   
-205        Satoshi Stablecoin             SATUSD       $       1.00           $158.6M   Dynamic USD-pegged stable     
-208        STASIS EURO                    EURS         $       1.22           $151.2M   Blacklisted                   
-209        GUSD                           GUSD         $       1.00           $149.5M   Dynamic USD-pegged stable     
-212        Sentient                       SENT         $       0.02           $146.7M   Blacklisted                   
-221        Onchain Yield Coin             ONYC         $       1.08           $137.4M   Blacklisted                   
-225        Theo Short Durat...            THBILL       $       1.02           $132.2M   Blacklisted                   
-228        Apollo Diversifi...            ACRED        $   1,092.77           $130.9M   Blacklisted                   
-232        Aster USDF                     USDF         $       1.00           $128.2M   Dynamic USD-pegged stable     
-233        CASH                           CASH         $       1.00           $127.6M   Blacklisted                   
-234        Frax USD                       FRXUSD       $       1.00           $127.5M   Dynamic USD-pegged stable     
-235        GoMining Token                 GOMINING     $       0.31           $127.1M   Blacklisted                   
-236        Avant USD                      AVUSD        $       1.00           $126.5M   Dynamic USD-pegged stable     
-243        Pleasing USD                   PUSD         $       1.00           $120.5M   Dynamic USD-pegged stable     
-247        Tradable Singapo...            PC0000023    $       1.00           $114.5M   Blacklisted                   
-252        Cap USD                        CUSD         $       1.02           $110.6M   Dynamic USD-pegged stable     
-254        Precious Metals USD            PMUSD        $       1.00           $110.1M   Dynamic USD-pegged stable     
-257        Chutes                         SN64         $      23.37           $108.2M   Blacklisted                   
-260        Securitize Token...            STAC         $   1,007.98           $105.9M   Blacklisted                   
-264        Resolv USR                     USR          $       1.00           $104.0M   Blacklisted                   
-269        MNEE USD Stablecoin            MNEE         $       1.00           $100.7M   Dynamic USD-pegged stable     
-270        Shuffle                        SHFL         $       0.25           $100.5M   Blacklisted                   
-271        Ring USD                       USDR         $       1.00           $100.4M   Dynamic USD-pegged stable     
-272        StandX DUSD                    DUSD         $       1.00           $100.1M   Dynamic USD-pegged stable     
-273        Unity USD                      UUSD         $       1.00            $99.9M   Dynamic USD-pegged stable     
-274        yearn.finance                  YFI          $   2,787.93            $99.6M   Blacklisted                   
-276        GRX Chain                      GRX          $      10.43            $99.2M   Blacklisted                   
-278        Pleasing Gold                  PGOLD        $   5,025.57            $98.0M   Blacklisted                   
-280        EXOD                           EXOD         $       9.32            $97.4M   Blacklisted                   
-281        Rollbit Coin                   RLB          $       0.06            $97.3M   Blacklisted                   
-286        Midas mF-ONE                   MF-ONE       $       1.07            $94.5M   Blacklisted                   
-290        Circle Internet ...            CRCLON       $     133.79            $92.8M   Blacklisted                   
-299        USDA                           USDA         $       1.00            $88.8M   Dynamic USD-pegged stable     
-303        Brazilian Digital              BRZ          $       0.19            $87.9M   Blacklisted                   
-304        MAG7.ssi                       MAG7.SSI     $       0.51            $86.9M   Blacklisted                   
-305        USDu                           USDU         $       1.00            $86.7M   Dynamic USD-pegged stable     
-307        JUSD                           JUSD         $       1.00            $86.2M   Dynamic USD-pegged stable     
-308        INI                            INI          $       0.11            $85.2M   Blacklisted                   
-311        Luxxcoin                       LUX          $       0.00            $83.9M   Blacklisted                   
-313        DOLA                           DOLA         $       0.99            $82.9M   Blacklisted                   
-321        Bitway                         BTW          $       0.04            $80.9M   Blacklisted                   
-330        τemplar                        SN3          $      18.46            $77.9M   Blacklisted                   
-332        MetaDAO                        META         $       3.42            $77.7M   Blacklisted                   
-336        Lista USD                      LISUSD       $       1.00            $76.2M   Dynamic USD-pegged stable     
-340        Cygnus Finance G...            CGUSD        $       1.00            $74.9M   Dynamic USD-pegged stable     
-341        Felix feUSD                    FEUSD        $       1.00            $74.9M   Dynamic USD-pegged stable     
-343        JupUSD                         JUPUSD       $       1.00            $74.0M   Dynamic USD-pegged stable     
-351        Ronin                          RON          $       0.09            $73.1M   Blacklisted                   
-354        TempleDAO                      TEMPLE       $       3.07            $72.7M   Blacklisted                   
-355        TRIA                           TRIA         $       0.03            $72.0M   Blacklisted                   
-359        Ondo U.S. Dollar...            USDON        $       1.00            $69.5M   Dynamic USD-pegged stable     
-365        MindWaveDAO                    NILA         $       0.08            $68.6M   Blacklisted                   
-367        MANTRA                         MANTRA       $       0.01            $68.5M   Blacklisted                   
-369        USDGO                          USDGO        $       1.00            $68.0M   Dynamic USD-pegged stable     
-376        TDCCP                          TDCCP        $       0.10            $66.5M   Blacklisted                   
-377        Aztec                          AZTEC        $       0.02            $66.4M   Blacklisted                   
-379        The Game Company               GMRT         $       0.19            $66.2M   Blacklisted                   
-382        BasedHype                      BASEDHYPE    $       0.01            $64.4M   Blacklisted                   
-385        MBG By Multibank...            MBG          $       0.34            $63.5M   Blacklisted                   
-388        VanEck Treasury ...            VBILL        $       1.00            $63.0M   Blacklisted                   
-389        MegaUSD                        USDM         $       1.00            $63.0M   Dynamic USD-pegged stable     
-391        Unit Pump                      UPUMP        $       0.00            $62.4M   Blacklisted                   
-400        BitDCA                         BDCA         $       0.74            $60.6M   Blacklisted                   
-401        RaveDAO                        RAVE         $       0.25            $60.2M   Blacklisted                   
-402        Fabric Protocol                ROBO         $       0.03            $60.1M   Blacklisted                   
-403        币安人生 (BinanceLife)             币安人生         $       0.06            $60.0M   Blacklisted                   
-406        USDX                           USDX         $       0.53            $59.1M   Blacklisted                   
-417        BurnedFi                       BURN         $       4.55            $56.2M   Blacklisted                   
-419        apxUSD                         APXUSD       $       1.00            $56.0M   Dynamic USD-pegged stable     
-422        Targon                         SN4          $      12.67            $55.6M   Blacklisted                   
-428        Anchored Coins AEUR            AEUR         $       1.14            $54.5M   Blacklisted                   
-429        Alphabet Class A...            GOOGLON      $     308.75            $54.1M   Blacklisted                   
+57         BFUSD                          BFUSD        $       1.00            $1.32B   Dynamic USD-pegged stable     
+59         Ondo US Dollar Y...            USDY         $       1.12            $1.31B   Blacklisted                   
+61         Superstate Short...            USTB         $      11.03            $1.24B   Blacklisted                   
+68         Spiko EU T-Bills...            EUTBL        $       1.21           $996.4M   Blacklisted                   
+70         Janus Henderson ...            JTRSY        $       1.10           $964.7M   Blacklisted                   
+76         USDtb                          USDTB        $       1.00           $828.0M   Dynamic USD-pegged stable     
+79         Official Trump                 TRUMP        $       3.36           $780.7M   Blacklisted                   
+80         Provenance Block...            HASH         $       0.01           $759.1M   Blacklisted                   
+81         USDD                           USDD         $       1.00           $758.8M   Stablecoin                    
+83         OUSG                           OUSG         $     114.65           $716.6M   Blacklisted                   
+91         GHO                            GHO          $       1.00           $583.9M   Blacklisted                   
+92         YLDS                           YLDS         $       1.00           $570.6M   Blacklisted                   
+94         Usual USD                      USD0         $       1.00           $559.5M   Dynamic USD-pegged stable     
+98         JUST                           JST          $       0.06           $516.2M   Blacklisted                   
+100        TrueUSD                        TUSD         $       1.00           $494.1M   Stablecoin                    
+102        A7A5                           A7A5         $       0.01           $461.5M   Blacklisted                   
+112        EURC                           EURC         $       1.16           $427.9M   Blacklisted                   
+113        Janus Henderson ...            JAAA         $       1.03           $420.8M   Blacklisted                   
+116        First Digital USD              FDUSD        $       1.00           $385.7M   Stablecoin                    
+118        USX                            USX          $       1.00           $359.6M   Blacklisted                   
+119        PRIME                          PRIME        $       1.03           $353.8M   Blacklisted                   
+121        Kinesis Gold                   KAU          $     146.68           $350.0M   Blacklisted                   
+124        Sun Token                      SUN          $       0.02           $339.8M   Blacklisted                   
+125        BitTorrent                     BTT          $       0.00           $331.6M   Blacklisted                   
+126        AINFT                          NFT          $       0.00           $330.9M   Blacklisted                   
+127        USDai                          USDAI        $       1.00           $323.0M   Dynamic USD-pegged stable     
+128        ADI                            ADI          $       3.24           $315.0M   Blacklisted                   
+140        Legacy Frax Dollar             FRAX         $       0.99           $273.8M   Stablecoin                    
+142        IOTA                           IOTA         $       0.06           $268.2M   Blacklisted                   
+149        crvUSD                         CRVUSD       $       1.00           $258.4M   Dynamic USD-pegged stable     
+161        USDa                           USDA         $       0.98           $217.2M   Dynamic USD-pegged stable     
+162        AUSD                           AUSD         $       1.00           $216.4M   Dynamic USD-pegged stable     
+167        Blockchain Capital             BCAP         $      22.99           $209.5M   Blacklisted                   
+173        Neutrl USD                     NUSD         $       1.00           $202.3M   Dynamic USD-pegged stable     
+177        Re Protocol reUSD              REUSD        $       1.07           $195.5M   Dynamic USD-pegged stable     
+178        Spiko US T-Bills...            USTBL        $       1.08           $194.4M   Blacklisted                   
+181        Tradable NA Rent...            PC0000031    $       1.00           $189.5M   Blacklisted                   
+183        The9bit                        9BIT         $       0.02           $187.7M   Blacklisted                   
+189        Fidelity Digital...            FDIT         $       1.00           $178.0M   Blacklisted                   
+190        InfiniFi USD                   IUSD         $       1.00           $176.3M   Dynamic USD-pegged stable     
+200        KOGE                           KOGE         $      47.99           $162.2M   Blacklisted                   
+201        Flying Tulip                   FT           $       0.10           $160.2M   Blacklisted                   
+203        Satoshi Stablecoin             SATUSD       $       1.00           $158.5M   Dynamic USD-pegged stable     
+204        STASIS EURO                    EURS         $       1.24           $153.8M   Blacklisted                   
+206        GUSD                           GUSD         $       1.00           $149.8M   Dynamic USD-pegged stable     
+208        Sentient                       SENT         $       0.02           $147.2M   Blacklisted                   
+217        Onchain Yield Coin             ONYC         $       1.09           $139.0M   Blacklisted                   
+223        Theo Short Durat...            THBILL       $       1.02           $131.9M   Blacklisted                   
+225        Apollo Diversifi...            ACRED        $   1,090.67           $130.7M   Blacklisted                   
+230        Aster USDF                     USDF         $       1.00           $127.5M   Dynamic USD-pegged stable     
+231        Frax USD                       FRXUSD       $       1.00           $126.8M   Dynamic USD-pegged stable     
+232        Avant USD                      AVUSD        $       1.00           $126.8M   Dynamic USD-pegged stable     
+233        Cap USD                        CUSD         $       0.98           $126.5M   Dynamic USD-pegged stable     
+236        GoMining Token                 GOMINING     $       0.31           $125.1M   Blacklisted                   
+237        CASH                           CASH         $       1.00           $124.5M   Blacklisted                   
+242        Tradable Singapo...            PC0000023    $       1.00           $114.5M   Blacklisted                   
+246        Chutes                         SN64         $      24.26           $112.6M   Blacklisted                   
+248        Pleasing USD                   PUSD         $       0.93           $112.2M   Dynamic USD-pegged stable     
+256        Securitize Token...            STAC         $   1,007.80           $105.9M   Blacklisted                   
+257        Resolv USR                     USR          $       1.00           $104.1M   Blacklisted                   
+265        MNEE USD Stablecoin            MNEE         $       1.00           $100.9M   Dynamic USD-pegged stable     
+266        Ring USD                       USDR         $       1.00           $100.4M   Dynamic USD-pegged stable     
+267        Precious Metals USD            PMUSD        $       0.98           $100.2M   Dynamic USD-pegged stable     
+268        StandX DUSD                    DUSD         $       1.00           $100.1M   Dynamic USD-pegged stable     
+269        Unity USD                      UUSD         $       1.00           $100.0M   Dynamic USD-pegged stable     
+270        yearn.finance                  YFI          $   2,753.27            $98.4M   Blacklisted                   
+271        Rollbit Coin                   RLB          $       0.06            $98.1M   Blacklisted                   
+274        EXOD                           EXOD         $       9.32            $97.4M   Blacklisted                   
+275        Circle Internet ...            CRCLON       $     126.66            $95.2M   Blacklisted                   
+278        Midas mF-ONE                   MF-ONE       $       1.07            $94.6M   Blacklisted                   
+281        XDAI                           XDAI         $       1.00            $93.8M   Blacklisted                   
+284        τemplar                        SN3          $      22.07            $93.0M   Blacklisted                   
+287        GRX Chain                      GRX          $       9.70            $92.3M   Blacklisted                   
+292        Shuffle                        SHFL         $       0.23            $89.3M   Blacklisted                   
+293        USDu                           USDU         $       1.00            $89.3M   Dynamic USD-pegged stable     
+296        USDA                           USDA         $       0.99            $88.2M   Dynamic USD-pegged stable     
+298        Brazilian Digital              BRZ          $       0.19            $87.3M   Blacklisted                   
+301        Luxxcoin                       LUX          $       0.00            $86.6M   Blacklisted                   
+303        JUSD                           JUSD         $       1.00            $86.2M   Dynamic USD-pegged stable     
+304        MAG7.ssi                       MAG7.SSI     $       0.51            $85.6M   Blacklisted                   
+305        INI                            INI          $       0.11            $85.2M   Blacklisted                   
+308        Pleasing Gold                  PGOLD        $   4,325.35            $84.4M   Blacklisted                   
+310        DOLA                           DOLA         $       0.99            $83.6M   Blacklisted                   
+323        MetaDAO                        META         $       3.43            $77.8M   Blacklisted                   
+332        Lista USD                      LISUSD       $       1.00            $76.5M   Dynamic USD-pegged stable     
+338        Cygnus Finance G...            CGUSD        $       1.00            $74.9M   Dynamic USD-pegged stable     
+340        JupUSD                         JUPUSD       $       1.00            $74.8M   Dynamic USD-pegged stable     
+343        Felix feUSD                    FEUSD        $       1.00            $74.6M   Dynamic USD-pegged stable     
+345        TempleDAO                      TEMPLE       $       3.06            $72.7M   Blacklisted                   
+349        TRIA                           TRIA         $       0.03            $72.1M   Blacklisted                   
+350        Ronin                          RON          $       0.09            $72.1M   Blacklisted                   
+354        The Game Company               GMRT         $       0.20            $71.4M   Blacklisted                   
+362        MindWaveDAO                    NILA         $       0.08            $68.9M   Blacklisted                   
+366        USDGO                          USDGO        $       1.00            $68.0M   Dynamic USD-pegged stable     
+369        TDCCP                          TDCCP        $       0.11            $67.7M   Blacklisted                   
+372        MANTRA                         MANTRA       $       0.01            $67.2M   Blacklisted                   
+376        Aztec                          AZTEC        $       0.02            $66.0M   Blacklisted                   
+377        MBG By Multibank...            MBG          $       0.35            $64.6M   Blacklisted                   
+378        VanEck Treasury ...            VBILL        $       1.00            $64.0M   Blacklisted                   
+382        BurnedFi                       BURN         $       5.13            $63.2M   Blacklisted                   
+383        BasedHype                      BASEDHYPE    $       0.01            $63.1M   Blacklisted                   
+385        MegaUSD                        USDM         $       1.00            $63.0M   Dynamic USD-pegged stable     
+387        BitDCA                         BDCA         $       0.76            $61.9M   Blacklisted                   
+388        Bitway                         BTW          $       0.03            $61.6M   Blacklisted                   
+392        RaveDAO                        RAVE         $       0.26            $61.2M   Blacklisted                   
+394        Ondo U.S. Dollar...            USDON        $       1.00            $61.1M   Dynamic USD-pegged stable     
+400        Unit Pump                      UPUMP        $       0.00            $59.6M   Blacklisted                   
+404        Targon                         SN4          $      13.47            $59.2M   Blacklisted                   
+409        USDX                           USDX         $       0.53            $58.8M   Blacklisted                   
+411        apxUSD                         APXUSD       $       1.00            $57.8M   Dynamic USD-pegged stable     
+412        Fabric Protocol                ROBO         $       0.03            $57.5M   Blacklisted                   
+417        affine                         SN120        $      21.02            $56.3M   Blacklisted                   
+427        Anchored Coins AEUR            AEUR         $       1.15            $55.1M   Blacklisted                   

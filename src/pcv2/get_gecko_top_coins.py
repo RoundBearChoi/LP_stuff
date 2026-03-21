@@ -42,6 +42,7 @@ class TopNonStableCoinsFetcher:
         'crown-brlv',
         'dacxi',
         'dai',
+        'xdai',
         'diem',
         'dola-usd',
         'ethena-usde',
