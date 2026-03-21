@@ -1,7 +1,7 @@
 import pandas as pd
 from pathlib import Path
 from typing import Optional, List
-import matplotlib.pyplot as plt   # NEW: required for the final chart
+import matplotlib.pyplot as plt
 
 
 class CointegrationDataProcessor:
@@ -9,8 +9,8 @@ class CointegrationDataProcessor:
     Updated for your exact request:
     1. Loads full CSV
     2. Overlap filter (80% of global max) → self.filtered_df
-    3. NEW SEPARATE FUNCTION: strong cointegration filter → self.strong_df
-    4. NEW FINAL FUNCTION: plot_half_life_distribution() ← now with vertical 10/50/90 lines
+    3. Strong cointegration filter → self.strong_df
+    4. Plot function with cleaner bottom footer (box moved up + refined)
     """
 
     def __init__(self, csv_path: str):
@@ -117,15 +117,14 @@ class CointegrationDataProcessor:
         return df['pair'].tolist() if df is not None else []
 
     # ===================================================================
-    # FIXED VERSION – no top-left overlap (legend upper right + stats box bottom left)
+    # UPDATED: Footer box moved up + cleaner/tighter appearance
     # ===================================================================
     def plot_half_life_distribution(self, output_png: Optional[str] = None, log_scale: bool = False) -> str:
         """
-        FIXED VERSION – no top-left overlap
-        - Legend moved to upper right
-        - Stats box moved to bottom left (flat area)
-        - Slightly shorter legend labels + cleaner stats formatting
-        - Wider figure + higher DPI for better readability
+        UPDATED PER YOUR REQUEST:
+        - Stats box moved slightly upward (y=0.038, va='center')
+        - Tighter padding + reduced bottom margin (no more excess white space)
+        - Cleaner, more balanced, professional look
         """
         df = self.strong_df if self.strong_df is not None else self.filtered_df
         if df is None or len(df) == 0:
@@ -148,14 +147,15 @@ class CointegrationDataProcessor:
         hl_10 = half_lives.iloc[rank_10]
         hl_90 = half_lives.iloc[rank_90]
 
-        plt.figure(figsize=(15.5, 8.5))  # ← Slightly wider for breathing room
+        # Slightly refined figure size
+        plt.figure(figsize=(16, 11.0))
         
         # Main sorted line
         plt.plot(half_lives.index, half_lives.values, 
                  color='royalblue', linewidth=1.8, alpha=0.85, 
                  label='Half-life (days)')
 
-        # Vertical lines (shorter labels – ranks moved to stats box)
+        # Vertical lines
         plt.axvline(x=rank_10, color='orange', linestyle='--', linewidth=2.2, alpha=0.85,
                     label='10th percentile')
         plt.axvline(x=rank_50, color='crimson', linestyle='--', linewidth=2.8, alpha=0.95,
@@ -180,21 +180,22 @@ class CointegrationDataProcessor:
             
         plt.grid(True, alpha=0.35, linestyle='--')
         
-        # === CLEAN LEGEND (upper right) ===
+        # Legend (upper right - unchanged)
         plt.legend(fontsize=11, loc='upper right', framealpha=0.92, fancybox=True)
 
-        # === STATS BOX (bottom left – perfect empty space) ===
-        stats_text = (
-            f"Total pairs : {n:,}\n"
-            f"10th percentile : {hl_10:.2f} days (rank {rank_10:,})\n"
-            f"Median          : {median_hl:.2f} days (rank {rank_50:,})\n"
-            f"90th percentile : {hl_90:.2f} days (rank {rank_90:,})\n"
-            f"Mean: {half_lives.mean():.2f} | Min: {half_lives.min():.2f} | Max: {half_lives.max():.2f}"
-        )
+        # === STATS BOX – MOVED UP + CLEANER ===
+        stats_text = f"""Total pairs: {n:,}
+10th percentile: {hl_10:.2f} days (rank {rank_10:,})
+Median: {median_hl:.2f} days (rank {rank_50:,})
+90th percentile: {hl_90:.2f} days (rank {rank_90:,})
+Mean: {half_lives.mean():.2f} days | Min: {half_lives.min():.2f} | Max: {half_lives.max():.2f} days"""
 
-        plt.text(0.02, 0.04, stats_text, transform=plt.gca().transAxes,
-                 bbox=dict(boxstyle="round,pad=0.8", facecolor="white", alpha=0.95, edgecolor='gray'),
-                 verticalalignment='bottom', fontsize=10.1, fontfamily='monospace')
+        plt.figtext(0.5, 0.038, stats_text, ha='center', va='center', 
+                    fontsize=10.2, fontfamily='monospace',
+                    bbox=dict(boxstyle="round,pad=0.85", facecolor="white", alpha=0.96, edgecolor='gray'))
+
+        # Reduced bottom margin for perfect spacing
+        plt.subplots_adjust(bottom=0.245)
 
         # Default filename
         if output_png is None:
@@ -202,10 +203,10 @@ class CointegrationDataProcessor:
             suffix = "_strong" if self.strong_df is not None else ""
             output_png = self.csv_path.parent / f"{base}_half_life_distribution{suffix}.png"
 
-        plt.savefig(output_png, dpi=160, bbox_inches='tight', facecolor='white')
+        plt.savefig(output_png, dpi=165, bbox_inches='tight', facecolor='white')
         plt.close()
 
-        print(f"📊 Fixed half-life distribution chart saved:")
+        print(f"📊 Updated chart with improved (higher + cleaner) footer saved:")
         print(f"   → {output_png}")
         print(f"   Pairs plotted: {n:,}")
         print(f"   10th–90th range : {hl_10:.2f} → {hl_90:.2f} days")
@@ -224,7 +225,6 @@ if __name__ == "__main__":
     
     processor.summary()
     
-    # === STRONG FILTER (as before) ===
     processor.filter_strong_cointegrations()
     
     print("\n🔝 Top 5 strongest cointegrations (shortest half-life):")
@@ -233,8 +233,7 @@ if __name__ == "__main__":
     
     processor.export_filtered()
 
-    # === FINAL PROCESS: half-life chart with 10/50/90 vertical lines ===
     print("\n" + "="*80)
-    print("🎨 FINAL PROCESS: Generating sorted half-life distribution chart...")
+    print("🎨 Generating updated half-life chart with better footer positioning...")
     processor.plot_half_life_distribution()
     print("="*80)
