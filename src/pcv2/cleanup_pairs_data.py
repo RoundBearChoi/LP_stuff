@@ -227,7 +227,7 @@ Mean: {half_lives.mean():.2f} days | Min: {half_lives.min():.2f} | Max: {half_li
 # =======================================================================
 if __name__ == "__main__":
     processor = CointegrationDataProcessor(
-        "BABYDOGE_vs_all_pairs_johansen_18m_top297.csv"
+        "all_pairs_cointegration_correlation_johansen_one_direction_18m_top42778.csv"
     )
     
     processor.filter_strong_cointegrations()
@@ -237,8 +237,8 @@ if __name__ == "__main__":
 
     # ←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←
     # (plot + trim will use these numbers)
-    LOWER_P = 20      # ← change here (e.g. 10, 20, 5, etc.)
-    UPPER_P = 80      # ← change here (e.g. 90, 80, 95, etc.)
+    LOWER_P = 30
+    UPPER_P = 70
     # ←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←
 
     print(f"📍 Using percentiles: {LOWER_P}th → {UPPER_P}th for BOTH chart AND trimming")

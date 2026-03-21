@@ -1,5 +1,0 @@
-SKIPPED COINS (2)
-These coins had no data on CryptoCompare USD CCCAGG.
-==================================================
-MNT
-IOTA
