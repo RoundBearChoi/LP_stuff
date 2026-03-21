@@ -313,8 +313,8 @@ if __name__ == "__main__":
 
     # ←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←
     # (plot + trim will use these numbers)
-    LOWER_P = 30
-    UPPER_P = 70
+    LOWER_P = 25
+    UPPER_P = 75
     # ←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←
 
     print(f"📍 Using percentiles: {LOWER_P}th → {UPPER_P}th for BOTH chart AND trimming")
