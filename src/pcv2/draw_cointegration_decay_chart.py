@@ -8,8 +8,6 @@ from config import DEFAULT_COINTEGRATION_CORRELATION_MONTHS, DEFAULT_CSV_FILE, D
 
 
 class CointegrationDecayChart:
-    """P-value DECAY scan — now unified with cointegration_correlation_months (renamed internally to max_months for consistency)."""
-
     def __init__(self, sym1: str, sym2: str, csv_file: str = None,
                  max_months: int = None):
         self.sym1 = sym1.upper()

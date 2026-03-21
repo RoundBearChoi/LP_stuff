@@ -2,6 +2,9 @@ import pandas as pd
 from pathlib import Path
 from typing import Optional, List
 import matplotlib.pyplot as plt
+import numpy as np
+from cointegration_engine import compute_cointegration
+from config import DEFAULT_CSV_FILE, DEFAULT_COINTEGRATION_METHOD
 
 
 class CointegrationDataProcessor:
@@ -12,7 +15,8 @@ class CointegrationDataProcessor:
     3. Strong cointegration filter → self.strong_df
     4. Plot half-life distribution (PNG created FIRST)
     5. Remove pairs outside chosen lower/upper percentiles
-    6. Export cleaned CSV (NOW LAST)
+    6. NEW: Add cointegration_stability_score (consistency across 1–18m windows)
+    7. Export cleaned CSV (NOW LAST)
 
     NEW: Plotting and trimming now use THE SAME percentiles (LOWER_P / UPPER_P).
          Change them only in the __main__ block – everything stays perfectly in sync.
@@ -97,13 +101,85 @@ class CointegrationDataProcessor:
         else:
             self.filtered_df = kept_df
 
+    def add_cointegration_stability_score(self, max_months: int = 18, p_threshold: float = 0.05) -> None:
+        """Adds 'cointegration_stability_score' (0.0–1.0).
+        Reuses exact logic from draw_cointegration_decay_chart.py (no chart created).
+        Score = fraction of 1m–18m lookbacks with p-value < 0.05.
+        Higher = more stable/consistent cointegration until the latest month.
+        
+        This is the exact column you asked for before exporting."""
+        if self.strong_df is None or len(self.strong_df) == 0:
+            print("❌ No strong_df ready for stability calculation.")
+            return
+
+        print(f"\n🔬 COMPUTING COINTEGRATION STABILITY SCORES ({max_months} lookbacks per pair)")
+        print(f"   This answers: 'how stable is cointegration until the latest month?'")
+        print("   (One-time cost — price data loaded only once for speed)")
+
+        # Load price data ONCE (huge speed win)
+        price_df = pd.read_csv(DEFAULT_CSV_FILE, parse_dates=['datetime'])
+        end_date = price_df['datetime'].max()
+        days_back = int(max_months * 30.437 * 1.1)  # small buffer
+        price_df = price_df[price_df['datetime'] >= (end_date - pd.Timedelta(days=days_back))].copy()
+        print(f"   → Loaded last {max_months} months: {len(price_df):,} hourly bars")
+
+        stability_scores = []
+        n_pairs = len(self.strong_df)
+
+        for i, row in enumerate(self.strong_df.itertuples(index=False), 1):
+            if i % max(10, n_pairs // 10) == 0:  # progress every ~10%
+                print(f"   Progress: {i:,}/{n_pairs:,} pairs processed")
+
+            sym1, sym2 = row.symbol1, row.symbol2
+
+            # Extract pair data
+            pair_data = price_df[price_df['symbol'].isin([sym1, sym2])]
+            if len(pair_data) < 1000:
+                stability_scores.append(0.0)
+                continue
+
+            pivot = pair_data.pivot(index='datetime', columns='symbol', values='close').dropna()
+            if sym1 not in pivot.columns or sym2 not in pivot.columns or len(pivot) < 500:
+                stability_scores.append(0.0)
+                continue
+
+            p1 = pivot[sym1]
+            p2 = pivot[sym2]
+
+            sig_count = 0
+            valid_windows = 0
+            for m in range(1, max_months + 1):
+                hours_back = int(m * 30.437 * 24)
+                p1w = p1.iloc[-hours_back:]
+                p2w = p2.iloc[-hours_back:]
+
+                if len(p1w) < 300:
+                    continue
+
+                try:
+                    result = compute_cointegration(p1w, p2w, method=DEFAULT_COINTEGRATION_METHOD)
+                    if getattr(result, 'p_value', 1.0) < p_threshold:
+                        sig_count += 1
+                    valid_windows += 1
+                except Exception:
+                    pass  # robustness
+
+            score = round(sig_count / valid_windows, 4) if valid_windows > 0 else 0.0
+            stability_scores.append(score)
+
+        self.strong_df = self.strong_df.copy()
+        self.strong_df['cointegration_stability_score'] = stability_scores
+
+        print(f"✅ Stability scores added! Mean score across pairs: {np.mean(stability_scores):.3f}")
+        print(f"   Column 'cointegration_stability_score' (0–1) is now in strong_df\n")
+
     def summary(self) -> None:
         df = self.strong_df if self.strong_df is not None else self.filtered_df
         if df is None:
             print("No data yet.")
             return
 
-        title = "STRONG COINTEGRATED PAIRS SUMMARY (overlap + strong + percentile trim)"
+        title = "STRONG COINTEGRATED PAIRS SUMMARY (overlap + strong + percentile trim + stability)"
         if self.strong_df is None:
             title = "OVERLAP-FILTERED SUMMARY"
 
@@ -111,7 +187,7 @@ class CointegrationDataProcessor:
         print("=" * 70)
         print(df[['overlap_hours', 'hourly_pearson', 'daily_pearson',
                   'abs_corr', 'cointegration_pvalue', 
-                  'half_life_days']].describe().round(4))
+                  'half_life_days', 'cointegration_stability_score']].describe().round(4))
         print(f"\nTotal pairs kept: {len(df):,}")
 
     def top_strong_cointegrations(self, n: int = 10, min_half_life_days: float = 0.01) -> pd.DataFrame:
@@ -124,12 +200,12 @@ class CointegrationDataProcessor:
         ].sort_values('half_life_days', ascending=True)
          .head(n)[['pair', 'symbol1', 'symbol2', 'overlap_hours', 
                    'hourly_pearson', 'cointegration_pvalue', 
-                   'half_life_days', 'beta']])
+                   'half_life_days', 'beta', 'cointegration_stability_score']])
 
     def export_filtered(self, output_path: Optional[str] = None) -> str:
         if self.strong_df is not None:
             df_to_export = self.strong_df
-            data_type = "strong + long-overlap + percentile-trimmed"
+            data_type = "strong + long-overlap + percentile-trimmed + stability-scored"
         elif self.filtered_df is not None:
             df_to_export = self.filtered_df
             data_type = "overlap-only"
@@ -253,11 +329,15 @@ if __name__ == "__main__":
         lower_percentile=LOWER_P, 
         upper_percentile=UPPER_P
     )
-    
+
+    # === NEW STEP (your exact request) ===
+    print("\n🔬 STEP 2.5: Computing 'how stable is cointegration until the latest month?' ...")
+    processor.add_cointegration_stability_score(max_months=18)
+
     print("\n💾 STEP 3: Exporting final cleaned CSV (now last)...")
     processor.export_filtered()
 
-    print("\n🔝 Top 5 after trimming:")
+    print("\n🔝 Top 5 after trimming & stability scoring:")
     top = processor.top_strong_cointegrations(n=5)
     print(top.to_string(index=False))
     
