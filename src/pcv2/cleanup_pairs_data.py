@@ -204,10 +204,21 @@ class CointegrationDataProcessor:
 
     def export_filtered(self, output_path: Optional[str] = None) -> str:
         if self.strong_df is not None:
-            df_to_export = self.strong_df
-            data_type = "strong + long-overlap + percentile-trimmed + stability-scored"
+            df_to_export = self.strong_df.copy()                    # ← copy to be safe
+            data_type = "strong + long-overlap + percentile-trimmed + stability-scored + SORTED"
+            
+            # NEW: Sort exactly as requested (before we export the CSV)
+            if {'cointegration_stability_score', 'half_life_days'}.issubset(df_to_export.columns):
+                df_to_export = df_to_export.sort_values(
+                    by=['cointegration_stability_score', 'half_life_days'],
+                    ascending=[False, True]
+                ).reset_index(drop=True)
+                print(f"   📋 Sorted by: cointegration_stability_score DESC → half_life_days ASC")
+            else:
+                print("   ⚠️  Missing sorting columns (skipped)")
+
         elif self.filtered_df is not None:
-            df_to_export = self.filtered_df
+            df_to_export = self.filtered_df.copy()
             data_type = "overlap-only"
         else:
             raise ValueError("No data to export.")
@@ -217,6 +228,14 @@ class CointegrationDataProcessor:
 
         df_to_export.to_csv(output_path, index=False)
         print(f"💾 Exported {data_type} data → {output_path}")
+        
+        # Nice confirmation of the new top pair
+        if 'cointegration_stability_score' in df_to_export.columns and len(df_to_export) > 0:
+            best = df_to_export.iloc[0]
+            print(f"   🏆 Top pair after sorting: {best['pair']} "
+                  f"| stability={best['cointegration_stability_score']:.4f} "
+                  f"| half_life={best['half_life_days']:.2f} days")
+
         return str(output_path)
 
     def get_pairs_list(self) -> List[str]:
