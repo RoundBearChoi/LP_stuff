@@ -63,7 +63,7 @@ class TopNonStableCoinsFetcher:
         'glidr',
         'gmt-token',
         'grx-chain',
-        'hash-2',                    # ← NEW: Provenance Blockchain (HASH) - added per your request
+        'hash-2',                                           # Provenance Blockchain (HASH)
         'hashnote-usyc',
         'hastra-prime',
         'helder',

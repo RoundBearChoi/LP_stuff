@@ -13,6 +13,9 @@ class CointegrationDataProcessor:
     4. Plot half-life distribution (PNG created FIRST)
     5. Remove pairs outside chosen lower/upper percentiles
     6. Export cleaned CSV (NOW LAST)
+
+    NEW: Plotting and trimming now use THE SAME percentiles (LOWER_P / UPPER_P).
+         Change them only in the __main__ block – everything stays perfectly in sync.
     """
 
     def __init__(self, csv_path: str):
@@ -67,12 +70,9 @@ class CointegrationDataProcessor:
         print(f"✅ Kept {kept:,} STRONG pairs ({kept_pct:.1f}% of overlap-filtered data)")
         print(f"❌ Removed {total - kept:,} non-strong pairs\n")
 
-    # ===================================================================
-    # NEW: Percentile trimming (exactly matches the chart you just saw)
-    # ===================================================================
-    def filter_by_half_life_percentiles(self, lower_percentile: float = 10.0, upper_percentile: float = 90.0) -> None:
+    def filter_by_half_life_percentiles(self, lower_percentile: float = 15.0, upper_percentile: float = 85.0) -> None:
         """Remove every pair whose half_life_days is outside the chosen percentiles.
-        Called AFTER plot_half_life_distribution() so the exported CSV matches the chart."""
+        Called AFTER plot_half_life_distribution() so the exported CSV matches the chart EXACTLY."""
         df = self.strong_df if self.strong_df is not None else self.filtered_df
         if df is None or len(df) == 0:
             print("❌ No data available for percentile filtering.")
@@ -92,7 +92,6 @@ class CointegrationDataProcessor:
         print(f"✅ Kept {len(kept_df):,} pairs ({kept_pct:.1f}%)")
         print(f"❌ Removed {removed:,} extreme pairs\n")
 
-        # Update the working dataframe
         if self.strong_df is not None:
             self.strong_df = kept_df
         else:
@@ -152,10 +151,9 @@ class CointegrationDataProcessor:
         self, 
         output_png: Optional[str] = None, 
         log_scale: bool = False,
-        lower_percentile: float = 10.0,
-        upper_percentile: float = 90.0
+        lower_percentile: float = 15.0,
+        upper_percentile: float = 85.0
     ) -> str:
-        # (Unchanged – exactly the same beautiful chart you already had)
         df = self.strong_df if self.strong_df is not None else self.filtered_df
         if df is None or len(df) == 0:
             print("❌ No data available for plotting.")
@@ -225,7 +223,7 @@ Mean: {half_lives.mean():.2f} days | Min: {half_lives.min():.2f} | Max: {half_li
 
 
 # =======================================================================
-# NEW WORKFLOW (exactly what you asked for)
+# SINGLE SOURCE OF TRUTH – change percentiles ONLY here
 # =======================================================================
 if __name__ == "__main__":
     processor = CointegrationDataProcessor(
@@ -237,14 +235,24 @@ if __name__ == "__main__":
     print("\n" + "="*80)
     print("🎨 STEP 1: Generating half-life distribution chart...")
 
-    # Change these two numbers if you want a different trim range
-    LOWER_P = 10
-    UPPER_P = 90
+    # ←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←
+    # (plot + trim will use these numbers)
+    LOWER_P = 10      # ← change here (e.g. 10, 20, 5, etc.)
+    UPPER_P = 90      # ← change here (e.g. 90, 80, 95, etc.)
+    # ←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←
 
-    processor.plot_half_life_distribution(lower_percentile=LOWER_P, upper_percentile=UPPER_P)
+    print(f"📍 Using percentiles: {LOWER_P}th → {UPPER_P}th for BOTH chart AND trimming")
+
+    processor.plot_half_life_distribution(
+        lower_percentile=LOWER_P, 
+        upper_percentile=UPPER_P
+    )
     
     print("\n✂️ STEP 2: Removing pairs outside the percentiles shown in the chart...")
-    processor.filter_by_half_life_percentiles(lower_percentile=LOWER_P, upper_percentile=UPPER_P)
+    processor.filter_by_half_life_percentiles(
+        lower_percentile=LOWER_P, 
+        upper_percentile=UPPER_P
+    )
     
     print("\n💾 STEP 3: Exporting final cleaned CSV (now last)...")
     processor.export_filtered()
