@@ -227,7 +227,7 @@ Mean: {half_lives.mean():.2f} days | Min: {half_lives.min():.2f} | Max: {half_li
 # =======================================================================
 if __name__ == "__main__":
     processor = CointegrationDataProcessor(
-        "all_pairs_cointegration_correlation_johansen_one_direction_18m_top44253.csv"
+        "BABYDOGE_vs_all_pairs_johansen_18m_top297.csv"
     )
     
     processor.filter_strong_cointegrations()
