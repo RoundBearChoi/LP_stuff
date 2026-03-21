@@ -127,8 +127,8 @@ class CointegrationDataProcessor:
         self, 
         output_png: Optional[str] = None, 
         log_scale: bool = False,
-        lower_percentile: float = 30.0,   # ← NEW: fully configurable
-        upper_percentile: float = 70.0    # ← NEW: fully configurable
+        lower_percentile: float = 10.0,   # ← NEW: fully configurable
+        upper_percentile: float = 90.0    # ← NEW: fully configurable
     ) -> str:
         """
         Now supports any percentile pair (e.g. 20/80, 5/95, 25/75).
