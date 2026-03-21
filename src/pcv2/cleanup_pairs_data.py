@@ -11,6 +11,10 @@ class CointegrationDataProcessor:
     2. Overlap filter (80% of global max) → self.filtered_df
     3. Strong cointegration filter → self.strong_df
     4. Plot function with cleaner bottom footer (box moved up + refined)
+    
+    NEW (March 2026): 
+    5. plot_half_life_distribution() now accepts lower_percentile and upper_percentile
+       (e.g. 20/80, 5/95, 25/75) while keeping the median fixed.
     """
 
     def __init__(self, csv_path: str):
@@ -117,14 +121,18 @@ class CointegrationDataProcessor:
         return df['pair'].tolist() if df is not None else []
 
     # ===================================================================
-    # UPDATED: Footer box moved up + cleaner/tighter appearance
+    # CONFIGURABLE PERCENTILES (NEW FEATURE)
     # ===================================================================
-    def plot_half_life_distribution(self, output_png: Optional[str] = None, log_scale: bool = False) -> str:
+    def plot_half_life_distribution(
+        self, 
+        output_png: Optional[str] = None, 
+        log_scale: bool = False,
+        lower_percentile: float = 30.0,   # ← NEW: fully configurable
+        upper_percentile: float = 70.0    # ← NEW: fully configurable
+    ) -> str:
         """
-        UPDATED PER YOUR REQUEST:
-        - Stats box moved slightly upward (y=0.038, va='center')
-        - Tighter padding + reduced bottom margin (no more excess white space)
-        - Cleaner, more balanced, professional look
+        Now supports any percentile pair (e.g. 20/80, 5/95, 25/75).
+        Median stays fixed (crimson line) as the most important reference.
         """
         df = self.strong_df if self.strong_df is not None else self.filtered_df
         if df is None or len(df) == 0:
@@ -139,31 +147,34 @@ class CointegrationDataProcessor:
         n = len(half_lives)
         median_hl = half_lives.median()
 
-        # Percentile ranks
-        rank_10 = int(n * 0.10)
-        rank_50 = int(n * 0.50)
-        rank_90 = int(n * 0.90)
+        # === DYNAMIC + SAFE PERCENTILE CALCULATION ===
+        lower_percentile = max(0.0, min(100.0, float(lower_percentile)))
+        upper_percentile = max(0.0, min(100.0, float(upper_percentile)))
 
-        hl_10 = half_lives.iloc[rank_10]
-        hl_90 = half_lives.iloc[rank_90]
+        lower_p = lower_percentile / 100.0
+        upper_p = upper_percentile / 100.0
 
-        # Slightly refined figure size
+        rank_lower = max(0, min(n-1, int(n * lower_p)))
+        rank_50    = int(n * 0.50)
+        rank_upper = max(0, min(n-1, int(n * upper_p)))
+
+        hl_lower = half_lives.iloc[rank_lower]
+        hl_upper = half_lives.iloc[rank_upper]
+
+        # === PLOTTING ===
         plt.figure(figsize=(16, 11.0))
         
-        # Main sorted line
         plt.plot(half_lives.index, half_lives.values, 
                  color='royalblue', linewidth=1.8, alpha=0.85, 
                  label='Half-life (days)')
 
-        # Vertical lines
-        plt.axvline(x=rank_10, color='orange', linestyle='--', linewidth=2.2, alpha=0.85,
-                    label='10th percentile')
+        plt.axvline(x=rank_lower, color='orange', linestyle='--', linewidth=2.2, alpha=0.85,
+                    label=f'{lower_percentile:.0f}th percentile')
         plt.axvline(x=rank_50, color='crimson', linestyle='--', linewidth=2.8, alpha=0.95,
                     label='Median')
-        plt.axvline(x=rank_90, color='purple', linestyle='--', linewidth=2.2, alpha=0.85,
-                    label='90th percentile')
+        plt.axvline(x=rank_upper, color='purple', linestyle='--', linewidth=2.2, alpha=0.85,
+                    label=f'{upper_percentile:.0f}th percentile')
 
-        # Faint median horizontal reference
         plt.axhline(y=median_hl, color='crimson', linestyle=':', linewidth=1.5, alpha=0.6)
 
         title = "Half-Life Distribution – Strong Cointegrated Pairs\n(Sorted: Lowest → Highest)"
@@ -179,25 +190,22 @@ class CointegrationDataProcessor:
             plt.ylabel("Half-Life (days) – Log Scale", fontsize=12)
             
         plt.grid(True, alpha=0.35, linestyle='--')
-        
-        # Legend (upper right - unchanged)
         plt.legend(fontsize=11, loc='upper right', framealpha=0.92, fancybox=True)
 
-        # === STATS BOX – MOVED UP + CLEANER ===
+        # === STATS BOX (same clean position) ===
         stats_text = f"""Total pairs: {n:,}
-10th percentile: {hl_10:.2f} days (rank {rank_10:,})
+{lower_percentile:.0f}th percentile: {hl_lower:.2f} days (rank {rank_lower:,})
 Median: {median_hl:.2f} days (rank {rank_50:,})
-90th percentile: {hl_90:.2f} days (rank {rank_90:,})
+{upper_percentile:.0f}th percentile: {hl_upper:.2f} days (rank {rank_upper:,})
 Mean: {half_lives.mean():.2f} days | Min: {half_lives.min():.2f} | Max: {half_lives.max():.2f} days"""
 
         plt.figtext(0.5, 0.038, stats_text, ha='center', va='center', 
                     fontsize=10.2, fontfamily='monospace',
                     bbox=dict(boxstyle="round,pad=0.85", facecolor="white", alpha=0.96, edgecolor='gray'))
 
-        # Reduced bottom margin for perfect spacing
         plt.subplots_adjust(bottom=0.245)
 
-        # Default filename
+        # Save
         if output_png is None:
             base = self.csv_path.stem
             suffix = "_strong" if self.strong_df is not None else ""
@@ -206,10 +214,10 @@ Mean: {half_lives.mean():.2f} days | Min: {half_lives.min():.2f} | Max: {half_li
         plt.savefig(output_png, dpi=165, bbox_inches='tight', facecolor='white')
         plt.close()
 
-        print(f"📊 Updated chart with improved (higher + cleaner) footer saved:")
+        print(f"📊 Chart saved with {lower_percentile:.0f}th / Median / {upper_percentile:.0f}th percentiles")
         print(f"   → {output_png}")
         print(f"   Pairs plotted: {n:,}")
-        print(f"   10th–90th range : {hl_10:.2f} → {hl_90:.2f} days")
+        print(f"   {lower_percentile:.0f}th–{upper_percentile:.0f}th range : {hl_lower:.2f} → {hl_upper:.2f} days")
         print(f"   Median          : {median_hl:.2f} days (rank {rank_50:,})")
         
         return str(output_png)
@@ -224,7 +232,6 @@ if __name__ == "__main__":
     )
     
     processor.summary()
-    
     processor.filter_strong_cointegrations()
     
     print("\n🔝 Top 5 strongest cointegrations (shortest half-life):")
@@ -234,6 +241,15 @@ if __name__ == "__main__":
     processor.export_filtered()
 
     print("\n" + "="*80)
-    print("🎨 Generating updated half-life chart with better footer positioning...")
+    print("🎨 Generating charts...")
+
+    # Default (10th / 90th) — exactly like before
     processor.plot_half_life_distribution()
+
+    # NEW: Custom percentiles examples (uncomment any you want)
+    # processor.plot_half_life_distribution(lower_percentile=20, upper_percentile=80)
+    # processor.plot_half_life_distribution(lower_percentile=5,  upper_percentile=95, log_scale=True)
+    # processor.plot_half_life_distribution(lower_percentile=25, upper_percentile=75,
+    #                                       output_png="half_life_25_75_custom.png")
+
     print("="*80)
