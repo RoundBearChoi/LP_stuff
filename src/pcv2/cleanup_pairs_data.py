@@ -237,8 +237,8 @@ if __name__ == "__main__":
 
     # ←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←
     # (plot + trim will use these numbers)
-    LOWER_P = 10      # ← change here (e.g. 10, 20, 5, etc.)
-    UPPER_P = 90      # ← change here (e.g. 90, 80, 95, etc.)
+    LOWER_P = 20      # ← change here (e.g. 10, 20, 5, etc.)
+    UPPER_P = 80      # ← change here (e.g. 90, 80, 95, etc.)
     # ←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←
 
     print(f"📍 Using percentiles: {LOWER_P}th → {UPPER_P}th for BOTH chart AND trimming")

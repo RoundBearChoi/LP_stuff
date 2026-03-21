@@ -1,5 +1,10 @@
-SKIPPED COINS (2)
+SKIPPED COINS (7)
 These coins had no data on CryptoCompare USD CCCAGG.
 ==================================================
 SOS
-UP
+APES
+ANKR
+CCD
+OPN
+BAN
+ELG
