@@ -9,17 +9,17 @@ from config import DEFAULT_CSV_FILE, DEFAULT_COINTEGRATION_METHOD
 
 class CointegrationDataProcessor:
     """
-    Updated workflow (your exact request – March 2026):
+    Updated workflow (March 2026 + your exact request):
     1. Loads full CSV
     2. Overlap filter (80% of global max) → self.filtered_df
     3. Strong cointegration filter → self.strong_df
     4. Plot half-life distribution (PNG created FIRST)
-    5. Remove pairs outside chosen lower/upper percentiles
-    6. NEW: Add cointegration_stability_score (consistency across 1–18m windows)
+    5. Mark pairs outside chosen percentiles as noise=True (NO DELETION)
+    6. Add cointegration_stability_score
     7. Export cleaned CSV (NOW LAST)
 
-    NEW: Plotting and trimming now use THE SAME percentiles (LOWER_P / UPPER_P).
-         Change them only in the __main__ block – everything stays perfectly in sync.
+    NEW: noise column (boolean) + sorting pushes noise=True to the very bottom.
+    Sorting order: noise (False first) → cointegration_stability_score DESC → half_life_days ASC
     """
 
     def __init__(self, csv_path: str):
@@ -74,40 +74,36 @@ class CointegrationDataProcessor:
         print(f"✅ Kept {kept:,} STRONG pairs ({kept_pct:.1f}% of overlap-filtered data)")
         print(f"❌ Removed {total - kept:,} non-strong pairs\n")
 
-    def filter_by_half_life_percentiles(self, lower_percentile: float = 15.0, upper_percentile: float = 85.0) -> None:
-        """Remove every pair whose half_life_days is outside the chosen percentiles.
-        Called AFTER plot_half_life_distribution() so the exported CSV matches the chart EXACTLY."""
+    def mark_noise_by_half_life_percentiles(self, lower_percentile: float = 15.0, upper_percentile: float = 85.0) -> None:
+        """Marks (but does NOT delete) pairs outside the chosen percentiles as noise=True.
+        Called AFTER plot_half_life_distribution() so the chart still shows the exact cutoffs."""
         df = self.strong_df if self.strong_df is not None else self.filtered_df
         if df is None or len(df) == 0:
-            print("❌ No data available for percentile filtering.")
+            print("❌ No data available for noise marking.")
             return
 
         lower_val = df['half_life_days'].quantile(lower_percentile / 100)
         upper_val = df['half_life_days'].quantile(upper_percentile / 100)
 
-        mask = (df['half_life_days'] >= lower_val) & (df['half_life_days'] <= upper_val)
-        kept_df = df[mask].copy()
+        df = df.copy()
+        df['noise'] = (df['half_life_days'] < lower_val) | (df['half_life_days'] > upper_val)
 
-        kept_pct = len(kept_df) / len(df) * 100
-        removed = len(df) - len(kept_df)
+        noise_count = int(df['noise'].sum())
+        clean_count = len(df) - noise_count
+        clean_pct = (clean_count / len(df) * 100)
 
-        print(f"✂️ HALF-LIFE PERCENTILE TRIM APPLIED ({lower_percentile:.0f}th – {upper_percentile:.0f}th)")
-        print(f"   Range kept : {lower_val:.2f} → {upper_val:.2f} days")
-        print(f"✅ Kept {len(kept_df):,} pairs ({kept_pct:.1f}%)")
-        print(f"❌ Removed {removed:,} extreme pairs\n")
+        print(f"🏷️ HALF-LIFE NOISE MARKING APPLIED ({lower_percentile:.0f}th – {upper_percentile:.0f}th)")
+        print(f"   Clean range : {lower_val:.2f} → {upper_val:.2f} days")
+        print(f"✅ Clean pairs : {clean_count:,} ({clean_pct:.1f}%)")
+        print(f"🔴 Noise pairs : {noise_count:,}\n")
 
         if self.strong_df is not None:
-            self.strong_df = kept_df
+            self.strong_df = df
         else:
-            self.filtered_df = kept_df
+            self.filtered_df = df
 
     def add_cointegration_stability_score(self, max_months: int = 18, p_threshold: float = 0.05) -> None:
-        """Adds 'cointegration_stability_score' (0.0–1.0).
-        Reuses exact logic from draw_cointegration_decay_chart.py (no chart created).
-        Score = fraction of 1m–18m lookbacks with p-value < 0.05.
-        Higher = more stable/consistent cointegration until the latest month.
-        
-        This is the exact column you asked for before exporting."""
+        """Adds 'cointegration_stability_score' (0.0–1.0). Exact logic as before."""
         if self.strong_df is None or len(self.strong_df) == 0:
             print("❌ No strong_df ready for stability calculation.")
             return
@@ -179,41 +175,46 @@ class CointegrationDataProcessor:
             print("No data yet.")
             return
 
-        title = "STRONG COINTEGRATED PAIRS SUMMARY (overlap + strong + percentile trim + stability)"
+        title = "STRONG COINTEGRATED PAIRS SUMMARY (overlap + strong + noise flag + stability)"
         if self.strong_df is None:
             title = "OVERLAP-FILTERED SUMMARY"
 
         print(f"📊 {title}")
         print("=" * 70)
-        print(df[['overlap_hours', 'hourly_pearson', 'daily_pearson',
-                  'abs_corr', 'cointegration_pvalue', 
-                  'half_life_days', 'cointegration_stability_score']].describe().round(4))
+        cols = ['overlap_hours', 'hourly_pearson', 'daily_pearson', 'abs_corr',
+                'cointegration_pvalue', 'half_life_days', 'cointegration_stability_score', 'noise']
+        print(df[cols].describe().round(4))
         print(f"\nTotal pairs kept: {len(df):,}")
+        if 'noise' in df.columns:
+            print(f"   Clean (noise=False): {(df['noise'] == False).sum():,}")
+            print(f"   Noise  (noise=True) : {(df['noise'] == True).sum():,}")
 
     def top_strong_cointegrations(self, n: int = 10, min_half_life_days: float = 0.01) -> pd.DataFrame:
         df = self.strong_df if self.strong_df is not None else self.filtered_df
         if df is None:
             return pd.DataFrame()
         
-        return (df[
-            (df['half_life_days'] >= min_half_life_days)
+        # Prefer clean pairs (noise=False) for the top list
+        clean_df = df[df['noise'] == False] if 'noise' in df.columns else df
+        return (clean_df[
+            (clean_df['half_life_days'] >= min_half_life_days)
         ].sort_values('half_life_days', ascending=True)
          .head(n)[['pair', 'symbol1', 'symbol2', 'overlap_hours', 
                    'hourly_pearson', 'cointegration_pvalue', 
-                   'half_life_days', 'beta', 'cointegration_stability_score']])
+                   'half_life_days', 'beta', 'cointegration_stability_score', 'noise']])
 
     def export_filtered(self, output_path: Optional[str] = None) -> str:
         if self.strong_df is not None:
-            df_to_export = self.strong_df.copy()                    # ← copy to be safe
-            data_type = "strong + long-overlap + percentile-trimmed + stability-scored + SORTED"
+            df_to_export = self.strong_df.copy()
+            data_type = "strong + long-overlap + noise-marked + stability-scored + SORTED"
             
-            # NEW: Sort exactly as requested (before we export the CSV)
-            if {'cointegration_stability_score', 'half_life_days'}.issubset(df_to_export.columns):
+            # UPDATED SORTING: noise=False first, then stability DESC, then half_life ASC
+            if {'cointegration_stability_score', 'half_life_days', 'noise'}.issubset(df_to_export.columns):
                 df_to_export = df_to_export.sort_values(
-                    by=['cointegration_stability_score', 'half_life_days'],
-                    ascending=[False, True]
+                    by=['noise', 'cointegration_stability_score', 'half_life_days'],
+                    ascending=[True, False, True]
                 ).reset_index(drop=True)
-                print(f"   📋 Sorted by: cointegration_stability_score DESC → half_life_days ASC")
+                print(f"   📋 Sorted by: noise (False/clean first) → stability DESC → half_life_days ASC")
             else:
                 print("   ⚠️  Missing sorting columns (skipped)")
 
@@ -231,10 +232,12 @@ class CointegrationDataProcessor:
         
         # Nice confirmation of the new top pair
         if 'cointegration_stability_score' in df_to_export.columns and len(df_to_export) > 0:
-            best = df_to_export.iloc[0]
-            print(f"   🏆 Top pair after sorting: {best['pair']} "
-                  f"| stability={best['cointegration_stability_score']:.4f} "
-                  f"| half_life={best['half_life_days']:.2f} days")
+            clean_pairs = df_to_export[df_to_export['noise'] == False] if 'noise' in df_to_export.columns else df_to_export
+            if len(clean_pairs) > 0:
+                best = clean_pairs.iloc[0]
+                print(f"   🏆 Top clean pair after sorting: {best['pair']} "
+                      f"| stability={best['cointegration_stability_score']:.4f} "
+                      f"| half_life={best['half_life_days']:.2f} days")
 
         return str(output_path)
 
@@ -331,20 +334,19 @@ if __name__ == "__main__":
     print("🎨 STEP 1: Generating half-life distribution chart...")
 
     # ←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←
-    # (plot + trim will use these numbers)
     LOWER_P = 25
     UPPER_P = 75
     # ←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←
 
-    print(f"📍 Using percentiles: {LOWER_P}th → {UPPER_P}th for BOTH chart AND trimming")
+    print(f"📍 Using percentiles: {LOWER_P}th → {UPPER_P}th for BOTH chart AND noise marking")
 
     processor.plot_half_life_distribution(
         lower_percentile=LOWER_P, 
         upper_percentile=UPPER_P
     )
     
-    print("\n✂️ STEP 2: Removing pairs outside the percentiles shown in the chart...")
-    processor.filter_by_half_life_percentiles(
+    print("\n🏷️ STEP 2: Marking noise (no pairs deleted)...")
+    processor.mark_noise_by_half_life_percentiles(
         lower_percentile=LOWER_P, 
         upper_percentile=UPPER_P
     )
@@ -356,7 +358,7 @@ if __name__ == "__main__":
     print("\n💾 STEP 3: Exporting final cleaned CSV (now last)...")
     processor.export_filtered()
 
-    print("\n🔝 Top 5 after trimming & stability scoring:")
+    print("\n🔝 Top 5 clean pairs after noise marking & stability scoring:")
     top = processor.top_strong_cointegrations(n=5)
     print(top.to_string(index=False))
     
