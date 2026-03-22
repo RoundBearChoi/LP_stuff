@@ -9,17 +9,21 @@ from config import DEFAULT_CSV_FILE, DEFAULT_COINTEGRATION_METHOD
 
 class CointegrationDataProcessor:
     """
-    Updated workflow (March 2026 + your exact request):
+    Updated workflow (March 2026 + your exact requests):
     1. Loads full CSV
     2. Overlap filter (80% of global max) → self.filtered_df
     3. Strong cointegration filter → self.strong_df
-    4. Plot half-life distribution (PNG created FIRST)
+    4. Plot half-life distribution (PNG created FIRST) ← NEW naming
     5. Mark pairs outside chosen percentiles as noise=True (NO DELETION)
     6. Add cointegration_stability_score
     7. Export cleaned CSV (NOW LAST)
 
     NEW: noise column (boolean) + sorting pushes noise=True to the very bottom.
     Sorting order: noise (False first) → cointegration_stability_score DESC → half_life_days ASC
+
+    Output filename format (your requests):
+    - CSV:  filtered_by_stability_johansen_one_direction_18m_top42778.csv
+    - PNG:  filtered_by_stability_johansen_one_direction_18m_top42778_half_life_distribution_strong.png
     """
 
     def __init__(self, csv_path: str):
@@ -75,8 +79,6 @@ class CointegrationDataProcessor:
         print(f"❌ Removed {total - kept:,} non-strong pairs\n")
 
     def mark_noise_by_half_life_percentiles(self, lower_percentile: float = 15.0, upper_percentile: float = 85.0) -> None:
-        """Marks (but does NOT delete) pairs outside the chosen percentiles as noise=True.
-        Called AFTER plot_half_life_distribution() so the chart still shows the exact cutoffs."""
         df = self.strong_df if self.strong_df is not None else self.filtered_df
         if df is None or len(df) == 0:
             print("❌ No data available for noise marking.")
@@ -103,7 +105,6 @@ class CointegrationDataProcessor:
             self.filtered_df = df
 
     def add_cointegration_stability_score(self, max_months: int = 18, p_threshold: float = 0.05) -> None:
-        """Adds 'cointegration_stability_score' (0.0–1.0). Exact logic as before."""
         if self.strong_df is None or len(self.strong_df) == 0:
             print("❌ No strong_df ready for stability calculation.")
             return
@@ -112,10 +113,9 @@ class CointegrationDataProcessor:
         print(f"   This answers: 'how stable is cointegration until the latest month?'")
         print("   (One-time cost — price data loaded only once for speed)")
 
-        # Load price data ONCE (huge speed win)
         price_df = pd.read_csv(DEFAULT_CSV_FILE, parse_dates=['datetime'])
         end_date = price_df['datetime'].max()
-        days_back = int(max_months * 30.437 * 1.1)  # small buffer
+        days_back = int(max_months * 30.437 * 1.1)
         price_df = price_df[price_df['datetime'] >= (end_date - pd.Timedelta(days=days_back))].copy()
         print(f"   → Loaded last {max_months} months: {len(price_df):,} hourly bars")
 
@@ -123,12 +123,11 @@ class CointegrationDataProcessor:
         n_pairs = len(self.strong_df)
 
         for i, row in enumerate(self.strong_df.itertuples(index=False), 1):
-            if i % max(10, n_pairs // 10) == 0:  # progress every ~10%
+            if i % max(10, n_pairs // 10) == 0:
                 print(f"   Progress: {i:,}/{n_pairs:,} pairs processed")
 
             sym1, sym2 = row.symbol1, row.symbol2
 
-            # Extract pair data
             pair_data = price_df[price_df['symbol'].isin([sym1, sym2])]
             if len(pair_data) < 1000:
                 stability_scores.append(0.0)
@@ -158,7 +157,7 @@ class CointegrationDataProcessor:
                         sig_count += 1
                     valid_windows += 1
                 except Exception:
-                    pass  # robustness
+                    pass
 
             score = round(sig_count / valid_windows, 4) if valid_windows > 0 else 0.0
             stability_scores.append(score)
@@ -194,7 +193,6 @@ class CointegrationDataProcessor:
         if df is None:
             return pd.DataFrame()
         
-        # Prefer clean pairs (noise=False) for the top list
         clean_df = df[df['noise'] == False] if 'noise' in df.columns else df
         return (clean_df[
             (clean_df['half_life_days'] >= min_half_life_days)
@@ -208,7 +206,6 @@ class CointegrationDataProcessor:
             df_to_export = self.strong_df.copy()
             data_type = "strong + long-overlap + noise-marked + stability-scored + SORTED"
             
-            # UPDATED SORTING: noise=False first, then stability DESC, then half_life ASC
             if {'cointegration_stability_score', 'half_life_days', 'noise'}.issubset(df_to_export.columns):
                 df_to_export = df_to_export.sort_values(
                     by=['noise', 'cointegration_stability_score', 'half_life_days'],
@@ -225,12 +222,17 @@ class CointegrationDataProcessor:
             raise ValueError("No data to export.")
 
         if output_path is None:
-            output_path = self.csv_path.with_name(f"cleanedup_{self.csv_path.name}")
+            stem = self.csv_path.stem
+            if stem.startswith("all_pairs_cointegration_correlation_"):
+                new_stem = stem.replace("all_pairs_cointegration_correlation_", "filtered_by_stability_")
+            else:
+                new_stem = f"filtered_by_stability_{stem}"
+            output_path = self.csv_path.with_name(f"{new_stem}.csv")
+            print(f"output name → {output_path.name}")
 
         df_to_export.to_csv(output_path, index=False)
         print(f"💾 Exported {data_type} data → {output_path}")
         
-        # Nice confirmation of the new top pair
         if 'cointegration_stability_score' in df_to_export.columns and len(df_to_export) > 0:
             clean_pairs = df_to_export[df_to_export['noise'] == False] if 'noise' in df_to_export.columns else df_to_export
             if len(clean_pairs) > 0:
@@ -307,9 +309,17 @@ Mean: {half_lives.mean():.2f} days | Min: {half_lives.min():.2f} | Max: {half_li
         plt.subplots_adjust(bottom=0.245)
 
         if output_png is None:
-            base = self.csv_path.stem
+            # ===================== YOUR REQUESTED PNG NAMING =====================
+            stem = self.csv_path.stem
+            if stem.startswith("all_pairs_cointegration_correlation_"):
+                new_stem = stem.replace("all_pairs_cointegration_correlation_", "filtered_by_stability_")
+            else:
+                new_stem = f"filtered_by_stability_{stem}"
+            base = new_stem
             suffix = "_strong" if self.strong_df is not None else ""
             output_png = self.csv_path.parent / f"{base}_half_life_distribution{suffix}.png"
+            print(f"output name → {output_png.name}")
+            # ====================================================================
 
         plt.savefig(output_png, dpi=165, bbox_inches='tight', facecolor='white')
         plt.close()
@@ -333,10 +343,8 @@ if __name__ == "__main__":
     print("\n" + "="*80)
     print("🎨 STEP 1: Generating half-life distribution chart...")
 
-    # ←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←
     LOWER_P = 25
     UPPER_P = 75
-    # ←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←
 
     print(f"📍 Using percentiles: {LOWER_P}th → {UPPER_P}th for BOTH chart AND noise marking")
 
@@ -351,7 +359,6 @@ if __name__ == "__main__":
         upper_percentile=UPPER_P
     )
 
-    # === NEW STEP (your exact request) ===
     print("\n🔬 STEP 2.5: Computing 'how stable is cointegration until the latest month?' ...")
     processor.add_cointegration_stability_score(max_months=18)
 
