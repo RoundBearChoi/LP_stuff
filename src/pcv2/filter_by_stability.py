@@ -188,7 +188,7 @@ class CointegrationDataProcessor:
             print(f"   Clean (noise=False): {(df['noise'] == False).sum():,}")
             print(f"   Noise  (noise=True) : {(df['noise'] == True).sum():,}")
 
-    def top_strong_cointegrations(self, n: int = 10, min_half_life_days: float = 0.01) -> pd.DataFrame:
+    """def top_strong_cointegrations(self, n: int = 10, min_half_life_days: float = 0.01) -> pd.DataFrame:
         df = self.strong_df if self.strong_df is not None else self.filtered_df
         if df is None:
             return pd.DataFrame()
@@ -199,7 +199,7 @@ class CointegrationDataProcessor:
         ].sort_values('half_life_days', ascending=True)
          .head(n)[['pair', 'symbol1', 'symbol2', 'overlap_hours', 
                    'hourly_pearson', 'cointegration_pvalue', 
-                   'half_life_days', 'beta', 'cointegration_stability_score', 'noise']])
+                   'half_life_days', 'beta', 'cointegration_stability_score', 'noise']])"""
 
     def export_filtered(self, output_path: Optional[str] = None) -> str:
         if self.strong_df is not None:
@@ -228,7 +228,6 @@ class CointegrationDataProcessor:
             else:
                 new_stem = f"filtered_by_stability_{stem}"
             output_path = self.csv_path.with_name(f"{new_stem}.csv")
-            print(f"output name → {output_path.name}")
 
         df_to_export.to_csv(output_path, index=False)
         print(f"💾 Exported {data_type} data → {output_path}")
@@ -318,7 +317,6 @@ Mean: {half_lives.mean():.2f} days | Min: {half_lives.min():.2f} | Max: {half_li
             base = new_stem
             suffix = "_strong" if self.strong_df is not None else ""
             output_png = self.csv_path.parent / f"{base}_half_life_distribution{suffix}.png"
-            print(f"output name → {output_png.name}")
             # ====================================================================
 
         plt.savefig(output_png, dpi=165, bbox_inches='tight', facecolor='white')
@@ -365,9 +363,9 @@ if __name__ == "__main__":
     print("\n💾 STEP 3: Exporting final cleaned CSV (now last)...")
     processor.export_filtered()
 
-    print("\n🔝 Top 5 clean pairs after noise marking & stability scoring:")
-    top = processor.top_strong_cointegrations(n=5)
-    print(top.to_string(index=False))
+    #print("\n🔝 Top 5 clean pairs after noise marking & stability scoring:")
+    #top = processor.top_strong_cointegrations(n=5)
+    #print(top.to_string(index=False))
     
     processor.summary()
     print("="*80)
