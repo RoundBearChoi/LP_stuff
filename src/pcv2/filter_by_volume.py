@@ -3,7 +3,14 @@ import requests
 import time
 import os
 import matplotlib.pyplot as plt
-import numpy as np   # ← added for safe log handling
+import numpy as np
+
+# ====================== CONFIG (change this one line!) ======================
+PERCENTILE = 90          # ←←← CHANGE THIS TO WHATEVER YOU WANT
+                         # Examples: 70, 80, 90, 95, 99, 99.9
+                         # The script will automatically mark this percentile
+                         # on the chart and update all titles/labels
+# ===========================================================================
 
 def get_mexc_7d_avg_volume(symbol):
     if pd.isna(symbol) or str(symbol).strip() == '':
@@ -113,18 +120,22 @@ if __name__ == "__main__":
     df = df.sort_values(by='pair_total_7d_vol_usdt', ascending=False).reset_index(drop=True)
     
     volumes = df['pair_total_7d_vol_usdt']
-    p70 = volumes.quantile(0.70)
-    print(f"📈 70th percentile total volume: ${p70:,.0f} USDT")
+    percentile_fraction = PERCENTILE / 100.0
+    p_value = volumes.quantile(percentile_fraction)
+    print(f"📈 {PERCENTILE}th percentile total volume: ${p_value:,.0f} USDT")
     
-    print("📈 Generating sorted rank chart (log scale)...")
+    print(f"📈 Generating sorted rank chart ({PERCENTILE}th percentile, log scale)...")
     plt.figure(figsize=(14, 8), dpi=150)
     ranks = range(1, len(df) + 1)
-    plot_volumes = np.maximum(volumes, 1)  # safe log — avoids log(0) error
+    plot_volumes = np.maximum(volumes, 1)
     plt.plot(ranks, plot_volumes, linewidth=2, color='#3498db')
-    plt.axhline(p70, color='red', linestyle='--', linewidth=2.5, label=f'70th Percentile (${p70:,.0f} USDT)')
+    plt.axhline(p_value, color='red', linestyle='--', linewidth=2.5, 
+                label=f'{PERCENTILE}th Percentile (${p_value:,.0f} USDT)')
     plt.yscale('log')
     
-    plt.title('Pair Total 7-Day Volume - Sorted Highest to Lowest Rank\nStrong Cointegration + Non-Noise Pairs (Log Scale)', fontsize=14, pad=20)
+    plt.title(f'Pair Total 7-Day Volume - Sorted Highest to Lowest Rank\n'
+              f'Strong Cointegration + Non-Noise Pairs ({PERCENTILE}th Percentile Marked)', 
+              fontsize=14, pad=20)
     plt.xlabel('Pair Rank (1 = Highest Total Volume)')
     plt.ylabel('Pair Total Volume USDT (log scale)')
     plt.legend(fontsize=12)
@@ -139,6 +150,6 @@ if __name__ == "__main__":
     # Save (or re-save) the CSV
     df.to_csv(output_file, index=False)
     print(f"\n✅ DONE! Final file: {output_file} ({len(df):,} rows, sorted highest → lowest)")
-    print(f"   Chart: {chart_file} (now on log scale as requested)")
+    print(f"   Chart: {chart_file} ({PERCENTILE}th percentile marked)")
     if skip_fetch:
         print("   (Used existing volume data — no new API calls)")
