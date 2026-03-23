@@ -12,6 +12,14 @@ PERCENTILE = 90          # ←←← CHANGE THIS TO WHATEVER YOU WANT
                          # on the chart and update all titles/labels
 # ===========================================================================
 
+def ordinal(n: int) -> str:
+    """Proper English suffixes: 1st, 2nd, 3rd, 4th... 11th, 21st, 101st, etc."""
+    if 11 <= (n % 100) <= 13:
+        suffix = 'th'
+    else:
+        suffix = {1: 'st', 2: 'nd', 3: 'rd'}.get(n % 10, 'th')
+    return f"{n}{suffix}"
+
 def get_mexc_7d_avg_volume(symbol):
     if pd.isna(symbol) or str(symbol).strip() == '':
         return 0.0
@@ -115,14 +123,32 @@ if __name__ == "__main__":
         df['symbol2_total_7d_vol_usdt'] = df['mexc_symbol2_7d_avg_vol_usdt'] + df['kucoin_symbol2_7d_avg_vol_usdt']
         df['pair_total_7d_vol_usdt'] = df['symbol1_total_7d_vol_usdt'] + df['symbol2_total_7d_vol_usdt']
     
-    # Always run: sort + chart + save
+    # ====================== ALWAYS RUN: SORT + PERCENTILES + CHART + SAVE ======================
     print("🔄 Sorting pairs from highest total volume to lowest...")
     df = df.sort_values(by='pair_total_7d_vol_usdt', ascending=False).reset_index(drop=True)
+    
+    print("📊 Calculating volume percentile ranks...")
+    # Precise percentile (100.00 = highest volume pair)
+    df['volume_percentile'] = (df['pair_total_7d_vol_usdt'].rank(pct=True) * 100).round(2)
+    
+    # Clean label with proper st/nd/rd/th suffixes
+    df['volume_percentile_rank'] = df['volume_percentile'].round(0).astype(int).map(ordinal) + " percentile"
+    
+    # Move new columns right after total volume for perfect readability
+    cols = list(df.columns)
+    try:
+        total_idx = cols.index('pair_total_7d_vol_usdt')
+        for col in ['volume_percentile_rank', 'volume_percentile'][::-1]:
+            cols.insert(total_idx + 1, cols.pop(cols.index(col)))
+        df = df[cols]
+    except:
+        pass  # safety net if column somehow missing
     
     volumes = df['pair_total_7d_vol_usdt']
     percentile_fraction = PERCENTILE / 100.0
     p_value = volumes.quantile(percentile_fraction)
     print(f"📈 {PERCENTILE}th percentile total volume: ${p_value:,.0f} USDT")
+    print(f"   Top pair is at {df['volume_percentile_rank'].iloc[0]}")
     
     print(f"📈 Generating sorted rank chart ({PERCENTILE}th percentile, log scale)...")
     plt.figure(figsize=(14, 8), dpi=150)
@@ -147,9 +173,10 @@ if __name__ == "__main__":
     
     print(f"   ✅ Chart saved → {chart_file}")
     
-    # Save (or re-save) the CSV
+    # Save (or re-save) the CSV with new columns
     df.to_csv(output_file, index=False)
-    print(f"\n✅ DONE! Final file: {output_file} ({len(df):,} rows, sorted highest → lowest)")
-    print(f"   Chart: {chart_file} ({PERCENTILE}th percentile marked)")
+    print(f"\n✅ DONE! Final file: {output_file} ({len(df):,} rows)")
+    print(f"   New columns added: volume_percentile + volume_percentile_rank")
+    print(f"   Chart: {chart_file}")
     if skip_fetch:
         print("   (Used existing volume data — no new API calls)")
