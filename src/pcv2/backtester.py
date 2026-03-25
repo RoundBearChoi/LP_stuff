@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from datetime import datetime
 
+
 class VolatilityHarvestingBacktester:
     def __init__(self, 
                  csv_path='top300_hourly_18months_combined.csv',
@@ -265,8 +266,55 @@ class VolatilityHarvestingBacktester:
         print(f"✅ Chart saved as '{self.output_filename}' (DPI 150)")
 
 
-# ====================== USAGE ======================
-# The script now runs exactly as the original when executed directly.
+# ====================== CLI ENTRY POINT ======================
+# Fully configurable from the console – no need to edit the code anymore
 if __name__ == "__main__":
-    backtester = VolatilityHarvestingBacktester()
+    import argparse
+
+    parser = argparse.ArgumentParser(
+        description='Volatility Harvesting Backtester – run any asset pair and time period directly from the terminal',
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter
+    )
+
+    # === Core parameters you asked to control from console ===
+    parser.add_argument('--asset-a', type=str, default='XVG',
+                        help='Symbol for Asset A (e.g. XVG, SOL, ETH)')
+    parser.add_argument('--asset-b', type=str, default='BTC',
+                        help='Symbol for Asset B (e.g. BTC, ETH, USDT)')
+    parser.add_argument('--months', type=int, default=18,
+                        help='Number of recent months to backtest. Use 0 (or any non-positive number) for the full dataset.')
+
+    # === All other parameters exposed for maximum flexibility ===
+    parser.add_argument('--target-weight-a', type=float, default=0.50,
+                        help='Target weight for Asset A (0.0–1.0)')
+    parser.add_argument('--outer-buffer', type=float, default=0.05,
+                        help='Outer rebalance trigger buffer (as decimal)')
+    parser.add_argument('--inner-rebalance-dev', type=float, default=0.025,
+                        help='Inner partial rebalance deviation (as decimal)')
+    parser.add_argument('--initial-capital', type=float, default=2000.0,
+                        help='Starting capital in USD')
+    parser.add_argument('--fee-rate', type=float, default=0.01,
+                        help='Trading fee rate (e.g. 0.01 = 1%)')
+    parser.add_argument('--csv-path', type=str,
+                        default='top300_hourly_18months_combined.csv',
+                        help='Path to the combined hourly CSV file')
+
+    args = parser.parse_args()
+
+    # Convert --months=0 → None (full dataset) to match class logic exactly
+    backtest_months = None if args.months <= 0 else args.months
+
+    # Normalise symbols to uppercase (prevents subtle bugs)
+    backtester = VolatilityHarvestingBacktester(
+        csv_path=args.csv_path,
+        asset_a=args.asset_a.upper(),
+        asset_b=args.asset_b.upper(),
+        target_weight_a=args.target_weight_a,
+        outer_buffer=args.outer_buffer,
+        inner_rebalance_dev=args.inner_rebalance_dev,
+        initial_capital=args.initial_capital,
+        fee_rate=args.fee_rate,
+        backtest_months=backtest_months
+    )
+
     backtester.run_backtest()
