@@ -5,15 +5,17 @@ import os
 import matplotlib.pyplot as plt
 import numpy as np
 
-# ====================== CONFIG (change this one line!) ======================
+# ====================== CONFIG (change these!) ======================
 PERCENTILE = 90          # ←←← CHANGE THIS TO WHATEVER YOU WANT
                          # Examples: 70, 80, 90, 95, 99, 99.9
-                         # The script will automatically mark this percentile
-                         # on the chart and update all titles/labels
+
+MIN_VOLUME_RATIO = 0.20  # ←←← NEW: Minimum ratio of smaller volume / larger volume
+                         # Filter out pairs where one symbol's volume < 30% of the other
+                         # Examples: 0.25, 0.30, 0.40, 0.50
 # ===========================================================================
 
 def ordinal(n: int) -> str:
-    """Proper English suffixes: 1st, 2nd, 3rd, 4th... 11th, 21st, 101st, etc."""
+    """Proper English suffixes: 1st, 2nd, 3rd, 4th..."""
     if 11 <= (n % 100) <= 13:
         suffix = 'th'
     else:
@@ -123,18 +125,31 @@ if __name__ == "__main__":
         df['symbol2_total_7d_vol_usdt'] = df['mexc_symbol2_7d_avg_vol_usdt'] + df['kucoin_symbol2_7d_avg_vol_usdt']
         df['pair_total_7d_vol_usdt'] = df['symbol1_total_7d_vol_usdt'] + df['symbol2_total_7d_vol_usdt']
     
+    # ====================== ALWAYS RUN: VOLUME BALANCE FILTER ======================
+    print(f"🔍 Applying volume balance filter ({MIN_VOLUME_RATIO*100:.0f}% min ratio)...")
+    before_balance = len(df)
+    
+    v_cols = ['symbol1_total_7d_vol_usdt', 'symbol2_total_7d_vol_usdt']
+    # Vectorized: keep only pairs where min >= ratio * max AND both volumes > 0
+    mask = (
+        (df[v_cols] > 0).all(axis=1) &
+        (df[v_cols].min(axis=1) >= MIN_VOLUME_RATIO * df[v_cols].max(axis=1))
+    )
+    
+    df = df[mask].copy().reset_index(drop=True)
+    print(f"   Kept {len(df):,} balanced pairs | Discarded {before_balance - len(df):,} imbalanced pairs")
+    # ===========================================================================
+
     # ====================== ALWAYS RUN: SORT + PERCENTILES + CHART + SAVE ======================
     print("🔄 Sorting pairs from highest total volume to lowest...")
     df = df.sort_values(by='pair_total_7d_vol_usdt', ascending=False).reset_index(drop=True)
     
     print("📊 Calculating volume percentile ranks...")
-    # Precise percentile (100.00 = highest volume pair)
     df['volume_percentile'] = (df['pair_total_7d_vol_usdt'].rank(pct=True) * 100).round(2)
     
-    # Clean label with proper st/nd/rd/th suffixes
     df['volume_percentile_rank'] = df['volume_percentile'].round(0).astype(int).map(ordinal) + " percentile"
     
-    # Move new columns right after total volume for perfect readability
+    # Move new columns right after total volume
     cols = list(df.columns)
     try:
         total_idx = cols.index('pair_total_7d_vol_usdt')
@@ -142,7 +157,7 @@ if __name__ == "__main__":
             cols.insert(total_idx + 1, cols.pop(cols.index(col)))
         df = df[cols]
     except:
-        pass  # safety net if column somehow missing
+        pass
     
     volumes = df['pair_total_7d_vol_usdt']
     percentile_fraction = PERCENTILE / 100.0
@@ -150,7 +165,7 @@ if __name__ == "__main__":
     print(f"📈 {PERCENTILE}th percentile total volume: ${p_value:,.0f} USDT")
     print(f"   Top pair is at {df['volume_percentile_rank'].iloc[0]}")
     
-    print(f"📈 Generating sorted rank chart ({PERCENTILE}th percentile, log scale)...")
+    print(f"📈 Generating sorted rank chart ({PERCENTILE}th percentile, {MIN_VOLUME_RATIO*100:.0f}% balanced, log scale)...")
     plt.figure(figsize=(14, 8), dpi=150)
     ranks = range(1, len(df) + 1)
     plot_volumes = np.maximum(volumes, 1)
@@ -160,7 +175,8 @@ if __name__ == "__main__":
     plt.yscale('log')
     
     plt.title(f'Pair Total 7-Day Volume - Sorted Highest to Lowest Rank\n'
-              f'Strong Cointegration + Non-Noise Pairs ({PERCENTILE}th Percentile Marked)', 
+              f'Strong Cointegration + Non-Noise + {MIN_VOLUME_RATIO*100:.0f}% Volume Balanced Pairs '
+              f'({PERCENTILE}th Percentile Marked)', 
               fontsize=14, pad=20)
     plt.xlabel('Pair Rank (1 = Highest Total Volume)')
     plt.ylabel('Pair Total Volume USDT (log scale)')
@@ -173,9 +189,10 @@ if __name__ == "__main__":
     
     print(f"   ✅ Chart saved → {chart_file}")
     
-    # Save (or re-save) the CSV with new columns
+    # Save (or re-save) the CSV
     df.to_csv(output_file, index=False)
     print(f"\n✅ DONE! Final file: {output_file} ({len(df):,} rows)")
+    print(f"   Filters applied: Strong Cointegration + Non-Noise + {MIN_VOLUME_RATIO*100:.0f}% Volume Balance")
     print(f"   New columns added: volume_percentile + volume_percentile_rank")
     print(f"   Chart: {chart_file}")
     if skip_fetch:

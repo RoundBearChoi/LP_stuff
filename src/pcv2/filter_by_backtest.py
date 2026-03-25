@@ -15,7 +15,7 @@ warnings.filterwarnings('ignore')
 # ==========================  EASY CONFIG SECTION  ============================
 # =============================================================================
 # Edit these defaults here — no need to type flags every time!
-TOP_VOLUME_PERCENT = 3.0          # Change to 10, 20, 25, 50, 100, 0, etc.
+TOP_VOLUME_PERCENT = 2.0          # Change to 10, 20, 25, 50, 100, 0, etc.
 MAX_PAIRS_OVERRIDE = None          # Set to e.g. 50 for quick testing (None = no limit)
 TARGET_WEIGHT_A = 0.50
 FEE_RATE = 0.01
