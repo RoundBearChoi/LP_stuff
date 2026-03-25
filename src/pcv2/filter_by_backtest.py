@@ -10,23 +10,14 @@ warnings.filterwarnings('ignore')
 
 
 class SilentVolatilityHarvestingBacktester(VolatilityHarvestingBacktester):
-    """Subclass of the original backtester that disables plotting and most console output.
-    
-    This is essential for batch-processing thousands of pairs:
-    - Prevents generation of 10,000+ PNG files (huge disk usage + slow matplotlib calls).
-    - Suppresses purchasing-power prints and final results table (we capture metrics programmatically instead).
-    - Keeps all the core calculation logic 100% identical to your original backtester.py.
-    """
+    """Silent subclass – no plots, no console spam for batch runs."""
     def plot_results(self):
-        """Completely skip plot generation and file I/O."""
         pass
 
     def _print_purchasing_power(self):
-        """Quiet mode – we don't need the purchasing-power messages repeated 42k times."""
         pass
 
     def _print_results(self):
-        """Quiet mode – metrics are extracted directly into the results DataFrame."""
         pass
 
 
@@ -36,11 +27,7 @@ def run_backtest_for_pair(symbol1: str, symbol2: str,
                           target_weight_a=0.50,
                           fee_rate=0.01,
                           **kwargs):
-    """Run a single volatility-harvesting backtest using your original class logic.
-    
-    Returns a dict of key performance numbers (or error info) that will be merged
-    into the final ranked DataFrame.
-    """
+    """Run one volatility-harvesting backtest (identical logic to your original backtester)."""
     try:
         backtester = SilentVolatilityHarvestingBacktester(
             csv_path=csv_path,
@@ -52,16 +39,13 @@ def run_backtest_for_pair(symbol1: str, symbol2: str,
             **kwargs
         )
 
-        # Full suppression of internal prints while still running every calculation
         with redirect_stdout(io.StringIO()):
             backtester.run_backtest()
 
-        # Extract Strategy metrics (exactly the same columns your original script produces)
         metrics = backtester.metrics
         strategy = metrics.loc['Strategy']
         bh = metrics.loc['BuyHold_50/50']
 
-        # Rebalance & trading stats (directly from the portfolio DataFrame)
         rebalances = int(backtester.portfolio['rebalance'].sum())
         total_trade_volume_usd = float(backtester.portfolio['trade'].sum())
 
@@ -96,29 +80,46 @@ if __name__ == "__main__":
         formatter_class=argparse.ArgumentDefaultsHelpFormatter
     )
 
-    parser.add_argument('--input-csv', type=str,
-                        default='filtered_by_volume_johansen_one_direction_18m_top42778.csv',
-                        help='Path to the filtered pairs CSV (the one you provided)')
+    # === NEW DEFAULT BEHAVIOR ===
+    parser.add_argument('--top-volume-percent', type=float, default=30.0,
+                        help='Default: run only the top X%% highest-volume pairs '
+                             '(sorted by volume_percentile descending). '
+                             'Set to 0 or 100 to run the full list.')
+
+    # === Existing flags (kept exactly as before) ===
     parser.add_argument('--max-pairs', type=int, default=None,
-                        help='Limit to first N pairs (highly recommended for testing – 42k pairs = many hours)')
+                        help='Manual limit (for testing). Overrides --top-volume-percent when set.')
     parser.add_argument('--target-weight-a', type=float, default=0.50,
-                        help='Target weight for Asset A (same as backtester)')
+                        help='Target weight for Asset A')
     parser.add_argument('--fee-rate', type=float, default=0.01,
                         help='Trading fee rate')
     parser.add_argument('--csv-path', type=str,
                         default='top300_hourly_18months_combined.csv',
                         help='Path to the hourly combined price data')
+    parser.add_argument('--input-csv', type=str,
+                        default='filtered_by_volume_johansen_one_direction_18m_top42778.csv',
+                        help='Path to the filtered pairs CSV')
 
     args = parser.parse_args()
 
-    # ====================== LOAD PAIRS ======================
+    # ====================== LOAD & FILTER PAIRS ======================
     print(f"📂 Loading pairs from: {args.input_csv}")
     df_pairs = pd.read_csv(args.input_csv)
-    print(f"   Found {len(df_pairs):,} candidate pairs.\n")
+    print(f"   Found {len(df_pairs):,} candidate pairs.")
 
+    # === NEW: Auto-select top X% by volume (unless --max-pairs is used) ===
     if args.max_pairs is not None and args.max_pairs > 0:
         df_pairs = df_pairs.head(args.max_pairs)
-        print(f"🔬 Running only the first {args.max_pairs} pairs (testing mode).\n")
+        print(f"🔬 Running only the first {args.max_pairs} pairs (manual --max-pairs override).\n")
+    else:
+        if 0 < args.top_volume_percent < 100:
+            # Sort by volume (robust – works even if CSV is not pre-sorted)
+            df_pairs = df_pairs.sort_values(by='volume_percentile', ascending=False).reset_index(drop=True)
+            n_pairs = int(len(df_pairs) * (args.top_volume_percent / 100))
+            df_pairs = df_pairs.head(n_pairs)
+            print(f"📊 Default mode: running top {args.top_volume_percent}% by volume → {n_pairs:,} pairs.\n")
+        else:
+            print(f"📊 Running full dataset ({len(df_pairs):,} pairs) because --top-volume-percent={args.top_volume_percent}.\n")
 
     # ====================== BATCH BACKTEST ======================
     results_list = []
@@ -137,7 +138,6 @@ if __name__ == "__main__":
             fee_rate=args.fee_rate
         )
 
-        # Merge original row + new backtest metrics
         result_row = row.to_dict().copy()
         result_row.update(metrics)
         results_list.append(result_row)
@@ -145,18 +145,14 @@ if __name__ == "__main__":
     # ====================== CREATE & RANK RESULTS ======================
     results_df = pd.DataFrame(results_list)
 
-    # Rank from highest strategy return → lowest (exactly what you asked for)
     if 'strategy_total_return_pct' in results_df.columns:
         results_df = results_df.sort_values(
             by='strategy_total_return_pct',
             ascending=False
         ).reset_index(drop=True)
-        # Add a clean rank column
         results_df.insert(0, 'rank', range(1, len(results_df) + 1))
 
-    # ====================== OUTPUT FILENAME (matches your requested format) ======================
-    # Example: filtered_by_volume_johansen_one_direction_18m_top42778.csv
-    #   → filtered_by_backtester_johansen_one_direction_18m_top42778.csv
+    # ====================== OUTPUT FILENAME ======================
     output_csv = args.input_csv.replace('volume', 'backtester').replace('_sample', '')
     if not output_csv.endswith('.csv'):
         output_csv += '.csv'
@@ -169,12 +165,16 @@ if __name__ == "__main__":
     print(f"   Total pairs processed: {len(results_df):,}")
     print(f"   Successful backtests: {results_df['backtest_success'].sum():,}\n")
 
-    # Show top 10 preview
+    # Top 10 preview
     if 'rank' in results_df.columns:
         print("🏆 Top 10 pairs by Strategy Total Return (%):")
         top10_cols = ['rank', 'pair', 'strategy_total_return_pct', 'strategy_cagr_pct',
                       'outperformance_vs_bh_pct', 'rebalances', 'strategy_max_dd_pct']
         print(results_df.head(10)[top10_cols].round(2).to_string(index=False))
 
-    print("\n💡 Tip: Re-run with --max-pairs 500 (or remove the flag for the full list) once you're happy with the setup.")
-    print("   The output CSV contains EVERY original column from your filtered file + all the new backtest metrics.")
+    print("\n💡 Usage tips:")
+    print("   • Default (no flags)          → top 30% by volume")
+    print("   • python ... --top-volume-percent 50   → top 50%")
+    print("   • python ... --max-pairs 100          → only first 100 (testing)")
+    print("   • python ... --top-volume-percent 0    → full list")
+    print("   The output CSV keeps ALL original columns + new backtest metrics.")
