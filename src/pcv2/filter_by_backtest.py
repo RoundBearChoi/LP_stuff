@@ -15,7 +15,8 @@ warnings.filterwarnings('ignore')
 # ==========================  EASY CONFIG SECTION  ============================
 # =============================================================================
 # Edit these defaults here — no need to type flags every time!
-TOP_VOLUME_PERCENT = 2.0          # Change to 10, 20, 25, 50, 100, 0, etc.
+TOP_N_PAIRS = 10                   # e.g. 10, 15, 50, 100, 0 (0 = run all)
+BACKTEST_MONTHS = 3                # ← NEW: number of recent months (latest → past X months)
 MAX_PAIRS_OVERRIDE = None          # Set to e.g. 50 for quick testing (None = no limit)
 TARGET_WEIGHT_A = 0.50
 FEE_RATE = 0.01
@@ -38,7 +39,7 @@ class SilentVolatilityHarvestingBacktester(VolatilityHarvestingBacktester):
 
 def run_backtest_for_pair(symbol1: str, symbol2: str,
                           csv_path=CSV_PATH,
-                          backtest_months=3,
+                          backtest_months=BACKTEST_MONTHS,
                           target_weight_a=TARGET_WEIGHT_A,
                           fee_rate=FEE_RATE,
                           **kwargs):
@@ -143,18 +144,20 @@ def plot_rebalance_distribution(results_df: pd.DataFrame, output_csv: str):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description='filtered_by_backtest.py – runs volatility harvesting on every pair '
-                    'from your Johansen-filtered CSV and ranks them by highest rebalance count.',
+        description='filtered_by_backtest.py – runs volatility harvesting on the top N '
+                    'highest-volume pairs from your Johansen-filtered CSV and ranks them by highest rebalance count.',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter
     )
 
-    parser.add_argument('--top-volume-percent', type=float, default=TOP_VOLUME_PERCENT,
-                        help='Default: run only the top X%% highest-volume pairs '
+    parser.add_argument('--top-n', type=int, default=TOP_N_PAIRS,
+                        help='Run only the top N highest-volume pairs '
                              '(sorted by volume_percentile descending). '
-                             'Set to 0 or 100 to run the full list.')
-
+                             'Set to 0 to run the full list.')
+    parser.add_argument('--backtest-months', type=int, default=BACKTEST_MONTHS,
+                        help='Number of recent months to run the backtest on '
+                             '(from the latest date backwards).')
     parser.add_argument('--max-pairs', type=int, default=MAX_PAIRS_OVERRIDE,
-                        help='Manual limit (for testing). Overrides --top-volume-percent when set.')
+                        help='Manual limit (for testing). Overrides --top-n when set.')
     parser.add_argument('--target-weight-a', type=float, default=TARGET_WEIGHT_A,
                         help='Target weight for Asset A')
     parser.add_argument('--fee-rate', type=float, default=FEE_RATE,
@@ -175,16 +178,16 @@ if __name__ == "__main__":
         df_pairs = df_pairs.head(args.max_pairs)
         print(f"🔬 Running only the first {args.max_pairs} pairs (manual --max-pairs override).\n")
     else:
-        if 0 < args.top_volume_percent < 100:
+        if args.top_n is not None and args.top_n > 0:
             df_pairs = df_pairs.sort_values(by='volume_percentile', ascending=False).reset_index(drop=True)
-            n_pairs = int(len(df_pairs) * (args.top_volume_percent / 100))
+            n_pairs = min(args.top_n, len(df_pairs))
             df_pairs = df_pairs.head(n_pairs)
-            print(f"📊 Running top {args.top_volume_percent}% by volume → {n_pairs:,} pairs.\n")
+            print(f"📊 Running top {n_pairs:,} pairs by volume (TOP_N_PAIRS = {args.top_n}).\n")
         else:
-            print(f"📊 Running full dataset ({len(df_pairs):,} pairs) because --top-volume-percent={args.top_volume_percent}.\n")
+            print(f"📊 Running full dataset ({len(df_pairs):,} pairs) because TOP_N_PAIRS = 0.\n")
 
-    # ====================== OUTPUT FILENAME ======================
-    output_csv = args.input_csv.replace('volume', 'backtester').replace('_sample', '')
+    # ====================== OUTPUT FILENAME (now includes months) ======================
+    output_csv = args.input_csv.replace('volume', f'backtester_m{args.backtest_months}').replace('_sample', '')
     if not output_csv.endswith('.csv'):
         output_csv += '.csv'
 
@@ -217,6 +220,7 @@ if __name__ == "__main__":
                 symbol1=symbol1,
                 symbol2=symbol2,
                 csv_path=args.csv_path,
+                backtest_months=args.backtest_months,      # ← NEW: passed here
                 target_weight_a=args.target_weight_a,
                 fee_rate=args.fee_rate
             )
@@ -263,7 +267,7 @@ if __name__ == "__main__":
         print(results_df.head(10)[top10_cols].round(2).to_string(index=False))
 
     print("\n💡 Tips:")
-    print("   • Just edit TOP_VOLUME_PERCENT at the top of the file!")
-    print("   • Or override with --top-volume-percent 10 on the command line")
+    print("   • Just edit TOP_N_PAIRS or BACKTEST_MONTHS at the top of the file!")
+    print("   • Or override with --top-n 15 --backtest-months 6 on the command line")
     print("   • Use --max-pairs 50 for quick testing")
     print("   • The chart is always generated at the end (pure visual reference)")
