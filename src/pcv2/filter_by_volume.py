@@ -4,14 +4,12 @@ import time
 import os
 import matplotlib.pyplot as plt
 import numpy as np
+from datetime import datetime
 
 # ====================== CONFIG (change these!) ======================
-PERCENTILE = 90          # ←←← CHANGE THIS TO WHATEVER YOU WANT
-                         # Examples: 70, 80, 90, 95, 99, 99.9
-
-MIN_VOLUME_RATIO = 0.20  # ←←← NEW: Minimum ratio of smaller volume / larger volume
-                         # Filter out pairs where one symbol's volume < 30% of the other
-                         # Examples: 0.25, 0.30, 0.40, 0.50
+PERCENTILE = 90
+MIN_VOLUME_RATIO = 0.30
+VOLUME_CACHE_FILE = "mexc_kucoin_volume.csv"
 # ===========================================================================
 
 def ordinal(n: int) -> str:
@@ -65,6 +63,21 @@ def get_kucoin_7d_avg_volume(symbol):
         return 0.0
 
 
+def load_volume_cache():
+    if os.path.exists(VOLUME_CACHE_FILE):
+        df_cache = pd.read_csv(VOLUME_CACHE_FILE)
+        print(f"✅ Loaded existing volume cache with {len(df_cache):,} symbols")
+        return df_cache
+    else:
+        print(f"📂 No volume cache found → will create {VOLUME_CACHE_FILE}")
+        return pd.DataFrame(columns=['symbol', 'mexc_7d_avg_vol_usdt', 'kucoin_7d_avg_vol_usdt', 'last_updated'])
+
+
+def save_volume_cache(df_cache):
+    df_cache.to_csv(VOLUME_CACHE_FILE, index=False)
+    print(f"💾 Saved/updated volume cache → {VOLUME_CACHE_FILE} ({len(df_cache):,} symbols)")
+
+
 # ====================== MAIN ======================
 if __name__ == "__main__":
     input_file = "filtered_by_stability_johansen_one_direction_18m_top42778.csv"
@@ -74,96 +87,110 @@ if __name__ == "__main__":
         print(f"❌ Original file '{input_file}' not found!")
         exit(1)
     
-    # Smart check: reuse existing file if you just want a chart refresh
-    skip_fetch = False
-    if os.path.exists(output_file):
-        print(f"✅ Existing volume file found: {output_file}")
-        response = input("Do you want to skip fetching new volume data from MEXC and KuCoin "
-                         "and only regenerate the sorted rank chart? (y/n): ").strip().lower()
-        if response in ['y', 'yes']:
-            print("📊 Loading existing volume file (skipping API calls)...")
-            df = pd.read_csv(output_file)
-            skip_fetch = True
-        else:
-            print("🔄 Proceeding with full volume refresh...")
-    else:
-        print("📊 No existing volume file found. Running full process...")
+    # Load original stability results
+    print("📊 Loading original CSV...")
+    df = pd.read_csv(input_file)
+    original_rows = len(df)
+    print(f"   Loaded {original_rows:,} rows")
     
-    # Full process only if needed
-    if not skip_fetch:
-        print("📊 Loading original CSV...")
-        df = pd.read_csv(input_file)
-        original_rows = len(df)
-        print(f"   Loaded {original_rows:,} rows")
-        
-        print("🔍 Applying strict filters (noise=False + STRONG COINTEGRATION)...")
-        df = df[
-            (df['noise'] == False) & 
-            (df['verdict'].astype(str).str.contains('STRONG COINTEGRATION', case=False, na=False))
-        ].copy()
-        print(f"   Kept {len(df):,} high-quality pairs | Discarded {original_rows - len(df):,} rows")
-        
-        symbols = pd.concat([df['symbol1'], df['symbol2']]).unique()
-        print(f"🔍 Found {len(symbols):,} unique symbols. Fetching MEXC + KuCoin 7d volumes...")
-        volume_cache = {}
-        for i, sym in enumerate(symbols, 1):
-            if i % 25 == 0 or i == len(symbols):
-                print(f"   Progress: {i}/{len(symbols)} symbols")
+    print("🔍 Applying strict filters (noise=False + STRONG COINTEGRATION)...")
+    df = df[
+        (df['noise'] == False) & 
+        (df['verdict'].astype(str).str.contains('STRONG COINTEGRATION', case=False, na=False))
+    ].copy()
+    print(f"   Kept {len(df):,} high-quality pairs | Discarded {original_rows - len(df):,} rows")
+    
+    # Unique symbols
+    symbols = pd.concat([df['symbol1'], df['symbol2']]).unique()
+    print(f"🔍 Found {len(symbols):,} unique symbols")
+    
+    # Load volume cache
+    volume_cache_df = load_volume_cache()
+    cached_symbols = set(volume_cache_df['symbol'].astype(str).str.upper())
+    
+    # Find symbols we still need to fetch
+    missing_symbols = [str(s).strip().upper() for s in symbols 
+                       if str(s).strip().upper() not in cached_symbols]
+    
+    if missing_symbols:
+        print(f"🔄 Fetching volume data for {len(missing_symbols):,} NEW symbols...")
+        new_rows = []
+        for i, sym in enumerate(missing_symbols, 1):
+            if i % 20 == 0 or i == len(missing_symbols):
+                print(f"   Progress: {i}/{len(missing_symbols)} symbols")
             mexc_vol = get_mexc_7d_avg_volume(sym)
             kucoin_vol = get_kucoin_7d_avg_volume(sym)
-            volume_cache[sym] = {'mexc': mexc_vol, 'kucoin': kucoin_vol}
+            new_rows.append({
+                'symbol': sym,
+                'mexc_7d_avg_vol_usdt': mexc_vol,
+                'kucoin_7d_avg_vol_usdt': kucoin_vol,
+                'last_updated': datetime.now().isoformat()
+            })
             time.sleep(0.25)
         
-        print("➕ Adding volume columns...")
-        df['mexc_symbol1_7d_avg_vol_usdt'] = df['symbol1'].map(lambda x: volume_cache.get(x, {}).get('mexc', 0.0))
-        df['mexc_symbol2_7d_avg_vol_usdt'] = df['symbol2'].map(lambda x: volume_cache.get(x, {}).get('mexc', 0.0))
-        df['kucoin_symbol1_7d_avg_vol_usdt'] = df['symbol1'].map(lambda x: volume_cache.get(x, {}).get('kucoin', 0.0))
-        df['kucoin_symbol2_7d_avg_vol_usdt'] = df['symbol2'].map(lambda x: volume_cache.get(x, {}).get('kucoin', 0.0))
-        
-        print("📊 Calculating total volumes...")
-        df['symbol1_total_7d_vol_usdt'] = df['mexc_symbol1_7d_avg_vol_usdt'] + df['kucoin_symbol1_7d_avg_vol_usdt']
-        df['symbol2_total_7d_vol_usdt'] = df['mexc_symbol2_7d_avg_vol_usdt'] + df['kucoin_symbol2_7d_avg_vol_usdt']
-        df['pair_total_7d_vol_usdt'] = df['symbol1_total_7d_vol_usdt'] + df['symbol2_total_7d_vol_usdt']
+        if new_rows:
+            new_df = pd.DataFrame(new_rows)
+            volume_cache_df = pd.concat([volume_cache_df, new_df], ignore_index=True)
+            # Deduplicate just in case
+            volume_cache_df = volume_cache_df.drop_duplicates(subset=['symbol']).reset_index(drop=True)
+            save_volume_cache(volume_cache_df)
+    else:
+        print("✅ All symbols already present in volume cache — no API calls needed!")
     
-    # ====================== ALWAYS RUN: VOLUME BALANCE FILTER ======================
+    # Build fast lookup dictionary
+    volume_dict = {}
+    for _, row in volume_cache_df.iterrows():
+        sym = str(row['symbol']).upper()
+        volume_dict[sym] = {
+            'mexc': float(row['mexc_7d_avg_vol_usdt']),
+            'kucoin': float(row['kucoin_7d_avg_vol_usdt'])
+        }
+    
+    # Add volumes to pairs
+    print("➕ Adding volume columns from cache...")
+    df['mexc_symbol1_7d_avg_vol_usdt'] = df['symbol1'].map(lambda x: volume_dict.get(str(x).upper(), {}).get('mexc', 0.0))
+    df['mexc_symbol2_7d_avg_vol_usdt'] = df['symbol2'].map(lambda x: volume_dict.get(str(x).upper(), {}).get('mexc', 0.0))
+    df['kucoin_symbol1_7d_avg_vol_usdt'] = df['symbol1'].map(lambda x: volume_dict.get(str(x).upper(), {}).get('kucoin', 0.0))
+    df['kucoin_symbol2_7d_avg_vol_usdt'] = df['symbol2'].map(lambda x: volume_dict.get(str(x).upper(), {}).get('kucoin', 0.0))
+    
+    print("📊 Calculating total volumes...")
+    df['symbol1_total_7d_vol_usdt'] = df['mexc_symbol1_7d_avg_vol_usdt'] + df['kucoin_symbol1_7d_avg_vol_usdt']
+    df['symbol2_total_7d_vol_usdt'] = df['mexc_symbol2_7d_avg_vol_usdt'] + df['kucoin_symbol2_7d_avg_vol_usdt']
+    df['pair_total_7d_vol_usdt'] = df['symbol1_total_7d_vol_usdt'] + df['symbol2_total_7d_vol_usdt']
+    
+    # Volume balance filter
     print(f"🔍 Applying volume balance filter ({MIN_VOLUME_RATIO*100:.0f}% min ratio)...")
     before_balance = len(df)
-    
     v_cols = ['symbol1_total_7d_vol_usdt', 'symbol2_total_7d_vol_usdt']
-    # Vectorized: keep only pairs where min >= ratio * max AND both volumes > 0
     mask = (
         (df[v_cols] > 0).all(axis=1) &
         (df[v_cols].min(axis=1) >= MIN_VOLUME_RATIO * df[v_cols].max(axis=1))
     )
-    
     df = df[mask].copy().reset_index(drop=True)
     print(f"   Kept {len(df):,} balanced pairs | Discarded {before_balance - len(df):,} imbalanced pairs")
-    # ===========================================================================
-
-    # ====================== ALWAYS RUN: SORT + PERCENTILES + CHART + SAVE ======================
+    
+    # Sort + percentiles + chart + save
     print("🔄 Sorting pairs from highest total volume to lowest...")
     df = df.sort_values(by='pair_total_7d_vol_usdt', ascending=False).reset_index(drop=True)
     
     print("📊 Calculating volume percentile ranks...")
     df['volume_percentile'] = (df['pair_total_7d_vol_usdt'].rank(pct=True) * 100).round(2)
-    
     df['volume_percentile_rank'] = df['volume_percentile'].round(0).astype(int).map(ordinal) + " percentile"
     
-    # Move new columns right after total volume
+    # Reorder columns for readability
     cols = list(df.columns)
     try:
         total_idx = cols.index('pair_total_7d_vol_usdt')
         for col in ['volume_percentile_rank', 'volume_percentile'][::-1]:
-            cols.insert(total_idx + 1, cols.pop(cols.index(col)))
+            if col in cols:
+                cols.insert(total_idx + 1, cols.pop(cols.index(col)))
         df = df[cols]
     except:
         pass
     
     volumes = df['pair_total_7d_vol_usdt']
-    percentile_fraction = PERCENTILE / 100.0
-    p_value = volumes.quantile(percentile_fraction)
+    p_value = volumes.quantile(PERCENTILE / 100.0)
     print(f"📈 {PERCENTILE}th percentile total volume: ${p_value:,.0f} USDT")
-    print(f"   Top pair is at {df['volume_percentile_rank'].iloc[0]}")
     
     print(f"📈 Generating sorted rank chart ({PERCENTILE}th percentile, {MIN_VOLUME_RATIO*100:.0f}% balanced, log scale)...")
     plt.figure(figsize=(14, 8), dpi=150)
@@ -186,14 +213,11 @@ if __name__ == "__main__":
     chart_file = "pair_total_volume_sorted_rank.png"
     plt.savefig(chart_file, dpi=150, bbox_inches='tight')
     plt.close()
-    
     print(f"   ✅ Chart saved → {chart_file}")
     
-    # Save (or re-save) the CSV
+    # Save the final filtered/ranked results
     df.to_csv(output_file, index=False)
-    print(f"\n✅ DONE! Final file: {output_file} ({len(df):,} rows)")
+    print(f"\n✅ DONE!")
+    print(f"   Final filtered pairs file → {output_file} ({len(df):,} rows)")
+    print(f"   Separate volume cache      → {VOLUME_CACHE_FILE} ({len(volume_cache_df):,} symbols)")
     print(f"   Filters applied: Strong Cointegration + Non-Noise + {MIN_VOLUME_RATIO*100:.0f}% Volume Balance")
-    print(f"   New columns added: volume_percentile + volume_percentile_rank")
-    print(f"   Chart: {chart_file}")
-    if skip_fetch:
-        print("   (Used existing volume data — no new API calls)")
