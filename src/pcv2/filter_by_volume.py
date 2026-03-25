@@ -7,9 +7,9 @@ import numpy as np
 from datetime import datetime
 
 # ====================== CONFIG (change these!) ======================
-PERCENTILE = 90
-MIN_VOLUME_RATIO = 0.30
-VOLUME_CACHE_FILE = "mexc_kucoin_volume.csv"
+PERCENTILE = 80
+MIN_VOLUME_RATIO = 0.20
+VOLUME_CACHE_FILE = "mexc_kucoin_volume.csv" 
 # ===========================================================================
 
 def ordinal(n: int) -> str:
@@ -112,8 +112,23 @@ if __name__ == "__main__":
     missing_symbols = [str(s).strip().upper() for s in symbols 
                        if str(s).strip().upper() not in cached_symbols]
     
+    # ====================== PROMPT LOGIC (exactly as you asked) ======================
+    force_refresh = False
     if missing_symbols:
         print(f"🔄 Fetching volume data for {len(missing_symbols):,} NEW symbols...")
+    else:
+        print("✅ All symbols already present in volume cache")
+        response = input("Do you want to skip fetching fresh volume data from MEXC and KuCoin "
+                         "and only use the cached data? (y/n): ").strip().lower()
+        if response in ['n', 'no']:
+            print("🔄 Forcing full volume refresh for all symbols...")
+            force_refresh = True
+            missing_symbols = [str(s).strip().upper() for s in symbols]
+        else:
+            print("📊 Using existing volume cache (no API calls)...")
+    
+    # Fetch (either new symbols or full refresh if user chose n)
+    if missing_symbols:
         new_rows = []
         for i, sym in enumerate(missing_symbols, 1):
             if i % 20 == 0 or i == len(missing_symbols):
@@ -131,11 +146,9 @@ if __name__ == "__main__":
         if new_rows:
             new_df = pd.DataFrame(new_rows)
             volume_cache_df = pd.concat([volume_cache_df, new_df], ignore_index=True)
-            # Deduplicate just in case
             volume_cache_df = volume_cache_df.drop_duplicates(subset=['symbol']).reset_index(drop=True)
             save_volume_cache(volume_cache_df)
-    else:
-        print("✅ All symbols already present in volume cache — no API calls needed!")
+    # ================================================================================
     
     # Build fast lookup dictionary
     volume_dict = {}
