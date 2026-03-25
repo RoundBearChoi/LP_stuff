@@ -341,8 +341,8 @@ if __name__ == "__main__":
     print("\n" + "="*80)
     print("🎨 STEP 1: Generating half-life distribution chart...")
 
-    LOWER_P = 25
-    UPPER_P = 75
+    LOWER_P = 20
+    UPPER_P = 80
 
     print(f"📍 Using percentiles: {LOWER_P}th → {UPPER_P}th for BOTH chart AND noise marking")
 
