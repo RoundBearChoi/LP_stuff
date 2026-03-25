@@ -11,6 +11,19 @@ import matplotlib.pyplot as plt
 warnings.filterwarnings('ignore')
 
 
+# =============================================================================
+# ==========================  EASY CONFIG SECTION  ============================
+# =============================================================================
+# Edit these defaults here — no need to type flags every time!
+TOP_VOLUME_PERCENT = 3.0          # Change to 10, 20, 25, 50, 100, 0, etc.
+MAX_PAIRS_OVERRIDE = None          # Set to e.g. 50 for quick testing (None = no limit)
+TARGET_WEIGHT_A = 0.50
+FEE_RATE = 0.01
+CSV_PATH = 'top300_hourly_18months_combined.csv'
+INPUT_CSV = 'filtered_by_volume_johansen_one_direction_18m_top42778.csv'
+# =============================================================================
+
+
 class SilentVolatilityHarvestingBacktester(VolatilityHarvestingBacktester):
     """Silent subclass – no plots, no console spam for batch runs."""
     def plot_results(self):
@@ -24,10 +37,10 @@ class SilentVolatilityHarvestingBacktester(VolatilityHarvestingBacktester):
 
 
 def run_backtest_for_pair(symbol1: str, symbol2: str,
-                          csv_path='top300_hourly_18months_combined.csv',
+                          csv_path=CSV_PATH,
                           backtest_months=3,
-                          target_weight_a=0.50,
-                          fee_rate=0.01,
+                          target_weight_a=TARGET_WEIGHT_A,
+                          fee_rate=FEE_RATE,
                           **kwargs):
     """Run one volatility-harvesting backtest (identical logic to your original backtester)."""
     try:
@@ -81,7 +94,6 @@ def plot_rebalance_distribution(results_df: pd.DataFrame, output_csv: str):
         print("⚠️  No 'rebalances' column found or DataFrame is empty – skipping chart.")
         return
 
-    # Work on a copy
     plot_df = results_df.copy()
     if 'rank' in plot_df.columns:
         plot_df = plot_df.drop(columns=['rank'])
@@ -92,7 +104,6 @@ def plot_rebalance_distribution(results_df: pd.DataFrame, output_csv: str):
     p20 = plot_df['rebalances'].quantile(0.20)
     p80 = plot_df['rebalances'].quantile(0.80)
 
-    # Print statistics (same as before)
     print(f"\n📊 Rebalance Statistics (N = {len(plot_df):,})")
     print(f"   Min      : {plot_df['rebalances'].min():,.0f}")
     print(f"   Median   : {plot_df['rebalances'].median():,.0f}")
@@ -101,7 +112,6 @@ def plot_rebalance_distribution(results_df: pd.DataFrame, output_csv: str):
     print(f"   80th %ile: {p80:,.0f}")
     print(f"   Max      : {plot_df['rebalances'].max():,.0f}")
 
-    # === CHART WITH EXTRA BOTTOM SPACE ===
     fig, ax = plt.subplots(figsize=(12, 7))
     ax.plot(plot_df['rank'], plot_df['rebalances'],
             marker='.', linestyle='-', color='tab:blue', alpha=0.7, label='Rebalances per pair')
@@ -138,22 +148,20 @@ if __name__ == "__main__":
         formatter_class=argparse.ArgumentDefaultsHelpFormatter
     )
 
-    parser.add_argument('--top-volume-percent', type=float, default=30.0,
+    parser.add_argument('--top-volume-percent', type=float, default=TOP_VOLUME_PERCENT,
                         help='Default: run only the top X%% highest-volume pairs '
                              '(sorted by volume_percentile descending). '
                              'Set to 0 or 100 to run the full list.')
 
-    parser.add_argument('--max-pairs', type=int, default=None,
+    parser.add_argument('--max-pairs', type=int, default=MAX_PAIRS_OVERRIDE,
                         help='Manual limit (for testing). Overrides --top-volume-percent when set.')
-    parser.add_argument('--target-weight-a', type=float, default=0.50,
+    parser.add_argument('--target-weight-a', type=float, default=TARGET_WEIGHT_A,
                         help='Target weight for Asset A')
-    parser.add_argument('--fee-rate', type=float, default=0.01,
+    parser.add_argument('--fee-rate', type=float, default=FEE_RATE,
                         help='Trading fee rate')
-    parser.add_argument('--csv-path', type=str,
-                        default='top300_hourly_18months_combined.csv',
+    parser.add_argument('--csv-path', type=str, default=CSV_PATH,
                         help='Path to the hourly combined price data')
-    parser.add_argument('--input-csv', type=str,
-                        default='filtered_by_volume_johansen_one_direction_18m_top42778.csv',
+    parser.add_argument('--input-csv', type=str, default=INPUT_CSV,
                         help='Path to the filtered pairs CSV')
 
     args = parser.parse_args()
@@ -171,7 +179,7 @@ if __name__ == "__main__":
             df_pairs = df_pairs.sort_values(by='volume_percentile', ascending=False).reset_index(drop=True)
             n_pairs = int(len(df_pairs) * (args.top_volume_percent / 100))
             df_pairs = df_pairs.head(n_pairs)
-            print(f"📊 Default mode: running top {args.top_volume_percent}% by volume → {n_pairs:,} pairs.\n")
+            print(f"📊 Running top {args.top_volume_percent}% by volume → {n_pairs:,} pairs.\n")
         else:
             print(f"📊 Running full dataset ({len(df_pairs):,} pairs) because --top-volume-percent={args.top_volume_percent}.\n")
 
@@ -220,31 +228,21 @@ if __name__ == "__main__":
         results_df = pd.DataFrame(results_list)
 
         if 'rebalances' in results_df.columns and not results_df.empty:
-            # ====================== NEW ORDERING LOGIC (per your request) ======================
-            p20 = results_df['rebalances'].quantile(0.20)
-            p80 = results_df['rebalances'].quantile(0.80)
-
-            print(f"\n📊 Rebalance Percentiles for CSV ordering:")
-            print(f"   20th percentile : {p20:,.0f}")
-            print(f"   80th percentile : {p80:,.0f}")
-
-            results_df['is_middle'] = (
-                (results_df['rebalances'] >= p20) &
-                (results_df['rebalances'] <= p80)
-            )
-
+            # SIMPLE SORT: everything ordered by rebalance count (highest first)
             results_df = results_df.sort_values(
-                by=['is_middle', 'rebalances'],
-                ascending=[False, False]
+                by='rebalances',
+                ascending=False
             ).reset_index(drop=True)
 
             results_df.insert(0, 'rank', range(1, len(results_df) + 1))
 
-            middle_count = results_df['is_middle'].sum()
-            print(f"   → Middle group (20–80th %ile) : {middle_count:,} pairs (now at top)")
-            print(f"   → Outliers (outside range)    : {len(results_df)-middle_count:,} pairs (moved to bottom)")
+            p20 = results_df['rebalances'].quantile(0.20)
+            p80 = results_df['rebalances'].quantile(0.80)
 
-            results_df = results_df.drop(columns=['is_middle'])
+            print(f"\n📊 Rebalance Percentiles (for reference):")
+            print(f"   20th percentile : {p20:,.0f}")
+            print(f"   80th percentile : {p80:,.0f}")
+            print(f"   → All {len(results_df):,} pairs sorted purely by rebalance count (highest → lowest)")
 
         results_df.to_csv(output_csv, index=False)
         print(f"\n✅ Backtest results saved to: {output_csv}")
@@ -265,6 +263,7 @@ if __name__ == "__main__":
         print(results_df.head(10)[top10_cols].round(2).to_string(index=False))
 
     print("\n💡 Tips:")
-    print("   • Run with --top-volume-percent 0 to process everything")
+    print("   • Just edit TOP_VOLUME_PERCENT at the top of the file!")
+    print("   • Or override with --top-volume-percent 10 on the command line")
     print("   • Use --max-pairs 50 for quick testing")
-    print("   • The chart is always generated at the end")
+    print("   • The chart is always generated at the end (pure visual reference)")
