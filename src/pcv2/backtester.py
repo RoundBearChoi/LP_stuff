@@ -5,16 +5,16 @@ from datetime import datetime
 
 # ====================== USER PARAMETERS ======================
 CSV_PATH = 'top300_hourly_18months_combined.csv'
-BACKTEST_MONTHS = 18                              # 18, 12, 6, 24, or None for full dataset
+BACKTEST_MONTHS = 18 # 18, 12, 6, 24, or None for full dataset
 
-ASSET_A = 'XVG'                                   # ← CHANGE THIS: the asset whose weight we track
-ASSET_B = 'BTC'                                   # ← CHANGE THIS: the pairing asset
-TARGET_WEIGHT_A = 0.50                            # target allocation to ASSET_A (50/50 classic)
+ASSET_A = 'XVG'
+ASSET_B = 'BTC'
+TARGET_WEIGHT_A = 0.50 # target allocation to ASSET_A (50/50 classic)
 
 OUTER_BUFFER = 0.05
 INNER_REBALANCE_DEV = 0.025
 INITIAL_CAPITAL = 2_000.0
-FEE_RATE = 0.0000
+FEE_RATE = 0.01 # assuming 1% for now
 # ============================================================
 
 # ====================== DYNAMIC OUTPUT FILENAME ======================
