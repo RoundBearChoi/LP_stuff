@@ -76,7 +76,7 @@ def run_backtest_for_pair(symbol1: str, symbol2: str,
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description='filtered_by_backtest.py – runs volatility harvesting on every pair '
-                    'from your Johansen-filtered CSV and ranks them by highest return.',
+                    'from your Johansen-filtered CSV and ranks them by highest rebalance count.',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter
     )
 
@@ -145,9 +145,9 @@ if __name__ == "__main__":
     # ====================== CREATE & RANK RESULTS ======================
     results_df = pd.DataFrame(results_list)
 
-    if 'strategy_total_return_pct' in results_df.columns:
+    if 'rebalances' in results_df.columns:
         results_df = results_df.sort_values(
-            by='strategy_total_return_pct',
+            by='rebalances',          # ←←← CHANGED: now ranked by highest rebalance count
             ascending=False
         ).reset_index(drop=True)
         results_df.insert(0, 'rank', range(1, len(results_df) + 1))
@@ -165,11 +165,11 @@ if __name__ == "__main__":
     print(f"   Total pairs processed: {len(results_df):,}")
     print(f"   Successful backtests: {results_df['backtest_success'].sum():,}\n")
 
-    # Top 10 preview
+    # Top 10 preview (updated for new ranking)
     if 'rank' in results_df.columns:
-        print("🏆 Top 10 pairs by Strategy Total Return (%):")
-        top10_cols = ['rank', 'pair', 'strategy_total_return_pct', 'strategy_cagr_pct',
-                      'outperformance_vs_bh_pct', 'rebalances', 'strategy_max_dd_pct']
+        print("🏆 Top 10 pairs by Rebalance Count (highest → lowest):")
+        top10_cols = ['rank', 'pair', 'rebalances', 'strategy_total_return_pct', 'strategy_cagr_pct',
+                      'outperformance_vs_bh_pct', 'strategy_max_dd_pct']
         print(results_df.head(10)[top10_cols].round(2).to_string(index=False))
 
     print("\n💡 Usage tips:")
@@ -178,3 +178,4 @@ if __name__ == "__main__":
     print("   • python ... --max-pairs 100          → only first 100 (testing)")
     print("   • python ... --top-volume-percent 0    → full list")
     print("   The output CSV keeps ALL original columns + new backtest metrics.")
+    print("   Ranking is now by rebalances (descending) – perfect for frequency analysis!")
