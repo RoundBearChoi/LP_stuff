@@ -5,6 +5,8 @@ from contextlib import redirect_stdout
 import io
 from tqdm import tqdm
 from backtester import VolatilityHarvestingBacktester
+import os
+import matplotlib.pyplot as plt
 
 warnings.filterwarnings('ignore')
 
@@ -73,6 +75,62 @@ def run_backtest_for_pair(symbol1: str, symbol2: str,
         }
 
 
+def plot_rebalance_distribution(results_df: pd.DataFrame, output_csv: str):
+    """Draw rebalances ordered highest → lowest + 20th/80th percentile lines + extra bottom text."""
+    if 'rebalances' not in results_df.columns or results_df.empty:
+        print("⚠️  No 'rebalances' column found or DataFrame is empty – skipping chart.")
+        return
+
+    # Work on a copy
+    plot_df = results_df.copy()
+    if 'rank' in plot_df.columns:
+        plot_df = plot_df.drop(columns=['rank'])
+
+    plot_df = plot_df.sort_values(by='rebalances', ascending=False).reset_index(drop=True)
+    plot_df.insert(0, 'rank', range(1, len(plot_df) + 1))
+
+    p20 = plot_df['rebalances'].quantile(0.20)
+    p80 = plot_df['rebalances'].quantile(0.80)
+
+    # Print statistics (same as before)
+    print(f"\n📊 Rebalance Statistics (N = {len(plot_df):,})")
+    print(f"   Min      : {plot_df['rebalances'].min():,.0f}")
+    print(f"   Median   : {plot_df['rebalances'].median():,.0f}")
+    print(f"   Mean     : {plot_df['rebalances'].mean():,.1f}")
+    print(f"   20th %ile: {p20:,.0f}")
+    print(f"   80th %ile: {p80:,.0f}")
+    print(f"   Max      : {plot_df['rebalances'].max():,.0f}")
+
+    # === CHART WITH EXTRA BOTTOM SPACE ===
+    fig, ax = plt.subplots(figsize=(12, 7))
+    ax.plot(plot_df['rank'], plot_df['rebalances'],
+            marker='.', linestyle='-', color='tab:blue', alpha=0.7, label='Rebalances per pair')
+    
+    ax.axhline(p20, color='tab:green', linestyle='--', linewidth=2.5,
+               label=f'20th Percentile ({p20:,.0f})')
+    ax.axhline(p80, color='tab:red', linestyle='--', linewidth=2.5,
+               label=f'80th Percentile ({p80:,.0f})')
+
+    ax.set_xlabel('Rank (1 = Highest Rebalances)')
+    ax.set_ylabel('Number of Rebalances')
+    ax.set_title('Rebalance Count Distribution Across All Pairs\n'
+                 '(Sorted Highest to Lowest)')
+    ax.legend(loc='upper right')
+    ax.grid(True, alpha=0.3)
+
+    plt.subplots_adjust(bottom=0.22)
+
+    fig.text(0.05, 0.08, f"20th Percentile rebalance count: {p20:,.0f}",
+             fontsize=11, color='tab:green', fontweight='bold')
+    fig.text(0.05, 0.04, f"80th Percentile rebalance count: {p80:,.0f}",
+             fontsize=11, color='tab:red', fontweight='bold')
+
+    chart_path = output_csv.replace('.csv', '_rebalances_chart.png')
+    plt.savefig(chart_path, dpi=300, bbox_inches='tight')
+    plt.close()
+    print(f"📈 Updated rebalance chart saved as: {chart_path}")
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description='filtered_by_backtest.py – runs volatility harvesting on every pair '
@@ -80,13 +138,11 @@ if __name__ == "__main__":
         formatter_class=argparse.ArgumentDefaultsHelpFormatter
     )
 
-    # === NEW DEFAULT BEHAVIOR ===
     parser.add_argument('--top-volume-percent', type=float, default=30.0,
                         help='Default: run only the top X%% highest-volume pairs '
                              '(sorted by volume_percentile descending). '
                              'Set to 0 or 100 to run the full list.')
 
-    # === Existing flags (kept exactly as before) ===
     parser.add_argument('--max-pairs', type=int, default=None,
                         help='Manual limit (for testing). Overrides --top-volume-percent when set.')
     parser.add_argument('--target-weight-a', type=float, default=0.50,
@@ -107,13 +163,11 @@ if __name__ == "__main__":
     df_pairs = pd.read_csv(args.input_csv)
     print(f"   Found {len(df_pairs):,} candidate pairs.")
 
-    # === NEW: Auto-select top X% by volume (unless --max-pairs is used) ===
     if args.max_pairs is not None and args.max_pairs > 0:
         df_pairs = df_pairs.head(args.max_pairs)
         print(f"🔬 Running only the first {args.max_pairs} pairs (manual --max-pairs override).\n")
     else:
         if 0 < args.top_volume_percent < 100:
-            # Sort by volume (robust – works even if CSV is not pre-sorted)
             df_pairs = df_pairs.sort_values(by='volume_percentile', ascending=False).reset_index(drop=True)
             n_pairs = int(len(df_pairs) * (args.top_volume_percent / 100))
             df_pairs = df_pairs.head(n_pairs)
@@ -121,61 +175,96 @@ if __name__ == "__main__":
         else:
             print(f"📊 Running full dataset ({len(df_pairs):,} pairs) because --top-volume-percent={args.top_volume_percent}.\n")
 
-    # ====================== BATCH BACKTEST ======================
-    results_list = []
-
-    print("🚀 Starting batch volatility-harvesting backtests...\n")
-    for idx, row in tqdm(df_pairs.iterrows(), total=len(df_pairs), desc="Backtesting pairs"):
-        pair = row['pair']
-        symbol1 = row['symbol1']
-        symbol2 = row['symbol2']
-
-        metrics = run_backtest_for_pair(
-            symbol1=symbol1,
-            symbol2=symbol2,
-            csv_path=args.csv_path,
-            target_weight_a=args.target_weight_a,
-            fee_rate=args.fee_rate
-        )
-
-        result_row = row.to_dict().copy()
-        result_row.update(metrics)
-        results_list.append(result_row)
-
-    # ====================== CREATE & RANK RESULTS ======================
-    results_df = pd.DataFrame(results_list)
-
-    if 'rebalances' in results_df.columns:
-        results_df = results_df.sort_values(
-            by='rebalances',          # ←←← CHANGED: now ranked by highest rebalance count
-            ascending=False
-        ).reset_index(drop=True)
-        results_df.insert(0, 'rank', range(1, len(results_df) + 1))
-
     # ====================== OUTPUT FILENAME ======================
     output_csv = args.input_csv.replace('volume', 'backtester').replace('_sample', '')
     if not output_csv.endswith('.csv'):
         output_csv += '.csv'
 
-    # ====================== SAVE & SUMMARY ======================
-    results_df.to_csv(output_csv, index=False)
+    # ====================== CHECK IF OUTPUT FILE ALREADY EXISTS ======================
+    plot_only = False
+    if os.path.exists(output_csv):
+        response = input(f"\n📄 Output file '{output_csv}' already exists.\n"
+                         f"Do you want to skip backtesting and only generate the chart? (y/n): ").strip().lower()
+        if response in ['y', 'yes']:
+            plot_only = True
+            print("🔄 Loading existing results and generating chart only...")
+            results_df = pd.read_csv(output_csv)
+            print(f"   Loaded {len(results_df):,} pairs from previous run.")
+        else:
+            print("🚀 Proceeding with full backtests (existing file will be overwritten)...\n")
+    else:
+        print(f"📂 No existing output file found. Will create: {output_csv}\n")
 
-    print(f"\n✅ DONE! Ranked backtest results saved to:")
-    print(f"   📄 {output_csv}")
-    print(f"   Total pairs processed: {len(results_df):,}")
-    print(f"   Successful backtests: {results_df['backtest_success'].sum():,}\n")
+    # ====================== RUN BACKTESTS OR LOAD EXISTING ======================
+    if not plot_only:
+        results_list = []
+        print("🚀 Starting batch volatility-harvesting backtests...\n")
+        
+        for idx, row in tqdm(df_pairs.iterrows(), total=len(df_pairs), desc="Backtesting pairs"):
+            pair = row['pair']
+            symbol1 = row['symbol1']
+            symbol2 = row['symbol2']
 
-    # Top 10 preview (updated for new ranking)
-    if 'rank' in results_df.columns:
-        print("🏆 Top 10 pairs by Rebalance Count (highest → lowest):")
+            metrics = run_backtest_for_pair(
+                symbol1=symbol1,
+                symbol2=symbol2,
+                csv_path=args.csv_path,
+                target_weight_a=args.target_weight_a,
+                fee_rate=args.fee_rate
+            )
+
+            result_row = row.to_dict().copy()
+            result_row.update(metrics)
+            results_list.append(result_row)
+
+        results_df = pd.DataFrame(results_list)
+
+        if 'rebalances' in results_df.columns and not results_df.empty:
+            # ====================== NEW ORDERING LOGIC (per your request) ======================
+            p20 = results_df['rebalances'].quantile(0.20)
+            p80 = results_df['rebalances'].quantile(0.80)
+
+            print(f"\n📊 Rebalance Percentiles for CSV ordering:")
+            print(f"   20th percentile : {p20:,.0f}")
+            print(f"   80th percentile : {p80:,.0f}")
+
+            results_df['is_middle'] = (
+                (results_df['rebalances'] >= p20) &
+                (results_df['rebalances'] <= p80)
+            )
+
+            results_df = results_df.sort_values(
+                by=['is_middle', 'rebalances'],
+                ascending=[False, False]
+            ).reset_index(drop=True)
+
+            results_df.insert(0, 'rank', range(1, len(results_df) + 1))
+
+            middle_count = results_df['is_middle'].sum()
+            print(f"   → Middle group (20–80th %ile) : {middle_count:,} pairs (now at top)")
+            print(f"   → Outliers (outside range)    : {len(results_df)-middle_count:,} pairs (moved to bottom)")
+
+            results_df = results_df.drop(columns=['is_middle'])
+
+        results_df.to_csv(output_csv, index=False)
+        print(f"\n✅ Backtest results saved to: {output_csv}")
+        print(f"   Total pairs processed: {len(results_df):,}")
+        print(f"   Successful backtests: {results_df['backtest_success'].sum():,}\n")
+
+    # ====================== GENERATE CHART ======================
+    if 'results_df' in locals() and not results_df.empty:
+        plot_rebalance_distribution(results_df, output_csv)
+    else:
+        print("⚠️  No results available to plot.")
+
+    # Top 10 preview
+    if 'results_df' in locals() and 'rank' in results_df.columns:
+        print("\n🏆 Top 10 pairs by Rebalance Count (highest → lowest):")
         top10_cols = ['rank', 'pair', 'rebalances', 'strategy_total_return_pct', 'strategy_cagr_pct',
                       'outperformance_vs_bh_pct', 'strategy_max_dd_pct']
         print(results_df.head(10)[top10_cols].round(2).to_string(index=False))
 
-    print("\n💡 Usage tips:")
-    print("   • Default (no flags)          → top 30% by volume")
-    print("   • python ... --top-volume-percent 50   → top 50%")
-    print("   • python ... --max-pairs 100          → only first 100 (testing)")
-    print("   • python ... --top-volume-percent 0    → full list")
-    print("   The output CSV keeps ALL original columns + new backtest metrics.")
-    print("   Ranking is now by rebalances (descending) – perfect for frequency analysis!")
+    print("\n💡 Tips:")
+    print("   • Run with --top-volume-percent 0 to process everything")
+    print("   • Use --max-pairs 50 for quick testing")
+    print("   • The chart is always generated at the end")
