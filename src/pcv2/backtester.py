@@ -17,6 +17,16 @@ INITIAL_CAPITAL = 2_000.0
 FEE_RATE = 0.0000
 # ============================================================
 
+# ====================== DYNAMIC OUTPUT FILENAME ======================
+# This is the change you requested
+if BACKTEST_MONTHS is None:
+    months_str = "full"
+else:
+    months_str = f"{BACKTEST_MONTHS}months"
+
+output_filename = f"volatility_harvesting_{ASSET_A}_{ASSET_B}_{months_str}.png"
+# =====================================================================
+
 # Load the combined hourly dataset
 df = pd.read_csv(CSV_PATH)
 df['datetime'] = pd.to_datetime(df['datetime'])
@@ -178,7 +188,7 @@ axs[0].plot(portfolio['total_value'], label='Strategy (trigger + partial)', line
 axs[0].plot(portfolio['bh_value'], label='Buy-&-Hold 50/50', alpha=0.7)
 axs[0].plot(portfolio['a_only'], label=f'100% {ASSET_A}', alpha=0.5)
 axs[0].plot(portfolio['b_only'], label=f'100% {ASSET_B}', alpha=0.5)
-axs[0].set_title(f'Portfolio Value – Volatility Harvesting Backtest ({ASSET_A}-{ASSET_B})')
+axs[0].set_title(f'Portfolio Value – Volatility Harvesting Backtest ({ASSET_A}-{ASSET_B}, {months_str})')
 axs[0].set_ylabel('USD')
 axs[0].legend()
 axs[0].grid(True)
@@ -201,6 +211,6 @@ axs[2].legend()
 axs[2].grid(True)
 
 plt.tight_layout()
-plt.savefig('volatility_harvesting_backtest.png', dpi=150, bbox_inches='tight')
+plt.savefig(output_filename, dpi=150, bbox_inches='tight')
 plt.close()
-print("✅ Chart saved as 'volatility_harvesting_backtest.png' (DPI 150)")
+print(f"✅ Chart saved as '{output_filename}' (DPI 150)")
