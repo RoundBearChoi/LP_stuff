@@ -23,7 +23,7 @@ class SilentVolatilityHarvestingBacktester(VolatilityHarvestingBacktester):
 
 def run_backtest_for_pair(symbol1: str, symbol2: str,
                           csv_path='top300_hourly_18months_combined.csv',
-                          backtest_months=18,
+                          backtest_months=3,
                           target_weight_a=0.50,
                           fee_rate=0.01,
                           **kwargs):
