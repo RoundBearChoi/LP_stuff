@@ -165,7 +165,7 @@ if __name__ == "__main__":
     df['symbol2_total_7d_vol_usdt'] = df['mexc_symbol2_7d_avg_vol_usdt'] + df['kucoin_symbol2_7d_avg_vol_usdt']
     df['pair_total_7d_vol_usdt'] = df['symbol1_total_7d_vol_usdt'] + df['symbol2_total_7d_vol_usdt']
     
-    # ====================== NEW: VOLUME FLAG (NO ROWS DROPPED) ======================
+    # ====================== VOLUME FLAG (NO ROWS DROPPED) ======================
     print(f"🔍 Adding volume_flag column (using {MIN_VOLUME_RATIO*100:.0f}% balance threshold)...")
     v1 = df['symbol1_total_7d_vol_usdt']
     v2 = df['symbol2_total_7d_vol_usdt']
@@ -183,55 +183,87 @@ if __name__ == "__main__":
     print(f"   → Imbalanced pairs   : {len(df[df['volume_flag'] == 'imbalanced']):,}")
     print(f"   → Zero-volume pairs  : {len(df[df['volume_flag'] == 'zero_volume']):,}")
     # ===========================================================================
-    
-    # Sort + percentiles + chart + save
-    print("🔄 Sorting pairs from highest total volume to lowest...")
-    df = df.sort_values(by='pair_total_7d_vol_usdt', ascending=False).reset_index(drop=True)
-    
-    print("📊 Calculating volume percentile ranks...")
-    df['volume_percentile'] = (df['pair_total_7d_vol_usdt'].rank(pct=True) * 100).round(2)
-    df['volume_percentile_rank'] = df['volume_percentile'].round(0).astype(int).map(ordinal) + " percentile"
-    
-    # Reorder columns (volume_flag appears right after pair_total_7d_vol_usdt)
+
+    # ====================== RANK BALANCED ONLY + MARK LOW VOLUME ======================
+    print("\n🔄 Ranking balanced pairs only (imbalanced/zero moved to bottom)...")
+    balanced_df = df[df['volume_flag'] == 'balanced'].copy()
+    other_df = df[df['volume_flag'] != 'balanced'].copy()
+
+    if not balanced_df.empty:
+        # Rank only balanced pairs
+        balanced_df = balanced_df.sort_values(by='pair_total_7d_vol_usdt', ascending=False).reset_index(drop=True)
+        balanced_df['volume_percentile'] = (balanced_df['pair_total_7d_vol_usdt'].rank(pct=True) * 100).round(2)
+        balanced_df['volume_percentile_rank'] = balanced_df['volume_percentile'].round(0).astype(int).map(ordinal) + " percentile"
+        
+        p_value = balanced_df['pair_total_7d_vol_usdt'].quantile(PERCENTILE / 100.0)
+        
+        # Mark lower volume after ranking (exactly as you asked)
+        balanced_df['volume_level'] = np.where(
+            balanced_df['volume_percentile'] <= PERCENTILE,
+            'low_volume',
+            'high_volume'
+        )
+        print(f"   → high_volume (balanced) : {len(balanced_df[balanced_df['volume_level']=='high_volume']):,}")
+        print(f"   → low_volume  (balanced) : {len(balanced_df[balanced_df['volume_level']=='low_volume']):,}")
+    else:
+        p_value = 0.0
+
+    # Sort non-balanced and prepare for bottom
+    if not other_df.empty:
+        other_df = other_df.sort_values(by='pair_total_7d_vol_usdt', ascending=False).reset_index(drop=True)
+        other_df['volume_level'] = 'excluded'
+        other_df['volume_percentile'] = np.nan
+        other_df['volume_percentile_rank'] = ''
+
+    # Final DataFrame: balanced ranked at top + others at bottom
+    df = pd.concat([balanced_df, other_df], ignore_index=True)
+    print(f"📈 {PERCENTILE}th percentile total volume (balanced pairs only): ${p_value:,.0f} USDT")
+    # ===========================================================================
+
+    # ====================== CHART (BALANCED ONLY) ======================
+    print(f"📈 Generating sorted rank chart ({PERCENTILE}th percentile, excluding imbalanced and zero balance)...")
+    if not balanced_df.empty:
+        volumes = balanced_df['pair_total_7d_vol_usdt']
+        ranks = range(1, len(balanced_df) + 1)
+        plot_volumes = np.maximum(volumes, 1)
+        
+        plt.figure(figsize=(14, 8), dpi=150)
+        plt.plot(ranks, plot_volumes, linewidth=2, color='#3498db')
+        plt.axhline(p_value, color='red', linestyle='--', linewidth=2.5, 
+                    label=f'{PERCENTILE}th Percentile (${p_value:,.0f} USDT)')
+        plt.yscale('log')
+        
+        plt.title(f'Pair Total 7-Day Volume - Sorted Highest to Lowest Rank\n'
+                  f'Strong Cointegration + Non-Noise (Balanced pairs only - excluding imbalanced & zero_volume)', 
+                  fontsize=14, pad=20)
+        plt.xlabel('Pair Rank (1 = Highest Total Volume)')
+        plt.ylabel('Pair Total Volume USDT (log scale)')
+        plt.legend(fontsize=12)
+        plt.grid(True, alpha=0.3)
+        
+        chart_file = "pair_total_volume_sorted_rank_balanced.png"
+        plt.savefig(chart_file, dpi=150, bbox_inches='tight')
+        plt.close()
+        print(f"   ✅ Chart saved → {chart_file}")
+    else:
+        print("   ⚠️  No balanced pairs → chart skipped")
+    # ===========================================================================
+
+    # Reorder columns (volume columns right after pair_total)
     cols = list(df.columns)
     try:
         total_idx = cols.index('pair_total_7d_vol_usdt')
-        for col in ['volume_flag', 'volume_percentile_rank', 'volume_percentile'][::-1]:
+        for col in ['volume_flag', 'volume_level', 'volume_percentile_rank', 'volume_percentile'][::-1]:
             if col in cols:
                 cols.insert(total_idx + 1, cols.pop(cols.index(col)))
         df = df[cols]
     except:
         pass
     
-    volumes = df['pair_total_7d_vol_usdt']
-    p_value = volumes.quantile(PERCENTILE / 100.0)
-    print(f"📈 {PERCENTILE}th percentile total volume: ${p_value:,.0f} USDT")
-    
-    print(f"📈 Generating sorted rank chart ({PERCENTILE}th percentile, all pairs kept)...")
-    plt.figure(figsize=(14, 8), dpi=150)
-    ranks = range(1, len(df) + 1)
-    plot_volumes = np.maximum(volumes, 1)
-    plt.plot(ranks, plot_volumes, linewidth=2, color='#3498db')
-    plt.axhline(p_value, color='red', linestyle='--', linewidth=2.5, 
-                label=f'{PERCENTILE}th Percentile (${p_value:,.0f} USDT)')
-    plt.yscale('log')
-    
-    plt.title(f'Pair Total 7-Day Volume - Sorted Highest to Lowest Rank\n'
-              f'Strong Cointegration + Non-Noise (ALL pairs kept + volume_flag)', 
-              fontsize=14, pad=20)
-    plt.xlabel('Pair Rank (1 = Highest Total Volume)')
-    plt.ylabel('Pair Total Volume USDT (log scale)')
-    plt.legend(fontsize=12)
-    plt.grid(True, alpha=0.3)
-    
-    chart_file = "pair_total_volume_sorted_rank.png"
-    plt.savefig(chart_file, dpi=150, bbox_inches='tight')
-    plt.close()
-    print(f"   ✅ Chart saved → {chart_file}")
-    
     # Save the final filtered/ranked results
     df.to_csv(output_file, index=False)
     print(f"\n✅ DONE!")
     print(f"   Final file → {output_file} ({len(df):,} rows) ← NO pairs were dropped!")
     print(f"   Volume cache → {VOLUME_CACHE_FILE} ({len(volume_cache_df):,} symbols)")
-    print(f"   New column: volume_flag → 'balanced' / 'imbalanced' / 'zero_volume'")
+    print(f"   Top = ranked balanced pairs | Bottom = imbalanced + zero_volume")
+    print(f"   New column: volume_level → 'high_volume' / 'low_volume' / 'excluded'")
