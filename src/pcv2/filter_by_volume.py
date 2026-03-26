@@ -7,8 +7,8 @@ import numpy as np
 from datetime import datetime
 
 # ====================== CONFIG (change these!) ======================
-PERCENTILE = 50
-MIN_VOLUME_RATIO = 0.30
+PERCENTILE = 30
+MIN_VOLUME_RATIO = 0.30          # ← only used for flagging now (you can change to 0.10 etc.)
 VOLUME_CACHE_FILE = "mexc_kucoin_volume.csv" 
 # ===========================================================================
 
@@ -38,7 +38,6 @@ def get_mexc_7d_avg_volume(symbol):
     except Exception:
         return 0.0
 
-
 def get_kucoin_7d_avg_volume(symbol):
     if pd.isna(symbol) or str(symbol).strip() == '':
         return 0.0
@@ -62,7 +61,6 @@ def get_kucoin_7d_avg_volume(symbol):
     except Exception:
         return 0.0
 
-
 def load_volume_cache():
     if os.path.exists(VOLUME_CACHE_FILE):
         df_cache = pd.read_csv(VOLUME_CACHE_FILE)
@@ -72,11 +70,9 @@ def load_volume_cache():
         print(f"📂 No volume cache found → will create {VOLUME_CACHE_FILE}")
         return pd.DataFrame(columns=['symbol', 'mexc_7d_avg_vol_usdt', 'kucoin_7d_avg_vol_usdt', 'last_updated'])
 
-
 def save_volume_cache(df_cache):
     df_cache.to_csv(VOLUME_CACHE_FILE, index=False)
     print(f"💾 Saved/updated volume cache → {VOLUME_CACHE_FILE} ({len(df_cache):,} symbols)")
-
 
 # ====================== MAIN ======================
 if __name__ == "__main__":
@@ -112,7 +108,6 @@ if __name__ == "__main__":
     missing_symbols = [str(s).strip().upper() for s in symbols 
                        if str(s).strip().upper() not in cached_symbols]
     
-    # ====================== PROMPT LOGIC (exactly as you asked) ======================
     force_refresh = False
     if missing_symbols:
         print(f"🔄 Fetching volume data for {len(missing_symbols):,} NEW symbols...")
@@ -148,7 +143,6 @@ if __name__ == "__main__":
             volume_cache_df = pd.concat([volume_cache_df, new_df], ignore_index=True)
             volume_cache_df = volume_cache_df.drop_duplicates(subset=['symbol']).reset_index(drop=True)
             save_volume_cache(volume_cache_df)
-    # ================================================================================
     
     # Build fast lookup dictionary
     volume_dict = {}
@@ -171,16 +165,24 @@ if __name__ == "__main__":
     df['symbol2_total_7d_vol_usdt'] = df['mexc_symbol2_7d_avg_vol_usdt'] + df['kucoin_symbol2_7d_avg_vol_usdt']
     df['pair_total_7d_vol_usdt'] = df['symbol1_total_7d_vol_usdt'] + df['symbol2_total_7d_vol_usdt']
     
-    # Volume balance filter
-    print(f"🔍 Applying volume balance filter ({MIN_VOLUME_RATIO*100:.0f}% min ratio)...")
-    before_balance = len(df)
+    # ====================== NEW: VOLUME FLAG (NO ROWS DROPPED) ======================
+    print(f"🔍 Adding volume_flag column (using {MIN_VOLUME_RATIO*100:.0f}% balance threshold)...")
+    v1 = df['symbol1_total_7d_vol_usdt']
+    v2 = df['symbol2_total_7d_vol_usdt']
     v_cols = ['symbol1_total_7d_vol_usdt', 'symbol2_total_7d_vol_usdt']
-    mask = (
-        (df[v_cols] > 0).all(axis=1) &
-        (df[v_cols].min(axis=1) >= MIN_VOLUME_RATIO * df[v_cols].max(axis=1))
-    )
-    df = df[mask].copy().reset_index(drop=True)
-    print(f"   Kept {len(df):,} balanced pairs | Discarded {before_balance - len(df):,} imbalanced pairs")
+    
+    df['volume_flag'] = "balanced"                                      # default
+    df.loc[(v1 == 0) | (v2 == 0), 'volume_flag'] = "zero_volume"
+    df.loc[
+        (v1 > 0) & (v2 > 0) &
+        (df[v_cols].min(axis=1) < MIN_VOLUME_RATIO * df[v_cols].max(axis=1)),
+        'volume_flag'
+    ] = "imbalanced"
+    
+    print(f"   → Balanced pairs     : {len(df[df['volume_flag'] == 'balanced']):,}")
+    print(f"   → Imbalanced pairs   : {len(df[df['volume_flag'] == 'imbalanced']):,}")
+    print(f"   → Zero-volume pairs  : {len(df[df['volume_flag'] == 'zero_volume']):,}")
+    # ===========================================================================
     
     # Sort + percentiles + chart + save
     print("🔄 Sorting pairs from highest total volume to lowest...")
@@ -190,11 +192,11 @@ if __name__ == "__main__":
     df['volume_percentile'] = (df['pair_total_7d_vol_usdt'].rank(pct=True) * 100).round(2)
     df['volume_percentile_rank'] = df['volume_percentile'].round(0).astype(int).map(ordinal) + " percentile"
     
-    # Reorder columns for readability
+    # Reorder columns (volume_flag appears right after pair_total_7d_vol_usdt)
     cols = list(df.columns)
     try:
         total_idx = cols.index('pair_total_7d_vol_usdt')
-        for col in ['volume_percentile_rank', 'volume_percentile'][::-1]:
+        for col in ['volume_flag', 'volume_percentile_rank', 'volume_percentile'][::-1]:
             if col in cols:
                 cols.insert(total_idx + 1, cols.pop(cols.index(col)))
         df = df[cols]
@@ -205,7 +207,7 @@ if __name__ == "__main__":
     p_value = volumes.quantile(PERCENTILE / 100.0)
     print(f"📈 {PERCENTILE}th percentile total volume: ${p_value:,.0f} USDT")
     
-    print(f"📈 Generating sorted rank chart ({PERCENTILE}th percentile, {MIN_VOLUME_RATIO*100:.0f}% balanced, log scale)...")
+    print(f"📈 Generating sorted rank chart ({PERCENTILE}th percentile, all pairs kept)...")
     plt.figure(figsize=(14, 8), dpi=150)
     ranks = range(1, len(df) + 1)
     plot_volumes = np.maximum(volumes, 1)
@@ -215,8 +217,7 @@ if __name__ == "__main__":
     plt.yscale('log')
     
     plt.title(f'Pair Total 7-Day Volume - Sorted Highest to Lowest Rank\n'
-              f'Strong Cointegration + Non-Noise + {MIN_VOLUME_RATIO*100:.0f}% Volume Balanced Pairs '
-              f'({PERCENTILE}th Percentile Marked)', 
+              f'Strong Cointegration + Non-Noise (ALL pairs kept + volume_flag)', 
               fontsize=14, pad=20)
     plt.xlabel('Pair Rank (1 = Highest Total Volume)')
     plt.ylabel('Pair Total Volume USDT (log scale)')
@@ -231,6 +232,6 @@ if __name__ == "__main__":
     # Save the final filtered/ranked results
     df.to_csv(output_file, index=False)
     print(f"\n✅ DONE!")
-    print(f"   Final filtered pairs file → {output_file} ({len(df):,} rows)")
-    print(f"   Separate volume cache      → {VOLUME_CACHE_FILE} ({len(volume_cache_df):,} symbols)")
-    print(f"   Filters applied: Strong Cointegration + Non-Noise + {MIN_VOLUME_RATIO*100:.0f}% Volume Balance")
+    print(f"   Final file → {output_file} ({len(df):,} rows) ← NO pairs were dropped!")
+    print(f"   Volume cache → {VOLUME_CACHE_FILE} ({len(volume_cache_df):,} symbols)")
+    print(f"   New column: volume_flag → 'balanced' / 'imbalanced' / 'zero_volume'")
