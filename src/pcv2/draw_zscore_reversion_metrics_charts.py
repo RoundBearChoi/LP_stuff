@@ -2,7 +2,7 @@
 """
 Standalone Z-Score Reversion Visualizer (March 2026) — UPDATED
 ===============================================================
-Run for a single pair (NOW NON-INTERACTIVE BY DEFAULT):
+Run for a single pair (NON-INTERACTIVE BY DEFAULT):
     python draw_zscore_reversion_metrics_charts.py ETH BTC
 
 Or with options:
@@ -10,11 +10,11 @@ Or with options:
         --z-upper 1.5 --revert-confirm 0.1 --months 18 \
         --dpi 300 --show
 
-This version:
-  • DEFAULT: no interactive window (just saves PNG silently — no pause)
-  • DEFAULT DPI lowered to 150 (faster save, still crisp)
-  • Added optional --show flag if you ever want the plot to pop up
-  • 100% same numbers & logic as before
+NEW in this version:
+  • Middle panel now shows CENTERED log spread (mean removed)
+    → you can finally see the "hidden" tiny movements!
+  • Y-label updated to "Centered Log Spread (mean removed)"
+  • Everything else identical to previous version (silent save, DPI=150 default)
 """
 
 import argparse
@@ -38,7 +38,7 @@ from get_zscore_reversion_metrics import (
 
 # ====================== PLOTTING CONFIG ======================
 DEFAULT_FIGSIZE = (16, 10)
-DEFAULT_DPI = 150          # ← CHANGED TO 150 as requested
+DEFAULT_DPI = 150
 DEFAULT_SAVE_PATH = "zscore_reversion_plot_{sym1}_{sym2}.png"
 
 
@@ -110,11 +110,10 @@ def draw_zscore_reversion_chart(
     figsize: Tuple[int, int] = DEFAULT_FIGSIZE,
     dpi: int = DEFAULT_DPI,
     save_path: Optional[str] = None,
-    show: bool = False,          # ← CHANGED DEFAULT TO False (no pause)
+    show: bool = False,
 ) -> None:
     """
-    Full visualization pipeline. Reuses the official metrics function
-    and adds rich Matplotlib charting.
+    Full visualization pipeline with centered log spread (shows the hidden movement).
     """
     sym1, sym2 = sym1.upper(), sym2.upper()
 
@@ -186,10 +185,11 @@ def draw_zscore_reversion_chart(
     ax1.legend(loc='upper left')
     ax1_twin.legend(loc='upper right')
 
-    # Panel 2: Spread
+    # Panel 2: Spread — NOW CENTERED (shows the hidden movement!)
     ax2 = axs[1]
-    ax2.plot(spread.index, spread, color='purple', linewidth=1.5, alpha=0.9)
-    ax2.set_ylabel("Log Spread", color='purple')
+    centered_spread = spread - spread.mean()
+    ax2.plot(spread.index, centered_spread, color='purple', linewidth=1.5, alpha=0.9)
+    ax2.set_ylabel("Centered Log Spread (mean removed)", color='purple')
     ax2.axhline(0, color='gray', linestyle='--', alpha=0.5)
 
     # Panel 3: Z-Score (the star of the show)
@@ -258,7 +258,7 @@ def main():
                         help="Lookback months (default: 18)")
     parser.add_argument("--figsize", nargs=2, type=int, default=DEFAULT_FIGSIZE,
                         help="Figure size in inches (width height), default 16 10")
-    parser.add_argument("--dpi", type=int, default=DEFAULT_DPI,   # ← NOW DEFAULTS TO 150
+    parser.add_argument("--dpi", type=int, default=DEFAULT_DPI,
                         help="DPI for saved PNG (default: 150)")
     parser.add_argument("--show", action="store_true",
                         help="Show interactive plot window (default: OFF — silent save only)")
@@ -276,7 +276,7 @@ def main():
         figsize=tuple(args.figsize),
         dpi=args.dpi,
         save_path=args.output,
-        show=args.show,          # now controlled by --show flag
+        show=args.show,
     )
 
     # Also print the exact same metrics table for quick reference
