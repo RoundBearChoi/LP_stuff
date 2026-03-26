@@ -8,7 +8,7 @@ from datetime import datetime
 
 # ====================== CONFIG (change these!) ======================
 PERCENTILE = 80
-MIN_VOLUME_RATIO = 0.20
+MIN_VOLUME_RATIO = 0.35
 VOLUME_CACHE_FILE = "mexc_kucoin_volume.csv" 
 # ===========================================================================
 

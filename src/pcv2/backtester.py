@@ -70,7 +70,7 @@ class VolatilityHarvestingBacktester:
         print(f"Total bars: {len(self.data):,}")
 
     def run_backtest(self):
-        """Run the full volatility-harvesting backtest."""
+        """Run the volatility-harvesting rebalancing backtest (only this portfolio)."""
         self.load_and_prepare_data()
         
         # ====================== BACKTEST ENGINE ======================
@@ -136,15 +136,7 @@ class VolatilityHarvestingBacktester:
                 self.portfolio.loc[ts, 'shares_a'] = shares_a
                 self.portfolio.loc[ts, 'shares_b'] = shares_b
 
-        # ====================== BENCHMARKS ======================
-        bh_shares_a = (self.initial_capital * self.target_weight_a) / self.data[self.col_a].iloc[0]
-        bh_shares_b = (self.initial_capital * (1 - self.target_weight_a)) / self.data[self.col_b].iloc[0]
-        self.portfolio['bh_value'] = bh_shares_a * self.portfolio[self.col_a] + bh_shares_b * self.portfolio[self.col_b]
-
-        self.portfolio['a_only'] = self.initial_capital * (self.portfolio[self.col_a] / self.data[self.col_a].iloc[0])
-        self.portfolio['b_only'] = self.initial_capital * (self.portfolio[self.col_b] / self.data[self.col_b].iloc[0])
-
-        # ====================== TOKEN HOLDINGS (now with blue circle highlight) ======================
+        # ====================== TOKEN HOLDINGS ======================
         self._print_token_holdings()
 
         # ====================== PERFORMANCE METRICS ======================
@@ -202,7 +194,7 @@ class VolatilityHarvestingBacktester:
         print(f"  🔵 Total {self.asset_b}-equivalent     : {final_total_b:,.6f} {self.asset_b}")
 
     def _calculate_metrics(self):
-        """Compute all performance metrics (unchanged)."""
+        """Compute metrics for the rebalancing portfolio only."""
         def cagr(series):
             days = (series.index[-1] - series.index[0]).days
             return (series.iloc[-1] / series.iloc[0]) ** (365.25 / days) - 1
@@ -212,51 +204,46 @@ class VolatilityHarvestingBacktester:
             drawdown = (series - peak) / peak
             return drawdown.min()
 
-        self.metrics = pd.DataFrame(index=['Strategy', f'{self.asset_a}_100%', f'{self.asset_b}_100%', 'BuyHold_50/50'])
+        s = self.portfolio['total_value']
+        final_val = s.iloc[-1]
         
-        for col, name in [('total_value', 'Strategy'),
-                          ('a_only', f'{self.asset_a}_100%'),
-                          ('b_only', f'{self.asset_b}_100%'),
-                          ('bh_value', 'BuyHold_50/50')]:
-            s = self.portfolio[col]
-            final_val = s.iloc[-1]
-            
-            end_price_a = self.data[self.col_a].iloc[-1]
-            end_price_b = self.data[self.col_b].iloc[-1]
-            final_a_eq = final_val / end_price_a
-            final_b_eq = final_val / end_price_b
-            
-            self.metrics.loc[name, 'Final Value (USD)'] = final_val
-            self.metrics.loc[name, 'Total Return (%)'] = ((final_val / self.initial_capital) - 1) * 100
-            self.metrics.loc[name, 'CAGR (%)'] = cagr(s) * 100
-            self.metrics.loc[name, 'Max DD (%)'] = max_dd(s) * 100
-            self.metrics.loc[name, 'Vol (ann.)'] = s.pct_change().std() * np.sqrt(365.25 * 24) * 100
-            self.metrics.loc[name, 'Sharpe (rf=0)'] = (s.pct_change().mean() / s.pct_change().std()) * np.sqrt(365.25 * 24)
-            
-            start_a_eq = self.initial_capital / self.data[self.col_a].iloc[0]
-            start_b_eq = self.initial_capital / self.data[self.col_b].iloc[0]
-            self.metrics.loc[name, f'Final {self.asset_b} equiv'] = final_b_eq
-            self.metrics.loc[name, f'{self.asset_b} equiv growth (%)'] = ((final_b_eq / start_b_eq) - 1) * 100
-            self.metrics.loc[name, f'Final {self.asset_a} equiv'] = final_a_eq
-            self.metrics.loc[name, f'{self.asset_a} equiv growth (%)'] = ((final_a_eq / start_a_eq) - 1) * 100
+        end_price_a = self.data[self.col_a].iloc[-1]
+        end_price_b = self.data[self.col_b].iloc[-1]
+        final_a_eq = final_val / end_price_a
+        final_b_eq = final_val / end_price_b
+        
+        start_a_eq = self.initial_capital / self.data[self.col_a].iloc[0]
+        start_b_eq = self.initial_capital / self.data[self.col_b].iloc[0]
+        
+        self.metrics = pd.DataFrame(index=[''])
+        
+        self.metrics.loc['', 'Final Value (USD)'] = final_val
+        self.metrics.loc['', 'Total Return (%)'] = ((final_val / self.initial_capital) - 1) * 100
+        self.metrics.loc['', 'CAGR (%)'] = cagr(s) * 100
+        self.metrics.loc['', 'Max DD (%)'] = max_dd(s) * 100
+        self.metrics.loc['', 'Vol (ann.)'] = s.pct_change().std() * np.sqrt(365.25 * 24) * 100
+        self.metrics.loc['', 'Sharpe (rf=0)'] = (s.pct_change().mean() / s.pct_change().std()) * np.sqrt(365.25 * 24)
+        
+        self.metrics.loc['', f'Final {self.asset_a} equiv'] = final_a_eq
+        self.metrics.loc['', f'{self.asset_a} equiv growth (%)'] = ((final_a_eq / start_a_eq) - 1) * 100
+        self.metrics.loc['', f'Final {self.asset_b} equiv'] = final_b_eq
+        self.metrics.loc['', f'{self.asset_b} equiv growth (%)'] = ((final_b_eq / start_b_eq) - 1) * 100
 
     def _print_results(self):
-        """Print metrics table and rebalance summary."""
+        """Print clean results (no labels, no benchmarks)."""
         print("\n=== BACKTEST RESULTS ===")
-        print(self.metrics.round(2))
+        # Print table without any row label on the left
+        print(self.metrics.round(2).to_string(index=False))
 
         print(f"\nRebalances triggered: {self.portfolio['rebalance'].sum():,} "
               f"({self.portfolio['trade'].sum():,.0f} USD total volume traded)")
 
     def plot_results(self):
-        """Generate the three-panel plot (unchanged)."""
+        """Generate simplified three-panel plot (only the rebalancing portfolio)."""
         fig, axs = plt.subplots(3, 1, figsize=(14, 10), height_ratios=[3, 2, 1])
 
-        axs[0].plot(self.portfolio['total_value'], label='Strategy (trigger + partial)', linewidth=2)
-        axs[0].plot(self.portfolio['bh_value'], label='Buy-&-Hold 50/50', alpha=0.7)
-        axs[0].plot(self.portfolio['a_only'], label=f'100% {self.asset_a}', alpha=0.5)
-        axs[0].plot(self.portfolio['b_only'], label=f'100% {self.asset_b}', alpha=0.5)
-        axs[0].set_title(f'Portfolio Value – Volatility Harvesting Backtest ({self.asset_a}-{self.asset_b}, {self.months_str})')
+        axs[0].plot(self.portfolio['total_value'], label='Portfolio Value', linewidth=2, color='blue')
+        axs[0].set_title(f'Portfolio Value – Volatility Harvesting ({self.asset_a}-{self.asset_b}, {self.months_str})')
         axs[0].set_ylabel('USD')
         axs[0].legend()
         axs[0].grid(True)
@@ -289,7 +276,7 @@ if __name__ == "__main__":
     import argparse
 
     parser = argparse.ArgumentParser(
-        description='Volatility Harvesting Backtester – run any asset pair and time period directly from the terminal',
+        description='Volatility Harvesting Backtester – clean rebalancing-only version',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter
     )
 
@@ -304,7 +291,7 @@ if __name__ == "__main__":
                         help='Target weight for Asset A (0.0–1.0)')
     parser.add_argument('--outer-buffer', type=float, default=0.05,
                         help='Outer rebalance trigger buffer (as decimal)')
-    parser.add_argument('--inner-rebalance-dev', type=float, default=0.0, # 0 buffer by default
+    parser.add_argument('--inner-rebalance-dev', type=float, default=0.0,
                         help='Inner partial rebalance deviation (as decimal)')
     parser.add_argument('--initial-capital', type=float, default=2000.0,
                         help='Starting capital in USD')
