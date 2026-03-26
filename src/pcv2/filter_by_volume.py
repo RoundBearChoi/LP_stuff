@@ -11,14 +11,14 @@ class VolumeFilter:
     """Processes cointegration pairs and adds/ranks by 7-day volume from MEXC + KuCoin."""
 
     def __init__(self, 
+        # ====================== CONFIG (change these!) ======================
                  PERCENTILE: int = 5,
                  MIN_VOLUME_RATIO: float = 0.0001, # most will not fall under imbalanced for now
                  VOLUME_CACHE_FILE: str = "mexc_kucoin_volume.csv"):
-        # ====================== CONFIG (change these!) ======================
+        # ===========================================================================
         self.PERCENTILE = PERCENTILE
         self.MIN_VOLUME_RATIO = MIN_VOLUME_RATIO
         self.VOLUME_CACHE_FILE = VOLUME_CACHE_FILE
-        # ===========================================================================
 
     def ordinal(self, n: int) -> str:
         """Proper English suffixes: 1st, 2nd, 3rd, 4th..."""
