@@ -7,8 +7,8 @@ import numpy as np
 from datetime import datetime
 
 # ====================== CONFIG (change these!) ======================
-PERCENTILE = 80
-MIN_VOLUME_RATIO = 0.35
+PERCENTILE = 50
+MIN_VOLUME_RATIO = 0.30
 VOLUME_CACHE_FILE = "mexc_kucoin_volume.csv" 
 # ===========================================================================
 
