@@ -7,11 +7,11 @@ from datetime import datetime
 class VolatilityHarvestingBacktester:
     def __init__(self, 
                  csv_path='top300_hourly_18months_combined.csv',
-                 asset_a='XVG',
+                 asset_a='ETH',
                  asset_b='BTC',
                  target_weight_a=0.50,
                  outer_buffer=0.05,
-                 inner_rebalance_dev=0.025,
+                 inner_rebalance_dev=0.0,
                  initial_capital=2000.0,
                  fee_rate=0.01,
                  backtest_months=18):
@@ -293,9 +293,9 @@ if __name__ == "__main__":
         formatter_class=argparse.ArgumentDefaultsHelpFormatter
     )
 
-    parser.add_argument('--asset-a', type=str, default='XVG',
+    parser.add_argument('--asset-a', type=str, default='FIL',
                         help='Symbol for Asset A (e.g. XVG, SOL, ETH)')
-    parser.add_argument('--asset-b', type=str, default='BTC',
+    parser.add_argument('--asset-b', type=str, default='SHIB',
                         help='Symbol for Asset B (e.g. BTC, ETH, USDT)')
     parser.add_argument('--months', type=int, default=18,
                         help='Number of recent months to backtest. Use 0 (or any non-positive number) for the full dataset.')
@@ -304,7 +304,7 @@ if __name__ == "__main__":
                         help='Target weight for Asset A (0.0–1.0)')
     parser.add_argument('--outer-buffer', type=float, default=0.05,
                         help='Outer rebalance trigger buffer (as decimal)')
-    parser.add_argument('--inner-rebalance-dev', type=float, default=0.025,
+    parser.add_argument('--inner-rebalance-dev', type=float, default=0.0, # 0 buffer by default
                         help='Inner partial rebalance deviation (as decimal)')
     parser.add_argument('--initial-capital', type=float, default=2000.0,
                         help='Starting capital in USD')
