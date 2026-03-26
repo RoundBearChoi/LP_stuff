@@ -8,13 +8,11 @@ from config import DEFAULT_CSV_FILE, DEFAULT_COINTEGRATION_METHOD
 
 
 # ====================== CONFIG (change these!) ======================
-# Input is the output of filter_by_stability.py
 INPUT_CSV: str = "filtered_by_stability_johansen_one_direction_18m_top42778.csv"
 
-# Z-score trigger settings (matches common pairs-trading practice)
-Z_UPPER_THRESHOLD: float = 2.0
-Z_LOWER_THRESHOLD: float = -2.0
-REVERT_CONFIRM_LEVEL: float = 0.5          # must revert past this level to count as completed round-trip
+Z_UPPER_THRESHOLD: float = 1.0
+Z_LOWER_THRESHOLD: float = -1.0
+REVERT_CONFIRM_LEVEL: float = 0.25          # must revert past this level to count as completed round-trip
 
 # Lookback (matches stability script)
 MAX_MONTHS_FOR_ZSCORE: int = 18
