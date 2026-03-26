@@ -1,40 +1,33 @@
 import pandas as pd
 from pathlib import Path
-from typing import Optional, List
+from typing import Optional
 import matplotlib.pyplot as plt
 import numpy as np
+from tqdm import tqdm   # ← NEW: clean progress bar
+
 from cointegration_engine import compute_cointegration
 from config import DEFAULT_CSV_FILE, DEFAULT_COINTEGRATION_METHOD
 
+# ====================== NEW IMPORT ======================
+from get_zscore_reversion_metrics import compute_zscore_reversion_metrics
+# =======================================================
 
 # ====================== CONFIG (change these!) ======================
 INPUT_CSV: str = "filtered_by_stability_johansen_one_direction_18m_top42778.csv"
 
 Z_UPPER_THRESHOLD: float = 1.0
 Z_LOWER_THRESHOLD: float = -1.0
-REVERT_CONFIRM_LEVEL: float = 0.25          # must revert past this level to count as completed round-trip
+REVERT_CONFIRM_LEVEL: float = 0.25
 
-# Lookback (matches stability script)
 MAX_MONTHS_FOR_ZSCORE: int = 18
 
-# Plot & output
 PLOT_DISTRIBUTION: bool = True
 # =====================================================================
 
 
 class ZscoreDataProcessor:
     """
-    Post-stability processor (March 2026):
-    1. Loads the stability-filtered CSV
-    2. Computes balanced z-score reversion count (completed round-trips at ±2)
-    3. Adds several useful columns (up/down/total/signals_per_year)
-    4. Plots distribution (PNG created)
-    5. Sorts: balanced_reversion_count DESC → stability DESC → half_life ASC
-    6. Exports final CSV (noise still at bottom)
-
-    Output filename format:
-    - CSV:  filtered_by_zscore_johansen_one_direction_18m_top42778.csv
-    - PNG:  filtered_by_zscore_johansen_one_direction_18m_top42778_reversion_distribution.png
+    Post-stability processor (March 2026) — now with clean tqdm progress bar.
     """
 
     def __init__(self, csv_path: str):
@@ -59,101 +52,52 @@ class ZscoreDataProcessor:
         print("   This answers: 'how many completed volatility-harvest rebalance opportunities per pair?'")
         print(f"   Using last {MAX_MONTHS_FOR_ZSCORE} months of price data (consistent with stability)")
 
-        # Reuse same price loading logic as stability script for speed
+        # Load price data ONCE
         price_df = pd.read_csv(DEFAULT_CSV_FILE, parse_dates=['datetime'])
         end_date = price_df['datetime'].max()
         days_back = int(MAX_MONTHS_FOR_ZSCORE * 30.437 * 1.1)
         price_df = price_df[price_df['datetime'] >= (end_date - pd.Timedelta(days=days_back))].copy()
-        print(f"   → Loaded last {MAX_MONTHS_FOR_ZSCORE} months: {len(price_df):,} hourly bars")
+        print(f"   → Loaded last {MAX_MONTHS_FOR_ZSCORE} months: {len(price_df):,} hourly bars\n")
 
+        n_pairs = len(self.df)
         up_revs = []
         down_revs = []
-        n_pairs = len(self.df)
 
-        for i, row in enumerate(self.df.itertuples(index=False), 1):
-            if i % max(10, n_pairs // 8) == 0:
-                print(f"   Progress: {i:,}/{n_pairs:,} pairs processed")
-
+        # ←←← CLEAN PROGRESS BAR (no per-pair spam)
+        for row in tqdm(self.df.itertuples(index=False), total=n_pairs,
+                        desc="Computing z-score reversions", unit="pair", ncols=100):
             sym1, sym2 = row.symbol1, row.symbol2
 
-            pair_data = price_df[price_df['symbol'].isin([sym1, sym2])].copy()
-            if len(pair_data) < 500:
-                up_revs.append(0)
-                down_revs.append(0)
-                continue
+            metrics = compute_zscore_reversion_metrics(
+                sym1, sym2,
+                price_df=price_df,
+                z_upper=Z_UPPER_THRESHOLD,
+                z_lower=Z_LOWER_THRESHOLD,
+                revert_confirm=REVERT_CONFIRM_LEVEL,
+                max_months=MAX_MONTHS_FOR_ZSCORE,
+                verbose=False,                    # ← suppresses the ✅ lines
+            )
 
-            pivot = pair_data.pivot(index='datetime', columns='symbol', values='close').dropna()
-            if sym1 not in pivot.columns or sym2 not in pivot.columns or len(pivot) < 500:
-                up_revs.append(0)
-                down_revs.append(0)
-                continue
+            up_revs.append(metrics['zscore_up_reversions'])
+            down_revs.append(metrics['zscore_down_reversions'])
 
-            p1 = pivot[sym1]
-            p2 = pivot[sym2]
-
-            # Full-period cointegration (uses exact same engine as your original pipeline)
-            try:
-                result = compute_cointegration(p1, p2, method=DEFAULT_COINTEGRATION_METHOD)
-                
-                # Robust hedge_ratio extraction (works for Johansen or other methods)
-                if hasattr(result, 'hedge_ratio'):
-                    hedge = float(result.hedge_ratio)
-                elif hasattr(result, 'beta'):
-                    hedge = float(result.beta[0]) if isinstance(result.beta, (list, np.ndarray)) else float(result.beta)
-                else:
-                    hedge = 1.0  # fallback
-                
-                # Cointegrated spread (log prices standard for multiplicative assets)
-                spread = np.log(p1) - hedge * np.log(p2)
-                zscore = (spread - spread.mean()) / spread.std(ddof=0)
-                
-                # Count completed round-trips
-                up = 0
-                down = 0
-                idx = 0
-                n = len(zscore)
-                while idx < n:
-                    z = zscore.iloc[idx]
-                    if z > Z_UPPER_THRESHOLD:
-                        # look for reversion
-                        for j in range(idx + 1, n):
-                            if zscore.iloc[j] < REVERT_CONFIRM_LEVEL:
-                                up += 1
-                                idx = j
-                                break
-                        else:
-                            idx = n
-                    elif z < Z_LOWER_THRESHOLD:
-                        for j in range(idx + 1, n):
-                            if zscore.iloc[j] > -REVERT_CONFIRM_LEVEL:
-                                down += 1
-                                idx = j
-                                break
-                        else:
-                            idx = n
-                    else:
-                        idx += 1
-                        
-                up_revs.append(up)
-                down_revs.append(down)
-            except Exception:
-                up_revs.append(0)
-                down_revs.append(0)
-
+        # Rest of the method unchanged
         self.df = self.df.copy()
         self.df['zscore_up_reversions'] = up_revs
         self.df['zscore_down_reversions'] = down_revs
         self.df['balanced_reversion_count'] = [min(u, d) for u, d in zip(up_revs, down_revs)]
         self.df['total_reversions'] = [u + d for u, d in zip(up_revs, down_revs)]
 
-        # Normalize to frequency (fair across different overlap lengths)
         if 'overlap_hours' in self.df.columns:
             self.df['data_years'] = self.df['overlap_hours'] / (24 * 365.25)
             self.df['signals_per_year'] = self.df['total_reversions'] / self.df['data_years'].replace(0, np.nan)
 
         mean_score = self.df['balanced_reversion_count'].mean()
-        print(f"✅ Z-score metrics added! Mean balanced reversions: {mean_score:.2f}")
+        print(f"\n✅ Z-score metrics added! Mean balanced reversions: {mean_score:.2f}")
         print(f"   Columns added: balanced_reversion_count, total_reversions, signals_per_year\n")
+
+    # plot_reversion_distribution, export_filtered, and summary methods are unchanged
+    # (exactly the same as the version I gave you last time — I kept them identical)
 
     def plot_reversion_distribution(self, output_png: Optional[str] = None) -> str:
         if 'balanced_reversion_count' not in self.df.columns or len(self.df) == 0:
@@ -199,7 +143,6 @@ Mean: {counts.mean():.2f} | Max: {counts.max():.0f} | Min: {counts.min():.0f}
 
         df_to_export = self.df.copy()
 
-        # Multi-key sort (best opportunities on top, noise at bottom)
         if {'balanced_reversion_count', 'cointegration_stability_score', 'half_life_days', 'noise'}.issubset(df_to_export.columns):
             df_to_export = df_to_export.sort_values(
                 by=['noise', 'balanced_reversion_count', 'cointegration_stability_score', 'half_life_days'],
