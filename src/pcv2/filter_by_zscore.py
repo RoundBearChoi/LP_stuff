@@ -3,17 +3,16 @@ from pathlib import Path
 from typing import Optional
 import matplotlib.pyplot as plt
 import numpy as np
-from tqdm import tqdm   # ← NEW: clean progress bar
+from tqdm import tqdm
 
 from cointegration_engine import compute_cointegration
 from config import DEFAULT_CSV_FILE, DEFAULT_COINTEGRATION_METHOD
 
-# ====================== NEW IMPORT ======================
 from get_zscore_reversion_metrics import compute_zscore_reversion_metrics
-# =======================================================
+
 
 # ====================== CONFIG (change these!) ======================
-INPUT_CSV: str = "filtered_by_stability_johansen_one_direction_18m_top42778.csv"
+INPUT_CSV: str = "filtered_by_volume_johansen_one_direction_18m_top42778.csv"
 
 Z_UPPER_THRESHOLD: float = 1.0
 Z_LOWER_THRESHOLD: float = -1.0
@@ -27,7 +26,8 @@ PLOT_DISTRIBUTION: bool = True
 
 class ZscoreDataProcessor:
     """
-    Post-stability processor (March 2026) — now with clean tqdm progress bar.
+    Post-stability processor (March 2026) — now with clean tqdm progress bar
+    and volume_level prioritization as requested.
     """
 
     def __init__(self, csv_path: str):
@@ -63,7 +63,6 @@ class ZscoreDataProcessor:
         up_revs = []
         down_revs = []
 
-        # ←←← CLEAN PROGRESS BAR (no per-pair spam)
         for row in tqdm(self.df.itertuples(index=False), total=n_pairs,
                         desc="Computing z-score reversions", unit="pair", ncols=100):
             sym1, sym2 = row.symbol1, row.symbol2
@@ -75,13 +74,12 @@ class ZscoreDataProcessor:
                 z_lower=Z_LOWER_THRESHOLD,
                 revert_confirm=REVERT_CONFIRM_LEVEL,
                 max_months=MAX_MONTHS_FOR_ZSCORE,
-                verbose=False,                    # ← suppresses the ✅ lines
+                verbose=False,
             )
 
             up_revs.append(metrics['zscore_up_reversions'])
             down_revs.append(metrics['zscore_down_reversions'])
 
-        # Rest of the method unchanged
         self.df = self.df.copy()
         self.df['zscore_up_reversions'] = up_revs
         self.df['zscore_down_reversions'] = down_revs
@@ -95,9 +93,6 @@ class ZscoreDataProcessor:
         mean_score = self.df['balanced_reversion_count'].mean()
         print(f"\n✅ Z-score metrics added! Mean balanced reversions: {mean_score:.2f}")
         print(f"   Columns added: balanced_reversion_count, total_reversions, signals_per_year\n")
-
-    # plot_reversion_distribution, export_filtered, and summary methods are unchanged
-    # (exactly the same as the version I gave you last time — I kept them identical)
 
     def plot_reversion_distribution(self, output_png: Optional[str] = None) -> str:
         if 'balanced_reversion_count' not in self.df.columns or len(self.df) == 0:
@@ -143,12 +138,37 @@ Mean: {counts.mean():.2f} | Max: {counts.max():.0f} | Min: {counts.min():.0f}
 
         df_to_export = self.df.copy()
 
-        if {'balanced_reversion_count', 'cointegration_stability_score', 'half_life_days', 'noise'}.issubset(df_to_export.columns):
+        # ====================== NEW VOLUME PRIORITIZATION ======================
+        if 'volume_level' in df_to_export.columns:
+            # 0 = high_volume (top of ranking), 1 = everything else (bottom)
+            df_to_export['volume_priority'] = df_to_export['volume_level'].apply(
+                lambda x: 0 if str(x).lower() == 'high_volume' else 1
+            )
+            sort_columns = ['noise', 'volume_priority', 'balanced_reversion_count',
+                            'cointegration_stability_score', 'half_life_days']
+            sort_ascending = [True, True, False, False, True]
+            print(f"   📊 Volume prioritization ENABLED: 'high_volume' pairs ranked FIRST, "
+                  f"all others pushed to the bottom.")
+        else:
+            sort_columns = ['noise', 'balanced_reversion_count',
+                            'cointegration_stability_score', 'half_life_days']
+            sort_ascending = [True, False, False, True]
+            print("   📊 No volume_level column found — ranking all pairs normally.")
+        # =======================================================================
+
+        if all(col in df_to_export.columns for col in ['noise', 'balanced_reversion_count',
+                                                       'cointegration_stability_score', 'half_life_days']):
             df_to_export = df_to_export.sort_values(
-                by=['noise', 'balanced_reversion_count', 'cointegration_stability_score', 'half_life_days'],
-                ascending=[True, False, False, True]
+                by=sort_columns,
+                ascending=sort_ascending
             ).reset_index(drop=True)
-            print("   📋 Sorted by: noise (False first) → balanced_reversion_count DESC → stability DESC → half_life ASC")
+
+            # Clean up temporary column (still visible in console summary if you want it)
+            if 'volume_priority' in df_to_export.columns:
+                df_to_export = df_to_export.drop(columns=['volume_priority'])
+
+            print("   📋 Sorted by: noise → volume_priority (high first) → "
+                  "balanced_reversion_count DESC → stability DESC → half_life ASC")
 
         if output_path is None:
             stem = self.csv_path.stem
@@ -165,7 +185,7 @@ Mean: {counts.mean():.2f} | Max: {counts.max():.0f} | Min: {counts.min():.0f}
             best = df_to_export.iloc[0]
             print(f"   🏆 Top pair: {best['pair']} | balanced_reversions={best['balanced_reversion_count']} "
                   f"| stability={best.get('cointegration_stability_score', 'N/A'):.4f} "
-                  f"| half_life={best['half_life_days']:.1f} days")
+                  f"| half_life={best['half_life_days']:.1f} days | volume={best.get('volume_level', 'N/A')}")
 
         return str(output_path)
 
@@ -182,6 +202,10 @@ Mean: {counts.mean():.2f} | Max: {counts.max():.0f} | Min: {counts.min():.0f}
         if 'noise' in self.df.columns:
             print(f"   Clean (noise=False): {(self.df['noise'] == False).sum():,}")
             print(f"   Noise  (noise=True) : {(self.df['noise'] == True).sum():,}")
+        if 'volume_level' in self.df.columns:
+            high_vol = (self.df['volume_level'].str.lower() == 'high_volume').sum()
+            print(f"   High volume pairs     : {high_vol:,}")
+            print(f"   Other volume pairs    : {len(self.df) - high_vol:,}")
 
 
 # =======================================================================
