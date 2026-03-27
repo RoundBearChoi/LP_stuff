@@ -21,7 +21,12 @@ MAX_MONTHS_FOR_ZSCORE: int = 18
 
 # ====================== BLACKLIST CONFIG ======================
 # Easy to extend later — just add more tickers here
-BLACKLISTED_TOKENS: set[str] = {"DAI"}
+BLACKLISTED_TOKENS: set[str] = {
+    "DAI",
+    "VCNT", # contract owner can make code changes
+    "NEXO", # a centralized finance (CeFi) crypto wealth platform
+    "APEPE", # too centralized (babydoge is significantly more decentralized)
+}
 # =====================================================================
 
 
