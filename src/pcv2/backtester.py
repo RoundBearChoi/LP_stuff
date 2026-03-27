@@ -12,7 +12,7 @@ CONFIG = {
     'target_weight_a': 0.50,
     'outer_buffer': 0.05,
     'inner_rebalance_dev': 0.0,
-    'initial_capital': 2000.0,
+    'initial_capital': 3500.0,
     'fee_rate': 0.01,
     'backtest_months': 18,          # set to 0 or negative for FULL dataset
     'csv_path': 'top300_hourly_18months_combined.csv',
