@@ -7,20 +7,13 @@ specifically for z-score mean-reversion trading strategies.
 
 WHAT IT DOES:
 1. Loads the full dataset (filtered_by_zscore_filtered_by_volume_johansen_one_direction_18m_top42778.csv).
-2. Identifies the TOP 20th percentile of pairs based on 'balanced_reversion_count' 
-   (i.e. the 20% of pairs with the highest number of balanced up/down z-score reversions).
-3. Sorts ONLY those top pairs by 'balanced_reversion_consistency_score' (descending – higher consistency first).
-4. Marks ALL remaining pairs (the bottom 80%) with the flag 'low balanced reversion count' 
-   and moves them to the bottom of the file – no further calculations or sorting are performed on them.
-5. Adds two new helpful columns:
-   - 'rank_category' – clearly labels high vs low groups
-   - 'final_rank' – overall position in the final file (1 = best)
-6. Saves everything to a new CSV that is ready for manual review or automated strategy loading.
+2. Identifies the TOP X% of pairs based on 'balanced_reversion_count' (configurable).
+3. Sorts ONLY those top pairs by 'balanced_reversion_consistency_score'.
+4. Marks ALL remaining pairs with the flag 'low balanced reversion count' and moves them to the bottom.
+5. Adds two new helpful columns: 'rank_category' and 'final_rank'.
+6. Saves everything to a new CSV with a filename that automatically reflects the chosen percentile.
 
-The script is fully configurable at the top so you can easily change the percentile, 
-sorting direction, filenames, or column names if the CSV structure ever changes.
-
-No external dependencies beyond pandas (already available in your environment).
+The script is fully configurable at the top.
 """
 
 import pandas as pd
@@ -30,18 +23,20 @@ import pandas as pd
 
 # File paths
 INPUT_FILE = "filtered_by_zscore_filtered_by_volume_johansen_one_direction_18m_top42778.csv"
-OUTPUT_FILE = "zscore_ranked_balanced_reversion_top20.csv"
+
+# <<< NEW: Dynamic output filename that matches the percentile >>>
+TOP_PERCENTILE = 15                     # Top X% by balanced_reversion_count
+OUTPUT_FILE = f"zscore_ranked_balanced_reversion_top{TOP_PERCENTILE}.csv"
 
 # Ranking rules
-TOP_PERCENTILE = 20                     # Top X% by balanced_reversion_count (20 = top 20th percentile)
 SORT_BY_COLUMN = "balanced_reversion_consistency_score"
-SORT_ASCENDING = False                  # False = highest consistency first (recommended for trading)
+SORT_ASCENDING = False                  # False = highest consistency first (recommended)
 
-# Column names (in case you rename them later)
+# Column names
 BALANCED_COUNT_COL = "balanced_reversion_count"
 BALANCED_CONSISTENCY_COL = "balanced_reversion_consistency_score"
 
-# Optional: extra columns you want to keep at the front of the output for quick viewing
+# Optional: extra columns you want to keep at the front
 DISPLAY_COLUMNS_FIRST = [
     "pair",
     "symbol1",
@@ -75,21 +70,17 @@ low_df = df[df[BALANCED_COUNT_COL] < threshold].copy()
 print(f"   → High-quality pairs (top {TOP_PERCENTILE}%): {len(high_df):,}")
 print(f"   → Low-quality pairs (bottom {100 - TOP_PERCENTILE}%): {len(low_df):,}")
 
-# Sort the high-quality group by consistency score (best first)
+# Sort the high-quality group by consistency score
 high_df = high_df.sort_values(by=SORT_BY_COLUMN, ascending=SORT_ASCENDING)
 
 # Mark the groups clearly
 high_df["rank_category"] = "high_balanced_reversion"
 low_df["rank_category"] = "low balanced reversion count"
 
-# For the low group we do NO extra calculations or sorting – just move them to the bottom.
-# (You can change this line if you ever want them sorted by count descending, etc.)
-# low_df = low_df.sort_values(by=BALANCED_COUNT_COL, ascending=False)  # ← uncomment if desired
-
-# Combine: high-quality first, then low-quality at the very bottom
+# Combine: high-quality first, then low-quality at the bottom
 final_df = pd.concat([high_df, low_df], ignore_index=True)
 
-# Add an overall rank column (useful for quick reference)
+# Add an overall rank column
 final_df["final_rank"] = range(1, len(final_df) + 1)
 
 # Reorder columns so the most important info appears first

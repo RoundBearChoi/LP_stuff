@@ -8,7 +8,7 @@ Run for a single pair:
 Or with options:
     python get_zscore_reversion_metrics.py ETH BTC --z-upper 1.5 --revert-confirm 0.1 --months 18 --csv
 
-Now with its own local DEFAULT_CSV_FILE at the top (independent of config.py).
+NOW INCLUDES spread_std, spread_mean, and is_log_spread for safe % price-range conversion.
 """
 
 import argparse
@@ -17,10 +17,9 @@ import numpy as np
 from pathlib import Path
 from typing import Dict, Optional
 from cointegration_engine import compute_cointegration
-from config import DEFAULT_COINTEGRATION_METHOD   # only this is still imported
+from config import DEFAULT_COINTEGRATION_METHOD
 
 # ====================== CONFIG (change these!) ======================
-# ←←← THIS IS THE NEW PART YOU ASKED FOR
 DEFAULT_CSV_FILE: str = "top300_hourly_18months_combined.csv"      
 Z_UPPER_THRESHOLD: float = 1.0
 Z_LOWER_THRESHOLD: float = -1.0
@@ -37,16 +36,14 @@ def compute_zscore_reversion_metrics(
     z_lower: float = Z_LOWER_THRESHOLD,
     revert_confirm: float = REVERT_CONFIRM_LEVEL,
     max_months: int = MAX_MONTHS_FOR_ZSCORE,
-    verbose: bool = True,          # ← False = silent when called from filter_by_zscore
+    verbose: bool = True,
 ) -> Dict:
     """
     Compute balanced z-score reversion metrics for ONE pair.
-    Now also returns 'reversion_timestamps' (list of pd.Timestamp) for
-    temporal consistency scoring in filter_by_zscore.py.
+    Returns spread statistics for safe % price-range conversion.
     """
     sym1, sym2 = sym1.upper(), sym2.upper()
 
-    # Load price data once (if not pre-loaded by batch script)
     if price_df is None:
         if verbose:
             print(f"   📥 Loading price data from: {DEFAULT_CSV_FILE}")
@@ -76,7 +73,6 @@ def compute_zscore_reversion_metrics(
     try:
         result = compute_cointegration(p1, p2, method=DEFAULT_COINTEGRATION_METHOD)
 
-        # Robust hedge_ratio extraction (works for Johansen or any method)
         if hasattr(result, 'hedge_ratio'):
             hedge = float(result.hedge_ratio)
         elif hasattr(result, 'beta'):
@@ -84,16 +80,19 @@ def compute_zscore_reversion_metrics(
         else:
             hedge = 1.0
 
-        # Cointegrated spread (log prices)
+        # Log-spread (standard for crypto)
         spread = np.log(p1) - hedge * np.log(p2)
         zscore = (spread - spread.mean()) / spread.std(ddof=0)
 
-        # ====================== NEW: Track exact completion timestamps ======================
+        # Spread stats for % conversion
+        spread_std = float(spread.std(ddof=0))
+        spread_mean = float(spread.mean())
+        is_log_spread = True
+
+        # Reversion timestamps
         up_reversion_times = []
         down_reversion_times = []
-        # ===================================================================================
 
-        # Count completed round-trips
         up = down = 0
         idx = 0
         n = len(zscore)
@@ -103,7 +102,7 @@ def compute_zscore_reversion_metrics(
                 for j in range(idx + 1, n):
                     if zscore.iloc[j] < revert_confirm:
                         up += 1
-                        up_reversion_times.append(zscore.index[j])      # ← completion timestamp
+                        up_reversion_times.append(zscore.index[j])
                         idx = j
                         break
                 else:
@@ -112,7 +111,7 @@ def compute_zscore_reversion_metrics(
                 for j in range(idx + 1, n):
                     if zscore.iloc[j] > -revert_confirm:
                         down += 1
-                        down_reversion_times.append(zscore.index[j])    # ← completion timestamp
+                        down_reversion_times.append(zscore.index[j])
                         idx = j
                         break
                 else:
@@ -123,7 +122,6 @@ def compute_zscore_reversion_metrics(
         total = up + down
         balanced = min(up, down)
 
-        # Normalize to yearly frequency
         hours = (zscore.index[-1] - zscore.index[0]).total_seconds() / 3600
         data_years = hours / (24 * 365.25) if hours > 0 else np.nan
         signals_per_year = total / data_years if data_years > 0 else np.nan
@@ -141,13 +139,17 @@ def compute_zscore_reversion_metrics(
             'zscore_threshold_up': z_upper,
             'zscore_threshold_down': z_lower,
             'revert_confirm_level': revert_confirm,
-            # ====================== NEW COLUMN FOR FREQUENCY ANALYSIS ======================
             'reversion_timestamps': sorted(up_reversion_times + down_reversion_times),
-            # =================================================================================
+            'spread_std': spread_std,
+            'spread_mean': spread_mean,
+            'is_log_spread': is_log_spread,
         }
 
         if verbose:
-            print(f"   ✅ {sym1}-{sym2} → balanced={balanced} | up={up} | down={down} | signals/yr={signals_per_year:.2f}")
+            # Safe % print (no overflow)
+            pct_approx = abs((np.exp(min(1.5 * spread_std, 20.0)) - 1) * 100) if spread_std > 0 else float('nan')
+            print(f"   ✅ {sym1}-{sym2} → balanced={balanced} | up={up} | down={down} | signals/yr={signals_per_year:.2f} "
+                  f"| spread_std={spread_std:.5f} | % range at Z±1.5 ≈ ±{pct_approx:.2f}%")
 
         return metrics
 
@@ -158,7 +160,6 @@ def compute_zscore_reversion_metrics(
 
 
 def _empty_metrics(sym1: str, sym2: str) -> Dict:
-    """Fallback when data or cointegration fails."""
     return {
         'pair': f"{sym1}-{sym2}",
         'symbol1': sym1,
@@ -172,7 +173,10 @@ def _empty_metrics(sym1: str, sym2: str) -> Dict:
         'zscore_threshold_up': Z_UPPER_THRESHOLD,
         'zscore_threshold_down': Z_LOWER_THRESHOLD,
         'revert_confirm_level': REVERT_CONFIRM_LEVEL,
-        'reversion_timestamps': [],          # ← important for filter_by_zscore
+        'reversion_timestamps': [],
+        'spread_std': 0.0,
+        'spread_mean': 0.0,
+        'is_log_spread': True,
     }
 
 
@@ -193,7 +197,7 @@ def main():
         z_lower=args.z_lower,
         revert_confirm=args.revert_confirm,
         max_months=args.months,
-        verbose=True,                  # always show output when running standalone
+        verbose=True,
     )
 
     if args.csv:
