@@ -34,6 +34,7 @@ class ZscoreDataProcessor:
     """
     Post-stability processor with volume prioritization,
     reversion frequency consistency, and manual blacklist support.
+    NOW INCLUDES balanced_reversion_consistency_score = raw_consistency × balance_ratio
     Blacklisted pairs are kept but moved to the very bottom and clearly marked.
     """
 
@@ -83,7 +84,7 @@ class ZscoreDataProcessor:
         black_df = self.df[self.df['is_blacklisted']].copy()
 
         print(f"\n🔬 COMPUTING Z-SCORE REVERSION METRICS (±{Z_UPPER_THRESHOLD} → revert past ±{REVERT_CONFIRM_LEVEL})")
-        print("   Computing temporal frequency consistency of reversions")
+        print("   → Now computing *balanced* reversion consistency (raw consistency × balance ratio)")
         print(f"   Using last {MAX_MONTHS_FOR_ZSCORE} months of price data")
         print(f"   → Only on {len(clean_df):,} non-blacklisted pairs (blacklisted pairs skipped)")
 
@@ -101,12 +102,14 @@ class ZscoreDataProcessor:
 
         up_revs = []
         down_revs = []
-        consistency_scores = []
+        raw_consistency_scores = []      # original raw score (kept for reference)
+        balanced_consistency_scores = [] # NEW: the score you asked for
+        balance_ratios = []              # NEW: for transparency
         mean_intervals = []
         max_gaps = []
 
         for row in tqdm(clean_df.itertuples(index=False), total=len(clean_df),
-                        desc="Computing z-score reversions + consistency", unit="pair", ncols=100):
+                        desc="Computing z-score + BALANCED consistency", unit="pair", ncols=100):
             sym1, sym2 = row.symbol1, row.symbol2
 
             metrics = compute_zscore_reversion_metrics(
@@ -126,20 +129,28 @@ class ZscoreDataProcessor:
             up_revs.append(up)
             down_revs.append(down)
 
+            # === ORIGINAL RAW CONSISTENCY (unchanged logic) ===
             if len(timestamps) >= 2:
                 ts_clean = pd.to_datetime(timestamps).tz_localize(None)
                 deltas = (np.diff(ts_clean.values) / np.timedelta64(1, 'D')).astype(float)
                 mean_delta = np.mean(deltas)
                 std_delta = np.std(deltas)
                 cv = std_delta / mean_delta if mean_delta > 0 else 0.0
-                score = 1 / (1 + cv)
+                raw_score = 1 / (1 + cv)
                 max_gap = float(np.max(deltas))
             else:
-                score = 0.0
+                raw_score = 0.0
                 mean_delta = np.nan
                 max_gap = np.nan
 
-            consistency_scores.append(score)
+            # === NEW: BALANCE-AWARE CONSISTENCY ===
+            total = up + down
+            balance_ratio = 2 * min(up, down) / total if total > 0 else 0.0
+            balanced_score = raw_score * balance_ratio
+
+            raw_consistency_scores.append(raw_score)
+            balanced_consistency_scores.append(balanced_score)
+            balance_ratios.append(balance_ratio)
             mean_intervals.append(mean_delta)
             max_gaps.append(max_gap)
 
@@ -148,7 +159,12 @@ class ZscoreDataProcessor:
         clean_df['zscore_down_reversions'] = down_revs
         clean_df['balanced_reversion_count'] = [min(u, d) for u, d in zip(up_revs, down_revs)]
         clean_df['total_reversions'] = [u + d for u, d in zip(up_revs, down_revs)]
-        clean_df['reversion_consistency_score'] = consistency_scores
+
+        # NEW COLUMNS
+        clean_df['reversion_consistency_score'] = raw_consistency_scores          # kept for reference
+        clean_df['balanced_reversion_consistency_score'] = balanced_consistency_scores  # ← PRIMARY new score
+        clean_df['balance_ratio'] = balance_ratios                                # ← transparency
+
         clean_df['mean_reversion_interval_days'] = mean_intervals
         clean_df['max_reversion_gap_days'] = max_gaps
 
@@ -163,12 +179,12 @@ class ZscoreDataProcessor:
         self.df = pd.concat([clean_df, black_df], ignore_index=True)
 
         mean_balanced = clean_df['balanced_reversion_count'].mean()
-        mean_consistency = clean_df['reversion_consistency_score'].mean()
+        mean_bal_consistency = clean_df['balanced_reversion_consistency_score'].mean()
         print(f"\n✅ Z-score metrics added! Mean balanced reversions (clean pairs): {mean_balanced:.2f}")
-        print(f"   Mean consistency score (clean pairs): {mean_consistency:.3f}\n")
+        print(f"   Mean BALANCED consistency score (clean pairs): {mean_bal_consistency:.3f}\n")
 
     def _zero_blacklisted_metrics(self, black_df: Optional[pd.DataFrame] = None) -> None:
-        """Helper: set zero/NaN metrics on blacklisted pairs."""
+        """Helper: set zero/NaN metrics on blacklisted pairs (including new columns)."""
         if black_df is None:
             black_df = self.df[self.df['is_blacklisted']]
         black_df['zscore_up_reversions'] = 0
@@ -176,6 +192,8 @@ class ZscoreDataProcessor:
         black_df['balanced_reversion_count'] = 0
         black_df['total_reversions'] = 0
         black_df['reversion_consistency_score'] = 0.0
+        black_df['balanced_reversion_consistency_score'] = 0.0   # ← NEW
+        black_df['balance_ratio'] = 0.0                          # ← NEW
         black_df['mean_reversion_interval_days'] = np.nan
         black_df['max_reversion_gap_days'] = np.nan
         if 'overlap_hours' in black_df.columns:
@@ -195,10 +213,12 @@ class ZscoreDataProcessor:
                 lambda x: 0 if str(x).lower() == 'high_volume' else 1
             )
             sort_columns = ['blacklist_priority', 'volume_priority', 'balanced_reversion_count',
-                            'reversion_consistency_score', 'cointegration_stability_score', 'half_life_days']
+                            'balanced_reversion_consistency_score',   # ← NOW the primary consistency metric
+                            'cointegration_stability_score', 'half_life_days']
             sort_ascending = [True, True, False, False, False, True]
         else:
-            sort_columns = ['blacklist_priority', 'balanced_reversion_count', 'reversion_consistency_score',
+            sort_columns = ['blacklist_priority', 'balanced_reversion_count',
+                            'balanced_reversion_consistency_score',   # ← NEW primary
                             'cointegration_stability_score', 'half_life_days']
             sort_ascending = [True, False, False, False, True]
 
@@ -228,7 +248,8 @@ class ZscoreDataProcessor:
             best = df_to_export.iloc[0]
             status = " ← MANUAL BLACKLIST" if best['is_blacklisted'] else ""
             print(f"   🏆 Top pair: {best['pair']}{status} | balanced_reversions={best['balanced_reversion_count']} "
-                  f"| consistency={best['reversion_consistency_score']:.3f} "
+                  f"| BALANCED_consistency={best['balanced_reversion_consistency_score']:.3f} "
+                  f"(raw={best['reversion_consistency_score']:.3f}, balance={best.get('balance_ratio', 0):.2f}) "
                   f"| stability={best.get('cointegration_stability_score', 'N/A'):.4f} "
                   f"| half_life={best['half_life_days']:.1f} days | volume={best.get('volume_level', 'N/A')}")
 
@@ -240,6 +261,7 @@ class ZscoreDataProcessor:
         print("\n📊 Z-SCORE RANKING SUMMARY")
         print("=" * 70)
         cols = ['balanced_reversion_count', 'total_reversions', 'reversion_consistency_score',
+                'balanced_reversion_consistency_score', 'balance_ratio',
                 'mean_reversion_interval_days', 'max_reversion_gap_days',
                 'signals_per_year', 'cointegration_stability_score', 'half_life_days']
         cols = [c for c in cols if c in self.df.columns]
@@ -261,7 +283,7 @@ if __name__ == "__main__":
     processor = ZscoreDataProcessor(INPUT_CSV)
     
     print("\n" + "="*80)
-    print("🔬 STEP 1: Computing z-score reversion metrics + temporal consistency (skipping blacklisted)...")
+    print("🔬 STEP 1: Computing z-score reversion metrics + BALANCED consistency (skipping blacklisted)...")
     processor.add_zscore_reversion_metrics()
     
     print("\n💾 STEP 2: Exporting final z-score-ranked CSV...")
