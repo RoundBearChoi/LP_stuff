@@ -25,7 +25,7 @@ import pandas as pd
 INPUT_FILE = "filtered_by_zscore_filtered_by_volume_johansen_one_direction_18m_top42778.csv"
 
 # <<< NEW: Dynamic output filename that matches the percentile >>>
-TOP_PERCENTILE = 15                     # Top X% by balanced_reversion_count
+TOP_PERCENTILE = 40                     # Top X% by balanced_reversion_count
 OUTPUT_FILE = f"zscore_ranked_balanced_reversion_top{TOP_PERCENTILE}.csv"
 
 # Ranking rules
