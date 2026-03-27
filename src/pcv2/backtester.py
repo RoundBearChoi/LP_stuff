@@ -4,17 +4,33 @@ import matplotlib.pyplot as plt
 from datetime import datetime
 
 
+# ====================== CONFIG SECTION ======================
+# ←←← EDIT THESE VALUES ONLY ←←←
+CONFIG = {
+    'asset_a': 'BABYDOGE',          # ← change here
+    'asset_b': 'JUP',               # ← change here
+    'target_weight_a': 0.50,
+    'outer_buffer': 0.05,
+    'inner_rebalance_dev': 0.0,
+    'initial_capital': 2000.0,
+    'fee_rate': 0.01,
+    'backtest_months': 18,          # set to 0 or negative for FULL dataset
+    'csv_path': 'top300_hourly_18months_combined.csv',
+}
+# ==========================================================
+
+
 class VolatilityHarvestingBacktester:
     def __init__(self, 
-                 csv_path='top300_hourly_18months_combined.csv',
-                 asset_a='ETH',
-                 asset_b='BTC',
-                 target_weight_a=0.50,
-                 outer_buffer=0.05,
-                 inner_rebalance_dev=0.0,
-                 initial_capital=2000.0,
-                 fee_rate=0.01,
-                 backtest_months=18):
+                 csv_path=CONFIG['csv_path'],
+                 asset_a=CONFIG['asset_a'],
+                 asset_b=CONFIG['asset_b'],
+                 target_weight_a=CONFIG['target_weight_a'],
+                 outer_buffer=CONFIG['outer_buffer'],
+                 inner_rebalance_dev=CONFIG['inner_rebalance_dev'],
+                 initial_capital=CONFIG['initial_capital'],
+                 fee_rate=CONFIG['fee_rate'],
+                 backtest_months=CONFIG['backtest_months']):
         
         self.csv_path = csv_path
         self.asset_a = asset_a
@@ -24,14 +40,10 @@ class VolatilityHarvestingBacktester:
         self.inner_rebalance_dev = inner_rebalance_dev
         self.initial_capital = initial_capital
         self.fee_rate = fee_rate
-        self.backtest_months = backtest_months
+        self.backtest_months = None if backtest_months and backtest_months <= 0 else backtest_months
         
         # ====================== DYNAMIC OUTPUT FILENAME ======================
-        if self.backtest_months is None:
-            self.months_str = "full"
-        else:
-            self.months_str = f"{self.backtest_months}months"
-        
+        self.months_str = "full" if self.backtest_months is None else f"{self.backtest_months}months"
         self.output_filename = f"volatility_harvesting_{self.asset_a}_{self.asset_b}_{self.months_str}.png"
         # =====================================================================
         
@@ -147,8 +159,7 @@ class VolatilityHarvestingBacktester:
         self.plot_results()
 
     def _print_token_holdings(self):
-        """Print initial and final token holdings with BOTH directions of equivalents
-        for starting AND final holdings. Total lines are now highlighted with 🔵 (blue circle)."""
+        """Print initial and final token holdings with BOTH directions of equivalents."""
         start_time = self.data.index[0]
         end_time   = self.data.index[-1]
 
@@ -158,7 +169,6 @@ class VolatilityHarvestingBacktester:
         start_shares_a = (self.initial_capital * self.target_weight_a) / price_a_0
         start_shares_b = (self.initial_capital * (1 - self.target_weight_a)) / price_b_0
 
-        # Starting conversions
         start_b_to_a = start_shares_b * (price_b_0 / price_a_0)
         start_total_a = start_shares_a + start_b_to_a
         start_a_to_b = start_shares_a * (price_a_0 / price_b_0)
@@ -179,7 +189,6 @@ class VolatilityHarvestingBacktester:
         end_price_a = self.data[self.col_a].iloc[-1]
         end_price_b = self.data[self.col_b].iloc[-1]
 
-        # Final conversions
         final_b_to_a = final_shares_b * (end_price_b / end_price_a)
         final_total_a = final_shares_a + final_b_to_a
         final_a_to_b = final_shares_a * (end_price_a / end_price_b)
@@ -232,14 +241,13 @@ class VolatilityHarvestingBacktester:
     def _print_results(self):
         """Print clean results (no labels, no benchmarks)."""
         print("\n=== BACKTEST RESULTS ===")
-        # Print table without any row label on the left
         print(self.metrics.round(2).to_string(index=False))
 
         print(f"\nRebalances triggered: {self.portfolio['rebalance'].sum():,} "
               f"({self.portfolio['trade'].sum():,.0f} USD total volume traded)")
 
     def plot_results(self):
-        """Generate simplified three-panel plot (only the rebalancing portfolio)."""
+        """Generate simplified three-panel plot."""
         fig, axs = plt.subplots(3, 1, figsize=(14, 10), height_ratios=[3, 2, 1])
 
         axs[0].plot(self.portfolio['total_value'], label='Portfolio Value', linewidth=2, color='blue')
@@ -280,26 +288,15 @@ if __name__ == "__main__":
         formatter_class=argparse.ArgumentDefaultsHelpFormatter
     )
 
-    parser.add_argument('--asset-a', type=str, default='FIL',
-                        help='Symbol for Asset A (e.g. XVG, SOL, ETH)')
-    parser.add_argument('--asset-b', type=str, default='SHIB',
-                        help='Symbol for Asset B (e.g. BTC, ETH, USDT)')
-    parser.add_argument('--months', type=int, default=18,
-                        help='Number of recent months to backtest. Use 0 (or any non-positive number) for the full dataset.')
-
-    parser.add_argument('--target-weight-a', type=float, default=0.50,
-                        help='Target weight for Asset A (0.0–1.0)')
-    parser.add_argument('--outer-buffer', type=float, default=0.05,
-                        help='Outer rebalance trigger buffer (as decimal)')
-    parser.add_argument('--inner-rebalance-dev', type=float, default=0.0,
-                        help='Inner partial rebalance deviation (as decimal)')
-    parser.add_argument('--initial-capital', type=float, default=2000.0,
-                        help='Starting capital in USD')
-    parser.add_argument('--fee-rate', type=float, default=0.01,
-                        help='Trading fee rate (e.g. 0.01 = 1%)')
-    parser.add_argument('--csv-path', type=str,
-                        default='top300_hourly_18months_combined.csv',
-                        help='Path to the combined hourly CSV file')
+    parser.add_argument('--asset-a', type=str, default=CONFIG['asset_a'])
+    parser.add_argument('--asset-b', type=str, default=CONFIG['asset_b'])
+    parser.add_argument('--months', type=int, default=CONFIG['backtest_months'])
+    parser.add_argument('--target-weight-a', type=float, default=CONFIG['target_weight_a'])
+    parser.add_argument('--outer-buffer', type=float, default=CONFIG['outer_buffer'])
+    parser.add_argument('--inner-rebalance-dev', type=float, default=CONFIG['inner_rebalance_dev'])
+    parser.add_argument('--initial-capital', type=float, default=CONFIG['initial_capital'])
+    parser.add_argument('--fee-rate', type=float, default=CONFIG['fee_rate'])
+    parser.add_argument('--csv-path', type=str, default=CONFIG['csv_path'])
 
     args = parser.parse_args()
 
