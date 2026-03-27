@@ -7,8 +7,8 @@ from datetime import datetime
 # ====================== CONFIG SECTION ======================
 # ←←← EDIT THESE VALUES ONLY ←←←
 CONFIG = {
-    'asset_a': 'BABYDOGE',          # ← change here
-    'asset_b': 'JUP',               # ← change here
+    'asset_a': 'BABYDOGE',
+    'asset_b': 'BSV',
     'target_weight_a': 0.50,
     'outer_buffer': 0.05,
     'inner_rebalance_dev': 0.0,
