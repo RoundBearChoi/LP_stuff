@@ -12,10 +12,12 @@ class VolumeFilter:
 
     def __init__(self, 
         # ====================== CONFIG (change these!) ======================
+                 INPUT_FILE: str = "filtered_by_stability_johansen_one_direction_18m_top42778.csv",  # ←←← CHANGE THIS
                  PERCENTILE: int = 5,
-                 MIN_VOLUME_RATIO: float = 0.0001, # most will not fall under imbalanced for now
+                 MIN_VOLUME_RATIO: float = 0.0001,
                  VOLUME_CACHE_FILE: str = "mexc_kucoin_volume.csv"):
         # ===========================================================================
+        self.INPUT_FILE = INPUT_FILE
         self.PERCENTILE = PERCENTILE
         self.MIN_VOLUME_RATIO = MIN_VOLUME_RATIO
         self.VOLUME_CACHE_FILE = VOLUME_CACHE_FILE
@@ -82,7 +84,11 @@ class VolumeFilter:
         df_cache.to_csv(self.VOLUME_CACHE_FILE, index=False)
         print(f"💾 Saved/updated volume cache → {self.VOLUME_CACHE_FILE} ({len(df_cache):,} symbols)")
 
-    def run(self, input_file: str = "filtered_by_stability_johansen_one_direction_18m_top42778.csv"):
+    def run(self, input_file: str = None):
+        """Run the volume filter/ranker."""
+        if input_file is None:
+            input_file = self.INPUT_FILE
+            
         output_file = input_file.replace("stability", "volume")
         
         if not os.path.exists(input_file):
@@ -95,13 +101,15 @@ class VolumeFilter:
         original_rows = len(df)
         print(f"   Loaded {original_rows:,} rows")
         
-        print("🔍 Applying strict filters (noise=False + STRONG COINTEGRATION)...")
+        # ====================== FILTER (NO NOISE ANYMORE) ======================
+        print("🔍 Applying filter: STRONG COINTEGRATION only...")
         df = df[
-            (df['noise'] == False) & 
-            (df['verdict'].astype(str).str.contains('STRONG COINTEGRATION', case=False, na=False))
+            df['verdict'].astype(str).str.contains('STRONG COINTEGRATION', case=False, na=False)
         ].copy()
-        print(f"   Kept {len(df):,} high-quality pairs | Discarded {original_rows - len(df):,} rows")
         
+        print(f"   Kept {len(df):,} high-quality pairs | Discarded {original_rows - len(df):,} rows")
+        # ===========================================================================
+
         # Unique symbols
         symbols = pd.concat([df['symbol1'], df['symbol2']]).unique()
         print(f"🔍 Found {len(symbols):,} unique symbols")
@@ -110,11 +118,9 @@ class VolumeFilter:
         volume_cache_df = self.load_volume_cache()
         cached_symbols = set(volume_cache_df['symbol'].astype(str).str.upper())
         
-        # Find symbols we still need to fetch
         missing_symbols = [str(s).strip().upper() for s in symbols 
                            if str(s).strip().upper() not in cached_symbols]
         
-        force_refresh = False
         if missing_symbols:
             print(f"🔄 Fetching volume data for {len(missing_symbols):,} NEW symbols...")
         else:
@@ -123,12 +129,11 @@ class VolumeFilter:
                              "and only use the cached data? (y/n): ").strip().lower()
             if response in ['n', 'no']:
                 print("🔄 Forcing full volume refresh for all symbols...")
-                force_refresh = True
                 missing_symbols = [str(s).strip().upper() for s in symbols]
             else:
                 print("📊 Using existing volume cache (no API calls)...")
         
-        # Fetch (either new symbols or full refresh if user chose n)
+        # Fetch missing / forced refresh
         if missing_symbols:
             new_rows = []
             for i, sym in enumerate(missing_symbols, 1):
@@ -171,13 +176,13 @@ class VolumeFilter:
         df['symbol2_total_7d_vol_usdt'] = df['mexc_symbol2_7d_avg_vol_usdt'] + df['kucoin_symbol2_7d_avg_vol_usdt']
         df['pair_total_7d_vol_usdt'] = df['symbol1_total_7d_vol_usdt'] + df['symbol2_total_7d_vol_usdt']
         
-        # ====================== VOLUME FLAG (NO ROWS DROPPED) ======================
+        # Volume flag (NO ROWS DROPPED)
         print(f"🔍 Adding volume_flag column (using {self.MIN_VOLUME_RATIO*100:.0f}% balance threshold)...")
         v1 = df['symbol1_total_7d_vol_usdt']
         v2 = df['symbol2_total_7d_vol_usdt']
         v_cols = ['symbol1_total_7d_vol_usdt', 'symbol2_total_7d_vol_usdt']
         
-        df['volume_flag'] = "balanced"                                      # default
+        df['volume_flag'] = "balanced"
         df.loc[(v1 == 0) | (v2 == 0), 'volume_flag'] = "zero_volume"
         df.loc[
             (v1 > 0) & (v2 > 0) &
@@ -188,22 +193,19 @@ class VolumeFilter:
         print(f"   → Balanced pairs     : {len(df[df['volume_flag'] == 'balanced']):,}")
         print(f"   → Imbalanced pairs   : {len(df[df['volume_flag'] == 'imbalanced']):,}")
         print(f"   → Zero-volume pairs  : {len(df[df['volume_flag'] == 'zero_volume']):,}")
-        # ===========================================================================
-
-        # ====================== RANK BALANCED ONLY + MARK LOW VOLUME ======================
+        
+        # Ranking balanced pairs only
         print("\n🔄 Ranking balanced pairs only (imbalanced/zero moved to bottom)...")
         balanced_df = df[df['volume_flag'] == 'balanced'].copy()
         other_df = df[df['volume_flag'] != 'balanced'].copy()
 
         if not balanced_df.empty:
-            # Rank only balanced pairs
             balanced_df = balanced_df.sort_values(by='pair_total_7d_vol_usdt', ascending=False).reset_index(drop=True)
             balanced_df['volume_percentile'] = (balanced_df['pair_total_7d_vol_usdt'].rank(pct=True) * 100).round(2)
             balanced_df['volume_percentile_rank'] = balanced_df['volume_percentile'].round(0).astype(int).map(self.ordinal) + " percentile"
             
             p_value = balanced_df['pair_total_7d_vol_usdt'].quantile(self.PERCENTILE / 100.0)
             
-            # Mark lower volume after ranking (exactly as you asked)
             balanced_df['volume_level'] = np.where(
                 balanced_df['volume_percentile'] <= self.PERCENTILE,
                 'low_volume',
@@ -214,19 +216,16 @@ class VolumeFilter:
         else:
             p_value = 0.0
 
-        # Sort non-balanced and prepare for bottom
         if not other_df.empty:
             other_df = other_df.sort_values(by='pair_total_7d_vol_usdt', ascending=False).reset_index(drop=True)
             other_df['volume_level'] = 'excluded'
             other_df['volume_percentile'] = np.nan
             other_df['volume_percentile_rank'] = ''
 
-        # Final DataFrame: balanced ranked at top + others at bottom
         df = pd.concat([balanced_df, other_df], ignore_index=True)
         print(f"📈 {self.PERCENTILE}th percentile total volume (balanced pairs only): ${p_value:,.0f} USDT")
-        # ===========================================================================
 
-        # ====================== CHART (BALANCED ONLY) ======================
+        # Chart (balanced only)
         print(f"📈 Generating sorted rank chart ({self.PERCENTILE}th percentile, excluding imbalanced and zero balance)...")
         if not balanced_df.empty:
             volumes = balanced_df['pair_total_7d_vol_usdt']
@@ -240,7 +239,7 @@ class VolumeFilter:
             plt.yscale('log')
             
             plt.title(f'Pair Total 7-Day Volume - Sorted Highest to Lowest Rank\n'
-                      f'Strong Cointegration + Non-Noise (Balanced pairs only - excluding imbalanced & zero_volume)', 
+                      f'Strong Cointegration (Balanced pairs only - excluding imbalanced & zero_volume)', 
                       fontsize=14, pad=20)
             plt.xlabel('Pair Rank (1 = Highest Total Volume)')
             plt.ylabel('Pair Total Volume USDT (log scale)')
@@ -253,9 +252,8 @@ class VolumeFilter:
             print(f"   ✅ Chart saved → {chart_file}")
         else:
             print("   ⚠️  No balanced pairs → chart skipped")
-        # ===========================================================================
 
-        # Reorder columns (volume columns right after pair_total)
+        # Reorder columns
         cols = list(df.columns)
         try:
             total_idx = cols.index('pair_total_7d_vol_usdt')
@@ -266,7 +264,7 @@ class VolumeFilter:
         except:
             pass
         
-        # Save the final filtered/ranked results
+        # Save
         df.to_csv(output_file, index=False)
         print(f"\n✅ DONE!")
         print(f"   Final file → {output_file} ({len(df):,} rows) ← NO pairs were dropped!")
@@ -276,5 +274,5 @@ class VolumeFilter:
 
 
 if __name__ == "__main__":
-    processor = VolumeFilter()          # you can override any config here, e.g. VolumeFilter(PERCENTILE=20)
-    processor.run()                     # or pass a custom input_file: processor.run("my_other_file.csv")
+    processor = VolumeFilter()          # ← You can also do VolumeFilter(INPUT_FILE="my_custom_file.csv")
+    processor.run()

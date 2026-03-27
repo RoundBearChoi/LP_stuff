@@ -7,6 +7,11 @@ from cointegration_engine import compute_cointegration
 from config import DEFAULT_COINTEGRATION_CORRELATION_MONTHS, DEFAULT_CSV_FILE, DEFAULT_COINTEGRATION_METHOD
 
 
+# ====================== CONFIG (change these!) ======================
+MIN_LOOKBACK_MONTHS: int = 3                # NEW: shortest lookback (was 1)
+# =====================================================================
+
+
 class CointegrationDecayChart:
     def __init__(self, sym1: str, sym2: str, csv_file: str = None,
                  max_months: int = None):
@@ -14,6 +19,7 @@ class CointegrationDecayChart:
         self.sym2 = sym2.upper()
         self.csv_file = csv_file or DEFAULT_CSV_FILE
         self.max_months = max_months or DEFAULT_COINTEGRATION_CORRELATION_MONTHS
+        self.min_months = MIN_LOOKBACK_MONTHS
 
     def _load_data(self):
         if not os.path.exists(self.csv_file):
@@ -44,10 +50,10 @@ class CointegrationDecayChart:
 
     def _compute_lookback_pvalues(self, p1_full: pd.Series, p2_full: pd.Series):
         results = []
-        print(f"\nComputing cointegration p-values (1–{self.max_months} months) "
+        print(f"\nComputing cointegration p-values ({self.min_months}–{self.max_months} months) "
               f"using {DEFAULT_COINTEGRATION_METHOD.value}...")
 
-        for m in range(1, self.max_months + 1):
+        for m in range(self.min_months, self.max_months + 1):
             hours_back = int(m * 30.437 * 24)
             p1_win = p1_full.iloc[-hours_back:]
             p2_win = p2_full.iloc[-hours_back:]
@@ -63,7 +69,7 @@ class CointegrationDecayChart:
                 'half_life': getattr(eg, 'half_life_days', None)
             })
 
-            if m % 6 == 0 or m == 1 or m == self.max_months:
+            if m % 6 == 0 or m == self.min_months or m == self.max_months:
                 status = "✓ Significant" if eg.p_value < 0.05 else "× Not significant"
                 print(f"  → {m:2d} months: p = {eg.p_value:.5f}  {status}")
 
@@ -102,7 +108,7 @@ class CointegrationDecayChart:
                     bbox=dict(boxstyle="round,pad=1", facecolor="#e6f3ff",
                               edgecolor='navy', alpha=0.95))
 
-        # CHART 2 – P-VALUE DECAY (44m LEFT → 1m RIGHT)
+        # CHART 2 – P-VALUE DECAY (now 3m → max_months)
         ax = axs[1]
         ax.plot(months, pvals, marker='o', markersize=5, linewidth=2.8,
                 color='purple', label='Cointegration p-value')
@@ -116,31 +122,37 @@ class CointegrationDecayChart:
                         color='lightgreen', alpha=0.45,
                         label='Cointegrated')
 
-        ax.set_title(f"2. Cointegration p-value DECAY Scan ({self.max_months}m → 1 month)")
-        ax.set_xlabel("Lookback Period (months) — longest (left) → shortest (right)")
+        ax.set_title(f"2. Cointegration p-value DECAY Scan "
+                     f"({self.min_months}m → {self.max_months}m lookback)")
+        ax.set_xlabel(f"Lookback Period (months) — longest ({self.max_months}m left) → shortest ({self.min_months}m right)")
         ax.set_ylabel("p-value")
         ax.set_ylim(0, 1.05)
         ax.grid(True, alpha=0.3)
         ax.legend(fontsize=11)
 
+        # Updated x-ticks (now respect minimum 3 months)
         step = max(4, self.max_months // 8)
-        ticks = list(range(self.max_months, 0, -step))
-        if 1 not in ticks:
-            ticks.append(1)
+        ticks = list(range(self.max_months, self.min_months - 1, -step))
+        if self.min_months not in ticks:
+            ticks.append(self.min_months)
         ax.set_xticks(ticks)
         ax.invert_xaxis()
 
         fig.suptitle(f"COINTEGRATION P-VALUE DECAY SCAN — {self.sym1} vs {self.sym2}\n"
-                     f"Method: {method_display} | Last {self.max_months} months",
+                     f"Method: {method_display} | Last {self.max_months} months "
+                     f"(minimum lookback {self.min_months}m)",
                      fontsize=15.5, y=0.96)
 
-        output_file = f"cointegration_{self.sym1}_{self.sym2}_{DEFAULT_COINTEGRATION_METHOD.value}_{self.max_months}m_pvalue_scan.png"
+        output_file = (f"cointegration_{self.sym1}_{self.sym2}_"
+                       f"{DEFAULT_COINTEGRATION_METHOD.value}_{self.max_months}m_"
+                       f"min{self.min_months}m_pvalue_scan.png")
 
         plt.savefig(output_file, dpi=200, bbox_inches='tight')
         plt.close(fig)
 
         print(f"\n✅ Saved: {output_file}")
         print(f"   Full-period ({self.max_months}m) p-value: {full['p_value']:.5f}")
+        print(f"   Lookback range used: {self.min_months}–{self.max_months} months")
 
 
 if __name__ == "__main__":

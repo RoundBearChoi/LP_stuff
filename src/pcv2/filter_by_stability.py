@@ -10,10 +10,9 @@ from config import DEFAULT_CSV_FILE, DEFAULT_COINTEGRATION_METHOD
 # ====================== CONFIG (change these!) ======================
 # All user-tunable settings are here at the top — no more scrolling!
 
-# Half-life noise marking & plot percentiles
-# (Pairs outside this range get noise=True but are NOT deleted)
-LOWER_P: float = 10.0   # e.g. 10th percentile = very short half-lives marked as noise
-UPPER_P: float = 90.0   # e.g. 90th percentile = very long half-lives marked as noise
+# Half-life chart reference percentiles (PURELY VISUAL — no filtering or marking)
+LOWER_P: float = 20.0 
+UPPER_P: float = 80.0
 
 # Cointegration stability score settings
 MAX_MONTHS_FOR_STABILITY: int = 18          # How many months of lookback windows to test
@@ -25,24 +24,26 @@ OVERLAP_PERCENTAGE: float = 0.8             # Keep only pairs with ≥ this % of
 # Strong filter toggle
 USE_STRONG_FILTER: bool = True              # Set False to skip strong-cointegration filter
 
-# Input CSV (you can hard-code a different filename here if you want)
+# Input CSV
 INPUT_CSV: str = "all_pairs_cointegration_correlation_johansen_one_direction_18m_top42778.csv"
 # =====================================================================
 
 
 class CointegrationDataProcessor:
     """
-    Updated workflow (March 2026 + your exact requests):
+    Updated workflow (March 2026 — per your latest request):
     1. Loads full CSV
     2. Overlap filter → self.filtered_df
     3. Strong cointegration filter → self.strong_df
-    4. Plot half-life distribution (PNG created FIRST)
-    5. Mark pairs outside chosen percentiles as noise=True (NO DELETION)
-    6. Add cointegration_stability_score
-    7. Export cleaned CSV (NOW LAST)
+    4. Plot half-life distribution (PNG created FIRST) — 20th/80th/median shown as REFERENCE ONLY
+    5. Add cointegration_stability_score
+    6. Export cleaned CSV (NOW LAST)
 
-    NEW: noise column (boolean) + sorting pushes noise=True to the very bottom.
-    Sorting order: noise (False first) → cointegration_stability_score DESC → half_life_days ASC
+    NEW BEHAVIOR:
+    - NO trimming whatsoever
+    - NO noise column
+    - ALL pairs that pass overlap + strong filter are kept
+    - Sorting order: cointegration_stability_score DESC → half_life_days ASC
 
     Output filename format:
     - CSV:  filtered_by_stability_johansen_one_direction_18m_top42778.csv
@@ -100,32 +101,6 @@ class CointegrationDataProcessor:
         print(f"🔥 STRONG COINTEGRATION FILTER APPLIED")
         print(f"✅ Kept {kept:,} STRONG pairs ({kept_pct:.1f}% of overlap-filtered data)")
         print(f"❌ Removed {total - kept:,} non-strong pairs\n")
-
-    def mark_noise_by_half_life_percentiles(self, lower_percentile: float = LOWER_P, upper_percentile: float = UPPER_P) -> None:
-        df = self.strong_df if self.strong_df is not None else self.filtered_df
-        if df is None or len(df) == 0:
-            print("❌ No data available for noise marking.")
-            return
-
-        lower_val = df['half_life_days'].quantile(lower_percentile / 100)
-        upper_val = df['half_life_days'].quantile(upper_percentile / 100)
-
-        df = df.copy()
-        df['noise'] = (df['half_life_days'] < lower_val) | (df['half_life_days'] > upper_val)
-
-        noise_count = int(df['noise'].sum())
-        clean_count = len(df) - noise_count
-        clean_pct = (clean_count / len(df) * 100)
-
-        print(f"🏷️ HALF-LIFE NOISE MARKING APPLIED ({lower_percentile:.0f}th – {upper_percentile:.0f}th)")
-        print(f"   Clean range : {lower_val:.2f} → {upper_val:.2f} days")
-        print(f"✅ Clean pairs : {clean_count:,} ({clean_pct:.1f}%)")
-        print(f"🔴 Noise pairs : {noise_count:,}\n")
-
-        if self.strong_df is not None:
-            self.strong_df = df
-        else:
-            self.filtered_df = df
 
     def add_cointegration_stability_score(self, max_months: int = MAX_MONTHS_FOR_STABILITY, p_threshold: float = P_VALUE_THRESHOLD) -> None:
         if self.strong_df is None or len(self.strong_df) == 0:
@@ -197,31 +172,28 @@ class CointegrationDataProcessor:
             print("No data yet.")
             return
 
-        title = "STRONG COINTEGRATED PAIRS SUMMARY (overlap + strong + noise flag + stability)"
+        title = "STRONG COINTEGRATED PAIRS SUMMARY (overlap + strong + stability)"
         if self.strong_df is None:
             title = "OVERLAP-FILTERED SUMMARY"
 
         print(f"📊 {title}")
         print("=" * 70)
         cols = ['overlap_hours', 'hourly_pearson', 'daily_pearson', 'abs_corr',
-                'cointegration_pvalue', 'half_life_days', 'cointegration_stability_score', 'noise']
+                'cointegration_pvalue', 'half_life_days', 'cointegration_stability_score']
         print(df[cols].describe().round(4))
         print(f"\nTotal pairs kept: {len(df):,}")
-        if 'noise' in df.columns:
-            print(f"   Clean (noise=False): {(df['noise'] == False).sum():,}")
-            print(f"   Noise  (noise=True) : {(df['noise'] == True).sum():,}")
 
     def export_filtered(self, output_path: Optional[str] = None) -> str:
         if self.strong_df is not None:
             df_to_export = self.strong_df.copy()
-            data_type = "strong + long-overlap + noise-marked + stability-scored + SORTED"
+            data_type = "strong + long-overlap + stability-scored + SORTED"
             
-            if {'cointegration_stability_score', 'half_life_days', 'noise'}.issubset(df_to_export.columns):
+            if {'cointegration_stability_score', 'half_life_days'}.issubset(df_to_export.columns):
                 df_to_export = df_to_export.sort_values(
-                    by=['noise', 'cointegration_stability_score', 'half_life_days'],
-                    ascending=[True, False, True]
+                    by=['cointegration_stability_score', 'half_life_days'],
+                    ascending=[False, True]
                 ).reset_index(drop=True)
-                print(f"   📋 Sorted by: noise (False/clean first) → stability DESC → half_life_days ASC")
+                print(f"   📋 Sorted by: stability DESC → half_life_days ASC")
             else:
                 print("   ⚠️  Missing sorting columns (skipped)")
 
@@ -243,12 +215,10 @@ class CointegrationDataProcessor:
         print(f"💾 Exported {data_type} data → {output_path}")
         
         if 'cointegration_stability_score' in df_to_export.columns and len(df_to_export) > 0:
-            clean_pairs = df_to_export[df_to_export['noise'] == False] if 'noise' in df_to_export.columns else df_to_export
-            if len(clean_pairs) > 0:
-                best = clean_pairs.iloc[0]
-                print(f"   🏆 Top clean pair after sorting: {best['pair']} "
-                      f"| stability={best['cointegration_stability_score']:.4f} "
-                      f"| half_life={best['half_life_days']:.2f} days")
+            best = df_to_export.iloc[0]
+            print(f"   🏆 Top pair after sorting: {best['pair']} "
+                  f"| stability={best['cointegration_stability_score']:.4f} "
+                  f"| half_life={best['half_life_days']:.2f} days")
 
         return str(output_path)
 
@@ -293,9 +263,9 @@ class CointegrationDataProcessor:
         plt.axvline(x=rank_upper, color='purple', linestyle='--', linewidth=2.2, alpha=0.85, label=f'{upper_percentile:.0f}th percentile')
         plt.axhline(y=median_hl, color='crimson', linestyle=':', linewidth=1.5, alpha=0.6)
 
-        title = "Half-Life Distribution – Strong Cointegrated Pairs\n(Sorted: Lowest → Highest)"
+        title = "Half-Life Distribution – Strong Cointegrated Pairs\n(Sorted: Lowest → Highest) — 20th/80th/median shown for REFERENCE ONLY"
         if self.strong_df is None:
-            title = "Half-Life Distribution – Overlap-Filtered Pairs\n(Sorted: Lowest → Highest)"
+            title = "Half-Life Distribution – Overlap-Filtered Pairs\n(Sorted: Lowest → Highest) — 20th/80th/median shown for REFERENCE ONLY"
             
         plt.title(title, fontsize=15, pad=20)
         plt.xlabel("Rank (1 = shortest half-life)", fontsize=12)
@@ -330,7 +300,7 @@ Mean: {half_lives.mean():.2f} days | Min: {half_lives.min():.2f} | Max: {half_li
         plt.savefig(output_png, dpi=165, bbox_inches='tight', facecolor='white')
         plt.close()
 
-        print(f"📊 Chart saved with {lower_percentile:.0f}th / Median / {upper_percentile:.0f}th percentiles")
+        print(f"📊 Chart saved with {lower_percentile:.0f}th / Median / {upper_percentile:.0f}th percentiles (REFERENCE ONLY)")
         print(f"   → {output_png}")
         print(f"   Pairs plotted: {n:,}")
         return str(output_png)
@@ -348,20 +318,14 @@ if __name__ == "__main__":
     print("\n" + "="*80)
     print("🎨 STEP 1: Generating half-life distribution chart...")
 
-    print(f"📍 Using percentiles: {LOWER_P}th → {UPPER_P}th for BOTH chart AND noise marking")
+    print(f"📍 Using percentiles: {LOWER_P}th → {UPPER_P}th for CHART REFERENCE ONLY (no filtering)")
 
     processor.plot_half_life_distribution(
         lower_percentile=LOWER_P, 
         upper_percentile=UPPER_P
     )
     
-    print("\n🏷️ STEP 2: Marking noise (no pairs deleted)...")
-    processor.mark_noise_by_half_life_percentiles(
-        lower_percentile=LOWER_P, 
-        upper_percentile=UPPER_P
-    )
-
-    print("\n🔬 STEP 2.5: Computing 'how stable is cointegration until the latest month?' ...")
+    print("\n🔬 STEP 2: Computing 'how stable is cointegration until the latest month?' ...")
     processor.add_cointegration_stability_score()
 
     print("\n💾 STEP 3: Exporting final cleaned CSV (now last)...")
