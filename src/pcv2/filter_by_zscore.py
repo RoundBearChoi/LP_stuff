@@ -14,9 +14,9 @@ from get_zscore_reversion_metrics import compute_zscore_reversion_metrics
 # ====================== CONFIG (change these!) ======================
 INPUT_CSV: str = "filtered_by_volume_johansen_one_direction_18m_top42778.csv"
 
-Z_UPPER_THRESHOLD: float = 1.0
-Z_LOWER_THRESHOLD: float = -1.0
-REVERT_CONFIRM_LEVEL: float = 0.25
+Z_UPPER_THRESHOLD: float = 1.5
+Z_LOWER_THRESHOLD: float = -1.5
+REVERT_CONFIRM_LEVEL: float = 0.5
 
 MAX_MONTHS_FOR_ZSCORE: int = 18
 
