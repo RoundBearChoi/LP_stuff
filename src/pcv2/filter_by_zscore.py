@@ -138,37 +138,37 @@ Mean: {counts.mean():.2f} | Max: {counts.max():.0f} | Min: {counts.min():.0f}
 
         df_to_export = self.df.copy()
 
-        # ====================== NEW VOLUME PRIORITIZATION ======================
+        # ====================== NEW VOLUME + BALANCED REVERSION SORTING ======================
         if 'volume_level' in df_to_export.columns:
             # 0 = high_volume (top of ranking), 1 = everything else (bottom)
             df_to_export['volume_priority'] = df_to_export['volume_level'].apply(
                 lambda x: 0 if str(x).lower() == 'high_volume' else 1
             )
-            sort_columns = ['noise', 'volume_priority', 'balanced_reversion_count',
-                            'cointegration_stability_score', 'half_life_days']
-            sort_ascending = [True, True, False, False, True]
+            sort_columns = ['volume_priority', 'balanced_reversion_count',
+                            'noise', 'cointegration_stability_score', 'half_life_days']
+            sort_ascending = [True, False, True, False, True]
             print(f"   📊 Volume prioritization ENABLED: 'high_volume' pairs ranked FIRST, "
-                  f"all others pushed to the bottom.")
+                  f"then sorted by balanced_reversion_count DESC.")
         else:
-            sort_columns = ['noise', 'balanced_reversion_count',
+            sort_columns = ['balanced_reversion_count', 'noise',
                             'cointegration_stability_score', 'half_life_days']
-            sort_ascending = [True, False, False, True]
-            print("   📊 No volume_level column found — ranking all pairs normally.")
+            sort_ascending = [False, True, False, True]
+            print("   📊 No volume_level column found — ranking by balanced_reversion_count DESC first.")
         # =======================================================================
 
-        if all(col in df_to_export.columns for col in ['noise', 'balanced_reversion_count',
+        if all(col in df_to_export.columns for col in ['volume_priority', 'balanced_reversion_count',
                                                        'cointegration_stability_score', 'half_life_days']):
             df_to_export = df_to_export.sort_values(
                 by=sort_columns,
                 ascending=sort_ascending
             ).reset_index(drop=True)
 
-            # Clean up temporary column (still visible in console summary if you want it)
+            # Clean up temporary column
             if 'volume_priority' in df_to_export.columns:
                 df_to_export = df_to_export.drop(columns=['volume_priority'])
 
-            print("   📋 Sorted by: noise → volume_priority (high first) → "
-                  "balanced_reversion_count DESC → stability DESC → half_life ASC")
+            print("   📋 Sorted by: volume_priority ASC (high_volume first) → "
+                  "balanced_reversion_count DESC → noise → stability DESC → half_life ASC")
 
         if output_path is None:
             stem = self.csv_path.stem
