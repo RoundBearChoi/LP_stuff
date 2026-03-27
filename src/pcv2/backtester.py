@@ -7,14 +7,14 @@ from datetime import datetime
 # ====================== CONFIG SECTION ======================
 # ←←← EDIT THESE VALUES ONLY ←←←
 CONFIG = {
-    'asset_a': 'BSV',
-    'asset_b': 'ZK',
+    'asset_a': 'BABYDOGE',
+    'asset_b': 'BTC',
     'target_weight_a': 0.50,
     'outer_buffer': 0.05,
     'inner_rebalance_dev': 0.0,
     'initial_capital': 2000.0,
     'fee_rate': 0.01,
-    'backtest_months': 3,          # set to 0 or negative for FULL dataset
+    'backtest_months': 6,          # set to 0 or negative for FULL dataset
     'csv_path': 'top300_hourly_18months_combined.csv',
 }
 # ==========================================================

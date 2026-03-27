@@ -18,7 +18,7 @@ Z_UPPER_THRESHOLD: float = 1.5
 Z_LOWER_THRESHOLD: float = -1.5
 REVERT_CONFIRM_LEVEL: float = 0.5
 
-MAX_MONTHS_FOR_ZSCORE: int = 18
+MAX_MONTHS_FOR_ZSCORE: int = 6
 
 PLOT_DISTRIBUTION: bool = True
 # =====================================================================
