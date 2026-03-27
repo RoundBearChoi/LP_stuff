@@ -7,8 +7,8 @@ from datetime import datetime
 # ====================== CONFIG SECTION ======================
 # ←←← EDIT THESE VALUES ONLY ←←←
 CONFIG = {
-    'asset_a': 'BTC',
-    'asset_b': 'DAI',
+    'asset_a': 'GAS',
+    'asset_b': 'SAFE',
     'target_weight_a': 0.50,
     'outer_buffer': 0.05,
     'inner_rebalance_dev': 0.0,
@@ -285,9 +285,15 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(
         description='Volatility Harvesting Backtester – clean rebalancing-only version',
-        formatter_class=argparse.ArgumentDefaultsHelpFormatter
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+        usage='%(prog)s [ASSET_A ASSET_B] [options]'
     )
 
+    # === NEW POSITIONAL SUPPORT (what you asked for) ===
+    parser.add_argument('assets', nargs='*',
+                        help='Optional positional arguments: ASSET_A ASSET_B (e.g. ETH BTC)')
+
+    # === Keep all original flags for full backward compatibility ===
     parser.add_argument('--asset-a', type=str, default=CONFIG['asset_a'])
     parser.add_argument('--asset-b', type=str, default=CONFIG['asset_b'])
     parser.add_argument('--months', type=int, default=CONFIG['backtest_months'])
@@ -300,12 +306,29 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
+    # === Resolve final assets (positional → flags → CONFIG) ===
+    # Start with CONFIG defaults
+    asset_a = CONFIG['asset_a']
+    asset_b = CONFIG['asset_b']
+
+    # Positional arguments take precedence (your new quick way)
+    if len(args.assets) >= 1:
+        asset_a = args.assets[0].upper()
+    if len(args.assets) >= 2:
+        asset_b = args.assets[1].upper()
+
+    # Any explicit --asset-a / --asset-b flag overrides everything
+    if args.asset_a != CONFIG['asset_a']:
+        asset_a = args.asset_a.upper()
+    if args.asset_b != CONFIG['asset_b']:
+        asset_b = args.asset_b.upper()
+
     backtest_months = None if args.months <= 0 else args.months
 
     backtester = VolatilityHarvestingBacktester(
         csv_path=args.csv_path,
-        asset_a=args.asset_a.upper(),
-        asset_b=args.asset_b.upper(),
+        asset_a=asset_a,
+        asset_b=asset_b,
         target_weight_a=args.target_weight_a,
         outer_buffer=args.outer_buffer,
         inner_rebalance_dev=args.inner_rebalance_dev,
