@@ -41,7 +41,8 @@ def compute_zscore_reversion_metrics(
 ) -> Dict:
     """
     Compute balanced z-score reversion metrics for ONE pair.
-    Returns a dict with all columns that filter_by_zscore.py expects.
+    Now also returns 'reversion_timestamps' (list of pd.Timestamp) for
+    temporal consistency scoring in filter_by_zscore.py.
     """
     sym1, sym2 = sym1.upper(), sym2.upper()
 
@@ -87,6 +88,11 @@ def compute_zscore_reversion_metrics(
         spread = np.log(p1) - hedge * np.log(p2)
         zscore = (spread - spread.mean()) / spread.std(ddof=0)
 
+        # ====================== NEW: Track exact completion timestamps ======================
+        up_reversion_times = []
+        down_reversion_times = []
+        # ===================================================================================
+
         # Count completed round-trips
         up = down = 0
         idx = 0
@@ -97,6 +103,7 @@ def compute_zscore_reversion_metrics(
                 for j in range(idx + 1, n):
                     if zscore.iloc[j] < revert_confirm:
                         up += 1
+                        up_reversion_times.append(zscore.index[j])      # ← completion timestamp
                         idx = j
                         break
                 else:
@@ -105,6 +112,7 @@ def compute_zscore_reversion_metrics(
                 for j in range(idx + 1, n):
                     if zscore.iloc[j] > -revert_confirm:
                         down += 1
+                        down_reversion_times.append(zscore.index[j])    # ← completion timestamp
                         idx = j
                         break
                 else:
@@ -133,6 +141,9 @@ def compute_zscore_reversion_metrics(
             'zscore_threshold_up': z_upper,
             'zscore_threshold_down': z_lower,
             'revert_confirm_level': revert_confirm,
+            # ====================== NEW COLUMN FOR FREQUENCY ANALYSIS ======================
+            'reversion_timestamps': sorted(up_reversion_times + down_reversion_times),
+            # =================================================================================
         }
 
         if verbose:
@@ -161,6 +172,7 @@ def _empty_metrics(sym1: str, sym2: str) -> Dict:
         'zscore_threshold_up': Z_UPPER_THRESHOLD,
         'zscore_threshold_down': Z_LOWER_THRESHOLD,
         'revert_confirm_level': REVERT_CONFIRM_LEVEL,
+        'reversion_timestamps': [],          # ← important for filter_by_zscore
     }
 
 

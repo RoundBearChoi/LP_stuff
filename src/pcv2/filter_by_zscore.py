@@ -18,7 +18,7 @@ Z_UPPER_THRESHOLD: float = 1.5
 Z_LOWER_THRESHOLD: float = -1.5
 REVERT_CONFIRM_LEVEL: float = 0.5
 
-MAX_MONTHS_FOR_ZSCORE: int = 6
+MAX_MONTHS_FOR_ZSCORE: int = 18
 
 PLOT_DISTRIBUTION: bool = True
 # =====================================================================
@@ -26,8 +26,8 @@ PLOT_DISTRIBUTION: bool = True
 
 class ZscoreDataProcessor:
     """
-    Post-stability processor (March 2026) — now with clean tqdm progress bar
-    and volume_level prioritization as requested.
+    Post-stability processor (March 2026) — now with volume prioritization
+    AND reversion_frequency_consistency_score (temporal regularity of events).
     """
 
     def __init__(self, csv_path: str):
@@ -49,8 +49,8 @@ class ZscoreDataProcessor:
             return
 
         print(f"\n🔬 COMPUTING Z-SCORE REVERSION METRICS (±{Z_UPPER_THRESHOLD} → revert past ±{REVERT_CONFIRM_LEVEL})")
-        print("   This answers: 'how many completed volatility-harvest rebalance opportunities per pair?'")
-        print(f"   Using last {MAX_MONTHS_FOR_ZSCORE} months of price data (consistent with stability)")
+        print("   Now also computing TEMPORAL FREQUENCY CONSISTENCY of reversions")
+        print(f"   Using last {MAX_MONTHS_FOR_ZSCORE} months of price data")
 
         # Load price data ONCE
         price_df = pd.read_csv(DEFAULT_CSV_FILE, parse_dates=['datetime'])
@@ -62,9 +62,12 @@ class ZscoreDataProcessor:
         n_pairs = len(self.df)
         up_revs = []
         down_revs = []
+        consistency_scores = []
+        mean_intervals = []
+        max_gaps = []
 
         for row in tqdm(self.df.itertuples(index=False), total=n_pairs,
-                        desc="Computing z-score reversions", unit="pair", ncols=100):
+                        desc="Computing z-score reversions + consistency", unit="pair", ncols=100):
             sym1, sym2 = row.symbol1, row.symbol2
 
             metrics = compute_zscore_reversion_metrics(
@@ -77,8 +80,32 @@ class ZscoreDataProcessor:
                 verbose=False,
             )
 
-            up_revs.append(metrics['zscore_up_reversions'])
-            down_revs.append(metrics['zscore_down_reversions'])
+            up = metrics['zscore_up_reversions']
+            down = metrics['zscore_down_reversions']
+            timestamps = metrics.get('reversion_timestamps', [])
+
+            up_revs.append(up)
+            down_revs.append(down)
+
+            # ====================== NEW: FREQUENCY CONSISTENCY ======================
+            if len(timestamps) >= 2:
+                # Robust fix that works on ALL pandas versions (no warning, no TypeError)
+                ts_clean = pd.to_datetime(timestamps).tz_localize(None)
+                deltas = (np.diff(ts_clean.values) / np.timedelta64(1, 'D')).astype(float)  # exact days (fractional OK)
+                mean_delta = np.mean(deltas)
+                std_delta = np.std(deltas)
+                cv = std_delta / mean_delta if mean_delta > 0 else 0.0
+                score = 1 / (1 + cv)
+                max_gap = float(np.max(deltas))
+            else:
+                score = 0.0
+                mean_delta = np.nan
+                max_gap = np.nan
+            # =====================================================================
+
+            consistency_scores.append(score)
+            mean_intervals.append(mean_delta)
+            max_gaps.append(max_gap)
 
         self.df = self.df.copy()
         self.df['zscore_up_reversions'] = up_revs
@@ -86,13 +113,20 @@ class ZscoreDataProcessor:
         self.df['balanced_reversion_count'] = [min(u, d) for u, d in zip(up_revs, down_revs)]
         self.df['total_reversions'] = [u + d for u, d in zip(up_revs, down_revs)]
 
+        self.df['reversion_consistency_score'] = consistency_scores
+        self.df['mean_reversion_interval_days'] = mean_intervals
+        self.df['max_reversion_gap_days'] = max_gaps
+
         if 'overlap_hours' in self.df.columns:
             self.df['data_years'] = self.df['overlap_hours'] / (24 * 365.25)
             self.df['signals_per_year'] = self.df['total_reversions'] / self.df['data_years'].replace(0, np.nan)
 
-        mean_score = self.df['balanced_reversion_count'].mean()
-        print(f"\n✅ Z-score metrics added! Mean balanced reversions: {mean_score:.2f}")
-        print(f"   Columns added: balanced_reversion_count, total_reversions, signals_per_year\n")
+        mean_balanced = self.df['balanced_reversion_count'].mean()
+        mean_consistency = self.df['reversion_consistency_score'].mean()
+        print(f"\n✅ Z-score metrics added! Mean balanced reversions: {mean_balanced:.2f}")
+        print(f"   Mean consistency score: {mean_consistency:.3f}")
+        print(f"   Columns added: balanced_reversion_count, total_reversions, reversion_consistency_score, "
+              f"mean_reversion_interval_days, max_reversion_gap_days, signals_per_year\n")
 
     def plot_reversion_distribution(self, output_png: Optional[str] = None) -> str:
         if 'balanced_reversion_count' not in self.df.columns or len(self.df) == 0:
@@ -138,36 +172,31 @@ Mean: {counts.mean():.2f} | Max: {counts.max():.0f} | Min: {counts.min():.0f}
 
         df_to_export = self.df.copy()
 
-        # ====================== VOLUME + BALANCED REVERSION SORTING ======================
         if 'volume_level' in df_to_export.columns:
-            # 0 = high_volume (top of ranking), 1 = everything else (bottom)
             df_to_export['volume_priority'] = df_to_export['volume_level'].apply(
                 lambda x: 0 if str(x).lower() == 'high_volume' else 1
             )
-            sort_columns = ['volume_priority', 'balanced_reversion_count',
+            sort_columns = ['volume_priority', 'balanced_reversion_count', 'reversion_consistency_score',
                             'cointegration_stability_score', 'half_life_days']
-            sort_ascending = [True, False, False, True]
-            print(f"   📊 Volume prioritization ENABLED: 'high_volume' pairs ranked FIRST, "
-                  f"then sorted by balanced_reversion_count DESC.")
+            sort_ascending = [True, False, False, False, True]
+            print(f"   📊 Volume prioritization ENABLED: 'high_volume' first → balanced_reversion_count DESC "
+                  f"→ reversion_consistency_score DESC")
         else:
-            sort_columns = ['balanced_reversion_count',
+            sort_columns = ['balanced_reversion_count', 'reversion_consistency_score',
                             'cointegration_stability_score', 'half_life_days']
-            sort_ascending = [False, False, True]
-            print("   📊 No volume_level column found — ranking by balanced_reversion_count DESC first.")
-        # =======================================================================
+            sort_ascending = [False, False, False, True]
+            print("   📊 No volume_level column — ranking by balanced_reversion_count DESC → consistency DESC")
 
-        # Always sort now that we know the columns exist after add_zscore_reversion_metrics()
         df_to_export = df_to_export.sort_values(
             by=sort_columns,
             ascending=sort_ascending
         ).reset_index(drop=True)
 
-        # Clean up temporary column
         if 'volume_priority' in df_to_export.columns:
             df_to_export = df_to_export.drop(columns=['volume_priority'])
 
-        print("   📋 Sorted by: volume_priority ASC (high_volume first) → "
-              "balanced_reversion_count DESC → stability DESC → half_life ASC")
+        print("   📋 Sorted by: volume_priority ASC → balanced_reversion_count DESC → "
+              "reversion_consistency_score DESC → stability DESC → half_life ASC")
 
         if output_path is None:
             stem = self.csv_path.stem
@@ -183,6 +212,9 @@ Mean: {counts.mean():.2f} | Max: {counts.max():.0f} | Min: {counts.min():.0f}
         if len(df_to_export) > 0:
             best = df_to_export.iloc[0]
             print(f"   🏆 Top pair: {best['pair']} | balanced_reversions={best['balanced_reversion_count']} "
+                  f"| consistency={best['reversion_consistency_score']:.3f} "
+                  f"| mean_interval={best['mean_reversion_interval_days']:.1f}d "
+                  f"| max_gap={best['max_reversion_gap_days']:.0f}d "
                   f"| stability={best.get('cointegration_stability_score', 'N/A'):.4f} "
                   f"| half_life={best['half_life_days']:.1f} days | volume={best.get('volume_level', 'N/A')}")
 
@@ -193,8 +225,9 @@ Mean: {counts.mean():.2f} | Max: {counts.max():.0f} | Min: {counts.min():.0f}
             return
         print("\n📊 Z-SCORE RANKING SUMMARY")
         print("=" * 70)
-        cols = ['balanced_reversion_count', 'total_reversions', 'signals_per_year',
-                'cointegration_stability_score', 'half_life_days']
+        cols = ['balanced_reversion_count', 'total_reversions', 'reversion_consistency_score',
+                'mean_reversion_interval_days', 'max_reversion_gap_days',
+                'signals_per_year', 'cointegration_stability_score', 'half_life_days']
         cols = [c for c in cols if c in self.df.columns]
         print(self.df[cols].describe().round(3))
         print(f"\nTotal pairs: {len(self.df):,}")
@@ -211,7 +244,7 @@ if __name__ == "__main__":
     processor = ZscoreDataProcessor(INPUT_CSV)
     
     print("\n" + "="*80)
-    print("🔬 STEP 1: Computing z-score reversion metrics...")
+    print("🔬 STEP 1: Computing z-score reversion metrics + temporal consistency...")
     processor.add_zscore_reversion_metrics()
     
     if PLOT_DISTRIBUTION:
