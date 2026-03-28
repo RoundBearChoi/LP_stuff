@@ -2,17 +2,26 @@ import requests
 import time
 import json
 from typing import List, Dict, Any, Optional
+from collections import defaultdict
 
 # ========================== CONFIG SECTION ==========================
-# ← Everything you can tweak is right here at the top
 CONFIG = {
-    "networks": ["solana", "bsc", "eth", "base", "arbitrum", "polygon_pos", "hyperliquid"],   # ← UPDATED as requested
-    "min_volume_24h_usd": 100_000,                              # ← ONLY filter left: minimum 24h volume (TVL filter removed)
-    "max_pages_per_network": 1,                                # safety cap — we usually stop much earlier now
-    "output_json": "geckoterminal_top_volume.json",             # JSON export (only format we keep)
-    "rate_limit_sleep_seconds": 65,                             # how long to wait on 429
-    "max_retries_per_page": 3,                                  # retry the same page up to 3 times on rate limit
-    "request_timeout": 15,                                      # seconds
+    "networks": ["solana", "bsc", "eth", "base", "arbitrum", "polygon_pos", "hyperliquid"],
+    "min_volume_24h_usd": 100_000,                              # ← ONLY filter left
+    "max_pages_per_network": 1,                                # safety cap
+    "output_prefix": "geckoterminal_top_volume",               # ← base name for per-chain files
+    "network_filename_map": {                                  # ← maps API network → your desired filename suffix
+        "solana": "sol",
+        "bsc": "bsc",
+        "eth": "eth",
+        "base": "base",
+        "arbitrum": "arbitrum",
+        "polygon_pos": "polygon",
+        "hyperliquid": "hyperliquid",
+    },
+    "rate_limit_sleep_seconds": 65,
+    "max_retries_per_page": 3,
+    "request_timeout": 15,
 }
 # =====================================================================
 
@@ -20,12 +29,12 @@ CONFIG = {
 class GeckoTerminalFetcher:
     """
     Clean OOP wrapper for GeckoTerminal public API.
-    
-    CHANGES MADE (per your request):
-    - target_top_n completely removed
-    - Now collects and exports ALL pairs with 24h volume >= min_volume_24h_usd
-    - TVL filter already gone; only volume filter remains
-    - Smart per-chain early-stop still active (stops the moment volume drops below threshold)
+
+    UPDATES (per your request):
+    - Separate JSON file per chain (e.g. geckoterminal_top_volume_sol.json)
+    - Still returns a single flat list for backward compatibility
+    - Global console output unchanged
+    - Only 24h volume filter remains
     """
 
     BASE_URL = "https://api.geckoterminal.com/api/v2"
@@ -38,7 +47,7 @@ class GeckoTerminalFetcher:
 
     @staticmethod
     def safe_float(value, default: float = 0.0) -> float:
-        """Safely convert API strings/numbers to float (handles None, '', 'null', etc.)."""
+        """Safely convert API strings/numbers to float."""
         if value is None:
             return default
         try:
@@ -63,7 +72,7 @@ class GeckoTerminalFetcher:
                     timeout=self.config["request_timeout"]
                 )
 
-                if response.status_code == 429:  # Rate limit
+                if response.status_code == 429:
                     sleep_time = self.config["rate_limit_sleep_seconds"]
                     print(f"   ⏳ Rate limit (429) on {network} page {page} — waiting {sleep_time}s (attempt {attempt}/{self.config['max_retries_per_page']})")
                     time.sleep(sleep_time)
@@ -84,18 +93,18 @@ class GeckoTerminalFetcher:
                     print(f"   ❌ Error on {network} page {page}: {e}")
                     break
 
-        return []  # failed after retries
+        return []
 
     def fetch_filtered_top_pairs(self) -> List[Dict[str, Any]]:
         """
-        Main method: returns ALL pairs with 24h volume >= min_volume_24h_usd.
-        No more target_top_n limit — we export everything that passes the volume filter.
+        Main method: returns ALL pairs (flat list) with 24h volume >= min_volume_24h_usd.
+        Also exports one JSON file per chain.
         """
-        filtered_pairs: List[Dict[str, Any]] = []
+        network_pairs = defaultdict(list)
 
         print("\n" + "=" * 70)
         print("Starting fetch — ONLY 24h volume filter + per-chain early stop")
-        print("Collecting ALL qualifying pairs (no artificial top-N limit)")
+        print("Exporting separate JSON per chain")
         print("=" * 70)
 
         for network in self.config["networks"]:
@@ -116,17 +125,17 @@ class GeckoTerminalFetcher:
                     # === EARLY-STOP LOGIC ===
                     if vol_24h < self.config["min_volume_24h_usd"]:
                         print(f"   ⚡ Volume dropped below ${self.config['min_volume_24h_usd']:,.0f} "
-                              f"on {network} page {page} — stopping this chain early and moving to next network")
+                              f"on {network} page {page} — stopping this chain early")
                         network_stopped_early = True
                         break
 
-                    # === FILTER: ONLY volume matters now ===
+                    # === FILTER & COLLECT ===
                     if vol_24h >= self.config["min_volume_24h_usd"]:
                         pair_info = {
                             "network": network,
                             "pool_address": pool.get("id"),
                             "name": attrs.get("name", "Unknown Pair"),
-                            "tvl_usd": self.safe_float(attrs.get("reserve_in_usd")),   # still collected for info
+                            "tvl_usd": self.safe_float(attrs.get("reserve_in_usd")),
                             "volume_24h_usd": vol_24h,
                             "fdv_usd": self.safe_float(attrs.get("fdv_usd")),
                             "price_usd": self.safe_float(attrs.get("price_usd")),
@@ -135,25 +144,43 @@ class GeckoTerminalFetcher:
                             "total_tx_24h": (attrs.get("transactions", {}).get("h24", {}).get("buys", 0) +
                                              attrs.get("transactions", {}).get("h24", {}).get("sells", 0)),
                         }
-                        filtered_pairs.append(pair_info)
+                        network_pairs[network].append(pair_info)
 
-                # If we hit a low-volume pool, we already broke the pool loop — now break the page loop
                 if network_stopped_early:
                     break
 
-            # Small politeness delay between networks
+            # === EXPORT PER-CHAIN JSON ===
+            if network_pairs[network]:
+                # Use friendly filename suffix (e.g. "sol" instead of "solana")
+                suffix = self.config["network_filename_map"].get(network, network)
+                json_path = f"{self.config['output_prefix']}_{suffix}.json"
+
+                network_pairs[network].sort(key=lambda x: x["volume_24h_usd"], reverse=True)
+                with open(json_path, mode="w", encoding="utf-8") as f:
+                    json.dump(network_pairs[network], f, indent=2, ensure_ascii=False)
+                print(f"   💾 Exported {len(network_pairs[network])} pairs for {network.upper()} → {json_path}")
+            else:
+                print(f"   ⚠️  No pairs above volume threshold for {network.upper()}")
+
+            # Politeness delay between networks
             if network != self.config["networks"][-1]:
                 time.sleep(2)
 
-        # Final sort by 24h volume (highest first)
+        # === GLOBAL LIST FOR RETURN + CONSOLE (unchanged UX) ===
+        filtered_pairs: List[Dict[str, Any]] = []
+        for net in self.config["networks"]:
+            filtered_pairs.extend(network_pairs[net])
+
         filtered_pairs.sort(key=lambda x: x["volume_24h_usd"], reverse=True)
 
-        # === JSON EXPORT ALL qualifying pairs ===
-        if self.config.get("output_json") and filtered_pairs:
-            json_path = self.config["output_json"]
-            with open(json_path, mode="w", encoding="utf-8") as f:
-                json.dump(filtered_pairs, f, indent=2, ensure_ascii=False)
-            print(f"\n💾 Exported {len(filtered_pairs)} pairs above volume threshold → {json_path}")
+        print(f"\n🎉 DONE — Found {len(filtered_pairs)} pairs with 24h volume >= ${CONFIG['min_volume_24h_usd']:,.0f}")
+        print("-" * 90)
+
+        for i, p in enumerate(filtered_pairs, 1):
+            print(f"{i:3d}. {p['name']}  ({p['network'].upper()})")
+            print(f"      TVL: ${p['tvl_usd']:,.0f}   |   24h Vol: ${p['volume_24h_usd']:,.0f}")
+            print(f"      Pool: {p['pool_address']}")
+            print("-" * 90)
 
         return filtered_pairs
 
@@ -161,14 +188,4 @@ class GeckoTerminalFetcher:
 # ========================== USAGE ==========================
 if __name__ == "__main__":
     fetcher = GeckoTerminalFetcher()
-
     results = fetcher.fetch_filtered_top_pairs()
-
-    print(f"\n🎉 DONE — Found {len(results)} pairs with 24h volume >= ${CONFIG['min_volume_24h_usd']:,.0f}")
-    print("-" * 90)
-
-    for i, p in enumerate(results, 1):
-        print(f"{i:3d}. {p['name']}  ({p['network'].upper()})")
-        print(f"      TVL: ${p['tvl_usd']:,.0f}   |   24h Vol: ${p['volume_24h_usd']:,.0f}")
-        print(f"      Pool: {p['pool_address']}")
-        print("-" * 90)

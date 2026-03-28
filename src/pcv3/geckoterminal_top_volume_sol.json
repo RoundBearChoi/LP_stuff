@@ -1,0 +1,110 @@
+[
+  {
+    "network": "solana",
+    "pool_address": "solana_Czfq3xZZDmsdGdUyrNLtRhGc47cXcZtLG4crryfu44zE",
+    "name": "SOL / USDC",
+    "tvl_usd": 29900406.0895,
+    "volume_24h_usd": 97459748.7862126,
+    "fdv_usd": 1140968020.9147,
+    "price_usd": 0.0,
+    "base_token_symbol": "",
+    "quote_token_symbol": "",
+    "total_tx_24h": 45033
+  },
+  {
+    "network": "solana",
+    "pool_address": "solana_8sKQHfjNhvmAw94PhfvfMcytmqW6jmxvwieYyzXCCPu",
+    "name": "SOL / USDC",
+    "tvl_usd": 566958.7748,
+    "volume_24h_usd": 83987315.4197195,
+    "fdv_usd": 1143214649.82218,
+    "price_usd": 0.0,
+    "base_token_symbol": "",
+    "quote_token_symbol": "",
+    "total_tx_24h": 192477
+  },
+  {
+    "network": "solana",
+    "pool_address": "solana_AAxHAHVE6xTDMM33MX9wJXaZdbjDMTbZNXKNFnYKT6NC",
+    "name": "Vanguard / SOL",
+    "tvl_usd": 2487.9363,
+    "volume_24h_usd": 77782024.4422082,
+    "fdv_usd": 75044120.0192496,
+    "price_usd": 0.0,
+    "base_token_symbol": "",
+    "quote_token_symbol": "",
+    "total_tx_24h": 3050
+  },
+  {
+    "network": "solana",
+    "pool_address": "solana_HpBMinuhP95YLNoUKRyjq7zhmfDeVN4kMaj6vuHDYoUG",
+    "name": "Vanguard / SOL",
+    "tvl_usd": 3065.3113,
+    "volume_24h_usd": 77258887.5201546,
+    "fdv_usd": 70825853.8292917,
+    "price_usd": 0.0,
+    "base_token_symbol": "",
+    "quote_token_symbol": "",
+    "total_tx_24h": 3031
+  },
+  {
+    "network": "solana",
+    "pool_address": "solana_74h7Tw6bA5jkaf5Nn97f893qzhYpGLAzabVZYY19fPJd",
+    "name": "Vanguard / SOL",
+    "tvl_usd": 2498.1079,
+    "volume_24h_usd": 70495176.313961,
+    "fdv_usd": 79719691.4992028,
+    "price_usd": 0.0,
+    "base_token_symbol": "",
+    "quote_token_symbol": "",
+    "total_tx_24h": 2779
+  },
+  {
+    "network": "solana",
+    "pool_address": "solana_3QYYvFWgSuGK8bbxMSAYkCqE8QfSuFtByagnZAuekia2",
+    "name": "USDT / SOL",
+    "tvl_usd": 174962.276,
+    "volume_24h_usd": 67630099.2695467,
+    "fdv_usd": 3489575483.23797,
+    "price_usd": 0.0,
+    "base_token_symbol": "",
+    "quote_token_symbol": "",
+    "total_tx_24h": 161897
+  },
+  {
+    "network": "solana",
+    "pool_address": "solana_HotSdqy8HjtZsRF1CVKM8ui79rXemfUMMBk7USGZkmVP",
+    "name": "Vanguard / SOL",
+    "tvl_usd": 11611.9793,
+    "volume_24h_usd": 41694026.5166764,
+    "fdv_usd": 1849759241.9815,
+    "price_usd": 0.0,
+    "base_token_symbol": "",
+    "quote_token_symbol": "",
+    "total_tx_24h": 1688
+  },
+  {
+    "network": "solana",
+    "pool_address": "solana_GyU2rnaQSR7GKZNXfkv1wG8gtGNCeg1U2txfW89v9p96",
+    "name": "U.S WAR / SOL",
+    "tvl_usd": 9918.4325,
+    "volume_24h_usd": 41379917.8579806,
+    "fdv_usd": 530236388.489395,
+    "price_usd": 0.0,
+    "base_token_symbol": "",
+    "quote_token_symbol": "",
+    "total_tx_24h": 978
+  },
+  {
+    "network": "solana",
+    "pool_address": "solana_GJDDMFMK6jjzHksGeAhjeC3CWiYgyghSe8skZoGkg3JJ",
+    "name": "UGOR / SOL",
+    "tvl_usd": 18401.8449,
+    "volume_24h_usd": 40250660.951478,
+    "fdv_usd": 48358777.9690328,
+    "price_usd": 0.0,
+    "base_token_symbol": "",
+    "quote_token_symbol": "",
+    "total_tx_24h": 1387
+  }
+]
