@@ -7,10 +7,10 @@ from collections import defaultdict
 # ========================== CONFIG SECTION ==========================
 CONFIG = {
     "networks": ["solana", "bsc", "eth", "base", "arbitrum", "polygon_pos", "hyperliquid"],
-    "min_volume_24h_usd": 100_000,                              # ← ONLY filter left
-    "max_pages_per_network": 1,                                # safety cap
-    "output_prefix": "geckoterminal_top_volume",               # ← base name for per-chain files
-    "network_filename_map": {                                  # ← maps API network → your desired filename suffix
+    "min_volume_24h_usd": 0,                              # pure volume sort
+    "max_pages_per_network": 2,                           # change to 5 when you want more results
+    "output_prefix": "geckoterminal_top_volume",
+    "network_filename_map": {
         "solana": "sol",
         "bsc": "bsc",
         "eth": "eth",
@@ -30,11 +30,11 @@ class GeckoTerminalFetcher:
     """
     Clean OOP wrapper for GeckoTerminal public API.
 
-    UPDATES (per your request):
-    - Separate JSON file per chain (e.g. geckoterminal_top_volume_sol.json)
-    - Still returns a single flat list for backward compatibility
-    - Global console output unchanged
-    - Only 24h volume filter remains
+    FIXED VERSION:
+    - name field now used directly (already contains perfect "TOKEN / SOL")
+    - Added fdv_usd (much more useful than market_cap on Solana)
+    - No more empty symbol fields
+    - Matches webpage look and feel
     """
 
     BASE_URL = "https://api.geckoterminal.com/api/v2"
@@ -47,7 +47,6 @@ class GeckoTerminalFetcher:
 
     @staticmethod
     def safe_float(value, default: float = 0.0) -> float:
-        """Safely convert API strings/numbers to float."""
         if value is None:
             return default
         try:
@@ -56,25 +55,22 @@ class GeckoTerminalFetcher:
             return default
 
     def _fetch_page(self, network: str, page: int) -> List[Dict]:
-        """Single page fetch with 429 retry logic."""
         url = f"{self.BASE_URL}/networks/{network}/pools"
+        print(f"fetching page {page}, h24_volume_usd_desc")
+
         params = {
             "page": page,
             "sort": "h24_volume_usd_desc",
-            "include": "volume_usd",
+            "include": "volume_usd,transactions",   # no longer need base/quote tokens
         }
 
         for attempt in range(1, self.config["max_retries_per_page"] + 1):
             try:
-                response = requests.get(
-                    url,
-                    params=params,
-                    timeout=self.config["request_timeout"]
-                )
+                response = requests.get(url, params=params, timeout=self.config["request_timeout"])
 
                 if response.status_code == 429:
                     sleep_time = self.config["rate_limit_sleep_seconds"]
-                    print(f"   ⏳ Rate limit (429) on {network} page {page} — waiting {sleep_time}s (attempt {attempt}/{self.config['max_retries_per_page']})")
+                    print(f"   ⏳ Rate limit (429) on {network} page {page} — waiting {sleep_time}s")
                     time.sleep(sleep_time)
                     continue
 
@@ -86,7 +82,7 @@ class GeckoTerminalFetcher:
             except requests.exceptions.RequestException as e:
                 if "429" in str(e) or (hasattr(response, "status_code") and response.status_code == 429):
                     sleep_time = self.config["rate_limit_sleep_seconds"]
-                    print(f"   ⏳ Rate limit hit on {network} page {page} — waiting {sleep_time}s (attempt {attempt})")
+                    print(f"   ⏳ Rate limit hit on {network} page {page} — waiting {sleep_time}s")
                     time.sleep(sleep_time)
                     continue
                 else:
@@ -96,91 +92,72 @@ class GeckoTerminalFetcher:
         return []
 
     def fetch_filtered_top_pairs(self) -> List[Dict[str, Any]]:
-        """
-        Main method: returns ALL pairs (flat list) with 24h volume >= min_volume_24h_usd.
-        Also exports one JSON file per chain.
-        """
         network_pairs = defaultdict(list)
 
-        print("\n" + "=" * 70)
-        print("Starting fetch — ONLY 24h volume filter + per-chain early stop")
-        print("Exporting separate JSON per chain")
-        print("=" * 70)
+        print("\n" + "=" * 80)
+        print("Starting clean 24h volume fetch (name + FDV + MCAP + Liq + Vol + TXN)")
+        print("Exporting clean JSON per chain")
+        print("=" * 80)
 
         for network in self.config["networks"]:
             print(f"\n🔍 Processing network: {network.upper()}")
-            network_stopped_early = False
 
             for page in range(1, self.config["max_pages_per_network"] + 1):
                 pools = self._fetch_page(network, page)
-
                 if not pools:
                     break
 
                 for pool in pools:
                     attrs = pool.get("attributes", {})
-
                     vol_24h = self.safe_float(attrs.get("volume_usd", {}).get("h24"))
 
-                    # === EARLY-STOP LOGIC ===
-                    if vol_24h < self.config["min_volume_24h_usd"]:
-                        print(f"   ⚡ Volume dropped below ${self.config['min_volume_24h_usd']:,.0f} "
-                              f"on {network} page {page} — stopping this chain early")
-                        network_stopped_early = True
-                        break
-
-                    # === FILTER & COLLECT ===
                     if vol_24h >= self.config["min_volume_24h_usd"]:
                         pair_info = {
                             "network": network,
                             "pool_address": pool.get("id"),
-                            "name": attrs.get("name", "Unknown Pair"),
-                            "tvl_usd": self.safe_float(attrs.get("reserve_in_usd")),
-                            "volume_24h_usd": vol_24h,
+                            "name": attrs.get("name", "Unknown Pair"),           # ← this is the good one
+
                             "fdv_usd": self.safe_float(attrs.get("fdv_usd")),
-                            "price_usd": self.safe_float(attrs.get("price_usd")),
-                            "base_token_symbol": attrs.get("base_token", {}).get("symbol", ""),
-                            "quote_token_symbol": attrs.get("quote_token", {}).get("symbol", ""),
+                            "market_cap_usd": self.safe_float(attrs.get("market_cap_usd")),
+                            "tvl_usd": self.safe_float(attrs.get("reserve_in_usd")),   # Liquidity
+                            "volume_24h_usd": vol_24h,
+
                             "total_tx_24h": (attrs.get("transactions", {}).get("h24", {}).get("buys", 0) +
                                              attrs.get("transactions", {}).get("h24", {}).get("sells", 0)),
                         }
                         network_pairs[network].append(pair_info)
 
-                if network_stopped_early:
-                    break
-
-            # === EXPORT PER-CHAIN JSON ===
+            # Export per-chain JSON
             if network_pairs[network]:
-                # Use friendly filename suffix (e.g. "sol" instead of "solana")
                 suffix = self.config["network_filename_map"].get(network, network)
                 json_path = f"{self.config['output_prefix']}_{suffix}.json"
-
                 network_pairs[network].sort(key=lambda x: x["volume_24h_usd"], reverse=True)
                 with open(json_path, mode="w", encoding="utf-8") as f:
                     json.dump(network_pairs[network], f, indent=2, ensure_ascii=False)
                 print(f"   💾 Exported {len(network_pairs[network])} pairs for {network.upper()} → {json_path}")
             else:
-                print(f"   ⚠️  No pairs above volume threshold for {network.upper()}")
+                print(f"   ⚠️  No pairs for {network.upper()}")
 
-            # Politeness delay between networks
             if network != self.config["networks"][-1]:
                 time.sleep(2)
 
-        # === GLOBAL LIST FOR RETURN + CONSOLE (unchanged UX) ===
+        # Global list + console
         filtered_pairs: List[Dict[str, Any]] = []
         for net in self.config["networks"]:
             filtered_pairs.extend(network_pairs[net])
 
         filtered_pairs.sort(key=lambda x: x["volume_24h_usd"], reverse=True)
 
-        print(f"\n🎉 DONE — Found {len(filtered_pairs)} pairs with 24h volume >= ${CONFIG['min_volume_24h_usd']:,.0f}")
-        print("-" * 90)
+        print(f"\n🎉 DONE — Found {len(filtered_pairs)} pairs (pure 24h volume sort)")
+        print("-" * 130)
 
+        # Clean console output
         for i, p in enumerate(filtered_pairs, 1):
             print(f"{i:3d}. {p['name']}  ({p['network'].upper()})")
-            print(f"      TVL: ${p['tvl_usd']:,.0f}   |   24h Vol: ${p['volume_24h_usd']:,.0f}")
-            print(f"      Pool: {p['pool_address']}")
-            print("-" * 90)
+            print(f"   FDV: ${p['fdv_usd']:,.0f}   |   Market Cap: ${p['market_cap_usd']:,.0f}   |   Liquidity: ${p['tvl_usd']:,.0f}")
+            print(f"   24h Vol: ${p['volume_24h_usd']:,.0f}   |   TXN 24h: {p['total_tx_24h']:,}")
+            print(f"   Pool: {p['pool_address']}")
+            print("-" * 130)
 
         return filtered_pairs
 
@@ -189,3 +166,4 @@ class GeckoTerminalFetcher:
 if __name__ == "__main__":
     fetcher = GeckoTerminalFetcher()
     results = fetcher.fetch_filtered_top_pairs()
+    print("\n✅ Script finished. JSON files are ready!")
