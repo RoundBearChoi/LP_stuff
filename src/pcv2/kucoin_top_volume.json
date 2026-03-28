@@ -1,0 +1,2002 @@
+[
+  {
+    "rank": 1,
+    "symbol": "BTC-USDT",
+    "quote_volume_usd": 346036593.42,
+    "base_volume": 5187.9628239781105,
+    "price_change_percent": -4.279999999999999,
+    "last_price": 66060.3,
+    "high_price": 69067.6,
+    "low_price": 65554.1
+  },
+  {
+    "rank": 2,
+    "symbol": "ETH-USDT",
+    "quote_volume_usd": 259159352.99,
+    "base_volume": 129263.6550696,
+    "price_change_percent": -4.2,
+    "last_price": 1985.92,
+    "high_price": 2075.86,
+    "low_price": 1968.93
+  },
+  {
+    "rank": 3,
+    "symbol": "TAO-USDT",
+    "quote_volume_usd": 79405780.33,
+    "base_volume": 243116.24833064,
+    "price_change_percent": -8.5,
+    "last_price": 312.41,
+    "high_price": 344.27,
+    "low_price": 309.75
+  },
+  {
+    "rank": 4,
+    "symbol": "ETH-USDC",
+    "quote_volume_usd": 78174081.68,
+    "base_volume": 39045.0744982,
+    "price_change_percent": -4.22,
+    "last_price": 1984.52,
+    "high_price": 2074.9,
+    "low_price": 1969.14
+  },
+  {
+    "rank": 5,
+    "symbol": "NEAR-USDT",
+    "quote_volume_usd": 65296094.8,
+    "base_volume": 54508639.53632148,
+    "price_change_percent": -5.45,
+    "last_price": 1.1689,
+    "high_price": 1.2392,
+    "low_price": 1.165
+  },
+  {
+    "rank": 6,
+    "symbol": "XRP-USDT",
+    "quote_volume_usd": 61895535.31,
+    "base_volume": 46212112.34077802,
+    "price_change_percent": -3.34,
+    "last_price": 1.324,
+    "high_price": 1.37254,
+    "low_price": 1.31864
+  },
+  {
+    "rank": 7,
+    "symbol": "BTC-USDC",
+    "quote_volume_usd": 55212834.92,
+    "base_volume": 828.34679544,
+    "price_change_percent": -4.31,
+    "last_price": 66021.0,
+    "high_price": 69036.8,
+    "low_price": 65521.0
+  },
+  {
+    "rank": 8,
+    "symbol": "ZEC-USDT",
+    "quote_volume_usd": 52929305.28,
+    "base_volume": 242359.98517302,
+    "price_change_percent": -6.4,
+    "last_price": 211.2,
+    "high_price": 226.193,
+    "low_price": 209.322
+  },
+  {
+    "rank": 9,
+    "symbol": "NIGHT-USDT",
+    "quote_volume_usd": 48951651.14,
+    "base_volume": 1079892705.4,
+    "price_change_percent": 1.08,
+    "last_price": 0.04663,
+    "high_price": 0.04682,
+    "low_price": 0.04432
+  },
+  {
+    "rank": 10,
+    "symbol": "SOL-USDT",
+    "quote_volume_usd": 44377432.95,
+    "base_volume": 529511.8296397725,
+    "price_change_percent": -4.87,
+    "last_price": 82.54,
+    "high_price": 86.91,
+    "low_price": 81.87
+  },
+  {
+    "rank": 11,
+    "symbol": "DOT-USDT",
+    "quote_volume_usd": 43213935.6,
+    "base_volume": 33311087.3512,
+    "price_change_percent": -3.6999999999999997,
+    "last_price": 1.2801,
+    "high_price": 1.3318,
+    "low_price": 1.2706
+  },
+  {
+    "rank": 12,
+    "symbol": "ASTER-USDT",
+    "quote_volume_usd": 37902277.66,
+    "base_volume": 57289780.64,
+    "price_change_percent": -1.69,
+    "last_price": 0.6612,
+    "high_price": 0.6737,
+    "low_price": 0.6497
+  },
+  {
+    "rank": 13,
+    "symbol": "XMR-USDT",
+    "quote_volume_usd": 36124424.98,
+    "base_volume": 110695.986,
+    "price_change_percent": -1.53,
+    "last_price": 326.25,
+    "high_price": 334.53,
+    "low_price": 317.06
+  },
+  {
+    "rank": 14,
+    "symbol": "AAVE-USDT",
+    "quote_volume_usd": 27500190.54,
+    "base_volume": 271821.3674,
+    "price_change_percent": -8.75,
+    "last_price": 97.346,
+    "high_price": 106.735,
+    "low_price": 96.968
+  },
+  {
+    "rank": 15,
+    "symbol": "BNB-USDT",
+    "quote_volume_usd": 16464284.57,
+    "base_volume": 26688.3758,
+    "price_change_percent": -3.09,
+    "last_price": 611.363,
+    "high_price": 631.702,
+    "low_price": 605.807
+  },
+  {
+    "rank": 16,
+    "symbol": "DOGE-USDT",
+    "quote_volume_usd": 15853106.99,
+    "base_volume": 175576298.514,
+    "price_change_percent": -2.41,
+    "last_price": 0.09026,
+    "high_price": 0.09268,
+    "low_price": 0.08929
+  },
+  {
+    "rank": 17,
+    "symbol": "UNI-USDT",
+    "quote_volume_usd": 15195773.48,
+    "base_volume": 4415131.9764,
+    "price_change_percent": -5.06,
+    "last_price": 3.3676,
+    "high_price": 3.5535,
+    "low_price": 3.3573
+  },
+  {
+    "rank": 18,
+    "symbol": "USDC-USDT",
+    "quote_volume_usd": 13834959.66,
+    "base_volume": 13830962.796023343,
+    "price_change_percent": 0.02,
+    "last_price": 1.0005,
+    "high_price": 1.0005,
+    "low_price": 1.0002
+  },
+  {
+    "rank": 19,
+    "symbol": "KAT-USDT",
+    "quote_volume_usd": 13690009.9,
+    "base_volume": 1130867034.4,
+    "price_change_percent": -6.950000000000001,
+    "last_price": 0.01151,
+    "high_price": 0.01312,
+    "low_price": 0.01137
+  },
+  {
+    "rank": 20,
+    "symbol": "LINK-USDT",
+    "quote_volume_usd": 12193639.45,
+    "base_volume": 1410869.0323044728,
+    "price_change_percent": -5.0,
+    "last_price": 8.5197,
+    "high_price": 8.9797,
+    "low_price": 8.4886
+  },
+  {
+    "rank": 21,
+    "symbol": "TON-USDT",
+    "quote_volume_usd": 9808419.57,
+    "base_volume": 7960842.03269698,
+    "price_change_percent": -2.53,
+    "last_price": 1.2156,
+    "high_price": 1.2584,
+    "low_price": 1.2046
+  },
+  {
+    "rank": 22,
+    "symbol": "HYPE-USDT",
+    "quote_volume_usd": 9638780.54,
+    "base_volume": 250239.06,
+    "price_change_percent": -1.37,
+    "last_price": 38.309,
+    "high_price": 39.432,
+    "low_price": 37.912
+  },
+  {
+    "rank": 23,
+    "symbol": "WMTX-USDT",
+    "quote_volume_usd": 7279794.54,
+    "base_volume": 102580921.8,
+    "price_change_percent": -5.489999999999999,
+    "last_price": 0.06929,
+    "high_price": 0.0736,
+    "low_price": 0.06927
+  },
+  {
+    "rank": 24,
+    "symbol": "ONDO-USDT",
+    "quote_volume_usd": 7089185.86,
+    "base_volume": 25919019.9806506,
+    "price_change_percent": -7.9399999999999995,
+    "last_price": 0.26208,
+    "high_price": 0.29118,
+    "low_price": 0.26007
+  },
+  {
+    "rank": 25,
+    "symbol": "BCH-USDT",
+    "quote_volume_usd": 6895866.26,
+    "base_volume": 14782.35968102,
+    "price_change_percent": 2.1,
+    "last_price": 475.25,
+    "high_price": 477.25,
+    "low_price": 458.28
+  },
+  {
+    "rank": 26,
+    "symbol": "SIREN-USDT",
+    "quote_volume_usd": 6802493.13,
+    "base_volume": 7625745.0,
+    "price_change_percent": -28.060000000000002,
+    "last_price": 0.99338,
+    "high_price": 1.43688,
+    "low_price": 0.71306
+  },
+  {
+    "rank": 27,
+    "symbol": "IAG-USDT",
+    "quote_volume_usd": 6698418.54,
+    "base_volume": 148561889.0,
+    "price_change_percent": -6.03,
+    "last_price": 0.04332,
+    "high_price": 0.04829,
+    "low_price": 0.04247
+  },
+  {
+    "rank": 28,
+    "symbol": "USDT-USDC",
+    "quote_volume_usd": 6533728.72,
+    "base_volume": 6535491.358351747,
+    "price_change_percent": -0.04,
+    "last_price": 0.9994,
+    "high_price": 0.9999,
+    "low_price": 0.9994
+  },
+  {
+    "rank": 29,
+    "symbol": "ADA-USDT",
+    "quote_volume_usd": 6374189.98,
+    "base_volume": 25624990.9770673,
+    "price_change_percent": -4.02,
+    "last_price": 0.2454,
+    "high_price": 0.2561,
+    "low_price": 0.2439
+  },
+  {
+    "rank": 30,
+    "symbol": "FIL-USDT",
+    "quote_volume_usd": 6169273.3,
+    "base_volume": 7280223.02000484,
+    "price_change_percent": -5.46,
+    "last_price": 0.8275,
+    "high_price": 0.8801,
+    "low_price": 0.8219
+  },
+  {
+    "rank": 31,
+    "symbol": "TRX-USDT",
+    "quote_volume_usd": 5957643.27,
+    "base_volume": 19085659.1,
+    "price_change_percent": -0.16,
+    "last_price": 0.3103,
+    "high_price": 0.3173,
+    "low_price": 0.3078
+  },
+  {
+    "rank": 32,
+    "symbol": "SHIB-USDT",
+    "quote_volume_usd": 5873500.02,
+    "base_volume": 1010083630197.6572,
+    "price_change_percent": -3.1199999999999997,
+    "last_price": 5.764e-06,
+    "high_price": 5.958e-06,
+    "low_price": 5.737e-06
+  },
+  {
+    "rank": 33,
+    "symbol": "AVAX-USDT",
+    "quote_volume_usd": 5513558.14,
+    "base_volume": 622565.3176,
+    "price_change_percent": -4.31,
+    "last_price": 8.733,
+    "high_price": 9.145,
+    "low_price": 8.665
+  },
+  {
+    "rank": 34,
+    "symbol": "ATOM-USDT",
+    "quote_volume_usd": 4977614.58,
+    "base_volume": 2953918.3296,
+    "price_change_percent": -2.4699999999999998,
+    "last_price": 1.6677,
+    "high_price": 1.7331,
+    "low_price": 1.6565
+  },
+  {
+    "rank": 35,
+    "symbol": "CFX-USDT",
+    "quote_volume_usd": 4919362.45,
+    "base_volume": 84476396.4,
+    "price_change_percent": -4.34,
+    "last_price": 0.05681,
+    "high_price": 0.05993,
+    "low_price": 0.05653
+  },
+  {
+    "rank": 36,
+    "symbol": "HBAR-USDT",
+    "quote_volume_usd": 4898682.16,
+    "base_volume": 54504733.75706414,
+    "price_change_percent": -3.0700000000000003,
+    "last_price": 0.08872,
+    "high_price": 0.09171,
+    "low_price": 0.08844
+  },
+  {
+    "rank": 37,
+    "symbol": "LTC-USDT",
+    "quote_volume_usd": 4716757.74,
+    "base_volume": 87031.32013246,
+    "price_change_percent": -2.78,
+    "last_price": 53.41,
+    "high_price": 55.18,
+    "low_price": 53.27
+  },
+  {
+    "rank": 38,
+    "symbol": "DASH-USDT",
+    "quote_volume_usd": 4709891.37,
+    "base_volume": 146892.0231396,
+    "price_change_percent": -4.279999999999999,
+    "last_price": 31.26,
+    "high_price": 32.97,
+    "low_price": 31.17
+  },
+  {
+    "rank": 39,
+    "symbol": "KCS-USDT",
+    "quote_volume_usd": 4681763.37,
+    "base_volume": 595955.69958008,
+    "price_change_percent": -1.79,
+    "last_price": 7.829,
+    "high_price": 8.012,
+    "low_price": 7.715
+  },
+  {
+    "rank": 40,
+    "symbol": "VIRTUAL-USDT",
+    "quote_volume_usd": 4650228.23,
+    "base_volume": 6985070.08,
+    "price_change_percent": -6.329999999999999,
+    "last_price": 0.6503,
+    "high_price": 0.6959,
+    "low_price": 0.6469
+  },
+  {
+    "rank": 41,
+    "symbol": "SUI-USDT",
+    "quote_volume_usd": 4448467.07,
+    "base_volume": 4963865.0,
+    "price_change_percent": -5.949999999999999,
+    "last_price": 0.875,
+    "high_price": 0.9328,
+    "low_price": 0.8697
+  },
+  {
+    "rank": 42,
+    "symbol": "PENGU-USDT",
+    "quote_volume_usd": 4400456.14,
+    "base_volume": 663491132.0,
+    "price_change_percent": -6.63,
+    "last_price": 0.006443,
+    "high_price": 0.006918,
+    "low_price": 0.006414
+  },
+  {
+    "rank": 43,
+    "symbol": "PRL-USDT",
+    "quote_volume_usd": 4198632.94,
+    "base_volume": 24741119.2,
+    "price_change_percent": -19.24,
+    "last_price": 0.15076,
+    "high_price": 0.20156,
+    "low_price": 0.1448
+  },
+  {
+    "rank": 44,
+    "symbol": "FET-USDT",
+    "quote_volume_usd": 3996157.24,
+    "base_volume": 17209294.2016,
+    "price_change_percent": -5.4399999999999995,
+    "last_price": 0.2273,
+    "high_price": 0.2409,
+    "low_price": 0.2258
+  },
+  {
+    "rank": 45,
+    "symbol": "KAS-USDT",
+    "quote_volume_usd": 3597392.42,
+    "base_volume": 102565884.4122,
+    "price_change_percent": -4.79,
+    "last_price": 0.03434,
+    "high_price": 0.03669,
+    "low_price": 0.03406
+  },
+  {
+    "rank": 46,
+    "symbol": "ENA-USDT",
+    "quote_volume_usd": 3504311.64,
+    "base_volume": 37220568.14883806,
+    "price_change_percent": -10.14,
+    "last_price": 0.0886,
+    "high_price": 0.0995,
+    "low_price": 0.0879
+  },
+  {
+    "rank": 47,
+    "symbol": "WLD-USDT",
+    "quote_volume_usd": 3493498.19,
+    "base_volume": 12913929.647,
+    "price_change_percent": -15.079999999999998,
+    "last_price": 0.2489,
+    "high_price": 0.2939,
+    "low_price": 0.2435
+  },
+  {
+    "rank": 48,
+    "symbol": "XAUM-USDT",
+    "quote_volume_usd": 3414545.33,
+    "base_volume": 764.2372,
+    "price_change_percent": 1.4000000000000001,
+    "last_price": 4506.0,
+    "high_price": 4567.11,
+    "low_price": 4422.83
+  },
+  {
+    "rank": 49,
+    "symbol": "WIF-USDT",
+    "quote_volume_usd": 3222617.65,
+    "base_volume": 18269998.8306,
+    "price_change_percent": -8.690000000000001,
+    "last_price": 0.1723,
+    "high_price": 0.1891,
+    "low_price": 0.1692
+  },
+  {
+    "rank": 50,
+    "symbol": "PEPE-USDT",
+    "quote_volume_usd": 3155642.42,
+    "base_volume": 953912337994.3445,
+    "price_change_percent": -4.55,
+    "last_price": 3.27e-06,
+    "high_price": 3.437e-06,
+    "low_price": 3.248e-06
+  },
+  {
+    "rank": 51,
+    "symbol": "XAUT-USDT",
+    "quote_volume_usd": 3043980.3,
+    "base_volume": 680.7426,
+    "price_change_percent": 1.28,
+    "last_price": 4487.29,
+    "high_price": 4545.06,
+    "low_price": 4402.92
+  },
+  {
+    "rank": 52,
+    "symbol": "TRUMP-USDT",
+    "quote_volume_usd": 2662076.36,
+    "base_volume": 881508.22,
+    "price_change_percent": -5.5,
+    "last_price": 2.967,
+    "high_price": 3.142,
+    "low_price": 2.949
+  },
+  {
+    "rank": 53,
+    "symbol": "SOL-USDC",
+    "quote_volume_usd": 2638605.8,
+    "base_volume": 31577.574,
+    "price_change_percent": -4.88,
+    "last_price": 82.49,
+    "high_price": 86.84,
+    "low_price": 81.83
+  },
+  {
+    "rank": 54,
+    "symbol": "ATA-USDT",
+    "quote_volume_usd": 2571673.27,
+    "base_volume": 282147277.0726,
+    "price_change_percent": -5.09,
+    "last_price": 0.00895,
+    "high_price": 0.00944,
+    "low_price": 0.00895
+  },
+  {
+    "rank": 55,
+    "symbol": "USDT-BRL",
+    "quote_volume_usd": 2467499.16,
+    "base_volume": 468184.0522,
+    "price_change_percent": 0.06,
+    "last_price": 5.2819,
+    "high_price": 5.288,
+    "low_price": 5.235
+  },
+  {
+    "rank": 56,
+    "symbol": "RENDER-USDT",
+    "quote_volume_usd": 2300584.92,
+    "base_volume": 1352590.88,
+    "price_change_percent": -9.969999999999999,
+    "last_price": 1.633,
+    "high_price": 1.818,
+    "low_price": 1.63
+  },
+  {
+    "rank": 57,
+    "symbol": "KGEN-USDT",
+    "quote_volume_usd": 2281076.33,
+    "base_volume": 11565439.8,
+    "price_change_percent": -4.109999999999999,
+    "last_price": 0.18789,
+    "high_price": 0.19982,
+    "low_price": 0.18533
+  },
+  {
+    "rank": 58,
+    "symbol": "PUMP-USDT",
+    "quote_volume_usd": 2259655.42,
+    "base_volume": 1307699564.0,
+    "price_change_percent": -5.25,
+    "last_price": 0.001696,
+    "high_price": 0.001794,
+    "low_price": 0.001686
+  },
+  {
+    "rank": 59,
+    "symbol": "ION-USDT",
+    "quote_volume_usd": 2232901.24,
+    "base_volume": 1431242214.0,
+    "price_change_percent": 7.9799999999999995,
+    "last_price": 0.001622,
+    "high_price": 0.001648,
+    "low_price": 0.001491
+  },
+  {
+    "rank": 60,
+    "symbol": "ICP-USDT",
+    "quote_volume_usd": 2119051.17,
+    "base_volume": 945633.09216658,
+    "price_change_percent": -4.43,
+    "last_price": 2.218,
+    "high_price": 2.326,
+    "low_price": 2.202
+  },
+  {
+    "rank": 61,
+    "symbol": "ARIA-USDT",
+    "quote_volume_usd": 1967105.96,
+    "base_volume": 6140780.8,
+    "price_change_percent": 18.75,
+    "last_price": 0.33756,
+    "high_price": 0.34521,
+    "low_price": 0.2793
+  },
+  {
+    "rank": 62,
+    "symbol": "PAXG-USDT",
+    "quote_volume_usd": 1834242.73,
+    "base_volume": 409.12519986,
+    "price_change_percent": 1.3599999999999999,
+    "last_price": 4492.79,
+    "high_price": 4553.54,
+    "low_price": 4408.03
+  },
+  {
+    "rank": 63,
+    "symbol": "XRP-USDC",
+    "quote_volume_usd": 1802937.65,
+    "base_volume": 1348151.8054,
+    "price_change_percent": -3.27,
+    "last_price": 1.32337,
+    "high_price": 1.37153,
+    "low_price": 1.31887
+  },
+  {
+    "rank": 64,
+    "symbol": "RAIN-USDT",
+    "quote_volume_usd": 1760869.33,
+    "base_volume": 221792246.0,
+    "price_change_percent": -2.41,
+    "last_price": 0.008172,
+    "high_price": 0.008753,
+    "low_price": 0.006845
+  },
+  {
+    "rank": 65,
+    "symbol": "CRV-USDT",
+    "quote_volume_usd": 1745141.49,
+    "base_volume": 8031334.4992,
+    "price_change_percent": -6.329999999999999,
+    "last_price": 0.2085,
+    "high_price": 0.2308,
+    "low_price": 0.2066
+  },
+  {
+    "rank": 66,
+    "symbol": "WLFI-USDT",
+    "quote_volume_usd": 1590129.43,
+    "base_volume": 16298711.44,
+    "price_change_percent": -2.31,
+    "last_price": 0.0969,
+    "high_price": 0.0995,
+    "low_price": 0.096
+  },
+  {
+    "rank": 67,
+    "symbol": "STG-USDT",
+    "quote_volume_usd": 1519212.35,
+    "base_volume": 5885802.1482,
+    "price_change_percent": -1.46,
+    "last_price": 0.2414,
+    "high_price": 0.2963,
+    "low_price": 0.2349
+  },
+  {
+    "rank": 68,
+    "symbol": "THETA-USDT",
+    "quote_volume_usd": 1500304.61,
+    "base_volume": 9679850.7658,
+    "price_change_percent": -5.19,
+    "last_price": 0.1516,
+    "high_price": 0.1612,
+    "low_price": 0.1506
+  },
+  {
+    "rank": 69,
+    "symbol": "BDX-USDT",
+    "quote_volume_usd": 1488789.25,
+    "base_volume": 17906701.7356,
+    "price_change_percent": -0.64,
+    "last_price": 0.08274,
+    "high_price": 0.08399,
+    "low_price": 0.08221
+  },
+  {
+    "rank": 70,
+    "symbol": "Q-USDT",
+    "quote_volume_usd": 1450360.8,
+    "base_volume": 162507868.0,
+    "price_change_percent": -29.79,
+    "last_price": 0.008647,
+    "high_price": 0.018497,
+    "low_price": 0.004928
+  },
+  {
+    "rank": 71,
+    "symbol": "BAS-USDT",
+    "quote_volume_usd": 1424660.39,
+    "base_volume": 172710846.4,
+    "price_change_percent": -10.96,
+    "last_price": 0.0082,
+    "high_price": 0.00983,
+    "low_price": 0.00702
+  },
+  {
+    "rank": 72,
+    "symbol": "C-USDT",
+    "quote_volume_usd": 1400701.16,
+    "base_volume": 16350181.4,
+    "price_change_percent": 34.71,
+    "last_price": 0.08476,
+    "high_price": 0.10308,
+    "low_price": 0.06236
+  },
+  {
+    "rank": 73,
+    "symbol": "USDT-EUR",
+    "quote_volume_usd": 1320617.37,
+    "base_volume": 1520612.9098,
+    "price_change_percent": 0.33999999999999997,
+    "last_price": 0.8699,
+    "high_price": 0.8705,
+    "low_price": 0.8661
+  },
+  {
+    "rank": 74,
+    "symbol": "SNEK-USDT",
+    "quote_volume_usd": 1294231.66,
+    "base_volume": 2909961576.0,
+    "price_change_percent": -3.53,
+    "last_price": 0.000436,
+    "high_price": 0.000454,
+    "low_price": 0.000427
+  },
+  {
+    "rank": 75,
+    "symbol": "XNY-USDT",
+    "quote_volume_usd": 1213280.42,
+    "base_volume": 173368138.0,
+    "price_change_percent": -9.09,
+    "last_price": 0.006726,
+    "high_price": 0.008,
+    "low_price": 0.006031
+  },
+  {
+    "rank": 76,
+    "symbol": "ZRO-USDT",
+    "quote_volume_usd": 1183351.19,
+    "base_volume": 572118.92,
+    "price_change_percent": -8.17,
+    "last_price": 1.9943,
+    "high_price": 2.1811,
+    "low_price": 1.9783
+  },
+  {
+    "rank": 77,
+    "symbol": "XLM-USDT",
+    "quote_volume_usd": 1178141.68,
+    "base_volume": 6930254.60728936,
+    "price_change_percent": -5.48,
+    "last_price": 0.1655,
+    "high_price": 0.1754,
+    "low_price": 0.1653
+  },
+  {
+    "rank": 78,
+    "symbol": "XCN-USDT",
+    "quote_volume_usd": 1173160.98,
+    "base_volume": 223615382.8774,
+    "price_change_percent": -5.5,
+    "last_price": 0.0051387,
+    "high_price": 0.0055099,
+    "low_price": 0.0050427
+  },
+  {
+    "rank": 79,
+    "symbol": "CC-USDT",
+    "quote_volume_usd": 1078918.77,
+    "base_volume": 7561445.4,
+    "price_change_percent": -3.7600000000000002,
+    "last_price": 0.14007,
+    "high_price": 0.14754,
+    "low_price": 0.13958
+  },
+  {
+    "rank": 80,
+    "symbol": "XDC-USDT",
+    "quote_volume_usd": 1004886.66,
+    "base_volume": 32408080.6298,
+    "price_change_percent": -2.3,
+    "last_price": 0.03045,
+    "high_price": 0.03141,
+    "low_price": 0.0304
+  },
+  {
+    "rank": 81,
+    "symbol": "ARB-USDT",
+    "quote_volume_usd": 988504.39,
+    "base_volume": 10770115.4806,
+    "price_change_percent": -5.8999999999999995,
+    "last_price": 0.0893,
+    "high_price": 0.095,
+    "low_price": 0.0887
+  },
+  {
+    "rank": 82,
+    "symbol": "NKN-USDT",
+    "quote_volume_usd": 988363.77,
+    "base_volume": 68966395.8,
+    "price_change_percent": -31.05,
+    "last_price": 0.01239,
+    "high_price": 0.01941,
+    "low_price": 0.01115
+  },
+  {
+    "rank": 83,
+    "symbol": "BLUAI-USDT",
+    "quote_volume_usd": 952487.38,
+    "base_volume": 129547334.0,
+    "price_change_percent": -21.740000000000002,
+    "last_price": 0.006769,
+    "high_price": 0.009061,
+    "low_price": 0.006361
+  },
+  {
+    "rank": 84,
+    "symbol": "ULTIMA-USDT",
+    "quote_volume_usd": 933513.53,
+    "base_volume": 241.4324,
+    "price_change_percent": -0.04,
+    "last_price": 3865.55,
+    "high_price": 3904.16,
+    "low_price": 3846.34
+  },
+  {
+    "rank": 85,
+    "symbol": "STABLE-USDT",
+    "quote_volume_usd": 912654.9,
+    "base_volume": 34221136.0,
+    "price_change_percent": -2.68,
+    "last_price": 0.026136,
+    "high_price": 0.027673,
+    "low_price": 0.024834
+  },
+  {
+    "rank": 86,
+    "symbol": "FOLKS-USDT",
+    "quote_volume_usd": 905077.7,
+    "base_volume": 725712.16,
+    "price_change_percent": -5.06,
+    "last_price": 1.2094,
+    "high_price": 1.2898,
+    "low_price": 1.1957
+  },
+  {
+    "rank": 87,
+    "symbol": "HFT-USDT",
+    "quote_volume_usd": 872149.79,
+    "base_volume": 66933271.2,
+    "price_change_percent": -4.35,
+    "last_price": 0.01253,
+    "high_price": 0.01353,
+    "low_price": 0.01244
+  },
+  {
+    "rank": 88,
+    "symbol": "FARTCOIN-USDT",
+    "quote_volume_usd": 859699.47,
+    "base_volume": 5027131.22,
+    "price_change_percent": -4.2299999999999995,
+    "last_price": 0.1675,
+    "high_price": 0.1755,
+    "low_price": 0.1646
+  },
+  {
+    "rank": 89,
+    "symbol": "SEI-USDT",
+    "quote_volume_usd": 829386.06,
+    "base_volume": 14808850.6,
+    "price_change_percent": -8.64,
+    "last_price": 0.0539,
+    "high_price": 0.0591,
+    "low_price": 0.0539
+  },
+  {
+    "rank": 90,
+    "symbol": "XMR-USDC",
+    "quote_volume_usd": 815926.35,
+    "base_volume": 2505.29,
+    "price_change_percent": -1.6,
+    "last_price": 325.93,
+    "high_price": 334.81,
+    "low_price": 317.65
+  },
+  {
+    "rank": 91,
+    "symbol": "COMMON-USDT",
+    "quote_volume_usd": 810967.48,
+    "base_volume": 1791966052.0,
+    "price_change_percent": 6.61,
+    "last_price": 0.000387,
+    "high_price": 0.000663,
+    "low_price": 0.000314
+  },
+  {
+    "rank": 92,
+    "symbol": "LIGHT-USDT",
+    "quote_volume_usd": 806827.29,
+    "base_volume": 5177117.92,
+    "price_change_percent": -7.93,
+    "last_price": 0.1577,
+    "high_price": 0.1723,
+    "low_price": 0.145
+  },
+  {
+    "rank": 93,
+    "symbol": "JUP-USDT",
+    "quote_volume_usd": 781843.24,
+    "base_volume": 5430529.48,
+    "price_change_percent": -5.59,
+    "last_price": 0.1418,
+    "high_price": 0.1504,
+    "low_price": 0.14
+  },
+  {
+    "rank": 94,
+    "symbol": "BTC-USDG",
+    "quote_volume_usd": 771509.96,
+    "base_volume": 11.48846,
+    "price_change_percent": -4.12,
+    "last_price": 66148.29,
+    "high_price": 68997.6,
+    "low_price": 65617.1
+  },
+  {
+    "rank": 95,
+    "symbol": "DEGO-USDT",
+    "quote_volume_usd": 766856.02,
+    "base_volume": 2271242.7404,
+    "price_change_percent": -0.08,
+    "last_price": 0.3377,
+    "high_price": 0.3817,
+    "low_price": 0.3127
+  },
+  {
+    "rank": 96,
+    "symbol": "MET-USDT",
+    "quote_volume_usd": 762596.75,
+    "base_volume": 5256297.06,
+    "price_change_percent": 4.9399999999999995,
+    "last_price": 0.1442,
+    "high_price": 0.155,
+    "low_price": 0.1352
+  },
+  {
+    "rank": 97,
+    "symbol": "ANOME-USDT",
+    "quote_volume_usd": 758077.89,
+    "base_volume": 18847291.2,
+    "price_change_percent": -3.7900000000000005,
+    "last_price": 0.0399905,
+    "high_price": 0.0415868,
+    "low_price": 0.0397697
+  },
+  {
+    "rank": 98,
+    "symbol": "XPL-USDT",
+    "quote_volume_usd": 753695.79,
+    "base_volume": 8325772.94,
+    "price_change_percent": -7.3,
+    "last_price": 0.0876,
+    "high_price": 0.0948,
+    "low_price": 0.0872
+  },
+  {
+    "rank": 99,
+    "symbol": "LYN-USDT",
+    "quote_volume_usd": 748550.95,
+    "base_volume": 15235788.6,
+    "price_change_percent": 5.970000000000001,
+    "last_price": 0.0514,
+    "high_price": 0.0591,
+    "low_price": 0.0436
+  },
+  {
+    "rank": 100,
+    "symbol": "AKT-USDT",
+    "quote_volume_usd": 725563.15,
+    "base_volume": 1479708.6536,
+    "price_change_percent": -7.66,
+    "last_price": 0.496,
+    "high_price": 0.5375,
+    "low_price": 0.4709
+  },
+  {
+    "rank": 101,
+    "symbol": "PIXEL-USDT",
+    "quote_volume_usd": 710768.8,
+    "base_volume": 77589893.5652,
+    "price_change_percent": 7.22,
+    "last_price": 0.00876,
+    "high_price": 0.0105,
+    "low_price": 0.00813
+  },
+  {
+    "rank": 102,
+    "symbol": "PROVE-USDT",
+    "quote_volume_usd": 691934.67,
+    "base_volume": 2567825.38,
+    "price_change_percent": -8.35,
+    "last_price": 0.2513,
+    "high_price": 0.2863,
+    "low_price": 0.249
+  },
+  {
+    "rank": 103,
+    "symbol": "HUMA-USDT",
+    "quote_volume_usd": 679564.96,
+    "base_volume": 44294714.0,
+    "price_change_percent": -13.819999999999999,
+    "last_price": 0.01461,
+    "high_price": 0.017044,
+    "low_price": 0.013226
+  },
+  {
+    "rank": 104,
+    "symbol": "KITE-USDT",
+    "quote_volume_usd": 645219.16,
+    "base_volume": 3335797.0,
+    "price_change_percent": -13.83,
+    "last_price": 0.1794,
+    "high_price": 0.20849,
+    "low_price": 0.17481
+  },
+  {
+    "rank": 105,
+    "symbol": "SPX-USDT",
+    "quote_volume_usd": 625969.92,
+    "base_volume": 2258830.94,
+    "price_change_percent": -6.39,
+    "last_price": 0.271,
+    "high_price": 0.2895,
+    "low_price": 0.2698
+  },
+  {
+    "rank": 106,
+    "symbol": "JCT-USDT",
+    "quote_volume_usd": 619211.9,
+    "base_volume": 205767410.0,
+    "price_change_percent": 4.88,
+    "last_price": 0.003047,
+    "high_price": 0.003221,
+    "low_price": 0.00265
+  },
+  {
+    "rank": 107,
+    "symbol": "TIA-USDT",
+    "quote_volume_usd": 600404.31,
+    "base_volume": 1953869.1396,
+    "price_change_percent": -6.63,
+    "last_price": 0.2954,
+    "high_price": 0.3175,
+    "low_price": 0.2945
+  },
+  {
+    "rank": 108,
+    "symbol": "UB-USDT",
+    "quote_volume_usd": 580822.45,
+    "base_volume": 20765034.0,
+    "price_change_percent": -0.13,
+    "last_price": 0.026788,
+    "high_price": 0.031075,
+    "low_price": 0.024927
+  },
+  {
+    "rank": 109,
+    "symbol": "OP-USDT",
+    "quote_volume_usd": 578462.4,
+    "base_volume": 5478960.26289712,
+    "price_change_percent": -5.59,
+    "last_price": 0.103,
+    "high_price": 0.1104,
+    "low_price": 0.1021
+  },
+  {
+    "rank": 110,
+    "symbol": "CYS-USDT",
+    "quote_volume_usd": 570623.99,
+    "base_volume": 1544587.0,
+    "price_change_percent": 5.81,
+    "last_price": 0.37988,
+    "high_price": 0.40844,
+    "low_price": 0.3352
+  },
+  {
+    "rank": 111,
+    "symbol": "BTR-USDT",
+    "quote_volume_usd": 562742.84,
+    "base_volume": 17571365.2,
+    "price_change_percent": -17.47,
+    "last_price": 0.0297,
+    "high_price": 0.03604,
+    "low_price": 0.02888
+  },
+  {
+    "rank": 112,
+    "symbol": "BONK-USDT",
+    "quote_volume_usd": 532028.44,
+    "base_volume": 92111950902.7902,
+    "price_change_percent": -4.0,
+    "last_price": 5.712e-06,
+    "high_price": 5.963e-06,
+    "low_price": 5.671e-06
+  },
+  {
+    "rank": 113,
+    "symbol": "KNC-USDT",
+    "quote_volume_usd": 522329.42,
+    "base_volume": 2994242.7728,
+    "price_change_percent": 8.05,
+    "last_price": 0.1489,
+    "high_price": 0.2389,
+    "low_price": 0.1378
+  },
+  {
+    "rank": 114,
+    "symbol": "ZIL-USDT",
+    "quote_volume_usd": 521725.73,
+    "base_volume": 136216066.0,
+    "price_change_percent": -3.85,
+    "last_price": 0.003737,
+    "high_price": 0.003972,
+    "low_price": 0.003735
+  },
+  {
+    "rank": 115,
+    "symbol": "APT-USDT",
+    "quote_volume_usd": 521236.88,
+    "base_volume": 522624.7874,
+    "price_change_percent": -6.909999999999999,
+    "last_price": 0.9584,
+    "high_price": 1.0305,
+    "low_price": 0.9569
+  },
+  {
+    "rank": 116,
+    "symbol": "ATH-USDT",
+    "quote_volume_usd": 515639.65,
+    "base_volume": 70277199.2,
+    "price_change_percent": -7.88,
+    "last_price": 0.007042,
+    "high_price": 0.007903,
+    "low_price": 0.006695
+  },
+  {
+    "rank": 117,
+    "symbol": "ANKR-USDT",
+    "quote_volume_usd": 493038.81,
+    "base_volume": 96125457.4256,
+    "price_change_percent": 6.3100000000000005,
+    "last_price": 0.00505,
+    "high_price": 0.00544,
+    "low_price": 0.00474
+  },
+  {
+    "rank": 118,
+    "symbol": "ALGO-USDT",
+    "quote_volume_usd": 483076.63,
+    "base_volume": 5893613.17033612,
+    "price_change_percent": -3.44,
+    "last_price": 0.0813,
+    "high_price": 0.0843,
+    "low_price": 0.0808
+  },
+  {
+    "rank": 119,
+    "symbol": "USDG-USDT",
+    "quote_volume_usd": 482425.83,
+    "base_volume": 482261.1,
+    "price_change_percent": 0.0,
+    "last_price": 1.0005,
+    "high_price": 1.0006,
+    "low_price": 0.9997
+  },
+  {
+    "rank": 120,
+    "symbol": "HYPE-USDC",
+    "quote_volume_usd": 456180.66,
+    "base_volume": 11930.68,
+    "price_change_percent": -1.5,
+    "last_price": 38.261,
+    "high_price": 39.405,
+    "low_price": 37.927
+  },
+  {
+    "rank": 121,
+    "symbol": "ADA-USDC",
+    "quote_volume_usd": 446595.18,
+    "base_volume": 1799085.78,
+    "price_change_percent": -3.5999999999999996,
+    "last_price": 0.246,
+    "high_price": 0.256,
+    "low_price": 0.2443
+  },
+  {
+    "rank": 122,
+    "symbol": "XPR-USDT",
+    "quote_volume_usd": 434825.8,
+    "base_volume": 187913984.0714,
+    "price_change_percent": -2.48,
+    "last_price": 0.0023172,
+    "high_price": 0.00238,
+    "low_price": 0.0022548
+  },
+  {
+    "rank": 123,
+    "symbol": "LDO-USDT",
+    "quote_volume_usd": 416056.78,
+    "base_volume": 1425361.3258,
+    "price_change_percent": 1.79,
+    "last_price": 0.2944,
+    "high_price": 0.3074,
+    "low_price": 0.2738
+  },
+  {
+    "rank": 124,
+    "symbol": "PRO-USDT",
+    "quote_volume_usd": 413152.6,
+    "base_volume": 1151396.7,
+    "price_change_percent": -3.19,
+    "last_price": 0.3541,
+    "high_price": 0.3668,
+    "low_price": 0.3504
+  },
+  {
+    "rank": 125,
+    "symbol": "AGT-USDT",
+    "quote_volume_usd": 412435.9,
+    "base_volume": 69422406.0,
+    "price_change_percent": 7.99,
+    "last_price": 0.006253,
+    "high_price": 0.006527,
+    "low_price": 0.005497
+  },
+  {
+    "rank": 126,
+    "symbol": "CFG-USDT",
+    "quote_volume_usd": 411783.57,
+    "base_volume": 2632188.701,
+    "price_change_percent": 9.120000000000001,
+    "last_price": 0.1663,
+    "high_price": 0.1789,
+    "low_price": 0.1402
+  },
+  {
+    "rank": 127,
+    "symbol": "VVV-USDT",
+    "quote_volume_usd": 397663.97,
+    "base_volume": 66399.72,
+    "price_change_percent": -6.49,
+    "last_price": 5.97,
+    "high_price": 6.408,
+    "low_price": 5.763
+  },
+  {
+    "rank": 128,
+    "symbol": "POL-USDT",
+    "quote_volume_usd": 396506.91,
+    "base_volume": 4306842.76793366,
+    "price_change_percent": -5.53,
+    "last_price": 0.0905,
+    "high_price": 0.097,
+    "low_price": 0.0895
+  },
+  {
+    "rank": 129,
+    "symbol": "BIO-USDT",
+    "quote_volume_usd": 393942.09,
+    "base_volume": 23670035.0,
+    "price_change_percent": -8.06,
+    "last_price": 0.01608,
+    "high_price": 0.01753,
+    "low_price": 0.01591
+  },
+  {
+    "rank": 130,
+    "symbol": "TEL-USDT",
+    "quote_volume_usd": 391328.99,
+    "base_volume": 183226466.0,
+    "price_change_percent": -3.61,
+    "last_price": 0.002109,
+    "high_price": 0.002206,
+    "low_price": 0.002084
+  },
+  {
+    "rank": 131,
+    "symbol": "KERNEL-USDT",
+    "quote_volume_usd": 384830.71,
+    "base_volume": 4441108.0,
+    "price_change_percent": -16.16,
+    "last_price": 0.0777,
+    "high_price": 0.09387,
+    "low_price": 0.07717
+  },
+  {
+    "rank": 132,
+    "symbol": "VR-USDT",
+    "quote_volume_usd": 376074.28,
+    "base_volume": 229469334.0,
+    "price_change_percent": -9.47,
+    "last_price": 0.001624,
+    "high_price": 0.001801,
+    "low_price": 0.001519
+  },
+  {
+    "rank": 133,
+    "symbol": "LTC-USDC",
+    "quote_volume_usd": 375157.46,
+    "base_volume": 6942.656,
+    "price_change_percent": -2.73,
+    "last_price": 53.42,
+    "high_price": 55.16,
+    "low_price": 53.28
+  },
+  {
+    "rank": 134,
+    "symbol": "BIRB-USDT",
+    "quote_volume_usd": 374890.38,
+    "base_volume": 2768492.6,
+    "price_change_percent": 4.63,
+    "last_price": 0.13927,
+    "high_price": 0.14015,
+    "low_price": 0.12771
+  },
+  {
+    "rank": 135,
+    "symbol": "ICNT-USDT",
+    "quote_volume_usd": 373266.41,
+    "base_volume": 868335.8,
+    "price_change_percent": 14.02,
+    "last_price": 0.44336,
+    "high_price": 0.4569,
+    "low_price": 0.37912
+  },
+  {
+    "rank": 136,
+    "symbol": "USTC-USDT",
+    "quote_volume_usd": 368518.73,
+    "base_volume": 80278020.40792714,
+    "price_change_percent": -5.779999999999999,
+    "last_price": 0.0044,
+    "high_price": 0.00474,
+    "low_price": 0.00426
+  },
+  {
+    "rank": 137,
+    "symbol": "BR-USDT",
+    "quote_volume_usd": 367356.73,
+    "base_volume": 2818329.8,
+    "price_change_percent": -6.21,
+    "last_price": 0.12324,
+    "high_price": 0.14795,
+    "low_price": 0.1138
+  },
+  {
+    "rank": 138,
+    "symbol": "USDC-EUR",
+    "quote_volume_usd": 365910.78,
+    "base_volume": 421716.12,
+    "price_change_percent": 0.45999999999999996,
+    "last_price": 0.8704,
+    "high_price": 0.8704,
+    "low_price": 0.8622
+  },
+  {
+    "rank": 139,
+    "symbol": "PARTI-USDT",
+    "quote_volume_usd": 358841.64,
+    "base_volume": 3577157.92,
+    "price_change_percent": 0.38999999999999996,
+    "last_price": 0.1007,
+    "high_price": 0.1036,
+    "low_price": 0.097
+  },
+  {
+    "rank": 140,
+    "symbol": "TAO-USDC",
+    "quote_volume_usd": 352425.86,
+    "base_volume": 1092.2566,
+    "price_change_percent": -8.459999999999999,
+    "last_price": 312.14,
+    "high_price": 343.97,
+    "low_price": 310.0
+  },
+  {
+    "rank": 141,
+    "symbol": "TRX-USDC",
+    "quote_volume_usd": 346849.61,
+    "base_volume": 1113874.64,
+    "price_change_percent": -0.25,
+    "last_price": 0.3101,
+    "high_price": 0.317,
+    "low_price": 0.3077
+  },
+  {
+    "rank": 142,
+    "symbol": "SUPER-USDT",
+    "quote_volume_usd": 342633.7,
+    "base_volume": 3033746.0,
+    "price_change_percent": -1.7999999999999998,
+    "last_price": 0.1143,
+    "high_price": 0.1176,
+    "low_price": 0.1076
+  },
+  {
+    "rank": 143,
+    "symbol": "H-USDT",
+    "quote_volume_usd": 329980.79,
+    "base_volume": 3942510.0,
+    "price_change_percent": -3.01,
+    "last_price": 0.081724,
+    "high_price": 0.08597,
+    "low_price": 0.081563
+  },
+  {
+    "rank": 144,
+    "symbol": "ETHFI-USDT",
+    "quote_volume_usd": 326054.37,
+    "base_volume": 687297.06,
+    "price_change_percent": -9.41,
+    "last_price": 0.4523,
+    "high_price": 0.5004,
+    "low_price": 0.451
+  },
+  {
+    "rank": 145,
+    "symbol": "ZEN-USDT",
+    "quote_volume_usd": 321032.12,
+    "base_volume": 61353.5366,
+    "price_change_percent": -7.06,
+    "last_price": 5.088,
+    "high_price": 5.493,
+    "low_price": 5.048
+  },
+  {
+    "rank": 146,
+    "symbol": "DYDX-USDT",
+    "quote_volume_usd": 319251.68,
+    "base_volume": 3434028.17417908,
+    "price_change_percent": -0.11,
+    "last_price": 0.0899,
+    "high_price": 0.0968,
+    "low_price": 0.0897
+  },
+  {
+    "rank": 147,
+    "symbol": "MON-USDT",
+    "quote_volume_usd": 318856.92,
+    "base_volume": 13945143.5648415,
+    "price_change_percent": -7.829999999999999,
+    "last_price": 0.02222,
+    "high_price": 0.02423,
+    "low_price": 0.02185
+  },
+  {
+    "rank": 148,
+    "symbol": "BERT-USDT",
+    "quote_volume_usd": 317718.16,
+    "base_volume": 40650062.2,
+    "price_change_percent": -7.04,
+    "last_price": 0.00779,
+    "high_price": 0.00838,
+    "low_price": 0.00739
+  },
+  {
+    "rank": 149,
+    "symbol": "QNT-USDT",
+    "quote_volume_usd": 302127.41,
+    "base_volume": 4223.1774,
+    "price_change_percent": -4.35,
+    "last_price": 70.664,
+    "high_price": 73.878,
+    "low_price": 70.144
+  },
+  {
+    "rank": 150,
+    "symbol": "RESOLV-USDT",
+    "quote_volume_usd": 299071.3,
+    "base_volume": 6864338.46,
+    "price_change_percent": -4.01,
+    "last_price": 0.0406,
+    "high_price": 0.0466,
+    "low_price": 0.04
+  },
+  {
+    "rank": 151,
+    "symbol": "9BIT-USDT",
+    "quote_volume_usd": 298647.5,
+    "base_volume": 10910940.0,
+    "price_change_percent": 0.06999999999999999,
+    "last_price": 0.02733,
+    "high_price": 0.027726,
+    "low_price": 0.02728
+  },
+  {
+    "rank": 152,
+    "symbol": "JASMY-USDT",
+    "quote_volume_usd": 297180.3,
+    "base_volume": 54266348.9684,
+    "price_change_percent": -4.25,
+    "last_price": 0.005267,
+    "high_price": 0.005696,
+    "low_price": 0.005252
+  },
+  {
+    "rank": 153,
+    "symbol": "APR-USDT",
+    "quote_volume_usd": 297042.98,
+    "base_volume": 1923150.0,
+    "price_change_percent": 0.64,
+    "last_price": 0.1558,
+    "high_price": 0.1567,
+    "low_price": 0.1503
+  },
+  {
+    "rank": 154,
+    "symbol": "IRYS-USDT",
+    "quote_volume_usd": 296775.75,
+    "base_volume": 14397156.0,
+    "price_change_percent": 6.79,
+    "last_price": 0.02042,
+    "high_price": 0.02168,
+    "low_price": 0.01904
+  },
+  {
+    "rank": 155,
+    "symbol": "ZBCN-USDT",
+    "quote_volume_usd": 293891.73,
+    "base_volume": 130135282.0,
+    "price_change_percent": -3.84,
+    "last_price": 0.0022279,
+    "high_price": 0.0023176,
+    "low_price": 0.0022127
+  },
+  {
+    "rank": 156,
+    "symbol": "BTC-EUR",
+    "quote_volume_usd": 292844.04,
+    "base_volume": 5.04968,
+    "price_change_percent": -3.6700000000000004,
+    "last_price": 57666.28,
+    "high_price": 59869.35,
+    "low_price": 56925.97
+  },
+  {
+    "rank": 157,
+    "symbol": "W-USDT",
+    "quote_volume_usd": 290806.44,
+    "base_volume": 18995446.1446,
+    "price_change_percent": -5.09,
+    "last_price": 0.0149,
+    "high_price": 0.0158,
+    "low_price": 0.0148
+  },
+  {
+    "rank": 158,
+    "symbol": "INIT-USDT",
+    "quote_volume_usd": 280997.51,
+    "base_volume": 3546852.0,
+    "price_change_percent": -6.75,
+    "last_price": 0.076501,
+    "high_price": 0.0832,
+    "low_price": 0.075715
+  },
+  {
+    "rank": 159,
+    "symbol": "JELLYJELLY-USDT",
+    "quote_volume_usd": 280246.42,
+    "base_volume": 5084132.2,
+    "price_change_percent": 0.84,
+    "last_price": 0.05519,
+    "high_price": 0.05743,
+    "low_price": 0.05335
+  },
+  {
+    "rank": 160,
+    "symbol": "USELESS-USDT",
+    "quote_volume_usd": 270680.79,
+    "base_volume": 8611025.2,
+    "price_change_percent": -5.79,
+    "last_price": 0.03074,
+    "high_price": 0.03268,
+    "low_price": 0.03041
+  },
+  {
+    "rank": 161,
+    "symbol": "WBTC-USDT",
+    "quote_volume_usd": 266028.54,
+    "base_volume": 3.922,
+    "price_change_percent": -3.9800000000000004,
+    "last_price": 66160.0,
+    "high_price": 68907.05,
+    "low_price": 65570.0
+  },
+  {
+    "rank": 162,
+    "symbol": "BNKR-USDT",
+    "quote_volume_usd": 265650.14,
+    "base_volume": 751748262.0,
+    "price_change_percent": -4.17,
+    "last_price": 0.0003514,
+    "high_price": 0.0003667,
+    "low_price": 0.0003348
+  },
+  {
+    "rank": 163,
+    "symbol": "VELO-USDT",
+    "quote_volume_usd": 250857.44,
+    "base_volume": 69867591.9196,
+    "price_change_percent": -3.74,
+    "last_price": 0.003598,
+    "high_price": 0.003749,
+    "low_price": 0.003504
+  },
+  {
+    "rank": 164,
+    "symbol": "RATS-USDT",
+    "quote_volume_usd": 246681.89,
+    "base_volume": 4123657879.7704,
+    "price_change_percent": 2.06,
+    "last_price": 6.022e-05,
+    "high_price": 6.445e-05,
+    "low_price": 5.576e-05
+  },
+  {
+    "rank": 165,
+    "symbol": "PYTH-USDT",
+    "quote_volume_usd": 246001.36,
+    "base_volume": 6507918.3842,
+    "price_change_percent": -5.609999999999999,
+    "last_price": 0.03701,
+    "high_price": 0.03929,
+    "low_price": 0.0367
+  },
+  {
+    "rank": 166,
+    "symbol": "DOGE-USDC",
+    "quote_volume_usd": 240875.94,
+    "base_volume": 2665080.42833218,
+    "price_change_percent": -1.9900000000000002,
+    "last_price": 0.09051,
+    "high_price": 0.09247,
+    "low_price": 0.08926
+  },
+  {
+    "rank": 167,
+    "symbol": "CRO-USDT",
+    "quote_volume_usd": 239301.09,
+    "base_volume": 3336265.4036,
+    "price_change_percent": -2.87,
+    "last_price": 0.07155,
+    "high_price": 0.07378,
+    "low_price": 0.06999
+  },
+  {
+    "rank": 168,
+    "symbol": "LIT-USDT",
+    "quote_volume_usd": 235998.86,
+    "base_volume": 273603.6,
+    "price_change_percent": -4.42,
+    "last_price": 0.864,
+    "high_price": 0.904,
+    "low_price": 0.829
+  },
+  {
+    "rank": 169,
+    "symbol": "CATI-USDT",
+    "quote_volume_usd": 235972.21,
+    "base_volume": 4925060.8,
+    "price_change_percent": 10.75,
+    "last_price": 0.04921,
+    "high_price": 0.04955,
+    "low_price": 0.04383
+  },
+  {
+    "rank": 170,
+    "symbol": "FLUX-USDT",
+    "quote_volume_usd": 235404.33,
+    "base_volume": 4937259.7556,
+    "price_change_percent": 2.9899999999999998,
+    "last_price": 0.0481,
+    "high_price": 0.0498,
+    "low_price": 0.0453
+  },
+  {
+    "rank": 171,
+    "symbol": "LKI-USDT",
+    "quote_volume_usd": 235304.03,
+    "base_volume": 723367500.0,
+    "price_change_percent": 8.14,
+    "last_price": 0.0003612,
+    "high_price": 0.0004595,
+    "low_price": 0.0002704
+  },
+  {
+    "rank": 172,
+    "symbol": "WAL-USDT",
+    "quote_volume_usd": 231410.81,
+    "base_volume": 3242657.2,
+    "price_change_percent": -6.800000000000001,
+    "last_price": 0.06985,
+    "high_price": 0.07533,
+    "low_price": 0.06912
+  },
+  {
+    "rank": 173,
+    "symbol": "STRAX-USDT",
+    "quote_volume_usd": 230807.34,
+    "base_volume": 17122944.0,
+    "price_change_percent": -3.2199999999999998,
+    "last_price": 0.0129,
+    "high_price": 0.01376,
+    "low_price": 0.01285
+  },
+  {
+    "rank": 174,
+    "symbol": "GOMINING-USDT",
+    "quote_volume_usd": 226461.01,
+    "base_volume": 730799.44,
+    "price_change_percent": 0.44,
+    "last_price": 0.314,
+    "high_price": 0.3163,
+    "low_price": 0.3048
+  },
+  {
+    "rank": 175,
+    "symbol": "UAI-USDT",
+    "quote_volume_usd": 226364.9,
+    "base_volume": 1023974.6,
+    "price_change_percent": -10.780000000000001,
+    "last_price": 0.2103,
+    "high_price": 0.24039,
+    "low_price": 0.20622
+  },
+  {
+    "rank": 176,
+    "symbol": "XPIN-USDT",
+    "quote_volume_usd": 226307.85,
+    "base_volume": 205743288.0,
+    "price_change_percent": 3.64,
+    "last_price": 0.0010907,
+    "high_price": 0.0011382,
+    "low_price": 0.0010312
+  },
+  {
+    "rank": 177,
+    "symbol": "USDT-DAI",
+    "quote_volume_usd": 223935.58,
+    "base_volume": 223922.3065,
+    "price_change_percent": -0.08,
+    "last_price": 1.0002,
+    "high_price": 1.0017,
+    "low_price": 0.9985
+  },
+  {
+    "rank": 178,
+    "symbol": "TRIA-USDT",
+    "quote_volume_usd": 221941.13,
+    "base_volume": 7848890.0,
+    "price_change_percent": -1.8599999999999999,
+    "last_price": 0.027479,
+    "high_price": 0.031521,
+    "low_price": 0.025717
+  },
+  {
+    "rank": 179,
+    "symbol": "NAVI-USDT",
+    "quote_volume_usd": 216415.51,
+    "base_volume": 38586586.0,
+    "price_change_percent": -2.22,
+    "last_price": 0.005576,
+    "high_price": 0.005713,
+    "low_price": 0.00551
+  },
+  {
+    "rank": 180,
+    "symbol": "IO-USDT",
+    "quote_volume_usd": 214762.52,
+    "base_volume": 1920310.18,
+    "price_change_percent": -9.5,
+    "last_price": 0.1057,
+    "high_price": 0.1174,
+    "low_price": 0.1057
+  },
+  {
+    "rank": 181,
+    "symbol": "EWT-USDT",
+    "quote_volume_usd": 214146.99,
+    "base_volume": 506933.6,
+    "price_change_percent": -3.71,
+    "last_price": 0.41322,
+    "high_price": 0.43998,
+    "low_price": 0.40251
+  },
+  {
+    "rank": 182,
+    "symbol": "CRTR-USDT",
+    "quote_volume_usd": 211682.79,
+    "base_volume": 5921586.6,
+    "price_change_percent": -2.22,
+    "last_price": 0.03555,
+    "high_price": 0.03636,
+    "low_price": 0.0354
+  },
+  {
+    "rank": 183,
+    "symbol": "IMX-USDT",
+    "quote_volume_usd": 211315.79,
+    "base_volume": 1415275.6496,
+    "price_change_percent": -3.04,
+    "last_price": 0.1434,
+    "high_price": 0.1539,
+    "low_price": 0.1422
+  },
+  {
+    "rank": 184,
+    "symbol": "ARKM-USDT",
+    "quote_volume_usd": 210419.22,
+    "base_volume": 2133055.938,
+    "price_change_percent": -8.450000000000001,
+    "last_price": 0.0942,
+    "high_price": 0.1033,
+    "low_price": 0.0939
+  },
+  {
+    "rank": 185,
+    "symbol": "ROBO-USDT",
+    "quote_volume_usd": 205656.93,
+    "base_volume": 8275724.2,
+    "price_change_percent": -11.08,
+    "last_price": 0.02342,
+    "high_price": 0.02675,
+    "low_price": 0.02293
+  },
+  {
+    "rank": 186,
+    "symbol": "STRK-USDT",
+    "quote_volume_usd": 205347.47,
+    "base_volume": 6016618.90003658,
+    "price_change_percent": -6.069999999999999,
+    "last_price": 0.0334,
+    "high_price": 0.03567,
+    "low_price": 0.03324
+  },
+  {
+    "rank": 187,
+    "symbol": "NAKA-USDT",
+    "quote_volume_usd": 205056.51,
+    "base_volume": 3428285.62,
+    "price_change_percent": -1.9900000000000002,
+    "last_price": 0.0591,
+    "high_price": 0.0604,
+    "low_price": 0.0589
+  },
+  {
+    "rank": 188,
+    "symbol": "WARD-USDT",
+    "quote_volume_usd": 203988.44,
+    "base_volume": 44908189.2,
+    "price_change_percent": -14.35,
+    "last_price": 0.004181,
+    "high_price": 0.004909,
+    "low_price": 0.004
+  },
+  {
+    "rank": 189,
+    "symbol": "JST-USDT",
+    "quote_volume_usd": 202797.36,
+    "base_volume": 3432193.8,
+    "price_change_percent": 3.08,
+    "last_price": 0.06011,
+    "high_price": 0.06084,
+    "low_price": 0.05772
+  },
+  {
+    "rank": 190,
+    "symbol": "XU3O8-USDT",
+    "quote_volume_usd": 200395.3,
+    "base_volume": 38394.96,
+    "price_change_percent": 0.8999999999999999,
+    "last_price": 5.248,
+    "high_price": 5.262,
+    "low_price": 5.157
+  },
+  {
+    "rank": 191,
+    "symbol": "SWFTC-USDT",
+    "quote_volume_usd": 200341.0,
+    "base_volume": 54837849.534,
+    "price_change_percent": 2.34,
+    "last_price": 0.0035235,
+    "high_price": 0.0039588,
+    "low_price": 0.003316
+  },
+  {
+    "rank": 192,
+    "symbol": "XR-USDT",
+    "quote_volume_usd": 200222.88,
+    "base_volume": 39200092.0,
+    "price_change_percent": -0.05,
+    "last_price": 0.005112,
+    "high_price": 0.005115,
+    "low_price": 0.005084
+  },
+  {
+    "rank": 193,
+    "symbol": "CPOOL-USDT",
+    "quote_volume_usd": 198484.56,
+    "base_volume": 8009978.2958,
+    "price_change_percent": -5.8500000000000005,
+    "last_price": 0.02446,
+    "high_price": 0.02598,
+    "low_price": 0.02401
+  },
+  {
+    "rank": 194,
+    "symbol": "HAEDAL-USDT",
+    "quote_volume_usd": 195100.09,
+    "base_volume": 6589290.4,
+    "price_change_percent": -0.2,
+    "last_price": 0.02905,
+    "high_price": 0.03022,
+    "low_price": 0.02887
+  },
+  {
+    "rank": 195,
+    "symbol": "CSPR-USDT",
+    "quote_volume_usd": 194772.09,
+    "base_volume": 59903402.0,
+    "price_change_percent": -1.9,
+    "last_price": 0.003244,
+    "high_price": 0.003411,
+    "low_price": 0.003126
+  },
+  {
+    "rank": 196,
+    "symbol": "TRUTH-USDT",
+    "quote_volume_usd": 192174.37,
+    "base_volume": 20785212.0,
+    "price_change_percent": -1.69,
+    "last_price": 0.009187,
+    "high_price": 0.009372,
+    "low_price": 0.009136
+  },
+  {
+    "rank": 197,
+    "symbol": "TOWER-USDT",
+    "quote_volume_usd": 189282.33,
+    "base_volume": 770010994.0,
+    "price_change_percent": -4.81,
+    "last_price": 0.0002452,
+    "high_price": 0.0002582,
+    "low_price": 0.0002403
+  },
+  {
+    "rank": 198,
+    "symbol": "ETN-USDT",
+    "quote_volume_usd": 189025.26,
+    "base_volume": 186914758.0,
+    "price_change_percent": 5.16,
+    "last_price": 0.001039,
+    "high_price": 0.001039,
+    "low_price": 0.000978
+  },
+  {
+    "rank": 199,
+    "symbol": "ROSE-USDT",
+    "quote_volume_usd": 188416.1,
+    "base_volume": 17289813.7898,
+    "price_change_percent": -8.309999999999999,
+    "last_price": 0.01037,
+    "high_price": 0.01144,
+    "low_price": 0.01026
+  },
+  {
+    "rank": 200,
+    "symbol": "WOD-USDT",
+    "quote_volume_usd": 187446.41,
+    "base_volume": 13576413.4,
+    "price_change_percent": -3.4099999999999997,
+    "last_price": 0.01357,
+    "high_price": 0.01406,
+    "low_price": 0.01355
+  }
+]
