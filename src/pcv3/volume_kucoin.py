@@ -5,7 +5,7 @@ from typing import List, Dict
 # ========================= CONFIG =========================
 CONFIG = {
     "default_limit": 200,
-    "default_min_volume_usd": 100_000.0, # 24h volume in usd
+    "default_min_volume_usd": 100_000.0,  # 24h volume in USD
     "api_timeout": 10,
     "json_filename": "kucoin_top_volume.json",
     "print_top_n": 10,
@@ -13,7 +13,8 @@ CONFIG = {
 # =========================================================
 
 class KuCoinVolumeFetcher:
-    """Clean class to fetch top spot pairs on KuCoin by 24h USD quote volume."""
+    """Clean class to fetch top spot pairs on KuCoin by 24h USD quote volume.
+    Now includes base_asset and quote_asset for easier downstream analysis."""
 
     def __init__(self, limit: int = None, min_volume_usd: float = None):
         self.limit = limit or CONFIG["default_limit"]
@@ -21,7 +22,7 @@ class KuCoinVolumeFetcher:
         self.timeout = CONFIG["api_timeout"]
 
     def get_top_volume(self) -> List[Dict]:
-        """Fetch and return list of top pairs (same dict format as before)."""
+        """Fetch and return list of top pairs (same dict format as before + base/quote)."""
         url = "https://api.kucoin.com/api/v1/market/allTickers"
         
         try:
@@ -44,9 +45,17 @@ class KuCoinVolumeFetcher:
             if quote_vol < self.min_volume_usd:
                 continue
                 
+            # === NEW: Separate base and quote assets (robust split) ===
+            symbol_str = item["symbol"]
+            parts = symbol_str.split('-', 1)          # split only on the FIRST hyphen
+            base_asset = parts[0] if parts else ""
+            quote_asset = parts[1] if len(parts) > 1 else ""
+            
             top.append({
                 "rank": len(top) + 1,
-                "symbol": item["symbol"],
+                "symbol": symbol_str,
+                "base_asset": base_asset,      # ← NEW
+                "quote_asset": quote_asset,    # ← NEW
                 "quote_volume_usd": round(quote_vol, 2),
                 "base_volume": float(item["vol"]),
                 "price_change_percent": float(item.get("changeRate", 0)) * 100,
@@ -61,7 +70,7 @@ class KuCoinVolumeFetcher:
         return top
 
     def print_top_preview(self, top_list: List[Dict] = None):
-        """Pretty-print top N rows."""
+        """Pretty-print top N rows (unchanged — still uses 'symbol' for readability)."""
         if top_list is None:
             top_list = self.get_top_volume()
         
@@ -76,7 +85,7 @@ class KuCoinVolumeFetcher:
                   f"${item['last_price']:<12}")
 
     def save_to_json(self, top_list: List[Dict] = None, filename: str = None):
-        """Save the list to JSON."""
+        """Save the list to JSON (now includes base_asset & quote_asset)."""
         if top_list is None:
             top_list = self.get_top_volume()
         if filename is None:
@@ -89,7 +98,6 @@ class KuCoinVolumeFetcher:
 
 # ====================== EXAMPLE USAGE ======================
 if __name__ == "__main__":
-    # Uses whatever you set in CONFIG["default_limit"] (currently 200)
     fetcher = KuCoinVolumeFetcher()          # ← no limit= here anymore
     top_pairs = fetcher.get_top_volume()
     
