@@ -3,20 +3,20 @@ import sys
 import time
 from typing import List, Dict, Any
 
-# ========================= CONFIG =========================
+# ========================= CONFIG (TEST MODE) =========================
 MIN_TVL = 1_000_000
 MIN_24H_VOLUME = 100_000
-TOP_N = 10
+TOP_N = 100                     # Smaller for quick testing (change to 300 later)
 
-TOKENS_PER_CHAIN = 100
-DELAY_BETWEEN_CHAINS = 2.5   # Increased slightly for free-tier stability
+TOKENS_PER_CHAIN = 20           # ← LOWERED for fast testing (max is 100)
+DELAY_BETWEEN_CHAINS = 2.5      # Keeps free-tier 100% safe
 
-# Only chains that reliably work with /defi/v3/token/list (per Birdeye docs + your run)
+# Only chains that reliably work with /defi/v3/token/list
 WORKING_V3_CHAINS = [
     "solana", "ethereum", "bsc", "base", "monad",
     "hyperevm", "fogo", "mantle", "megaeth"
 ]
-# =======================================================
+# =====================================================================
 
 BASE_URL = "https://public-api.birdeye.so"
 
@@ -66,7 +66,8 @@ def fetch_top_tokens_for_chain(chain: str, api_key: str) -> List[Dict[str, Any]]
 
 
 def main():
-    print("🚀 Birdeye Highest Volume Tokens (V3 - Only Working Chains)")
+    print("🚀 Birdeye Highest Volume Tokens (FREE TIER - TEST MODE)")
+    print("   → TOKENS_PER_CHAIN=20 | Only 1 page per chain | Super safe\n")
     print("=" * 75)
 
     api_key = input("\nEnter your Birdeye free-tier API key: ").strip()
@@ -74,10 +75,9 @@ def main():
         print("❌ API key cannot be empty!")
         sys.exit(1)
 
-    print("\n🔍 Starting fetch...\n")
+    print("\n🔍 Starting quick test fetch...\n")
 
     all_chains = get_supported_chains(api_key)
-    # Filter to only reliable V3 chains
     chains = [c for c in all_chains if c in WORKING_V3_CHAINS]
 
     print(f"📌 Querying {len(chains)} V3-supported chains: {chains}\n")
@@ -104,7 +104,7 @@ def main():
     top_n = all_tokens[:TOP_N]
 
     print("\n" + "="*130)
-    print(f"🏆 TOP {TOP_N} HIGHEST VOLUME TOKENS (TVL ≥ ${MIN_TVL:,} | 24h Vol ≥ ${MIN_24H_VOLUME:,})")
+    print(f"🏆 TOP {TOP_N} HIGHEST VOLUME TOKENS (TEST RUN)")
     print("="*130)
 
     for i, token in enumerate(top_n, 1):
@@ -116,9 +116,10 @@ def main():
         print(f"    MC: ${token.get('market_cap', 0):,.0f}  │  FDV: ${token.get('fdv', 0):,.0f}\n")
 
     import json
-    with open("birdeye_top_volume_tokens.json", "w") as f:
+    with open("birdeye_top_volume_tokens_TEST.json", "w") as f:
         json.dump(top_n, f, indent=2)
-    print(f"💾 Saved top {TOP_N} to birdeye_top_volume_tokens.json")
+    print(f"💾 Saved top {TOP_N} to birdeye_top_volume_tokens_TEST.json")
+    print("✅ Test complete! Ready to increase TOKENS_PER_CHAIN if you want more data.")
 
 
 if __name__ == "__main__":
