@@ -5,6 +5,7 @@ import sys
 import time  # for polite rate-limit handling if needed
 
 # ========================= CONFIG SECTION =========================
+# All user-controllable variables are centralized here.
 CONFIG = {
     # API behavior
     "API_URL": "https://api.geckoterminal.com/api/v2/networks/trending_pools",
@@ -34,6 +35,7 @@ CONFIG = {
 class GeckoTerminalGlobalFetcher:
     """
     Pure server-side ranking + full token data + CoinGecko links + CoinGecko ranks.
+    Field "rank" renamed to "gecko_terminal_rank" for clarity.
     """
 
     def __init__(self, config: dict = None):
@@ -93,7 +95,7 @@ class GeckoTerminalGlobalFetcher:
         return filtered
 
     def _enrich_pools_with_token_data(self, pools: list, included: list):
-        """Embed base/quote token data + direct CoinGecko link (unchanged from previous version)."""
+        """Embed base/quote token data + direct CoinGecko link."""
         token_map = {item["id"]: item["attributes"] for item in included if item.get("type") == "token"}
 
         network_slug_map = {
@@ -148,7 +150,6 @@ class GeckoTerminalGlobalFetcher:
 
     def _enrich_with_coingecko_ranks(self, pools: list):
         """Batch fetch CoinGecko market_cap_rank for all tokens that have a coingecko_coin_id."""
-        # Collect unique coin IDs
         coin_ids = {
             pool["base_token"]["coingecko_coin_id"]
             for pool in pools
@@ -173,16 +174,11 @@ class GeckoTerminalGlobalFetcher:
         }
 
         try:
-            response = requests.get(
-                url, params=params, timeout=self.config["COINGECKO_TIMEOUT"]
-            )
+            response = requests.get(url, params=params, timeout=self.config["COINGECKO_TIMEOUT"])
             response.raise_for_status()
             data = response.json()
-
-            # Build lookup: coin_id → market_cap_rank
             rank_map = {coin["id"]: coin.get("market_cap_rank") for coin in data if isinstance(coin, dict)}
 
-            # Attach to each pool
             for pool in pools:
                 base = pool.get("base_token")
                 if base and base.get("coingecko_coin_id"):
@@ -202,7 +198,7 @@ class GeckoTerminalGlobalFetcher:
                 pool["coingecko_rank"] = None
 
     def pretty_print_pool(self, pool: dict, included: list):
-        """Pretty print with contract, CoinGecko link, and now CG Rank."""
+        """Pretty print with contract, CoinGecko link, and CG Rank."""
         attr = pool.get("attributes", {})
         rel = pool.get("relationships", {})
 
@@ -217,7 +213,7 @@ class GeckoTerminalGlobalFetcher:
 
         contract = pool.get("base_token", {}).get("address") if pool.get("base_token") else "N/A"
 
-        # 24h metrics (unchanged)
+        # 24h metrics
         vol_dict = attr.get("volume_usd", {})
         volume_24h = vol_dict.get("h24", "0") if isinstance(vol_dict, dict) else "0"
         tx_dict = attr.get("transactions", {}).get("h24", {})
@@ -272,27 +268,28 @@ class GeckoTerminalGlobalFetcher:
 
         pools, meta, included = self.fetch_global_trending_pools()
 
+        # === ASSIGN GECKO TERMINAL RANK (explicit key) ===
         for i, pool in enumerate(pools, 1):
-            pool["rank"] = i
+            pool["gecko_terminal_rank"] = i
 
         filtered_pools = self._filter_pools(pools)
         print(f"✅ {len(filtered_pools)} pools passed your filters")
 
         self._enrich_pools_with_token_data(filtered_pools, included)
-        self._enrich_with_coingecko_ranks(filtered_pools)   # ← NEW: rank enrichment
+        self._enrich_with_coingecko_ranks(filtered_pools)
 
         top_n = self.config["TOP_N_TO_PRINT"]
-        print(f"\n📊 Top {top_n} GLOBAL trending pools (original Gecko ranking):\n")
+        print(f"\n📊 Top {top_n} GLOBAL trending pools (GeckoTerminal server-side ranking):\n")
 
         for pool in filtered_pools[:top_n]:
-            print(f"#{pool['rank']} ───────────────────────────────────────")
+            print(f"#{pool['gecko_terminal_rank']} (GeckoTerminal rank) ───────────────────────────────────────")
             self.pretty_print_pool(pool, included)
             print()
 
         json_filename = self.config["JSON_FILENAME"]
         with open(json_filename, "w", encoding="utf-8") as f:
             json.dump({
-                "pools": filtered_pools,   # now contains coingecko_rank
+                "pools": filtered_pools,   # now contains gecko_terminal_rank + coingecko_rank
                 "meta": meta,
                 "included": included,
                 "filters_applied": {
