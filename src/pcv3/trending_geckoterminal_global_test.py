@@ -134,7 +134,7 @@ def main():
         print()  # extra blank line between pools
     
     # === JSON: ALL 20 pools WITH explicit rank ===
-    json_filename = "global_trending_24h.json"
+    json_filename = "gecko_global_trending_24h.json"
     with open(json_filename, "w", encoding="utf-8") as f:
         json.dump({
             "pools": enriched_pools,   # ← now contains "rank": 1, 2, ...
