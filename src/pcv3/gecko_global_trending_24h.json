@@ -4,72 +4,72 @@
       "id": "bsc_0xb2af49dbf526054faf19602860a5e298a79f3d05",
       "type": "pool",
       "attributes": {
-        "base_token_price_usd": "1.60840114712677",
-        "base_token_price_native_currency": "0.0026250089750249",
-        "quote_token_price_usd": "612.8",
+        "base_token_price_usd": "1.59966667264574",
+        "base_token_price_native_currency": "0.00261178496536039",
+        "quote_token_price_usd": "612.96",
         "quote_token_price_native_currency": "1.0",
-        "base_token_price_quote_token": "0.002625008975",
-        "quote_token_price_base_token": "380.951078459",
+        "base_token_price_quote_token": "0.002611784965",
+        "quote_token_price_base_token": "382.879912881",
         "address": "0xb2af49dbf526054faf19602860a5e298a79f3d05",
         "name": "SIREN / WBNB 1%",
         "pool_created_at": "2025-02-08T20:23:54Z",
-        "fdv_usd": "1171259941.27253",
-        "market_cap_usd": "1171259941.27353",
+        "fdv_usd": "1165153000.73627",
+        "market_cap_usd": "1165153000.73727",
         "price_change_percentage": {
-          "m5": "-0.086",
-          "m15": "-0.391",
-          "m30": "-2.453",
-          "h1": "1.69",
-          "h6": "7.945",
-          "h24": "-0.467"
+          "m5": "-0.21",
+          "m15": "-0.534",
+          "m30": "-0.91",
+          "h1": "-0.442",
+          "h6": "3.54",
+          "h24": "-1.894"
         },
         "transactions": {
           "m5": {
             "buys": 0,
-            "sells": 17,
+            "sells": 15,
             "buyers": 0,
-            "sellers": 16
+            "sellers": 11
           },
           "m15": {
             "buys": 0,
-            "sells": 44,
+            "sells": 37,
             "buyers": 0,
-            "sellers": 28
+            "sellers": 16
           },
           "m30": {
             "buys": 0,
-            "sells": 135,
+            "sells": 81,
             "buyers": 0,
-            "sellers": 67
+            "sellers": 40
           },
           "h1": {
             "buys": 165,
-            "sells": 175,
+            "sells": 174,
             "buyers": 75,
-            "sellers": 84
+            "sellers": 80
           },
           "h6": {
-            "buys": 1902,
-            "sells": 1750,
-            "buyers": 383,
-            "sellers": 340
+            "buys": 1729,
+            "sells": 1740,
+            "buyers": 359,
+            "sellers": 339
           },
           "h24": {
-            "buys": 9748,
-            "sells": 9061,
-            "buyers": 988,
-            "sellers": 960
+            "buys": 9570,
+            "sells": 8971,
+            "buyers": 972,
+            "sellers": 956
           }
         },
         "volume_usd": {
-          "m5": "1591.6654037211",
-          "m15": "8439.3823452434",
-          "m30": "45823.5998579723",
-          "h1": "146849.57156443",
-          "h6": "1335262.05830813",
-          "h24": "9256675.78976903"
+          "m5": "4848.6541960221",
+          "m15": "11173.7984438052",
+          "m30": "19613.1807890486",
+          "h1": "149168.772893785",
+          "h6": "1289207.51115343",
+          "h24": "9102562.17317901"
         },
-        "reserve_in_usd": "14228075.2115"
+        "reserve_in_usd": "14183792.526"
       },
       "relationships": {
         "base_token": {
@@ -97,78 +97,92 @@
           }
         }
       },
-      "rank": 2
+      "rank": 2,
+      "base_token": {
+        "name": "SIREN",
+        "symbol": "SIREN",
+        "address": "0x997a58129890bbda032231a52ed1ddc845fc18e1",
+        "coingecko_coin_id": "siren-2"
+      },
+      "quote_token": {
+        "name": "Wrapped BNB",
+        "symbol": "WBNB",
+        "address": "0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c",
+        "coingecko_coin_id": "wbnb"
+      },
+      "coingecko_link": "https://www.coingecko.com/en/coins/siren-2",
+      "coingecko_rank": 61
     },
     {
       "id": "bsc_0x933477eba23726ca95a957cb85dbb1957267ef85",
       "type": "pool",
       "attributes": {
-        "base_token_price_usd": "0.000000126999018553808",
-        "base_token_price_native_currency": "0.000000000206729325184077",
-        "quote_token_price_usd": "612.8",
+        "base_token_price_usd": "0.000000125112222442321",
+        "base_token_price_native_currency": "0.000000000203596313485697",
+        "quote_token_price_usd": "612.97",
         "quote_token_price_native_currency": "1.0",
-        "base_token_price_quote_token": "0.0000000002067293252",
-        "quote_token_price_base_token": "4837243091.22363",
+        "base_token_price_quote_token": "0.0000000002035963135",
+        "quote_token_price_base_token": "4911680289.68389",
         "address": "0x933477eba23726ca95a957cb85dbb1957267ef85",
         "name": "WKC / WBNB",
         "pool_created_at": "2022-03-20T15:33:50Z",
-        "fdv_usd": "68522811.9429454",
-        "market_cap_usd": "68523609.9934203",
+        "fdv_usd": "67171083.1182003",
+        "market_cap_usd": "67171865.4257744",
         "price_change_percentage": {
-          "m5": "-0.029",
-          "m15": "-1.15",
-          "m30": "-1.586",
-          "h1": "-1.619",
-          "h6": "9.171",
-          "h24": "21.443"
+          "m5": "-0.34",
+          "m15": "-1.5",
+          "m30": "-3.1",
+          "h1": "-4.049",
+          "h6": "6.827",
+          "h24": "19.433"
         },
         "transactions": {
           "m5": {
-            "buys": 4,
-            "sells": 3,
-            "buyers": 2,
-            "sellers": 2
+            "buys": 13,
+            "sells": 8,
+            "buyers": 10,
+            "sellers": 6
           },
           "m15": {
-            "buys": 17,
-            "sells": 24,
-            "buyers": 13,
-            "sellers": 20
+            "buys": 31,
+            "sells": 27,
+            "buyers": 25,
+            "sellers": 23
           },
           "m30": {
-            "buys": 40,
-            "sells": 43,
-            "buyers": 26,
-            "sellers": 36
+            "buys": 50,
+            "sells": 52,
+            "buyers": 39,
+            "sellers": 43
           },
           "h1": {
-            "buys": 93,
-            "sells": 92,
-            "buyers": 67,
-            "sellers": 75
+            "buys": 102,
+            "sells": 98,
+            "buyers": 74,
+            "sellers": 81
           },
           "h6": {
-            "buys": 386,
-            "sells": 337,
-            "buyers": 247,
-            "sellers": 220
+            "buys": 406,
+            "sells": 357,
+            "buyers": 263,
+            "sellers": 233
           },
           "h24": {
-            "buys": 1945,
-            "sells": 1242,
-            "buyers": 992,
-            "sellers": 634
+            "buys": 1974,
+            "sells": 1265,
+            "buyers": 1010,
+            "sellers": 649
           }
         },
         "volume_usd": {
-          "m5": "278.0004543788",
-          "m15": "5965.025157454",
-          "m30": "12160.6895647296",
-          "h1": "27526.5357049571",
-          "h6": "111840.027290789",
-          "h24": "386156.192403948"
+          "m5": "739.5346652597",
+          "m15": "7896.4411979562",
+          "m30": "13988.2161708799",
+          "h1": "26337.9014993219",
+          "h6": "118146.880274561",
+          "h24": "393833.484434533"
         },
-        "reserve_in_usd": "1360578.5758"
+        "reserve_in_usd": "1350623.9212"
       },
       "relationships": {
         "base_token": {
@@ -196,78 +210,92 @@
           }
         }
       },
-      "rank": 4
+      "rank": 4,
+      "base_token": {
+        "name": "WIKI CAT",
+        "symbol": "WKC",
+        "address": "0x6ec90334d89dbdc89e08a133271be3d104128edb",
+        "coingecko_coin_id": "wiki-cat"
+      },
+      "quote_token": {
+        "name": "Wrapped BNB",
+        "symbol": "WBNB",
+        "address": "0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c",
+        "coingecko_coin_id": "wbnb"
+      },
+      "coingecko_link": "https://www.coingecko.com/en/coins/wiki-cat",
+      "coingecko_rank": 348
     },
     {
       "id": "eth_0x0d047a370611437a1b8e6c2a95ea36f69fdda3be",
       "type": "pool",
       "attributes": {
-        "base_token_price_usd": "0.00776134236219807",
-        "base_token_price_native_currency": "0.00000385133141121033",
-        "quote_token_price_usd": "2003.38317337528",
+        "base_token_price_usd": "0.00778703987169184",
+        "base_token_price_native_currency": "0.00000385016882503148",
+        "quote_token_price_usd": "2003.38315351538",
         "quote_token_price_native_currency": "1.0",
-        "base_token_price_quote_token": "0.000003851331411",
-        "quote_token_price_base_token": "259650.467131765",
+        "base_token_price_quote_token": "0.000003850168825",
+        "quote_token_price_base_token": "259728.870458511",
         "address": "0x0d047a370611437a1b8e6c2a95ea36f69fdda3be",
         "name": "LCAI / WETH 0.3%",
         "pool_created_at": "2026-01-27T17:30:23Z",
-        "fdv_usd": "74655646.3040009",
+        "fdv_usd": "74771517.2599463",
         "market_cap_usd": "0.0",
         "price_change_percentage": {
-          "m5": "0.56",
-          "m15": "0.833",
-          "m30": "0.798",
-          "h1": "-0.896",
-          "h6": "-6.401",
-          "h24": "8.94"
+          "m5": "0.176",
+          "m15": "0.757",
+          "m30": "0.99",
+          "h1": "0.15",
+          "h6": "-5.316",
+          "h24": "6.152"
         },
         "transactions": {
           "m5": {
-            "buys": 1,
-            "sells": 3,
-            "buyers": 1,
-            "sellers": 2
+            "buys": 4,
+            "sells": 1,
+            "buyers": 3,
+            "sellers": 1
           },
           "m15": {
-            "buys": 3,
-            "sells": 4,
-            "buyers": 3,
-            "sellers": 3
+            "buys": 7,
+            "sells": 6,
+            "buyers": 6,
+            "sellers": 5
           },
           "m30": {
-            "buys": 4,
-            "sells": 5,
-            "buyers": 4,
-            "sellers": 4
+            "buys": 10,
+            "sells": 10,
+            "buyers": 9,
+            "sellers": 8
           },
           "h1": {
-            "buys": 8,
-            "sells": 14,
-            "buyers": 8,
+            "buys": 14,
+            "sells": 15,
+            "buyers": 12,
             "sellers": 13
           },
           "h6": {
-            "buys": 185,
-            "sells": 114,
-            "buyers": 135,
-            "sellers": 85
+            "buys": 183,
+            "sells": 115,
+            "buyers": 133,
+            "sellers": 86
           },
           "h24": {
-            "buys": 1657,
+            "buys": 1628,
             "sells": 961,
-            "buyers": 844,
-            "sellers": 576
+            "buyers": 833,
+            "sellers": 577
           }
         },
         "volume_usd": {
-          "m5": "224.0912148292",
-          "m15": "1755.5118672984",
-          "m30": "1880.1617706146",
-          "h1": "9398.9717700873",
-          "h6": "268325.164737098",
-          "h24": "2149159.1978664"
+          "m5": "1600.7304489057",
+          "m15": "1812.1530686575",
+          "m30": "3567.664935956",
+          "h1": "7120.5152013577",
+          "h6": "253472.544766532",
+          "h24": "2140004.34377468"
         },
-        "reserve_in_usd": "1881178.6028"
+        "reserve_in_usd": "1880900.9153"
       },
       "relationships": {
         "base_token": {
@@ -295,78 +323,92 @@
           }
         }
       },
-      "rank": 5
+      "rank": 5,
+      "base_token": {
+        "name": "LightchainAI",
+        "symbol": "LCAI",
+        "address": "0x9ca8530ca349c966fe9ef903df17a75b8a778927",
+        "coingecko_coin_id": "lightchain-ai"
+      },
+      "quote_token": {
+        "name": "Wrapped Ether",
+        "symbol": "WETH",
+        "address": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+        "coingecko_coin_id": "weth"
+      },
+      "coingecko_link": "https://www.coingecko.com/en/coins/lightchain-ai",
+      "coingecko_rank": null
     },
     {
       "id": "polygon_pos_0x882df4b0fb50a229c3b4124eb18c759911485bfb",
       "type": "pool",
       "attributes": {
-        "base_token_price_usd": "5.92415614228854",
-        "base_token_price_native_currency": "0.00296784513064438",
-        "quote_token_price_usd": "0.996057254484236",
+        "base_token_price_usd": "5.96471766096679",
+        "base_token_price_native_currency": "0.00297056591227958",
+        "quote_token_price_usd": "0.995987604305612",
         "quote_token_price_native_currency": "0.000497501275889675",
-        "base_token_price_quote_token": "5.9655025514",
-        "quote_token_price_base_token": "0.1676304706",
+        "base_token_price_quote_token": "5.9709714452",
+        "quote_token_price_base_token": "0.1674769356",
         "address": "0x882df4b0fb50a229c3b4124eb18c759911485bfb",
         "name": "LGNS / DAI",
         "pool_created_at": "2024-03-06T16:34:32Z",
-        "fdv_usd": "9482100098.308",
+        "fdv_usd": "9433867315.71581",
         "market_cap_usd": "0.0",
         "price_change_percentage": {
-          "m5": "0.655",
-          "m15": "0.321",
-          "m30": "0.28",
-          "h1": "1.966",
-          "h6": "5.036",
-          "h24": "-2.639"
+          "m5": "-0.671",
+          "m15": "0.082",
+          "m30": "-0.189",
+          "h1": "0.382",
+          "h6": "4.638",
+          "h24": "-3.089"
         },
         "transactions": {
           "m5": {
-            "buys": 370,
-            "sells": 1677,
-            "buyers": 346,
-            "sellers": 460
+            "buys": 568,
+            "sells": 2848,
+            "buyers": 529,
+            "sellers": 752
           },
           "m15": {
-            "buys": 1789,
-            "sells": 6954,
-            "buyers": 1567,
-            "sellers": 1764
+            "buys": 2004,
+            "sells": 8726,
+            "buyers": 1746,
+            "sellers": 2119
           },
           "m30": {
-            "buys": 4375,
-            "sells": 16947,
-            "buyers": 3725,
-            "sellers": 3937
+            "buys": 4049,
+            "sells": 16719,
+            "buyers": 3470,
+            "sellers": 3926
           },
           "h1": {
-            "buys": 9230,
-            "sells": 35725,
-            "buyers": 7757,
-            "sellers": 7724
+            "buys": 9055,
+            "sells": 36454,
+            "buyers": 7593,
+            "sellers": 7903
           },
           "h6": {
-            "buys": 52231,
-            "sells": 195192,
-            "buyers": 43174,
-            "sellers": 39140
+            "buys": 51605,
+            "sells": 194059,
+            "buyers": 42574,
+            "sellers": 38855
           },
           "h24": {
-            "buys": 164240,
-            "sells": 667485,
-            "buyers": 119787,
-            "sellers": 112707
+            "buys": 164279,
+            "sells": 665987,
+            "buyers": 119800,
+            "sellers": 112726
           }
         },
         "volume_usd": {
-          "m5": "224796.006622024",
-          "m15": "866403.194669767",
-          "m30": "1884493.27956187",
-          "h1": "4607321.69994755",
-          "h6": "20623602.9048431",
-          "h24": "111376021.670469"
+          "m5": "231676.462146715",
+          "m15": "868497.306734907",
+          "m30": "1848115.85398358",
+          "h1": "4335013.62991258",
+          "h6": "20827695.6291319",
+          "h24": "111325203.115173"
         },
-        "reserve_in_usd": "494902425.5872"
+        "reserve_in_usd": "495161150.3095"
       },
       "relationships": {
         "base_token": {
@@ -394,7 +436,21 @@
           }
         }
       },
-      "rank": 18
+      "rank": 18,
+      "base_token": {
+        "name": "Longinus",
+        "symbol": "LGNS",
+        "address": "0xeb51d9a39ad5eef215dc0bf39a8821ff804a0f01",
+        "coingecko_coin_id": "origin-lgns"
+      },
+      "quote_token": {
+        "name": "(PoS) Dai Stablecoin",
+        "symbol": "DAI",
+        "address": "0x8f3cf7ad23cd3cadbd9735aff958023239c6a063",
+        "coingecko_coin_id": "polygon-pos-bridged-dai-polygon-pos"
+      },
+      "coingecko_link": "https://www.coingecko.com/en/coins/origin-lgns",
+      "coingecko_rank": null
     }
   ],
   "meta": {},

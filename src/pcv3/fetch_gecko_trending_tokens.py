@@ -2,14 +2,13 @@ import requests
 import json
 from datetime import datetime
 import sys
+import time  # for polite rate-limit handling if needed
 
 # ========================= CONFIG SECTION =========================
-# All user-controllable variables are centralized here.
-# Change any value below — no need to touch the class code.
 CONFIG = {
     # API behavior
     "API_URL": "https://api.geckoterminal.com/api/v2/networks/trending_pools",
-    "DURATION": "24h",                  # "24h", "1h", "6h", etc.
+    "DURATION": "24h",
     "PAGE": 1,
     "PER_PAGE": 20,
     "INCLUDE": "base_token,quote_token,dex,network",
@@ -25,52 +24,39 @@ CONFIG = {
     # Output settings
     "JSON_FILENAME": "gecko_global_trending_24h.json",
     "TOP_N_TO_PRINT": 5,
+
+    # CoinGecko enrichment
+    "COINGECKO_TIMEOUT": 10,
 }
 # ==================================================================
 
 
 class GeckoTerminalGlobalFetcher:
     """
-    PURE server-side ranking only.
-    No client-side re-numbering whatsoever.
-    Filters are applied but original Gecko rank is preserved.
+    Pure server-side ranking + full token data + CoinGecko links + CoinGecko ranks.
     """
 
     def __init__(self, config: dict = None):
         self.config = config or CONFIG.copy()
 
     def fetch_global_trending_pools(self):
-        """Fetch GLOBAL trending pools — already ranked server-side by Gecko."""
         url = self.config["API_URL"]
-
         params = {
             "duration": self.config["DURATION"],
             "page": self.config["PAGE"],
             "per_page": self.config["PER_PAGE"],
             "include": self.config["INCLUDE"]
         }
-
-        headers = {
-            "accept": "application/json",
-            "User-Agent": self.config["USER_AGENT"]
-        }
+        headers = {"accept": "application/json", "User-Agent": self.config["USER_AGENT"]}
 
         try:
-            response = requests.get(
-                url,
-                params=params,
-                headers=headers,
-                timeout=self.config["TIMEOUT_SECONDS"]
-            )
+            response = requests.get(url, params=params, headers=headers, timeout=self.config["TIMEOUT_SECONDS"])
             response.raise_for_status()
-
             data = response.json()
             pools = data.get("data", [])
             included = data.get("included", [])
-
-            print(f"✅ Fetched {len(pools)} GLOBAL trending pools from API (already ranked server-side by Gecko)")
+            print(f"✅ Fetched {len(pools)} GLOBAL trending pools from API")
             return pools, data.get("meta", {}), included
-
         except requests.exceptions.RequestException as e:
             print(f"❌ API request failed: {e}")
             if hasattr(e.response, 'text'):
@@ -94,13 +80,10 @@ class GeckoTerminalGlobalFetcher:
             return 0.0
 
     def _filter_pools(self, pools: list) -> list:
-        """Apply filters while preserving original server-side order."""
         min_tvl = float(self.config.get("MIN_TVL_USD", 0))
         min_vol = float(self.config.get("MIN_VOLUME_24H_USD", 0))
-
         if min_tvl <= 0 and min_vol <= 0:
             return pools[:]
-
         filtered = []
         for pool in pools:
             tvl = self._get_tvl(pool)
@@ -109,8 +92,117 @@ class GeckoTerminalGlobalFetcher:
                 filtered.append(pool)
         return filtered
 
+    def _enrich_pools_with_token_data(self, pools: list, included: list):
+        """Embed base/quote token data + direct CoinGecko link (unchanged from previous version)."""
+        token_map = {item["id"]: item["attributes"] for item in included if item.get("type") == "token"}
+
+        network_slug_map = {
+            "ethereum": "ethereum", "eth": "ethereum", "base": "base", "solana": "solana",
+            "bsc": "binance-smart-chain", "bnb": "binance-smart-chain", "arbitrum": "arbitrum",
+            "polygon": "polygon-pos", "avalanche": "avalanche", "optimism": "optimistic-ethereum",
+            "zksync": "zksync", "blast": "blast", "linea": "linea",
+        }
+
+        for pool in pools:
+            rel = pool.get("relationships", {})
+            # Base token
+            try:
+                base_id = rel["base_token"]["data"]["id"]
+                base_attrs = token_map.get(base_id, {})
+                pool["base_token"] = {
+                    "name": base_attrs.get("name"),
+                    "symbol": base_attrs.get("symbol"),
+                    "address": base_attrs.get("address"),
+                    "coingecko_coin_id": base_attrs.get("coingecko_coin_id")
+                }
+            except:
+                pool["base_token"] = None
+
+            # Quote token
+            try:
+                quote_id = rel["quote_token"]["data"]["id"]
+                quote_attrs = token_map.get(quote_id, {})
+                pool["quote_token"] = {
+                    "name": quote_attrs.get("name"),
+                    "symbol": quote_attrs.get("symbol"),
+                    "address": quote_attrs.get("address"),
+                    "coingecko_coin_id": quote_attrs.get("coingecko_coin_id")
+                }
+            except:
+                pool["quote_token"] = None
+
+            # CoinGecko link
+            base = pool.get("base_token")
+            if base and base.get("coingecko_coin_id"):
+                pool["coingecko_link"] = f"https://www.coingecko.com/en/coins/{base['coingecko_coin_id']}"
+            elif base and base.get("address"):
+                network_id = rel.get("network", {}).get("data", {}).get("id")
+                network_name = next(
+                    (item["attributes"].get("name", network_id) for item in included
+                     if item.get("id") == network_id), network_id
+                ).lower()
+                slug = network_slug_map.get(network_name, network_name)
+                pool["coingecko_link"] = f"https://www.coingecko.com/en/coins/{slug}/contract/{base['address']}"
+            else:
+                pool["coingecko_link"] = None
+
+    def _enrich_with_coingecko_ranks(self, pools: list):
+        """Batch fetch CoinGecko market_cap_rank for all tokens that have a coingecko_coin_id."""
+        # Collect unique coin IDs
+        coin_ids = {
+            pool["base_token"]["coingecko_coin_id"]
+            for pool in pools
+            if pool.get("base_token") and pool["base_token"].get("coingecko_coin_id")
+        }
+        if not coin_ids:
+            print("   ℹ️  No CoinGecko coin IDs found — skipping rank enrichment")
+            return
+
+        print(f"   🔄 Fetching CoinGecko ranks for {len(coin_ids)} unique tokens...")
+
+        ids_param = ",".join(coin_ids)
+        url = "https://api.coingecko.com/api/v3/coins/markets"
+        params = {
+            "vs_currency": "usd",
+            "ids": ids_param,
+            "order": "market_cap_desc",
+            "per_page": 250,
+            "page": 1,
+            "sparkline": "false",
+            "price_change_percentage": "24h"
+        }
+
+        try:
+            response = requests.get(
+                url, params=params, timeout=self.config["COINGECKO_TIMEOUT"]
+            )
+            response.raise_for_status()
+            data = response.json()
+
+            # Build lookup: coin_id → market_cap_rank
+            rank_map = {coin["id"]: coin.get("market_cap_rank") for coin in data if isinstance(coin, dict)}
+
+            # Attach to each pool
+            for pool in pools:
+                base = pool.get("base_token")
+                if base and base.get("coingecko_coin_id"):
+                    pool["coingecko_rank"] = rank_map.get(base["coingecko_coin_id"])
+                else:
+                    pool["coingecko_rank"] = None
+
+            print(f"   ✅ CoinGecko ranks enriched ({len(rank_map)} coins)")
+
+        except requests.exceptions.RequestException as e:
+            print(f"   ⚠️  CoinGecko rank fetch failed: {e} (ranks will be null)")
+            for pool in pools:
+                pool["coingecko_rank"] = None
+        except Exception as e:
+            print(f"   ⚠️  Unexpected error during rank enrichment: {e}")
+            for pool in pools:
+                pool["coingecko_rank"] = None
+
     def pretty_print_pool(self, pool: dict, included: list):
-        """Pretty print (unchanged)."""
+        """Pretty print with contract, CoinGecko link, and now CG Rank."""
         attr = pool.get("attributes", {})
         rel = pool.get("relationships", {})
 
@@ -123,20 +215,19 @@ class GeckoTerminalGlobalFetcher:
         except:
             token_name = token_symbol = "Unknown"
 
-        # 24h metrics
+        contract = pool.get("base_token", {}).get("address") if pool.get("base_token") else "N/A"
+
+        # 24h metrics (unchanged)
         vol_dict = attr.get("volume_usd", {})
         volume_24h = vol_dict.get("h24", "0") if isinstance(vol_dict, dict) else "0"
-
         tx_dict = attr.get("transactions", {}).get("h24", {})
         total_tx_24h = 0
         if isinstance(tx_dict, dict):
             total_tx_24h = int(tx_dict.get("buys", 0)) + int(tx_dict.get("sells", 0))
         else:
             total_tx_24h = int(float(tx_dict or 0))
-
         change_dict = attr.get("price_change_percentage", {})
         price_change_24h = change_dict.get("h24", "0") if isinstance(change_dict, dict) else "0"
-
         price = attr.get("base_token_price_usd", attr.get("price_usd", "0"))
         liquidity = attr.get("reserve_in_usd", "0")
         fdv = attr.get("fdv_usd", "0")
@@ -149,7 +240,6 @@ class GeckoTerminalGlobalFetcher:
             dex_name = dex["attributes"].get("name", dex_id) if dex else dex_id
         except:
             dex_name = "Unknown DEX"
-
         try:
             network_id = rel["network"]["data"]["id"]
             network = next((item for item in included if item.get("id") == network_id), None)
@@ -158,6 +248,7 @@ class GeckoTerminalGlobalFetcher:
             network_name = "Unknown Chain"
 
         print(f"   Token      : {token_name} ({token_symbol})")
+        print(f"   Contract   : {contract}  ({network_name})")
         print(f"   Pool       : {attr.get('name', 'N/A')}")
         print(f"   Chain      : {network_name}")
         print(f"   DEX        : {dex_name}")
@@ -168,47 +259,40 @@ class GeckoTerminalGlobalFetcher:
         print(f"   Liquidity  : ${float(liquidity):,}")
         print(f"   FDV        : ${float(fdv):,}")
         print(f"   GT Score   : {gt_score}/100")
+        print(f"   🔗 CoinGecko: {pool.get('coingecko_link', 'N/A')}")
+        rank = pool.get("coingecko_rank")
+        print(f"   🏆 CG Rank   : #{rank if rank is not None else 'N/A'} (market-cap based)")
 
     def run(self):
-        """Main flow — 100% server-side ranking, no client-side renumbering."""
         print("=" * 80)
         print("🚀 FIXED GeckoTerminal GLOBAL 24h Trending Pools Fetcher")
-        print("   (Pure server-side ranking from GeckoTerminal)")
+        print("   (Server-side ranking + token addresses + CoinGecko links + RANKS)")
         print(f"   Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
         print("=" * 80)
 
-        # === FETCH (already in server-side ranked order) ===
         pools, meta, included = self.fetch_global_trending_pools()
 
-        # === ASSIGN SERVER-SIDE RANK (once, before any filtering) ===
         for i, pool in enumerate(pools, 1):
-            pool["rank"] = i   # ← pure Gecko server rank
+            pool["rank"] = i
 
-        # === APPLY FILTERS (preserves order) ===
         filtered_pools = self._filter_pools(pools)
-        print(f"✅ {len(filtered_pools)} pools passed your filters "
-              f"(MIN_TVL_USD=${self.config['MIN_TVL_USD']:,} | "
-              f"MIN_VOLUME_24H_USD=${self.config['MIN_VOLUME_24H_USD']:,})")
+        print(f"✅ {len(filtered_pools)} pools passed your filters")
 
-        if not filtered_pools:
-            print("⚠️  No pools met your minimum thresholds.")
-            filtered_pools = []
+        self._enrich_pools_with_token_data(filtered_pools, included)
+        self._enrich_with_coingecko_ranks(filtered_pools)   # ← NEW: rank enrichment
 
-        # === CONSOLE: Show using ORIGINAL Gecko rank ===
         top_n = self.config["TOP_N_TO_PRINT"]
-        print(f"\n📊 Top {top_n} GLOBAL trending pools that passed filters "
-              f"(showing **original Gecko server-side ranking**):\n")
+        print(f"\n📊 Top {top_n} GLOBAL trending pools (original Gecko ranking):\n")
 
         for pool in filtered_pools[:top_n]:
-            print(f"#{pool['rank']} ───────────────────────────────────────")  # ← server rank
+            print(f"#{pool['rank']} ───────────────────────────────────────")
             self.pretty_print_pool(pool, included)
             print()
 
-        # === JSON: Filtered pools with original Gecko rank ===
         json_filename = self.config["JSON_FILENAME"]
         with open(json_filename, "w", encoding="utf-8") as f:
             json.dump({
-                "pools": filtered_pools,   # already contain "rank" = Gecko server rank
+                "pools": filtered_pools,   # now contains coingecko_rank
                 "meta": meta,
                 "included": included,
                 "filters_applied": {
@@ -219,7 +303,7 @@ class GeckoTerminalGlobalFetcher:
                 }
             }, f, indent=2, ensure_ascii=False)
 
-        print(f"\n💾 Filtered data ({len(filtered_pools)} pools with original Gecko ranks) saved to → {json_filename}")
+        print(f"\n💾 Enriched data saved to → {json_filename}")
 
 
 if __name__ == "__main__":
