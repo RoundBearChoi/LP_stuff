@@ -26,13 +26,6 @@ CONFIG = {
     "rate_limit_sleep_seconds": 65,
     "max_retries_per_page": 3,
     "request_timeout": 15,
-
-    # === NEW: Thresholds for trader-profile flagging ===
-    "trader_thresholds": {
-        "whale_heavy_min": 5000,   # volume per trader above this = whale/concentrated
-        "bot_like_max": 300,       # volume per trader below this = bot-like / wash
-        # everything in between = "normal"
-    },
 }
 # =====================================================================
 
@@ -44,9 +37,9 @@ class GeckoTerminalFetcher:
     UPDATES:
     - Separate JSON file per chain
     - unique_buyers_24h, unique_sellers_24h, unique_traders_24h_approx
-    - NEW: volume_per_trader_usd + trader_profile flag for easy extreme filtering
+    - base_token_symbol + quote_token_symbol parsed directly from the 'name' field (reliable, zero extra API cost)
+    - Trader-profile flags (whale_heavy / bot_like / volume_per_trader_usd) completely removed per your request
     - Still returns a single flat list for backward compatibility
-    - Console output now highlights the new metric
     - Only 24h volume filter remains
     """
 
@@ -67,6 +60,22 @@ class GeckoTerminalFetcher:
             return float(value)
         except (ValueError, TypeError):
             return default
+
+    @staticmethod
+    def _parse_pair_name(name: str) -> tuple[str, str]:
+        """
+        Reliably extract base_token_symbol and quote_token_symbol from the pool 'name' field.
+        GeckoTerminal always returns names in the format "BASE / QUOTE" (or "BASE/QUOTE").
+        This parser is:
+          - Fast (string split, no API calls)
+          - Robust (handles spaces, "U.S. VDOR" style names, missing slash fallback)
+          - Consistent with every pool in the current top-volume data
+        """
+        if not name or "/" not in name:
+            return "", ""
+        # Split on the FIRST '/' only (in case a token name itself contains '/')
+        parts = [p.strip() for p in name.split("/", 1)]
+        return parts[0], parts[1] if len(parts) > 1 else ""
 
     def _fetch_page(self, network: str, page: int) -> List[Dict]:
         """Single page fetch with 429 retry logic."""
@@ -112,13 +121,13 @@ class GeckoTerminalFetcher:
     def fetch_filtered_top_pairs(self) -> List[Dict[str, Any]]:
         """
         Main method: returns ALL pairs (flat list) with 24h volume >= min_volume_24h_usd.
-        Also exports one JSON file per chain (now includes volume_per_trader_usd + profile).
+        Also exports one JSON file per chain (now includes parsed base/quote symbols).
         """
         network_pairs = defaultdict(list)
 
         print("\n" + "=" * 70)
         print("Starting fetch — ONLY 24h volume filter + per-chain early stop")
-        print("Exporting separate JSON per chain (with volume-per-trader metric)")
+        print("Exporting separate JSON per chain (with parsed base/quote symbols)")
         print("=" * 70)
 
         for network in self.config["networks"]:
@@ -148,16 +157,9 @@ class GeckoTerminalFetcher:
                         tx = attrs.get("transactions", {}).get("h24", {})
                         traders_approx = (self.safe_float(tx.get("buyers")) +
                                           self.safe_float(tx.get("sellers")))
-                        volume_per_trader = vol_24h / max(traders_approx, 1)
 
-                        # Determine simple profile for quick extreme filtering
-                        thresholds = self.config["trader_thresholds"]
-                        if volume_per_trader > thresholds["whale_heavy_min"]:
-                            profile = "whale_heavy"
-                        elif volume_per_trader < thresholds["bot_like_max"]:
-                            profile = "bot_like"
-                        else:
-                            profile = "normal"
+                        # === Parse symbols from name field ===
+                        base_symbol, quote_symbol = self._parse_pair_name(attrs.get("name", ""))
 
                         pair_info = {
                             "network": network,
@@ -167,18 +169,14 @@ class GeckoTerminalFetcher:
                             "volume_24h_usd": vol_24h,
                             "fdv_usd": self.safe_float(attrs.get("fdv_usd")),
                             "price_usd": self.safe_float(attrs.get("price_usd")),
-                            "base_token_symbol": attrs.get("base_token", {}).get("symbol", ""),
-                            "quote_token_symbol": attrs.get("quote_token", {}).get("symbol", ""),
+                            "base_token_symbol": base_symbol,      # ← now populated
+                            "quote_token_symbol": quote_symbol,    # ← now populated
                             "total_tx_24h": (tx.get("buys", 0) + tx.get("sells", 0)),
 
-                            # Trader fields
+                            # Trader fields (kept because they are useful)
                             "unique_buyers_24h": self.safe_float(tx.get("buyers")),
                             "unique_sellers_24h": self.safe_float(tx.get("sellers")),
                             "unique_traders_24h_approx": traders_approx,
-
-                            # === NEW METRIC YOU REQUESTED ===
-                            "volume_per_trader_usd": round(volume_per_trader, 2),
-                            "trader_profile": profile,          # "normal", "whale_heavy", or "bot_like"
                         }
                         network_pairs[network].append(pair_info)
 
@@ -214,8 +212,8 @@ class GeckoTerminalFetcher:
         for i, p in enumerate(filtered_pairs, 1):
             print(f"{i:3d}. {p['name']}  ({p['network'].upper()})")
             print(f"      TVL: ${p['tvl_usd']:,.0f}   |   24h Vol: ${p['volume_24h_usd']:,.0f}")
+            print(f"      Base: {p['base_token_symbol']}   |   Quote: {p['quote_token_symbol']}")
             print(f"      Unique Buyers: {int(p['unique_buyers_24h']):,} | Unique Sellers: {int(p['unique_sellers_24h']):,} | Approx Traders: {int(p['unique_traders_24h_approx']):,}")
-            print(f"      Volume per Trader: ${p['volume_per_trader_usd']:,.2f}   →   Profile: {p['trader_profile'].upper()}")
             print(f"      Pool: {p['pool_address']}")
             print("-" * 110)
 
