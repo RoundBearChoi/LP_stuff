@@ -106,19 +106,20 @@ def main():
     # === FETCH ALL 20 (matches real API behavior) ===
     pools, meta, included = fetch_solana_trending_pools(duration="24h", page=1, per_page=20)
     
-    print(f"\n📊 Top {len(pools)} Solana pools ranked by 24h trend score:\n")
+    # === CONSOLE: Show ONLY Top 5 ===
+    print(f"\n📊 Top 5 Solana pools ranked by 24h trend score (full 20 saved to JSON):\n")
     
-    # === CLEAN RANKING #1 to #20 ===
-    for i, pool in enumerate(pools, 1):
+    for i, pool in enumerate(pools[:5], 1):   # <-- only first 5 for console
         print(f"#{i} ───────────────────────────────────────")
         pretty_print_pool(pool, included)
         print()  # extra blank line between pools for readability
     
-    # JSON export now contains all 20 pools
-    with open(f"solana_trending_24h.json", "w", encoding="utf-8") as f:
+    # === JSON: Keep ALL 20 pools ===
+    json_filename = "solana_trending_24h.json"
+    with open(json_filename, "w", encoding="utf-8") as f:
         json.dump({"pools": pools, "meta": meta, "included": included}, f, indent=2, ensure_ascii=False)
     
-    print(f"\n💾 Full data (all 20 pools) saved to JSON.")
+    print(f"\n💾 Full data (all 20 pools) saved to → {json_filename}")
 
 
 if __name__ == "__main__":
