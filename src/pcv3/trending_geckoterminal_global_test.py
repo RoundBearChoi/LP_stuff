@@ -3,26 +3,27 @@ import json
 from datetime import datetime
 import sys
 
-def fetch_solana_trending_pools(duration="24h", page=1, per_page=20):
+def fetch_global_trending_pools(duration="24h", page=1, per_page=20):
     """
-    Fetch Solana pools sorted by 24h trending score (exact match to website).
+    Fetch GLOBAL trending pools across ALL chains supported by GeckoTerminal.
     
-    IMPORTANT: GeckoTerminal's trending_pools endpoint is hard-coded to return
-    exactly 20 pools and completely ignores the per_page parameter.
-    We now default to 20 to match the real API behavior.
+    IMPORTANT: The API is hard-coded to return exactly 20 pools and ignores per_page.
+    We now default to 20 to match real behavior.
+    
+    Chains are mixed together (Solana, Base, Ethereum, TON, Sui, etc.).
     """
-    url = "https://api.geckoterminal.com/api/v2/networks/solana/trending_pools"
+    url = "https://api.geckoterminal.com/api/v2/networks/trending_pools"
     
     params = {
         "duration": duration,
         "page": page,
         "per_page": per_page,
-        "include": "base_token,quote_token,dex"   # needed for token names + DEX
+        "include": "base_token,quote_token,dex,network"   # added "network" so we get the chain name
     }
     
     headers = {
         "accept": "application/json",
-        "User-Agent": "GeckoTerminal-Fixed-Script/2.0"
+        "User-Agent": "GeckoTerminal-Global-Fixed-Script/2.0"
     }
     
     try:
@@ -33,7 +34,7 @@ def fetch_solana_trending_pools(duration="24h", page=1, per_page=20):
         pools = data.get("data", [])
         included = data.get("included", [])
         
-        print(f"✅ Fetched {len(pools)} trending pools from API (GeckoTerminal always returns 20)")
+        print(f"✅ Fetched {len(pools)} GLOBAL trending pools from API (mixed across all chains)")
         return pools, data.get("meta", {}), included
         
     except requests.exceptions.RequestException as e:
@@ -44,7 +45,7 @@ def fetch_solana_trending_pools(duration="24h", page=1, per_page=20):
 
 
 def pretty_print_pool(pool, included):
-    """Safe pretty print with correct nested structure from current API."""
+    """Safe pretty print with correct nested structure + NEW chain display."""
     attr = pool.get("attributes", {})
     rel = pool.get("relationships", {})
     
@@ -57,7 +58,7 @@ def pretty_print_pool(pool, included):
     except:
         token_name = token_symbol = "Unknown"
 
-    # === 24h metrics ===
+    # === 24h metrics (unchanged) ===
     vol_dict = attr.get("volume_usd", {})
     volume_24h = vol_dict.get("h24", "0") if isinstance(vol_dict, dict) else "0"
     
@@ -76,7 +77,7 @@ def pretty_print_pool(pool, included):
     fdv = attr.get("fdv_usd", "0")
     gt_score = attr.get("gt_score", "N/A")
 
-    # DEX name
+    # === DEX name ===
     try:
         dex_id = rel["dex"]["data"]["id"]
         dex = next((item for item in included if item.get("id") == dex_id), None)
@@ -84,9 +85,18 @@ def pretty_print_pool(pool, included):
     except:
         dex_name = "Unknown DEX"
 
+    # === NEW: Network / Chain name ===
+    try:
+        network_id = rel["network"]["data"]["id"]
+        network = next((item for item in included if item.get("id") == network_id), None)
+        network_name = network["attributes"].get("name", network_id) if network else network_id
+    except:
+        network_name = "Unknown Chain"
+
     # === PRINT BLOCK ===
     print(f"   Token      : {token_name} ({token_symbol})")
     print(f"   Pool       : {attr.get('name', 'N/A')}")
+    print(f"   Chain      : {network_name}")          # ← new line
     print(f"   DEX        : {dex_name}")
     print(f"   24h Volume : ${float(volume_24h):,}")
     print(f"   24h Txns   : {total_tx_24h:,}")
@@ -99,27 +109,40 @@ def pretty_print_pool(pool, included):
 
 def main():
     print("=" * 80)
-    print("🚀 FIXED GeckoTerminal Solana 24h Trending Pools Fetcher")
+    print("🚀 FIXED GeckoTerminal GLOBAL 24h Trending Pools Fetcher")
+    print("   (All chains mixed together — exact match to website)")
     print(f"   Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print("=" * 80)
     
-    # === FETCH ALL 20 (matches real API behavior) ===
-    pools, meta, included = fetch_solana_trending_pools(duration="24h", page=1, per_page=20)
+    # === FETCH ALL 20 GLOBAL POOLS ===
+    pools, meta, included = fetch_global_trending_pools(duration="24h", page=1, per_page=20)
     
-    # === CONSOLE: Show ONLY Top 5 ===
-    print(f"\n📊 Top 5 Solana pools ranked by 24h trend score (full 20 saved to JSON):\n")
+    # === ENRICH WITH RANK NUMBER FOR JSON ===
+    # We create a copy so we never mutate the raw API response
+    enriched_pools = []
+    for i, pool in enumerate(pools, 1):
+        enriched = pool.copy()          # shallow copy is sufficient here
+        enriched["rank"] = i
+        enriched_pools.append(enriched)
     
-    for i, pool in enumerate(pools[:5], 1):   # <-- only first 5 for console
+    # === CONSOLE: Show ONLY Top 5 (unchanged) ===
+    print(f"\n📊 Top 5 GLOBAL trending pools (across ALL chains):\n")
+    
+    for i, pool in enumerate(pools[:5], 1):
         print(f"#{i} ───────────────────────────────────────")
         pretty_print_pool(pool, included)
-        print()  # extra blank line between pools for readability
+        print()  # extra blank line between pools
     
-    # === JSON: Keep ALL 20 pools ===
-    json_filename = "solana_trending_24h.json"
+    # === JSON: ALL 20 pools WITH explicit rank ===
+    json_filename = "global_trending_24h.json"
     with open(json_filename, "w", encoding="utf-8") as f:
-        json.dump({"pools": pools, "meta": meta, "included": included}, f, indent=2, ensure_ascii=False)
+        json.dump({
+            "pools": enriched_pools,   # ← now contains "rank": 1, 2, ...
+            "meta": meta,
+            "included": included
+        }, f, indent=2, ensure_ascii=False)
     
-    print(f"\n💾 Full data (all 20 pools) saved to → {json_filename}")
+    print(f"\n💾 Full data (all 20 global pools WITH RANK) saved to → {json_filename}")
 
 
 if __name__ == "__main__":
