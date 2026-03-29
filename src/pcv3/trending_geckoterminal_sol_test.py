@@ -119,7 +119,6 @@ def main():
         json.dump({"pools": pools, "meta": meta, "included": included}, f, indent=2, ensure_ascii=False)
     
     print(f"\n💾 Full data (all 20 pools) saved to JSON.")
-    print(f"🔗 Matches exactly: https://www.geckoterminal.com/solana/pools?sort=-24h_trend_score")
 
 
 if __name__ == "__main__":
