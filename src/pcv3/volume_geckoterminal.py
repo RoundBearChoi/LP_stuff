@@ -26,6 +26,13 @@ CONFIG = {
     "rate_limit_sleep_seconds": 65,
     "max_retries_per_page": 3,
     "request_timeout": 15,
+
+    # === NEW: Thresholds for trader-profile flagging ===
+    "trader_thresholds": {
+        "whale_heavy_min": 5000,   # volume per trader above this = whale/concentrated
+        "bot_like_max": 300,       # volume per trader below this = bot-like / wash
+        # everything in between = "normal"
+    },
 }
 # =====================================================================
 
@@ -35,10 +42,11 @@ class GeckoTerminalFetcher:
     Clean OOP wrapper for GeckoTerminal public API.
 
     UPDATES:
-    - Separate JSON file per chain (e.g. geckoterminal_top_volume_sol.json)
-    - Added unique_buyers_24h, unique_sellers_24h and unique_traders_24h_approx
+    - Separate JSON file per chain
+    - unique_buyers_24h, unique_sellers_24h, unique_traders_24h_approx
+    - NEW: volume_per_trader_usd + trader_profile flag for easy extreme filtering
     - Still returns a single flat list for backward compatibility
-    - Global console output mostly unchanged (now also shows trader counts)
+    - Console output now highlights the new metric
     - Only 24h volume filter remains
     """
 
@@ -104,13 +112,13 @@ class GeckoTerminalFetcher:
     def fetch_filtered_top_pairs(self) -> List[Dict[str, Any]]:
         """
         Main method: returns ALL pairs (flat list) with 24h volume >= min_volume_24h_usd.
-        Also exports one JSON file per chain (now includes unique buyer/seller counts).
+        Also exports one JSON file per chain (now includes volume_per_trader_usd + profile).
         """
         network_pairs = defaultdict(list)
 
         print("\n" + "=" * 70)
         print("Starting fetch — ONLY 24h volume filter + per-chain early stop")
-        print("Exporting separate JSON per chain (with unique traders)")
+        print("Exporting separate JSON per chain (with volume-per-trader metric)")
         print("=" * 70)
 
         for network in self.config["networks"]:
@@ -138,6 +146,18 @@ class GeckoTerminalFetcher:
                     # === FILTER & COLLECT ===
                     if vol_24h >= self.config["min_volume_24h_usd"]:
                         tx = attrs.get("transactions", {}).get("h24", {})
+                        traders_approx = (self.safe_float(tx.get("buyers")) +
+                                          self.safe_float(tx.get("sellers")))
+                        volume_per_trader = vol_24h / max(traders_approx, 1)
+
+                        # Determine simple profile for quick extreme filtering
+                        thresholds = self.config["trader_thresholds"]
+                        if volume_per_trader > thresholds["whale_heavy_min"]:
+                            profile = "whale_heavy"
+                        elif volume_per_trader < thresholds["bot_like_max"]:
+                            profile = "bot_like"
+                        else:
+                            profile = "normal"
 
                         pair_info = {
                             "network": network,
@@ -151,10 +171,14 @@ class GeckoTerminalFetcher:
                             "quote_token_symbol": attrs.get("quote_token", {}).get("symbol", ""),
                             "total_tx_24h": (tx.get("buys", 0) + tx.get("sells", 0)),
 
-                            # === NEW TRADER FIELDS ===
+                            # Trader fields
                             "unique_buyers_24h": self.safe_float(tx.get("buyers")),
                             "unique_sellers_24h": self.safe_float(tx.get("sellers")),
-                            "unique_traders_24h_approx": self.safe_float(tx.get("buyers")) + self.safe_float(tx.get("sellers")),
+                            "unique_traders_24h_approx": traders_approx,
+
+                            # === NEW METRIC YOU REQUESTED ===
+                            "volume_per_trader_usd": round(volume_per_trader, 2),
+                            "trader_profile": profile,          # "normal", "whale_heavy", or "bot_like"
                         }
                         network_pairs[network].append(pair_info)
 
@@ -177,7 +201,7 @@ class GeckoTerminalFetcher:
             if network != self.config["networks"][-1]:
                 time.sleep(2)
 
-        # === GLOBAL LIST FOR RETURN + CONSOLE (unchanged UX + trader info) ===
+        # === GLOBAL LIST FOR RETURN + CONSOLE ===
         filtered_pairs: List[Dict[str, Any]] = []
         for net in self.config["networks"]:
             filtered_pairs.extend(network_pairs[net])
@@ -185,14 +209,15 @@ class GeckoTerminalFetcher:
         filtered_pairs.sort(key=lambda x: x["volume_24h_usd"], reverse=True)
 
         print(f"\n🎉 DONE — Found {len(filtered_pairs)} pairs with 24h volume >= ${CONFIG['min_volume_24h_usd']:,.0f}")
-        print("-" * 100)
+        print("-" * 110)
 
         for i, p in enumerate(filtered_pairs, 1):
             print(f"{i:3d}. {p['name']}  ({p['network'].upper()})")
             print(f"      TVL: ${p['tvl_usd']:,.0f}   |   24h Vol: ${p['volume_24h_usd']:,.0f}")
             print(f"      Unique Buyers: {int(p['unique_buyers_24h']):,} | Unique Sellers: {int(p['unique_sellers_24h']):,} | Approx Traders: {int(p['unique_traders_24h_approx']):,}")
+            print(f"      Volume per Trader: ${p['volume_per_trader_usd']:,.2f}   →   Profile: {p['trader_profile'].upper()}")
             print(f"      Pool: {p['pool_address']}")
-            print("-" * 100)
+            print("-" * 110)
 
         return filtered_pairs
 

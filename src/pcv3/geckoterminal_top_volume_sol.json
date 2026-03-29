@@ -3,46 +3,52 @@
     "network": "solana",
     "pool_address": "solana_3QYYvFWgSuGK8bbxMSAYkCqE8QfSuFtByagnZAuekia2",
     "name": "USDT / SOL",
-    "tvl_usd": 173719.3737,
-    "volume_24h_usd": 68266419.0419423,
-    "fdv_usd": 3490017781.70555,
+    "tvl_usd": 173899.0671,
+    "volume_24h_usd": 68505169.0779481,
+    "fdv_usd": 3489550548.26647,
     "price_usd": 0.0,
     "base_token_symbol": "",
     "quote_token_symbol": "",
-    "total_tx_24h": 154328,
-    "unique_buyers_24h": 3050.0,
-    "unique_sellers_24h": 2192.0,
-    "unique_traders_24h_approx": 5242.0
+    "total_tx_24h": 154678,
+    "unique_buyers_24h": 3048.0,
+    "unique_sellers_24h": 2183.0,
+    "unique_traders_24h_approx": 5231.0,
+    "volume_per_trader_usd": 13096.0,
+    "trader_profile": "whale_heavy"
   },
   {
     "network": "solana",
     "pool_address": "solana_8sKQHfjNhvmAw94PhfvfMcytmqW6jmxvwieYyzXCCPu",
     "name": "SOL / USDC",
-    "tvl_usd": 567287.4552,
-    "volume_24h_usd": 65575255.4399772,
-    "fdv_usd": 1136699137.69158,
+    "tvl_usd": 568110.4731,
+    "volume_24h_usd": 65624058.6291433,
+    "fdv_usd": 1144359552.90153,
     "price_usd": 0.0,
     "base_token_symbol": "",
     "quote_token_symbol": "",
-    "total_tx_24h": 159044,
-    "unique_buyers_24h": 4445.0,
-    "unique_sellers_24h": 3646.0,
-    "unique_traders_24h_approx": 8091.0
+    "total_tx_24h": 158875,
+    "unique_buyers_24h": 4432.0,
+    "unique_sellers_24h": 3633.0,
+    "unique_traders_24h_approx": 8065.0,
+    "volume_per_trader_usd": 8136.9,
+    "trader_profile": "whale_heavy"
   },
   {
     "network": "solana",
     "pool_address": "solana_Czfq3xZZDmsdGdUyrNLtRhGc47cXcZtLG4crryfu44zE",
     "name": "SOL / USDC",
-    "tvl_usd": 27596068.9541,
-    "volume_24h_usd": 60220012.4544366,
-    "fdv_usd": 1135971092.51163,
+    "tvl_usd": 27641784.7472,
+    "volume_24h_usd": 60216459.0573966,
+    "fdv_usd": 1143250104.42731,
     "price_usd": 0.0,
     "base_token_symbol": "",
     "quote_token_symbol": "",
-    "total_tx_24h": 27255,
-    "unique_buyers_24h": 891.0,
-    "unique_sellers_24h": 740.0,
-    "unique_traders_24h_approx": 1631.0
+    "total_tx_24h": 27138,
+    "unique_buyers_24h": 895.0,
+    "unique_sellers_24h": 738.0,
+    "unique_traders_24h_approx": 1633.0,
+    "volume_per_trader_usd": 36874.75,
+    "trader_profile": "whale_heavy"
   },
   {
     "network": "solana",
@@ -57,7 +63,9 @@
     "total_tx_24h": 77556,
     "unique_buyers_24h": 7745.0,
     "unique_sellers_24h": 71.0,
-    "unique_traders_24h_approx": 7816.0
+    "unique_traders_24h_approx": 7816.0,
+    "volume_per_trader_usd": 6034.1,
+    "trader_profile": "whale_heavy"
   },
   {
     "network": "solana",
@@ -72,7 +80,9 @@
     "total_tx_24h": 1615,
     "unique_buyers_24h": 129.0,
     "unique_sellers_24h": 125.0,
-    "unique_traders_24h_approx": 254.0
+    "unique_traders_24h_approx": 254.0,
+    "volume_per_trader_usd": 158215.03,
+    "trader_profile": "whale_heavy"
   },
   {
     "network": "solana",
@@ -87,7 +97,9 @@
     "total_tx_24h": 1604,
     "unique_buyers_24h": 131.0,
     "unique_sellers_24h": 124.0,
-    "unique_traders_24h_approx": 255.0
+    "unique_traders_24h_approx": 255.0,
+    "volume_per_trader_usd": 156467.76,
+    "trader_profile": "whale_heavy"
   },
   {
     "network": "solana",
@@ -102,7 +114,9 @@
     "total_tx_24h": 1603,
     "unique_buyers_24h": 126.0,
     "unique_sellers_24h": 125.0,
-    "unique_traders_24h_approx": 251.0
+    "unique_traders_24h_approx": 251.0,
+    "volume_per_trader_usd": 158885.13,
+    "trader_profile": "whale_heavy"
   },
   {
     "network": "solana",
@@ -117,7 +131,9 @@
     "total_tx_24h": 1589,
     "unique_buyers_24h": 127.0,
     "unique_sellers_24h": 125.0,
-    "unique_traders_24h_approx": 252.0
+    "unique_traders_24h_approx": 252.0,
+    "volume_per_trader_usd": 157685.32,
+    "trader_profile": "whale_heavy"
   },
   {
     "network": "solana",
@@ -132,7 +148,9 @@
     "total_tx_24h": 10682,
     "unique_buyers_24h": 1.0,
     "unique_sellers_24h": 1.0,
-    "unique_traders_24h_approx": 2.0
+    "unique_traders_24h_approx": 2.0,
+    "volume_per_trader_usd": 19830876.16,
+    "trader_profile": "whale_heavy"
   },
   {
     "network": "solana",
@@ -147,7 +165,9 @@
     "total_tx_24h": 1596,
     "unique_buyers_24h": 126.0,
     "unique_sellers_24h": 125.0,
-    "unique_traders_24h_approx": 251.0
+    "unique_traders_24h_approx": 251.0,
+    "volume_per_trader_usd": 157939.19,
+    "trader_profile": "whale_heavy"
   },
   {
     "network": "solana",
@@ -162,7 +182,9 @@
     "total_tx_24h": 1598,
     "unique_buyers_24h": 131.0,
     "unique_sellers_24h": 125.0,
-    "unique_traders_24h_approx": 256.0
+    "unique_traders_24h_approx": 256.0,
+    "volume_per_trader_usd": 154795.98,
+    "trader_profile": "whale_heavy"
   },
   {
     "network": "solana",
@@ -177,7 +199,9 @@
     "total_tx_24h": 1600,
     "unique_buyers_24h": 129.0,
     "unique_sellers_24h": 125.0,
-    "unique_traders_24h_approx": 254.0
+    "unique_traders_24h_approx": 254.0,
+    "volume_per_trader_usd": 155865.8,
+    "trader_profile": "whale_heavy"
   },
   {
     "network": "solana",
@@ -192,7 +216,9 @@
     "total_tx_24h": 1562,
     "unique_buyers_24h": 128.0,
     "unique_sellers_24h": 125.0,
-    "unique_traders_24h_approx": 253.0
+    "unique_traders_24h_approx": 253.0,
+    "volume_per_trader_usd": 154863.19,
+    "trader_profile": "whale_heavy"
   },
   {
     "network": "solana",
@@ -207,7 +233,9 @@
     "total_tx_24h": 1567,
     "unique_buyers_24h": 127.0,
     "unique_sellers_24h": 125.0,
-    "unique_traders_24h_approx": 252.0
+    "unique_traders_24h_approx": 252.0,
+    "volume_per_trader_usd": 155068.7,
+    "trader_profile": "whale_heavy"
   },
   {
     "network": "solana",
@@ -222,7 +250,9 @@
     "total_tx_24h": 1562,
     "unique_buyers_24h": 132.0,
     "unique_sellers_24h": 125.0,
-    "unique_traders_24h_approx": 257.0
+    "unique_traders_24h_approx": 257.0,
+    "volume_per_trader_usd": 151985.55,
+    "trader_profile": "whale_heavy"
   },
   {
     "network": "solana",
@@ -237,7 +267,9 @@
     "total_tx_24h": 1570,
     "unique_buyers_24h": 126.0,
     "unique_sellers_24h": 125.0,
-    "unique_traders_24h_approx": 251.0
+    "unique_traders_24h_approx": 251.0,
+    "volume_per_trader_usd": 155327.84,
+    "trader_profile": "whale_heavy"
   },
   {
     "network": "solana",
@@ -252,7 +284,9 @@
     "total_tx_24h": 1555,
     "unique_buyers_24h": 126.0,
     "unique_sellers_24h": 124.0,
-    "unique_traders_24h_approx": 250.0
+    "unique_traders_24h_approx": 250.0,
+    "volume_per_trader_usd": 155133.66,
+    "trader_profile": "whale_heavy"
   },
   {
     "network": "solana",
@@ -267,7 +301,9 @@
     "total_tx_24h": 1883,
     "unique_buyers_24h": 452.0,
     "unique_sellers_24h": 125.0,
-    "unique_traders_24h_approx": 577.0
+    "unique_traders_24h_approx": 577.0,
+    "volume_per_trader_usd": 67044.59,
+    "trader_profile": "whale_heavy"
   },
   {
     "network": "solana",
@@ -282,7 +318,9 @@
     "total_tx_24h": 1549,
     "unique_buyers_24h": 127.0,
     "unique_sellers_24h": 125.0,
-    "unique_traders_24h_approx": 252.0
+    "unique_traders_24h_approx": 252.0,
+    "volume_per_trader_usd": 153231.72,
+    "trader_profile": "whale_heavy"
   },
   {
     "network": "solana",
@@ -297,7 +335,9 @@
     "total_tx_24h": 1539,
     "unique_buyers_24h": 126.0,
     "unique_sellers_24h": 125.0,
-    "unique_traders_24h_approx": 251.0
+    "unique_traders_24h_approx": 251.0,
+    "volume_per_trader_usd": 153401.9,
+    "trader_profile": "whale_heavy"
   },
   {
     "network": "solana",
@@ -312,7 +352,9 @@
     "total_tx_24h": 1536,
     "unique_buyers_24h": 126.0,
     "unique_sellers_24h": 125.0,
-    "unique_traders_24h_approx": 251.0
+    "unique_traders_24h_approx": 251.0,
+    "volume_per_trader_usd": 151573.76,
+    "trader_profile": "whale_heavy"
   },
   {
     "network": "solana",
@@ -327,7 +369,9 @@
     "total_tx_24h": 1530,
     "unique_buyers_24h": 126.0,
     "unique_sellers_24h": 125.0,
-    "unique_traders_24h_approx": 251.0
+    "unique_traders_24h_approx": 251.0,
+    "volume_per_trader_usd": 151074.96,
+    "trader_profile": "whale_heavy"
   },
   {
     "network": "solana",
@@ -342,7 +386,9 @@
     "total_tx_24h": 1518,
     "unique_buyers_24h": 126.0,
     "unique_sellers_24h": 125.0,
-    "unique_traders_24h_approx": 251.0
+    "unique_traders_24h_approx": 251.0,
+    "volume_per_trader_usd": 150127.08,
+    "trader_profile": "whale_heavy"
   },
   {
     "network": "solana",
@@ -357,7 +403,9 @@
     "total_tx_24h": 6592,
     "unique_buyers_24h": 1.0,
     "unique_sellers_24h": 1.0,
-    "unique_traders_24h_approx": 2.0
+    "unique_traders_24h_approx": 2.0,
+    "volume_per_trader_usd": 18788076.23,
+    "trader_profile": "whale_heavy"
   },
   {
     "network": "solana",
@@ -372,7 +420,9 @@
     "total_tx_24h": 1512,
     "unique_buyers_24h": 130.0,
     "unique_sellers_24h": 125.0,
-    "unique_traders_24h_approx": 255.0
+    "unique_traders_24h_approx": 255.0,
+    "volume_per_trader_usd": 147319.95,
+    "trader_profile": "whale_heavy"
   },
   {
     "network": "solana",
@@ -387,7 +437,9 @@
     "total_tx_24h": 1629,
     "unique_buyers_24h": 242.0,
     "unique_sellers_24h": 125.0,
-    "unique_traders_24h_approx": 367.0
+    "unique_traders_24h_approx": 367.0,
+    "volume_per_trader_usd": 102355.83,
+    "trader_profile": "whale_heavy"
   },
   {
     "network": "solana",
@@ -402,7 +454,9 @@
     "total_tx_24h": 1508,
     "unique_buyers_24h": 127.0,
     "unique_sellers_24h": 125.0,
-    "unique_traders_24h_approx": 252.0
+    "unique_traders_24h_approx": 252.0,
+    "volume_per_trader_usd": 148990.19,
+    "trader_profile": "whale_heavy"
   },
   {
     "network": "solana",
@@ -417,7 +471,9 @@
     "total_tx_24h": 1504,
     "unique_buyers_24h": 130.0,
     "unique_sellers_24h": 125.0,
-    "unique_traders_24h_approx": 255.0
+    "unique_traders_24h_approx": 255.0,
+    "volume_per_trader_usd": 146850.49,
+    "trader_profile": "whale_heavy"
   },
   {
     "network": "solana",
@@ -432,7 +488,9 @@
     "total_tx_24h": 6568,
     "unique_buyers_24h": 1.0,
     "unique_sellers_24h": 1.0,
-    "unique_traders_24h_approx": 2.0
+    "unique_traders_24h_approx": 2.0,
+    "volume_per_trader_usd": 18719422.38,
+    "trader_profile": "whale_heavy"
   },
   {
     "network": "solana",
@@ -447,7 +505,9 @@
     "total_tx_24h": 1506,
     "unique_buyers_24h": 126.0,
     "unique_sellers_24h": 125.0,
-    "unique_traders_24h_approx": 251.0
+    "unique_traders_24h_approx": 251.0,
+    "volume_per_trader_usd": 148521.86,
+    "trader_profile": "whale_heavy"
   },
   {
     "network": "solana",
@@ -462,7 +522,9 @@
     "total_tx_24h": 1497,
     "unique_buyers_24h": 126.0,
     "unique_sellers_24h": 125.0,
-    "unique_traders_24h_approx": 251.0
+    "unique_traders_24h_approx": 251.0,
+    "volume_per_trader_usd": 147682.36,
+    "trader_profile": "whale_heavy"
   },
   {
     "network": "solana",
@@ -477,7 +539,9 @@
     "total_tx_24h": 1494,
     "unique_buyers_24h": 126.0,
     "unique_sellers_24h": 125.0,
-    "unique_traders_24h_approx": 251.0
+    "unique_traders_24h_approx": 251.0,
+    "volume_per_trader_usd": 147452.45,
+    "trader_profile": "whale_heavy"
   },
   {
     "network": "solana",
@@ -492,7 +556,9 @@
     "total_tx_24h": 1500,
     "unique_buyers_24h": 126.0,
     "unique_sellers_24h": 125.0,
-    "unique_traders_24h_approx": 251.0
+    "unique_traders_24h_approx": 251.0,
+    "volume_per_trader_usd": 146823.87,
+    "trader_profile": "whale_heavy"
   },
   {
     "network": "solana",
@@ -507,7 +573,9 @@
     "total_tx_24h": 1480,
     "unique_buyers_24h": 126.0,
     "unique_sellers_24h": 125.0,
-    "unique_traders_24h_approx": 251.0
+    "unique_traders_24h_approx": 251.0,
+    "volume_per_trader_usd": 145931.61,
+    "trader_profile": "whale_heavy"
   },
   {
     "network": "solana",
@@ -522,7 +590,9 @@
     "total_tx_24h": 1474,
     "unique_buyers_24h": 126.0,
     "unique_sellers_24h": 125.0,
-    "unique_traders_24h_approx": 251.0
+    "unique_traders_24h_approx": 251.0,
+    "volume_per_trader_usd": 145417.17,
+    "trader_profile": "whale_heavy"
   },
   {
     "network": "solana",
@@ -537,7 +607,9 @@
     "total_tx_24h": 1460,
     "unique_buyers_24h": 129.0,
     "unique_sellers_24h": 125.0,
-    "unique_traders_24h_approx": 254.0
+    "unique_traders_24h_approx": 254.0,
+    "volume_per_trader_usd": 142884.85,
+    "trader_profile": "whale_heavy"
   },
   {
     "network": "solana",
@@ -552,7 +624,9 @@
     "total_tx_24h": 1476,
     "unique_buyers_24h": 126.0,
     "unique_sellers_24h": 125.0,
-    "unique_traders_24h_approx": 251.0
+    "unique_traders_24h_approx": 251.0,
+    "volume_per_trader_usd": 144523.08,
+    "trader_profile": "whale_heavy"
   },
   {
     "network": "solana",
@@ -567,7 +641,9 @@
     "total_tx_24h": 1470,
     "unique_buyers_24h": 126.0,
     "unique_sellers_24h": 125.0,
-    "unique_traders_24h_approx": 251.0
+    "unique_traders_24h_approx": 251.0,
+    "volume_per_trader_usd": 143873.25,
+    "trader_profile": "whale_heavy"
   },
   {
     "network": "solana",
@@ -582,7 +658,9 @@
     "total_tx_24h": 1450,
     "unique_buyers_24h": 126.0,
     "unique_sellers_24h": 125.0,
-    "unique_traders_24h_approx": 251.0
+    "unique_traders_24h_approx": 251.0,
+    "volume_per_trader_usd": 142997.28,
+    "trader_profile": "whale_heavy"
   },
   {
     "network": "solana",
@@ -597,6 +675,8 @@
     "total_tx_24h": 9,
     "unique_buyers_24h": 9.0,
     "unique_sellers_24h": 0.0,
-    "unique_traders_24h_approx": 9.0
+    "unique_traders_24h_approx": 9.0,
+    "volume_per_trader_usd": 85.64,
+    "trader_profile": "bot_like"
   }
 ]
