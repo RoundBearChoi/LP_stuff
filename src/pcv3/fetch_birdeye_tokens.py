@@ -5,7 +5,8 @@ import sys
 import os
 
 # ============== CONFIG (easy to tweak) ==============
-CHAINS = ["solana", "base", "bsc", "ethereum"]   # ← Change this list anytime you want
+CHAINS = ["solana", "base", "bsc", "ethereum"]
+#CHAINS = ["sui"]
 
 LIMIT = 100          # max 100 per call on free tier
 
