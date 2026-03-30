@@ -1,6 +1,6 @@
 import requests
 import json
-from datetime import datetime
+from datetime import datetime, timezone   # ← added timezone
 import sys
 import time  # for polite rate-limit handling
 import random  # for jitter on retries
@@ -27,6 +27,7 @@ CONFIG = {
     # Filters (set to 0 to disable)
     "MIN_TVL_USD": 1000000,
     "MIN_VOLUME_24H_USD": 100000,
+    "MIN_TOKEN_AGE_HOURS": 4320, # ~6 months (180 days)
 
     # Output settings
     "JSON_FILENAME": "gecko_global_trending_24h.json",
@@ -40,14 +41,39 @@ CONFIG = {
 
 class GeckoTerminalGlobalFetcher:
     """
-    Pure server-side ranking + full token data + CoinGecko links + RANKS.
+    Pure server-side ranking + full token data + CoinGecko links + RANKS + token-age filter.
     """
 
     def __init__(self, config: dict = None):
         self.config = config or CONFIG.copy()
 
+    # ====================== NEW HELPER ======================
+    def _get_pool_age_hours(self, pool: dict) -> float:
+        """Calculate pool/token age in hours from pool_created_at (ISO format)."""
+        try:
+            attr = pool.get("attributes", {})
+            created_at_str = attr.get("pool_created_at")
+            if not created_at_str:
+                return 0.0
+
+            # Normalize "Z" UTC to +00:00 so fromisoformat works
+            if created_at_str.endswith("Z"):
+                created_at_str = created_at_str[:-1] + "+00:00"
+
+            created_at = datetime.fromisoformat(created_at_str)
+            if created_at.tzinfo is None:
+                created_at = created_at.replace(tzinfo=timezone.utc)
+
+            now = datetime.now(timezone.utc)
+            age_hours = (now - created_at).total_seconds() / 3600
+            return max(0.0, age_hours)   # never return negative
+        except Exception as e:
+            print(f"   ⚠️  Failed to parse pool_created_at: {e}")
+            return 0.0
+    # =======================================================
+
     def fetch_global_trending_pools(self):
-        """Fetch pages 1 through TOTAL_PAGES with automatic 429 retry + exponential backoff."""
+        """(unchanged — same as your original)"""
         all_pools = []
         included_map = {}
         total_pages = self.config.get("TOTAL_PAGES", 1)
@@ -74,7 +100,6 @@ class GeckoTerminalGlobalFetcher:
                 try:
                     response = requests.get(url, params=params, headers=headers, timeout=self.config["TIMEOUT_SECONDS"])
 
-                    # Check 429 BEFORE raise_for_status
                     if response.status_code == 429:
                         if attempt == max_retries:
                             print(f"   ❌ Rate limit (429) on page {page_num} — giving up after {max_retries} retries")
@@ -105,7 +130,7 @@ class GeckoTerminalGlobalFetcher:
                         break
 
                     if page_num < total_pages:
-                        time.sleep(inter_page_delay)   # ← now uses the configurable delay
+                        time.sleep(inter_page_delay)
                     break
 
                 except requests.exceptions.RequestException as e:
@@ -124,7 +149,6 @@ class GeckoTerminalGlobalFetcher:
 
         return all_pools, {}, combined_included
 
-    # === The rest of the class is unchanged (exactly the same as the previous version) ===
     def _get_tvl(self, pool: dict) -> float:
         try:
             return float(pool.get("attributes", {}).get("reserve_in_usd", 0))
@@ -141,20 +165,43 @@ class GeckoTerminalGlobalFetcher:
         except (ValueError, TypeError):
             return 0.0
 
+    # ====================== UPDATED FILTER ======================
     def _filter_pools(self, pools: list) -> list:
         min_tvl = float(self.config.get("MIN_TVL_USD", 0))
         min_vol = float(self.config.get("MIN_VOLUME_24H_USD", 0))
-        if min_tvl <= 0 and min_vol <= 0:
+        min_age_hours = float(self.config.get("MIN_TOKEN_AGE_HOURS", 0))
+
+        if min_tvl <= 0 and min_vol <= 0 and min_age_hours <= 0:
             return pools[:]
+
         filtered = []
+        age_filtered_out = 0
+
         for pool in pools:
             tvl = self._get_tvl(pool)
             vol = self._get_volume_24h(pool)
-            if (min_tvl <= 0 or tvl >= min_tvl) and (min_vol <= 0 or vol >= min_vol):
+            age_hours = self._get_pool_age_hours(pool)
+
+            if (min_tvl <= 0 or tvl >= min_tvl) and \
+               (min_vol <= 0 or vol >= min_vol) and \
+               (min_age_hours <= 0 or age_hours >= min_age_hours):
                 filtered.append(pool)
+            elif min_age_hours > 0 and age_hours < min_age_hours:
+                age_filtered_out += 1
+
+        # Nice feedback for the user
+        if min_age_hours > 0:
+            days = min_age_hours / 24
+            print(f"   📅 Age filter applied: kept {len(filtered)} / {len(pools)} pools "
+                  f"(filtered out {age_filtered_out} pools younger than {days:.0f} days)")
+
         return filtered
+    # ============================================================
+
+    # (the rest of your original methods — _enrich_pools_with_token_data, _enrich_with_coingecko_ranks, pretty_print_pool — are unchanged)
 
     def _enrich_pools_with_token_data(self, pools: list, included: list):
+        # ... (exactly your original code)
         token_map = {item["id"]: item["attributes"] for item in included if item.get("type") == "token"}
 
         network_slug_map = {
@@ -205,6 +252,7 @@ class GeckoTerminalGlobalFetcher:
                 pool["coingecko_link"] = None
 
     def _enrich_with_coingecko_ranks(self, pools: list):
+        # ... (exactly your original code — unchanged)
         coin_ids = {
             pool["base_token"]["coingecko_coin_id"]
             for pool in pools
@@ -249,7 +297,7 @@ class GeckoTerminalGlobalFetcher:
                 pool["coingecko_rank"] = None
 
     def pretty_print_pool(self, pool: dict, included: list):
-        """Detailed block for each trending pool."""
+        # (exactly your original code — unchanged)
         attr = pool.get("attributes", {})
         rel = pool.get("relationships", {})
 
@@ -310,6 +358,7 @@ class GeckoTerminalGlobalFetcher:
         print("🚀 FIXED GeckoTerminal GLOBAL 24h Trending Pools Fetcher")
         print(f"   (Multi-page + 429 retry • TOTAL_PAGES = {self.config.get('TOTAL_PAGES', 1)})")
         print(f"   Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+        print(f"   Age filter: {self.config.get('MIN_TOKEN_AGE_HOURS')} hours minimum")
         print("=" * 80)
 
         pools, meta, included = self.fetch_global_trending_pools()
@@ -340,6 +389,7 @@ class GeckoTerminalGlobalFetcher:
                 "filters_applied": {
                     "MIN_TVL_USD": self.config["MIN_TVL_USD"],
                     "MIN_VOLUME_24H_USD": self.config["MIN_VOLUME_24H_USD"],
+                    "MIN_TOKEN_AGE_HOURS": self.config["MIN_TOKEN_AGE_HOURS"],   # ← new
                     "pools_fetched": len(pools),
                     "pools_after_filter": len(filtered_pools),
                     "total_pages": self.config.get("TOTAL_PAGES", 1),
