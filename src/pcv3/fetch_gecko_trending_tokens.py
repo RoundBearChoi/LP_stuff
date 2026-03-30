@@ -11,7 +11,7 @@ CONFIG = {
     # API behavior
     "API_URL": "https://api.geckoterminal.com/api/v2/networks/trending_pools",
     "DURATION": "24h",
-    "TOTAL_PAGES": 20,
+    "TOTAL_PAGES": 10, # need analyst plan or above for more
     "PER_PAGE": 20,
     "INCLUDE": "base_token,quote_token,dex,network",
 
