@@ -8,9 +8,9 @@ import os
 CHAIN = "solana"
 LIMIT = 100          # max 100 per call on free tier
 
-MIN_VOLUME_24H_USD = 0
+MIN_VOLUME_24H_USD = 100_000
 MIN_LIQUIDITY = 1_000_000
-MIN_MC = 0
+MIN_MC = 1_000_000
 
 TARGET = 200                   # how many tokens you want (200 by default)
 
