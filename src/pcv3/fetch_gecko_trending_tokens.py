@@ -84,7 +84,7 @@ class GeckoTerminalGlobalFetcher:
 
         print(f"🚀 Fetching {total_pages} page(s) from GeckoTerminal global trending (pages 1–{total_pages})...")
         print(f"   (Rate-limit retry enabled: up to {max_retries} attempts per page, base delay {retry_delay}s)")
-        print(f"   (Inter-page delay: {inter_page_delay}s — this helps avoid 429s)")
+        print(f"   (Inter-page delay: {inter_page_delay}s")
 
         for page_num in range(1, total_pages + 1):
             for attempt in range(max_retries + 1):
