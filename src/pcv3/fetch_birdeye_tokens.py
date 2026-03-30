@@ -8,10 +8,14 @@ import os
 CHAIN = "solana"
 LIMIT = 100          # max 100 per call on free tier
 
-# FILTERS - change these anytime you want
-MIN_VOLUME_24H_USD = 100_000   # $100,000 minimum 24h volume
-MIN_LIQUIDITY = 1_000_000      # $1,000,000 minimum liquidity
-MIN_MC = 10_000_000            # $10,000,000 minimum market cap
+MIN_VOLUME_24H_USD = 0
+MIN_LIQUIDITY = 1_000_000
+MIN_MC = 0
+
+TARGET = 200                   # how many tokens you want (200 by default)
+
+PAGE_WAIT_SECONDS = 1.1        # ← NEW: seconds to wait BEFORE each new page
+                               # Free tier: 1.1 is safe. Paid tier: can go down to 0.0
 # ========================================================
 
 def masked_input(prompt="Enter your Birdeye API key: ", mask="*"):
@@ -96,13 +100,18 @@ def fetch_highest_volume_gems(api_key, offset=0, limit=LIMIT, sort_by="volume_24
         "offset": offset,
         "limit": limit,
         "ui_amount_mode": "scaled",
-        
-        # ==================== FILTERS ====================
-        "min_volume_24h_usd": MIN_VOLUME_24H_USD,
-        "min_liquidity": MIN_LIQUIDITY,
-        "min_mc": MIN_MC,
-        # =================================================
     }
+    
+    # ==================== CONDITIONAL FILTERS ====================
+    # Only send the parameter if the config value is > 0
+    # (Birdeye API errors on min_volume_24h_usd=0 and treats omitted params as "no filter")
+    if MIN_VOLUME_24H_USD > 0:
+        params["min_volume_24h_usd"] = MIN_VOLUME_24H_USD
+    if MIN_LIQUIDITY > 0:
+        params["min_liquidity"] = MIN_LIQUIDITY
+    if MIN_MC > 0:
+        params["min_mc"] = MIN_MC
+    # ============================================================
     
     headers = {
         "accept": "application/json",
@@ -133,13 +142,49 @@ if __name__ == "__main__":
     # 1. Ask for API key with masking
     API_KEY = get_api_key()
     
-    print(f"🚀 Fetching top {LIMIT} highest 24h volume gems on {CHAIN.upper()}...")
-    print(f"   Filters: ≥${MIN_VOLUME_24H_USD:,} vol | ≥${MIN_LIQUIDITY:,} liq | ≥${MIN_MC:,} MC\n")
+    PAGE_SIZE = 100                  # free tier max
     
-    # 2. Fetch the data
-    gems = fetch_highest_volume_gems(API_KEY, limit=LIMIT, sort_by="volume_24h_usd")
+    print(f"🚀 Fetching top {TARGET} highest 24h volume gems on {CHAIN.upper()}...")
     
-    # 3. Pretty print top 10 (now with clean B/M formatting)
+    # Build nice dynamic filter text (only shows active filters)
+    active_filters = []
+    if MIN_VOLUME_24H_USD > 0:
+        active_filters.append(f"≥${MIN_VOLUME_24H_USD:,} vol")
+    if MIN_LIQUIDITY > 0:
+        active_filters.append(f"≥${MIN_LIQUIDITY:,} liq")
+    if MIN_MC > 0:
+        active_filters.append(f"≥${MIN_MC:,} MC")
+    
+    filter_text = " | ".join(active_filters) if active_filters else "No minimum filters (all tokens)"
+    
+    print(f"   Filters: {filter_text}")
+    print(f"   Page wait time: {PAGE_WAIT_SECONDS}s between pages\n")
+    
+    all_gems = []
+    offset = 0
+    
+    while len(all_gems) < TARGET:
+        # ── Wait time BEFORE each page (except the very first call) ──
+        if offset > 0:
+            print(f"   ⏳ Waiting {PAGE_WAIT_SECONDS}s before next page...")
+            time.sleep(PAGE_WAIT_SECONDS)
+        
+        needed = TARGET - len(all_gems)
+        limit = min(PAGE_SIZE, needed)
+        
+        print(f"   Fetching page offset={offset} (limit={limit})...")
+        page = fetch_highest_volume_gems(API_KEY, offset=offset, limit=limit, sort_by="volume_24h_usd")
+        
+        if not page:
+            print("   No more data returned.")
+            break
+        
+        all_gems.extend(page)
+        offset += len(page)
+    
+    gems = all_gems[:TARGET]   # trim if we somehow overshot
+    
+    # 3. Pretty print top 10
     if gems:
         print(f"\n📊 Top {min(10, len(gems))} Highest 24h Volume Tokens on {CHAIN.upper()}\n")
         
@@ -159,8 +204,8 @@ if __name__ == "__main__":
                   f"{format_money(fdv):<14} "
                   f"{format_money(liq):<14}")
         
-        # 4. Save full results to JSON (no timestamp)
-        filename = f"highest_volume_gems_{CHAIN}.json"
+        # 4. Save full results to JSON
+        filename = f"highest_volume_gems_{CHAIN}_{TARGET}.json"
         with open(filename, "w") as f:
             json.dump(gems, f, indent=2)
         

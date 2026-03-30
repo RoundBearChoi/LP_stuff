@@ -1,16 +1,21 @@
 import json
 import csv
+import os  # ← Added for clean filename handling
 
 # ====================== CONFIG ======================
-input_file = "highest_volume_gems_solana.json"
-output_file = "highest_volume_gems_solana.csv"   # exactly the name you asked for
+# Only the input file is now configurable.
+# Output is automatically generated from the input name.
+input_file = "highest_volume_gems_solana_200.json"
 
-# Column headers exactly as you specified
-fieldnames = ["symbol", "24h vol", "liquidity", "market cap", "fdv"]
+# Derive output filename automatically (e.g. "foo.json" → "foo.csv")
+output_file = os.path.splitext(input_file)[0] + ".csv"
 # ===================================================
 
+# Column headers exactly as you originally specified
+fieldnames = ["symbol", "24h vol", "liquidity", "market cap", "fdv"]
+
 try:
-    # 1. Load the entire JSON (safe for typical gem-list sizes; see edge-case notes below)
+    # 1. Load the entire JSON
     with open(input_file, "r", encoding="utf-8") as f:
         data = json.load(f)
 
@@ -41,4 +46,3 @@ except json.JSONDecodeError:
     print(f"❌ Error: '{input_file}' is not valid JSON.")
 except Exception as e:
     print(f"❌ Unexpected error: {e}")
-
