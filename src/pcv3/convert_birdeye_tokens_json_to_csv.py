@@ -5,7 +5,7 @@ import os  # ← Added for clean filename handling
 # ====================== CONFIG ======================
 # Only the input file is now configurable.
 # Output is automatically generated from the input name.
-input_file = "highest_volume_gems_solana_200.json"
+input_file = "highest_volume_gems_MULTI_400.json"
 
 # Derive output filename automatically (e.g. "foo.json" → "foo.csv")
 output_file = os.path.splitext(input_file)[0] + ".csv"

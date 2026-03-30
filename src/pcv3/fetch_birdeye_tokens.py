@@ -5,17 +5,21 @@ import sys
 import os
 
 # ============== CONFIG (easy to tweak) ==============
-CHAIN = "solana"
+CHAINS = ["solana", "base", "bsc", "ethereum"]   # ← Change this list anytime you want
+
 LIMIT = 100          # max 100 per call on free tier
 
 MIN_VOLUME_24H_USD = 100_000
 MIN_LIQUIDITY = 1_000_000
 MIN_MC = 1_000_000
 
-TARGET = 200                   # how many tokens you want (200 by default)
+TARGET_PER_CHAIN = 200          # how many tokens to fetch from EACH chain
 
-PAGE_WAIT_SECONDS = 1.1        # ← NEW: seconds to wait BEFORE each new page
-                               # Free tier: 1.1 is safe. Paid tier: can go down to 0.0
+# NEW: Rate-limit backoff (used on HTTP 429)
+RATE_LIMIT_WAIT_SECONDS = 5.0   # ← seconds to wait when rate-limited
+
+PAGE_WAIT_SECONDS = 1.1         # ← seconds to wait BEFORE each new page
+                                # (proactive wait; free tier: 1.1 is safe)
 # ========================================================
 
 def masked_input(prompt="Enter your Birdeye API key: ", mask="*"):
@@ -91,7 +95,8 @@ def format_money(amount):
         return f"${amount:,.0f}"
 
 
-def fetch_highest_volume_gems(api_key, offset=0, limit=LIMIT, sort_by="volume_24h_usd"):
+def fetch_highest_volume_gems(api_key, chain, offset=0, limit=LIMIT, sort_by="volume_24h_usd"):
+    """Fetch one page from Birdeye. Now accepts `chain` as argument."""
     url = "https://public-api.birdeye.so/defi/v3/token/list"
     
     params = {
@@ -103,8 +108,6 @@ def fetch_highest_volume_gems(api_key, offset=0, limit=LIMIT, sort_by="volume_24
     }
     
     # ==================== CONDITIONAL FILTERS ====================
-    # Only send the parameter if the config value is > 0
-    # (Birdeye API errors on min_volume_24h_usd=0 and treats omitted params as "no filter")
     if MIN_VOLUME_24H_USD > 0:
         params["min_volume_24h_usd"] = MIN_VOLUME_24H_USD
     if MIN_LIQUIDITY > 0:
@@ -115,7 +118,7 @@ def fetch_highest_volume_gems(api_key, offset=0, limit=LIMIT, sort_by="volume_24
     
     headers = {
         "accept": "application/json",
-        "x-chain": CHAIN,
+        "x-chain": chain,                    # ← chain-specific header
         "X-API-KEY": api_key
     }
     
@@ -126,14 +129,14 @@ def fetch_highest_volume_gems(api_key, offset=0, limit=LIMIT, sort_by="volume_24
         if data.get("success"):
             return data["data"]["items"]
         else:
-            print("API error:", data.get("message", data))
+            print(f"   API error on {chain}: {data.get('message', data)}")
             return []
     elif response.status_code == 429:
-        print("⏳ Rate limited – waiting 1.1s...")
-        time.sleep(1.1)
-        return fetch_highest_volume_gems(api_key, offset, limit, sort_by)
+        print(f"   ⏳ Rate limited on {chain} – waiting {RATE_LIMIT_WAIT_SECONDS}s...")
+        time.sleep(RATE_LIMIT_WAIT_SECONDS)
+        return fetch_highest_volume_gems(api_key, chain, offset, limit, sort_by)
     else:
-        print(f"Error {response.status_code}: {response.text}")
+        print(f"   Error {response.status_code} on {chain}: {response.text}")
         return []
 
 
@@ -144,7 +147,12 @@ if __name__ == "__main__":
     
     PAGE_SIZE = 100                  # free tier max
     
-    print(f"🚀 Fetching top {TARGET} highest 24h volume gems on {CHAIN.upper()}...")
+    # === NEW: GLOBAL_TARGET is now dynamic ===
+    GLOBAL_TARGET = len(CHAINS) * TARGET_PER_CHAIN
+    
+    print(f"🚀 Fetching top {GLOBAL_TARGET} highest 24h volume gems across {len(CHAINS)} chains...")
+    print(f"   Chains: {', '.join(c.upper() for c in CHAINS)}")
+    print(f"   TARGET_PER_CHAIN = {TARGET_PER_CHAIN} → GLOBAL_TARGET = {GLOBAL_TARGET} (auto-calculated)")
     
     # Build nice dynamic filter text (only shows active filters)
     active_filters = []
@@ -158,57 +166,76 @@ if __name__ == "__main__":
     filter_text = " | ".join(active_filters) if active_filters else "No minimum filters (all tokens)"
     
     print(f"   Filters: {filter_text}")
-    print(f"   Page wait time: {PAGE_WAIT_SECONDS}s between pages\n")
+    print(f"   Page wait: {PAGE_WAIT_SECONDS}s | Rate-limit wait: {RATE_LIMIT_WAIT_SECONDS}s\n")
     
     all_gems = []
-    offset = 0
     
-    while len(all_gems) < TARGET:
-        # ── Wait time BEFORE each page (except the very first call) ──
-        if offset > 0:
-            print(f"   ⏳ Waiting {PAGE_WAIT_SECONDS}s before next page...")
-            time.sleep(PAGE_WAIT_SECONDS)
+    # ── Fetch from every chain ──
+    for chain in CHAINS:
+        print(f"🔄 Processing chain: {chain.upper()}")
         
-        needed = TARGET - len(all_gems)
-        limit = min(PAGE_SIZE, needed)
+        gems_this_chain = []
+        offset = 0
         
-        print(f"   Fetching page offset={offset} (limit={limit})...")
-        page = fetch_highest_volume_gems(API_KEY, offset=offset, limit=limit, sort_by="volume_24h_usd")
+        while len(gems_this_chain) < TARGET_PER_CHAIN:
+            # Wait BEFORE each page (except the very first call of this chain)
+            if offset > 0:
+                print(f"   ⏳ Waiting {PAGE_WAIT_SECONDS}s before next page...")
+                time.sleep(PAGE_WAIT_SECONDS)
+            
+            needed = TARGET_PER_CHAIN - len(gems_this_chain)
+            limit = min(PAGE_SIZE, needed)
+            
+            print(f"   Fetching page offset={offset} (limit={limit})...")
+            page = fetch_highest_volume_gems(API_KEY, chain=chain, offset=offset, limit=limit)
+            
+            if not page:
+                print(f"   No more data returned from {chain}.")
+                break
+            
+            # Add chain identifier so we know where each token came from
+            for token in page:
+                token["chain"] = chain
+            
+            gems_this_chain.extend(page)
+            offset += len(page)
         
-        if not page:
-            print("   No more data returned.")
-            break
-        
-        all_gems.extend(page)
-        offset += len(page)
+        # Keep only the requested amount per chain
+        all_gems.extend(gems_this_chain[:TARGET_PER_CHAIN])
+        print(f"   ✅ Got {len(gems_this_chain[:TARGET_PER_CHAIN])} tokens from {chain.upper()}\n")
     
-    gems = all_gems[:TARGET]   # trim if we somehow overshot
+    # === GLOBAL SORT & TRIM (now uses dynamic GLOBAL_TARGET) ===
+    print("🔀 Sorting all tokens by 24h volume (highest first)...")
+    all_gems.sort(key=lambda x: x.get("volume_24h_usd", 0), reverse=True)
+    gems = all_gems[:GLOBAL_TARGET]
     
-    # 3. Pretty print top 10
+    # 3. Pretty print top 10 (with Chain column)
     if gems:
-        print(f"\n📊 Top {min(10, len(gems))} Highest 24h Volume Tokens on {CHAIN.upper()}\n")
+        print(f"\n📊 Top {min(10, len(gems))} Highest 24h Volume Tokens (multi-chain)\n")
         
-        # Header
-        print(f"{'Rank':<4} {'Symbol':<10} {'24h Vol':<13} {'Market Cap':<14} {'FDV':<14} {'Liquidity':<14}")
-        print("-" * 78)
+        # Header (added Chain column)
+        print(f"{'Rank':<4} {'Chain':<8} {'Symbol':<10} {'24h Vol':<13} {'Market Cap':<14} {'FDV':<14} {'Liquidity':<14}")
+        print("-" * 88)
         
         for i, token in enumerate(gems[:10], 1):
             mc = token.get('market_cap') or token.get('mc', 0)
             fdv = token.get('fdv', 0)
             vol = token.get('volume_24h_usd', 0)
             liq = token.get('liquidity', 0)
+            chain_name = token.get('chain', 'N/A').upper()
             
-            print(f"{i:<4} {token.get('symbol', 'N/A'):<10} "
+            print(f"{i:<4} {chain_name:<8} {token.get('symbol', 'N/A'):<10} "
                   f"{format_money(vol):<13} "
                   f"{format_money(mc):<14} "
                   f"{format_money(fdv):<14} "
                   f"{format_money(liq):<14}")
         
         # 4. Save full results to JSON
-        filename = f"highest_volume_gems_{CHAIN}_{TARGET}.json"
+        filename = f"highest_volume_gems_MULTI_{GLOBAL_TARGET}.json"
         with open(filename, "w") as f:
             json.dump(gems, f, indent=2)
         
         print(f"\n✅ Success! Saved {len(gems)} tokens to → {filename}")
+        print("   Each token now has a 'chain' field so you can filter later if needed.")
     else:
         print("❌ No data returned. Try lowering the filters or check your API key/rate limits.")
