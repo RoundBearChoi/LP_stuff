@@ -1,0 +1,342 @@
+{
+  "pools": [
+    {
+      "id": "bsc_0x933477eba23726ca95a957cb85dbb1957267ef85",
+      "type": "pool",
+      "attributes": {
+        "base_token_price_usd": "0.000000120842352434203",
+        "base_token_price_native_currency": "0.00000000019565673923694",
+        "quote_token_price_usd": "616.08",
+        "quote_token_price_native_currency": "1.0",
+        "base_token_price_quote_token": "0.0000000001956567392",
+        "quote_token_price_base_token": "5110991851.85235",
+        "address": "0x933477eba23726ca95a957cb85dbb1957267ef85",
+        "name": "WKC / WBNB",
+        "pool_created_at": "2022-03-20T15:33:50Z",
+        "fdv_usd": "65020911.5832295",
+        "market_cap_usd": "65021029.7764263",
+        "price_change_percentage": {
+          "m5": "-0.41",
+          "m15": "-1.11",
+          "m30": "-1.244",
+          "h1": "-1.779",
+          "h6": "2.823",
+          "h24": "2.303"
+        },
+        "transactions": {
+          "m5": {
+            "buys": 3,
+            "sells": 4,
+            "buyers": 2,
+            "sellers": 3
+          },
+          "m15": {
+            "buys": 10,
+            "sells": 8,
+            "buyers": 7,
+            "sellers": 6
+          },
+          "m30": {
+            "buys": 15,
+            "sells": 17,
+            "buyers": 11,
+            "sellers": 15
+          },
+          "h1": {
+            "buys": 31,
+            "sells": 28,
+            "buyers": 18,
+            "sellers": 26
+          },
+          "h6": {
+            "buys": 419,
+            "sells": 263,
+            "buyers": 261,
+            "sellers": 224
+          },
+          "h24": {
+            "buys": 1904,
+            "sells": 1536,
+            "buyers": 1066,
+            "sellers": 979
+          }
+        },
+        "volume_usd": {
+          "m5": "1962.3333078144",
+          "m15": "6966.9368488893",
+          "m30": "7917.1243887739",
+          "h1": "11487.9414042706",
+          "h6": "42404.4683245387",
+          "h24": "307202.383125033"
+        },
+        "reserve_in_usd": "1334284.9295"
+      },
+      "relationships": {
+        "base_token": {
+          "data": {
+            "id": "bsc_0x6ec90334d89dbdc89e08a133271be3d104128edb",
+            "type": "token"
+          }
+        },
+        "quote_token": {
+          "data": {
+            "id": "bsc_0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c",
+            "type": "token"
+          }
+        },
+        "network": {
+          "data": {
+            "id": "bsc",
+            "type": "network"
+          }
+        },
+        "dex": {
+          "data": {
+            "id": "pancakeswap_v2",
+            "type": "dex"
+          }
+        }
+      },
+      "gecko_terminal_rank": 7,
+      "base_token": {
+        "name": "WIKI CAT",
+        "symbol": "WKC",
+        "address": "0x6ec90334d89dbdc89e08a133271be3d104128edb",
+        "coingecko_coin_id": "wiki-cat"
+      },
+      "quote_token": {
+        "name": "Wrapped BNB",
+        "symbol": "WBNB",
+        "address": "0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c",
+        "coingecko_coin_id": "wbnb"
+      },
+      "coingecko_link": "https://www.coingecko.com/en/coins/wiki-cat",
+      "coingecko_rank": 360
+    },
+    {
+      "id": "bsc_0xb2af49dbf526054faf19602860a5e298a79f3d05",
+      "type": "pool",
+      "attributes": {
+        "base_token_price_usd": "1.75853285630007",
+        "base_token_price_native_currency": "0.00285391362877149",
+        "quote_token_price_usd": "616.27",
+        "quote_token_price_native_currency": "1.0",
+        "base_token_price_quote_token": "0.002853913629",
+        "quote_token_price_base_token": "350.396028078",
+        "address": "0xb2af49dbf526054faf19602860a5e298a79f3d05",
+        "name": "SIREN / WBNB 1%",
+        "pool_created_at": "2025-02-08T20:23:54Z",
+        "fdv_usd": "1280587926.53134",
+        "market_cap_usd": "1280587926.53134",
+        "price_change_percentage": {
+          "m5": "0",
+          "m15": "0.285",
+          "m30": "-0.706",
+          "h1": "0.534",
+          "h6": "-1.672",
+          "h24": "5.334"
+        },
+        "transactions": {
+          "m5": {
+            "buys": 0,
+            "sells": 0,
+            "buyers": 0,
+            "sellers": 0
+          },
+          "m15": {
+            "buys": 0,
+            "sells": 8,
+            "buyers": 0,
+            "sellers": 7
+          },
+          "m30": {
+            "buys": 82,
+            "sells": 14,
+            "buyers": 40,
+            "sellers": 10
+          },
+          "h1": {
+            "buys": 139,
+            "sells": 134,
+            "buyers": 50,
+            "sellers": 48
+          },
+          "h6": {
+            "buys": 847,
+            "sells": 924,
+            "buyers": 203,
+            "sellers": 235
+          },
+          "h24": {
+            "buys": 3622,
+            "sells": 3976,
+            "buyers": 594,
+            "sellers": 575
+          }
+        },
+        "volume_usd": {
+          "m5": "0.0",
+          "m15": "613.9422539116",
+          "m30": "31081.5839251582",
+          "h1": "79395.333738139",
+          "h6": "840684.379693673",
+          "h24": "3556588.31216994"
+        },
+        "reserve_in_usd": "15152944.7846"
+      },
+      "relationships": {
+        "base_token": {
+          "data": {
+            "id": "bsc_0x997a58129890bbda032231a52ed1ddc845fc18e1",
+            "type": "token"
+          }
+        },
+        "quote_token": {
+          "data": {
+            "id": "bsc_0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c",
+            "type": "token"
+          }
+        },
+        "network": {
+          "data": {
+            "id": "bsc",
+            "type": "network"
+          }
+        },
+        "dex": {
+          "data": {
+            "id": "pancakeswap-v3-bsc",
+            "type": "dex"
+          }
+        }
+      },
+      "gecko_terminal_rank": 11,
+      "base_token": {
+        "name": "SIREN",
+        "symbol": "SIREN",
+        "address": "0x997a58129890bbda032231a52ed1ddc845fc18e1",
+        "coingecko_coin_id": "siren-2"
+      },
+      "quote_token": {
+        "name": "Wrapped BNB",
+        "symbol": "WBNB",
+        "address": "0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c",
+        "coingecko_coin_id": "wbnb"
+      },
+      "coingecko_link": "https://www.coingecko.com/en/coins/siren-2",
+      "coingecko_rank": 59
+    },
+    {
+      "id": "solana_8WwcNqdZjCY5Pt7AkhupAFknV2txca9sq6YBkGzLbvdt",
+      "type": "pool",
+      "attributes": {
+        "base_token_price_usd": "0.0529628372552008482836716354853409613885110528",
+        "base_token_price_native_currency": "0.000634743019282928",
+        "quote_token_price_usd": "83.436151403641271362836384258",
+        "quote_token_price_native_currency": "1.0",
+        "base_token_price_quote_token": "0.0006347430193",
+        "quote_token_price_base_token": "1575.440721081",
+        "address": "8WwcNqdZjCY5Pt7AkhupAFknV2txca9sq6YBkGzLbvdt",
+        "name": "pippin / SOL",
+        "pool_created_at": "2024-11-09T20:27:41Z",
+        "fdv_usd": "52957155.4271342",
+        "market_cap_usd": "52957155.4271342",
+        "price_change_percentage": {
+          "m5": "0.707",
+          "m15": "-0.268",
+          "m30": "0.467",
+          "h1": "1.084",
+          "h6": "2.782",
+          "h24": "-6.655"
+        },
+        "transactions": {
+          "m5": {
+            "buys": 26,
+            "sells": 7,
+            "buyers": 7,
+            "sellers": 7
+          },
+          "m15": {
+            "buys": 112,
+            "sells": 75,
+            "buyers": 36,
+            "sellers": 33
+          },
+          "m30": {
+            "buys": 242,
+            "sells": 211,
+            "buyers": 62,
+            "sellers": 59
+          },
+          "h1": {
+            "buys": 477,
+            "sells": 456,
+            "buyers": 98,
+            "sellers": 81
+          },
+          "h6": {
+            "buys": 3058,
+            "sells": 3674,
+            "buyers": 231,
+            "sellers": 165
+          },
+          "h24": {
+            "buys": 15886,
+            "sells": 14418,
+            "buyers": 784,
+            "sellers": 653
+          }
+        },
+        "volume_usd": {
+          "m5": "4563.6085038795",
+          "m15": "23839.9798352784",
+          "m30": "65522.4394453546",
+          "h1": "154407.711799419",
+          "h6": "1603407.30660209",
+          "h24": "5933489.35288045"
+        },
+        "reserve_in_usd": "5452293.1079"
+      },
+      "relationships": {
+        "base_token": {
+          "data": {
+            "id": "solana_Dfh5DzRgSvvCFDoYc2ciTkMrbDfRKybA4SoFbPmApump",
+            "type": "token"
+          }
+        },
+        "quote_token": {
+          "data": {
+            "id": "solana_So11111111111111111111111111111111111111112",
+            "type": "token"
+          }
+        },
+        "network": {
+          "data": {
+            "id": "solana",
+            "type": "network"
+          }
+        },
+        "dex": {
+          "data": {
+            "id": "raydium",
+            "type": "dex"
+          }
+        }
+      },
+      "gecko_terminal_rank": 19,
+      "base_token": {
+        "name": "Pippin",
+        "symbol": "pippin",
+        "address": "Dfh5DzRgSvvCFDoYc2ciTkMrbDfRKybA4SoFbPmApump",
+        "coingecko_coin_id": "pippin"
+      },
+      "quote_token": {
+        "name": "Wrapped SOL",
+        "symbol": "SOL",
+        "address": "So11111111111111111111111111111111111111112",
+        "coingecko_coin_id": "wrapped-solana"
+      },
+      "coingecko_link": "https://www.coingecko.com/en/coins/pippin",
+      "coingecko_rank": 427
+    },
+    
