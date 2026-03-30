@@ -6,7 +6,7 @@ import os
 
 # ============== CONFIG (easy to tweak) ==============
 CHAIN = "solana"
-LIMIT = 20          # max 100 per call on free tier
+LIMIT = 100          # max 100 per call on free tier
 
 # FILTERS - change these anytime you want
 MIN_VOLUME_24H_USD = 100_000   # $100,000 minimum 24h volume
