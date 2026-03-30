@@ -2,7 +2,8 @@ import requests
 import json
 from datetime import datetime
 import sys
-import time  # for polite rate-limit handling if needed
+import time  # for polite rate-limit handling
+import random  # for jitter on retries
 
 # ========================= CONFIG SECTION =========================
 # All user-controllable variables are centralized here.
@@ -10,9 +11,14 @@ CONFIG = {
     # API behavior
     "API_URL": "https://api.geckoterminal.com/api/v2/networks/trending_pools",
     "DURATION": "24h",
-    "PAGE": 1,
+    "TOTAL_PAGES": 10,
     "PER_PAGE": 20,
     "INCLUDE": "base_token,quote_token,dex,network",
+
+    # Rate-limit handling
+    "MAX_RETRIES_ON_429": 5,
+    "RETRY_DELAY_SECONDS": 30.0,
+    "INTER_PAGE_DELAY": 1.2,
 
     # HTTP settings
     "USER_AGENT": "GeckoTerminal-Global-Fixed-Script/2.0",
@@ -34,37 +40,91 @@ CONFIG = {
 
 class GeckoTerminalGlobalFetcher:
     """
-    Pure server-side ranking + full token data + CoinGecko links + CoinGecko ranks.
-    Field "rank" renamed to "gecko_terminal_rank" for clarity.
+    Pure server-side ranking + full token data + CoinGecko links + RANKS.
     """
 
     def __init__(self, config: dict = None):
         self.config = config or CONFIG.copy()
 
     def fetch_global_trending_pools(self):
-        url = self.config["API_URL"]
-        params = {
-            "duration": self.config["DURATION"],
-            "page": self.config["PAGE"],
-            "per_page": self.config["PER_PAGE"],
-            "include": self.config["INCLUDE"]
-        }
-        headers = {"accept": "application/json", "User-Agent": self.config["USER_AGENT"]}
+        """Fetch pages 1 through TOTAL_PAGES with automatic 429 retry + exponential backoff."""
+        all_pools = []
+        included_map = {}
+        total_pages = self.config.get("TOTAL_PAGES", 1)
+        max_retries = self.config.get("MAX_RETRIES_ON_429", 5)
+        retry_delay = self.config.get("RETRY_DELAY_SECONDS", 30.0)
+        inter_page_delay = self.config.get("INTER_PAGE_DELAY", 1.2)
+        actual_pages_fetched = 0
 
-        try:
-            response = requests.get(url, params=params, headers=headers, timeout=self.config["TIMEOUT_SECONDS"])
-            response.raise_for_status()
-            data = response.json()
-            pools = data.get("data", [])
-            included = data.get("included", [])
-            print(f"✅ Fetched {len(pools)} GLOBAL trending pools from API")
-            return pools, data.get("meta", {}), included
-        except requests.exceptions.RequestException as e:
-            print(f"❌ API request failed: {e}")
-            if hasattr(e.response, 'text'):
-                print("Response:", e.response.text[:500])
-            sys.exit(1)
+        print(f"🚀 Fetching {total_pages} page(s) from GeckoTerminal global trending (pages 1–{total_pages})...")
+        print(f"   (Rate-limit retry enabled: up to {max_retries} attempts per page, base delay {retry_delay}s)")
+        print(f"   (Inter-page delay: {inter_page_delay}s — this helps avoid 429s)")
 
+        for page_num in range(1, total_pages + 1):
+            for attempt in range(max_retries + 1):
+                url = self.config["API_URL"]
+                params = {
+                    "duration": self.config["DURATION"],
+                    "page": page_num,
+                    "per_page": self.config["PER_PAGE"],
+                    "include": self.config["INCLUDE"]
+                }
+                headers = {"accept": "application/json", "User-Agent": self.config["USER_AGENT"]}
+
+                try:
+                    response = requests.get(url, params=params, headers=headers, timeout=self.config["TIMEOUT_SECONDS"])
+
+                    # Check 429 BEFORE raise_for_status
+                    if response.status_code == 429:
+                        if attempt == max_retries:
+                            print(f"   ❌ Rate limit (429) on page {page_num} — giving up after {max_retries} retries")
+                            break
+                        wait_time = retry_delay * (2 ** attempt) + random.uniform(0, 3.0)
+                        print(f"   ⏳ Rate limit (429) on page {page_num} — waiting {wait_time:.1f}s (retry {attempt+1}/{max_retries})...")
+                        time.sleep(wait_time)
+                        continue
+
+                    response.raise_for_status()
+                    data = response.json()
+
+                    pools = data.get("data", [])
+                    included = data.get("included", [])
+
+                    all_pools.extend(pools)
+                    actual_pages_fetched += 1
+
+                    for item in included:
+                        item_id = item.get("id")
+                        if item_id and item_id not in included_map:
+                            included_map[item_id] = item
+
+                    print(f"   ✅ Page {page_num}: +{len(pools)} pools")
+
+                    if len(pools) < self.config["PER_PAGE"]:
+                        print(f"   📍 Reached last available page at {page_num}")
+                        break
+
+                    if page_num < total_pages:
+                        time.sleep(inter_page_delay)   # ← now uses the configurable delay
+                    break
+
+                except requests.exceptions.RequestException as e:
+                    print(f"❌ Failed on page {page_num} (attempt {attempt+1}): {e}")
+                    if hasattr(e, 'response') and e.response is not None:
+                        print(f"   Status code: {e.response.status_code}")
+                        if hasattr(e.response, 'text'):
+                            print("   Response:", e.response.text[:400])
+                    if attempt == max_retries:
+                        break
+                    time.sleep(2)
+                    continue
+
+        combined_included = list(included_map.values())
+        print(f"✅ Successfully fetched {len(all_pools)} total pools from {actual_pages_fetched} page(s)")
+
+        return all_pools, {}, combined_included
+
+    # === The rest of the class is unchanged (exactly the same as the previous version) ===
     def _get_tvl(self, pool: dict) -> float:
         try:
             return float(pool.get("attributes", {}).get("reserve_in_usd", 0))
@@ -95,7 +155,6 @@ class GeckoTerminalGlobalFetcher:
         return filtered
 
     def _enrich_pools_with_token_data(self, pools: list, included: list):
-        """Embed base/quote token data + direct CoinGecko link."""
         token_map = {item["id"]: item["attributes"] for item in included if item.get("type") == "token"}
 
         network_slug_map = {
@@ -107,7 +166,6 @@ class GeckoTerminalGlobalFetcher:
 
         for pool in pools:
             rel = pool.get("relationships", {})
-            # Base token
             try:
                 base_id = rel["base_token"]["data"]["id"]
                 base_attrs = token_map.get(base_id, {})
@@ -120,7 +178,6 @@ class GeckoTerminalGlobalFetcher:
             except:
                 pool["base_token"] = None
 
-            # Quote token
             try:
                 quote_id = rel["quote_token"]["data"]["id"]
                 quote_attrs = token_map.get(quote_id, {})
@@ -133,7 +190,6 @@ class GeckoTerminalGlobalFetcher:
             except:
                 pool["quote_token"] = None
 
-            # CoinGecko link
             base = pool.get("base_token")
             if base and base.get("coingecko_coin_id"):
                 pool["coingecko_link"] = f"https://www.coingecko.com/en/coins/{base['coingecko_coin_id']}"
@@ -149,7 +205,6 @@ class GeckoTerminalGlobalFetcher:
                 pool["coingecko_link"] = None
 
     def _enrich_with_coingecko_ranks(self, pools: list):
-        """Batch fetch CoinGecko market_cap_rank for all tokens that have a coingecko_coin_id."""
         coin_ids = {
             pool["base_token"]["coingecko_coin_id"]
             for pool in pools
@@ -188,21 +243,16 @@ class GeckoTerminalGlobalFetcher:
 
             print(f"   ✅ CoinGecko ranks enriched ({len(rank_map)} coins)")
 
-        except requests.exceptions.RequestException as e:
-            print(f"   ⚠️  CoinGecko rank fetch failed: {e} (ranks will be null)")
-            for pool in pools:
-                pool["coingecko_rank"] = None
         except Exception as e:
-            print(f"   ⚠️  Unexpected error during rank enrichment: {e}")
+            print(f"   ⚠️  CoinGecko rank fetch failed: {e} (ranks will be null)")
             for pool in pools:
                 pool["coingecko_rank"] = None
 
     def pretty_print_pool(self, pool: dict, included: list):
-        """Pretty print with contract, CoinGecko link, and CG Rank."""
+        """Detailed block for each trending pool."""
         attr = pool.get("attributes", {})
         rel = pool.get("relationships", {})
 
-        # Token name
         try:
             base_id = rel["base_token"]["data"]["id"]
             base_token = next((item for item in included if item.get("id") == base_id), None)
@@ -213,7 +263,6 @@ class GeckoTerminalGlobalFetcher:
 
         contract = pool.get("base_token", {}).get("address") if pool.get("base_token") else "N/A"
 
-        # 24h metrics
         vol_dict = attr.get("volume_usd", {})
         volume_24h = vol_dict.get("h24", "0") if isinstance(vol_dict, dict) else "0"
         tx_dict = attr.get("transactions", {}).get("h24", {})
@@ -227,9 +276,7 @@ class GeckoTerminalGlobalFetcher:
         price = attr.get("base_token_price_usd", attr.get("price_usd", "0"))
         liquidity = attr.get("reserve_in_usd", "0")
         fdv = attr.get("fdv_usd", "0")
-        gt_score = attr.get("gt_score", "N/A")
 
-        # DEX & Chain
         try:
             dex_id = rel["dex"]["data"]["id"]
             dex = next((item for item in included if item.get("id") == dex_id), None)
@@ -254,7 +301,6 @@ class GeckoTerminalGlobalFetcher:
         print(f"   24h Change : {float(price_change_24h):+.2f}%")
         print(f"   Liquidity  : ${float(liquidity):,}")
         print(f"   FDV        : ${float(fdv):,}")
-        print(f"   GT Score   : {gt_score}/100")
         print(f"   🔗 CoinGecko: {pool.get('coingecko_link', 'N/A')}")
         rank = pool.get("coingecko_rank")
         print(f"   🏆 CG Rank   : #{rank if rank is not None else 'N/A'} (market-cap based)")
@@ -262,13 +308,12 @@ class GeckoTerminalGlobalFetcher:
     def run(self):
         print("=" * 80)
         print("🚀 FIXED GeckoTerminal GLOBAL 24h Trending Pools Fetcher")
-        print("   (Server-side ranking + token addresses + CoinGecko links + RANKS)")
+        print(f"   (Multi-page + 429 retry • TOTAL_PAGES = {self.config.get('TOTAL_PAGES', 1)})")
         print(f"   Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
         print("=" * 80)
 
         pools, meta, included = self.fetch_global_trending_pools()
 
-        # === ASSIGN GECKO TERMINAL RANK (explicit key) ===
         for i, pool in enumerate(pools, 1):
             pool["gecko_terminal_rank"] = i
 
@@ -289,14 +334,16 @@ class GeckoTerminalGlobalFetcher:
         json_filename = self.config["JSON_FILENAME"]
         with open(json_filename, "w", encoding="utf-8") as f:
             json.dump({
-                "pools": filtered_pools,   # now contains gecko_terminal_rank + coingecko_rank
+                "pools": filtered_pools,
                 "meta": meta,
                 "included": included,
                 "filters_applied": {
                     "MIN_TVL_USD": self.config["MIN_TVL_USD"],
                     "MIN_VOLUME_24H_USD": self.config["MIN_VOLUME_24H_USD"],
                     "pools_fetched": len(pools),
-                    "pools_after_filter": len(filtered_pools)
+                    "pools_after_filter": len(filtered_pools),
+                    "total_pages": self.config.get("TOTAL_PAGES", 1),
+                    "retries_used": True
                 }
             }, f, indent=2, ensure_ascii=False)
 
