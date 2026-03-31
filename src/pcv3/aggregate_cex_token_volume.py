@@ -7,6 +7,7 @@ import pandas as pd
 KUCOIN_FILE = "kucoin_top_volume.json"
 MEXC_FILE = "mexc_top_volume.json"
 OUTPUT_CSV = "aggregated_cex_token_volume.csv"
+MAPPING_FILE = "volume_tokens_whole_list_mar_31st.txt"   # ← your CoinGecko mapping file
 
 # Optional: set to True if you want a console preview
 SHOW_PREVIEW = True
@@ -16,6 +17,11 @@ def load_json(filename: str):
     """Load a JSON file safely."""
     with open(filename, "r", encoding="utf-8") as f:
         return json.load(f)
+
+# === LOAD COINGECKO MAPPING (NEW — added exactly as you requested) ===
+print(f"🔄 Loading CoinGecko mapping from {MAPPING_FILE}...")
+mapping_df = pd.read_csv(MAPPING_FILE)
+print(f"   Loaded {len(mapping_df):,} token mappings (symbol → coingecko_symbol + coingecko_id).")
 
 # Load both datasets
 kucoin_data = load_json(KUCOIN_FILE)
@@ -76,17 +82,34 @@ df = pd.DataFrame(rows)
 # Sort by total volume (most active base tokens first)
 df = df.sort_values(by="total_24h_volume_usd", ascending=False).reset_index(drop=True)
 
+# === ENRICH WITH COINGECKO COLUMNS (exactly as requested — added right next to base_asset) ===
+print("🔄 Adding coingecko_symbol and coingecko_id columns...")
+df = df.merge(
+    mapping_df[['symbol', 'coingecko_symbol', 'coingecko_id']].rename(columns={'symbol': 'base_asset'}),
+    on='base_asset',
+    how='left'          # keeps EVERY row — unmatched symbols just get NaN
+)
+
+# Reorder columns so the two new CoinGecko columns sit immediately after base_asset
+desired_order = [
+    'base_asset', 'coingecko_symbol', 'coingecko_id',
+    'total_24h_volume_usd', 'kucoin_24h_volume_usd', 'mexc_24h_volume_usd',
+    'kucoin_quote_assets', 'mexc_quote_assets',
+    'kucoin_pairs', 'mexc_pairs'
+]
+existing_cols = [col for col in desired_order if col in df.columns]
+df = df[existing_cols]
+
 # Save to CSV
 df.to_csv(OUTPUT_CSV, index=False)
 
-print(f"✅ Aggregation complete with exchange breakdown!")
+print(f"✅ Aggregation complete with CoinGecko enrichment!")
 print(f"   • Processed {len(kucoin_data):,} KuCoin pairs + {len(mexc_data):,} MEXC pairs")
 print(f"   • Found {len(df):,} unique base assets")
 print(f"   • Output saved to: {OUTPUT_CSV}")
 
 if SHOW_PREVIEW:
-    print("\n🔍 Top 15 base tokens (with exchange split):")
-    preview_cols = ["base_asset", "total_24h_volume_usd", 
-                    "kucoin_24h_volume_usd", "mexc_24h_volume_usd",
-                    "kucoin_quote_assets", "mexc_quote_assets"]
+    print("\n🔍 Top 15 base tokens (with CoinGecko + exchange split):")
+    preview_cols = ["base_asset", "coingecko_symbol", "coingecko_id",
+                    "total_24h_volume_usd", "kucoin_24h_volume_usd", "mexc_24h_volume_usd"]
     print(df.head(15)[preview_cols].to_string(index=False))
