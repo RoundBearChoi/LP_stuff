@@ -19,7 +19,7 @@ from pathlib import Path
 #        }
 #   4. Adds a 'chain' column to every row (CRITICAL — symbols like USDC, USDT, WETH appear on multiple chains)
 #   5. Keeps 100% of the original data (24h vol, liquidity, market cap, fdv + new columns)
-#   6. Saves everything to aggregate_highest_volume_dex_tokens.csv
+#   6. Saves everything to the filename you define in the CONFIG section below
 #   7. Optional: sorts by 24h volume descending for easy analysis
 #
 # Edge cases handled:
@@ -34,6 +34,20 @@ from pathlib import Path
 #     blue-chips (WETH, WBTC), and high-volume tokens. The aggregation treats everything equally.
 #   - Market-cap/FDV = 0 on some rows is preserved — these are often new or wrapped tokens.
 #   - You can later filter the CSV by chain, volume threshold, liquidity/MC ratio, etc.
+# ===================================================================
+
+# ===================================================================
+# CONFIGURATION SECTION
+# ===================================================================
+# ←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←←
+# Everything you want to customize lives here. Just edit the values below.
+
+# Output filename for the aggregated CSV
+# You can use a simple name, or a full path (e.g. "output/my_tokens.csv")
+OUTPUT_CSV_FILENAME = "aggregated_dex_token_volume.csv"
+
+# ===================================================================
+# END OF CONFIGURATION
 # ===================================================================
 
 # Step 1: Define your preferred short chain names (exactly as you requested)
@@ -97,8 +111,8 @@ desired_order = ['chain', 'symbol', '24h vol', 'liquidity', 'market cap', 'fdv',
 existing_cols = [col for col in desired_order if col in aggregate_df.columns]
 aggregate_df = aggregate_df[existing_cols]
 
-# Step 5: Save the final aggregated CSV
-output_filename = "aggregate_highest_volume_dex_tokens.csv"
+# Step 5: Save the final aggregated CSV using the configured filename
+output_filename = OUTPUT_CSV_FILENAME
 aggregate_df.to_csv(output_filename, index=False)
 
 # ===================================================================
@@ -108,7 +122,7 @@ print("\n" + "="*80)
 print("🎉 AGGREGATION COMPLETE!")
 print(f"   • Total rows in CSV : {len(aggregate_df):,}")
 print(f"   • Columns           : {list(aggregate_df.columns)}")
-print(f"   • Saved as          : {output_filename}")
+print(f"   • Saved as          : {output_filename}   ← (configured at the top)")
 print("\nTokens by chain (your requested array):")
 for chain, token_list in tokens_by_chain.items():
     print(f"   • {chain:8} → {len(token_list):>4} tokens (example: {token_list[:5]})")

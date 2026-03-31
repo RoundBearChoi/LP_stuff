@@ -6,7 +6,7 @@ import pandas as pd
 # Change these if your filenames are different
 KUCOIN_FILE = "kucoin_top_volume.json"
 MEXC_FILE = "mexc_top_volume.json"
-OUTPUT_CSV = "aggregated_base_token_volume.csv"
+OUTPUT_CSV = "aggregated_cex_token_volume.csv"
 
 # Optional: set to True if you want a console preview
 SHOW_PREVIEW = True
