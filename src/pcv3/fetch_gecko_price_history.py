@@ -19,45 +19,31 @@ class CoinGeckoPriceFetcher:
         self.volume_file = volume_file
 
     def get_masked_input(self, prompt: str) -> str:
-        """Cross-platform masked input that prints * for every character."""
+        """Linux-only masked input that prints * for every character.
+        (Windows code has been completely removed for simplicity & reliability.)"""
         print(prompt, end="", flush=True)
         key = ""
 
-        if os.name == "nt":  # Windows
-            import msvcrt
+        import termios
+        import tty
+        fd = sys.stdin.fileno()
+        old_settings = termios.tcgetattr(fd)
+        try:
+            tty.setcbreak(fd)
             while True:
-                ch = msvcrt.getch()
-                if ch in (b"\r", b"\n"):
+                ch = sys.stdin.read(1)
+                if ch in ("\n", "\r"):
                     print()
                     break
-                elif ch == b"\x08":
+                elif ch == "\x7f":          # Backspace
                     if key:
                         key = key[:-1]
                         print("\b \b", end="", flush=True)
                 else:
-                    key += ch.decode("utf-8", errors="ignore")
+                    key += ch
                     print("*", end="", flush=True)
-        else:  # Linux / macOS / WSL
-            import termios
-            import tty
-            fd = sys.stdin.fileno()
-            old_settings = termios.tcgetattr(fd)
-            try:
-                tty.setcbreak(fd)
-                while True:
-                    ch = sys.stdin.read(1)
-                    if ch in ("\n", "\r"):
-                        print()
-                        break
-                    elif ch == "\x7f":
-                        if key:
-                            key = key[:-1]
-                            print("\b \b", end="", flush=True)
-                    else:
-                        key += ch
-                        print("*", end="", flush=True)
-            finally:
-                termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+        finally:
+            termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
 
         return key.strip()
 
@@ -151,12 +137,19 @@ class CoinGeckoPriceFetcher:
         print(f"  → Fetched {len(df):,} hourly records.")
         return df
 
-    def run(self, coin_input: str, months: int, api_key: str | None = None) -> bool:
+    def run(self, coin_input: str, months: int, api_key: str | None = None, 
+            volume_mapping: dict | None = None) -> bool:
         """Main execution logic. Returns True if CSV was created/updated, False if coin not found."""
-        volume_mapping = self.load_volume_token_mapping()
+        
+        # Use pre-loaded mapping if provided (batch mode), otherwise load once
+        if volume_mapping is None:
+            volume_mapping = self.load_volume_token_mapping()
+        else:
+            print(f"   → Using pre-loaded volume mapping ({len(volume_mapping):,} tokens)")
 
+        # API key input (only if none was passed from batch)
         if api_key is None:
-            print("\nEnter your CoinGecko Basic Tier API key (will be shown as *):")
+            print("\nEnter your CoinGecko Pro API key (will be shown as *):")
             api_key = self.get_masked_input("API Key: ")
             if not api_key:
                 print("Error: API key is required.")
@@ -169,7 +162,6 @@ class CoinGeckoPriceFetcher:
         filename = f"price_data/gecko_{coin_input}_hourly_price_history.csv"
 
         if os.path.exists(filename):
-            # <<< ROBUST DATETIME PARSING — this fixes the mixed-format error >>>
             existing_df = pd.read_csv(filename)
             existing_df["timestamp"] = pd.to_datetime(existing_df["timestamp"], format='mixed')
             print(f"Loaded existing CSV with {len(existing_df):,} records.")
@@ -229,14 +221,12 @@ class CoinGeckoPriceFetcher:
         combined_df = combined_df.drop_duplicates(subset=["timestamp"])
         combined_df = combined_df.sort_values("timestamp").reset_index(drop=True)
 
-        # === NEW BEHAVIOR YOU REQUESTED ===
         if len(combined_df) == 0:
             print(f"\n❌ Coin not found on CoinGecko (404).")
             print(f"   No CSV created for {coin_input}.")
             print("   This usually means the coingecko_id in your mapping file is outdated.")
             return False
 
-        # Only save CSV if we actually have data
         combined_df.to_csv(filename, index=False)
 
         print(f"\n✅ Success! Full {months} months of data (with all gaps filled):")

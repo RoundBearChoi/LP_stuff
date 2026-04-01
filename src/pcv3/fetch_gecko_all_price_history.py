@@ -7,10 +7,10 @@ from fetch_gecko_price_history import CoinGeckoPriceFetcher
 # =============================================
 # CONFIGURATION - EDIT THESE DEFAULTS
 # =============================================
-DEFAULT_NUM_TOKENS = 10      # ← Change to 541 when you are ready for the full list
-DEFAULT_MONTHS      = 1      # ← Change to 18 when you want full 18-month history
-
-VOLUME_TOKENS_FILE  = "volume_tokens_whole_list_mar_31st.txt"
+DEFAULT_NUM_TOKENS   = 5
+DEFAULT_MONTHS       = 1       # ← Change to 18 when you want full 18-month history
+DEFAULT_WAIT_SECONDS = 3       # ← Seconds to wait between tokens (rate-limit safety / stability)
+VOLUME_TOKENS_FILE   = "volume_tokens_whole_list_mar_31st.txt"
 # =============================================
 
 
@@ -19,12 +19,12 @@ def main():
     if len(sys.argv) == 1:
         num_tokens = DEFAULT_NUM_TOKENS
         months = DEFAULT_MONTHS
-        print(f"ℹ️  Running with CONFIG defaults → {num_tokens} tokens, {months} month(s)")
+        print(f"ℹ️  Running with CONFIG defaults → {num_tokens} tokens, {months} month(s), {DEFAULT_WAIT_SECONDS}s wait")
     elif len(sys.argv) == 3:
         try:
             num_tokens = int(sys.argv[1])
             months = int(sys.argv[2])
-            print(f"ℹ️  Running with command-line args → {num_tokens} tokens, {months} month(s)")
+            print(f"ℹ️  Running with command-line args → {num_tokens} tokens, {months} month(s), {DEFAULT_WAIT_SECONDS}s wait")
         except ValueError:
             print("❌ Error: <num_tokens> and <months> must be integers.")
             sys.exit(1)
@@ -50,7 +50,11 @@ def main():
 
     fetcher = CoinGeckoPriceFetcher(volume_file=VOLUME_TOKENS_FILE)
 
-    # Ask for API key ONCE
+    # Load mapping ONCE for the entire batch
+    print("\n🔄 Loading volume token mapping once for all tokens...")
+    volume_mapping = fetcher.load_volume_token_mapping()
+
+    # Ask for API key ONCE (now using the simplified Linux-only masked input)
     print("\n" + "=" * 70)
     print("🔑 CoinGecko Pro API Key (asked once for the entire batch)")
     print("=" * 70)
@@ -72,7 +76,8 @@ def main():
         print(f"{'=' * 80}")
 
         try:
-            success = fetcher.run(coin_input=symbol, months=months, api_key=api_key)
+            success = fetcher.run(coin_input=symbol, months=months, api_key=api_key,
+                                  volume_mapping=volume_mapping)
             if success:
                 successful += 1
             else:
@@ -86,12 +91,12 @@ def main():
             skipped += 1
 
         if i < len(tokens_to_process):
-            print(f"⏳ Waiting 4 seconds before next token...")
-            time.sleep(4)
+            print(f"⏳ Waiting {DEFAULT_WAIT_SECONDS} seconds before next token...")
+            time.sleep(DEFAULT_WAIT_SECONDS)
 
     total_time = datetime.now() - start_time
 
-    # === FINAL SUMMARY WITH NOT-FOUND LIST (exactly as you asked) ===
+    # === FINAL SUMMARY WITH NOT-FOUND LIST ===
     print(f"\n🎉 BATCH COMPLETE!")
     print(f"   ✅ Successfully processed : {successful}")
     print(f"   ⚠️  Already up-to-date     : {skipped - len(not_found_coins)}")

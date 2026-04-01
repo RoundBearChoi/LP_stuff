@@ -1,13 +1,8 @@
 symbol,sources,coingecko_symbol,coingecko_id
 $BANANA,DEX,banana,banana-gun
-$NGP,DEX,ngp,ngp
-$WIF,DEX,wif,dogwifhat
 1INCH,DEX,1inch,1inch
-1PIECE,DEX,1piece,1piece
-2Z,DEX,2z,2z
-3A,DEX,3a,3a
-4,"CEX,DEX",4,4
-9BIT,CEX,9bit,9bit
+2Z,DEX,2z,doublezero
+4,"CEX,DEX",4,4-2
 AAVE,"CEX,DEX",aave,aave
 ADA,"CEX,DEX",ada,cardano
 ADI,"CEX,DEX",adi,adi
