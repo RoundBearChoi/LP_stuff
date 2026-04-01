@@ -538,5 +538,3 @@ ZGC,DEX,zgc,zgc
 ZIL,CEX,zil,zilliqa
 ZORA,DEX,zora,zora
 ZRO,CEX,zro,zro
-币安人生,DEX,币安人生,币安人生
-雷神,DEX,雷神,雷神
