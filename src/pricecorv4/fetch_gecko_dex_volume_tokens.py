@@ -9,10 +9,13 @@ import termios
 # =============== CONFIG SECTION ===============
 # Top DEX IDs (get more from https://www.coingecko.com/en/exchanges/decentralized — use the URL slug)
 DEX_EXCHANGE_IDS = [
+    "aerodrome-base",
+    "aerodrome-slipstream",
+    "aerodrome-slipstream-2",
     "uniswap_v3",
 ]
 
-MAX_PAGES_PER_DEX = 2
+MAX_PAGES_PER_DEX = 1
 
 # Use symbol format for pairs on DEX (cleaner than contract addresses)
 DEX_PAIR_FORMAT = "symbol"   # "symbol" or "contract_address"
