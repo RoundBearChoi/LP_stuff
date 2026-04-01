@@ -61,6 +61,8 @@ def main():
 
     successful = 0
     failed = 0
+    skipped = 0      # NEW: tracks pure skips (no API)
+    downloaded = 0   # NEW: tracks actual API usage
     start_time = datetime.now()
 
     print(f"\n🏁 Starting batch processing of {len(tokens_to_process)} tokens...\n")
@@ -70,28 +72,39 @@ def main():
         print(f"[{i:3d}/{len(tokens_to_process)}] Processing → {symbol}")
         print(f"{'=' * 80}")
 
+        fetched = False   # default for safety
         try:
-            success = fetcher.run(coin_input=symbol, months=months, api_key=api_key,
-                                  volume_mapping=volume_mapping)
+            success, fetched = fetcher.run(coin_input=symbol, months=months, api_key=api_key,
+                                           volume_mapping=volume_mapping)
             if success:
                 successful += 1
+                if fetched:
+                    downloaded += 1
+                else:
+                    skipped += 1
             else:
                 failed += 1
         except Exception as e:
             print(f"❌ Unexpected error on {symbol}: {e}")
             failed += 1
+            fetched = False
 
         if i < len(tokens_to_process):
-            print(f"⏳ Waiting {DEFAULT_WAIT_SECONDS} seconds before next token...")
-            time.sleep(DEFAULT_WAIT_SECONDS)
+            if fetched:
+                print(f"⏳ Waiting {DEFAULT_WAIT_SECONDS} seconds before next token (API was used)...")
+                time.sleep(DEFAULT_WAIT_SECONDS)
+            else:
+                print(f"   ⏭️  Skipped (file already exists) → no wait needed")
 
     total_time = datetime.now() - start_time
 
     # === FINAL SUMMARY ===
     print(f"\n🎉 BATCH COMPLETE!")
     print(f"   ✅ Successfully processed (including skips) : {successful}")
-    print(f"   ❌ Failed / not found                        : {failed}")
-    print(f"   ⏱️  Total time                               : {total_time}")
+    print(f"   ⏭️  Skipped (file already existed)          : {skipped}")
+    print(f"   📥 Downloaded fresh data                    : {downloaded}")
+    print(f"   ❌ Failed / not found                       : {failed}")
+    print(f"   ⏱️  Total time                              : {total_time}")
     print(f"   📁 Files saved to 'price_data/' folder\n")
 
     print("💡 Tip: Skipped tokens show '⏭️  File already exists → skipping' in the log.")

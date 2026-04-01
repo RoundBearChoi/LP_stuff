@@ -137,8 +137,9 @@ class CoinGeckoPriceFetcher:
         return df
 
     def run(self, coin_input: str, months: int, api_key: str | None = None,
-            volume_mapping: dict | None = None) -> bool:
-        """Main entry point – now extremely simple."""
+            volume_mapping: dict | None = None) -> tuple[bool, bool]:
+        """Main entry point – returns (success: bool, fetched: bool).
+        `fetched` is True only when we actually made API calls (so the batch script knows whether to wait)."""
         if volume_mapping is None:
             volume_mapping = self.load_volume_token_mapping()
         else:
@@ -161,7 +162,7 @@ class CoinGeckoPriceFetcher:
         if os.path.exists(filename) and not FORCE_FRESH_DOWNLOAD:
             print(f"⏭️  {coin_input}: File already exists → skipping download")
             print(f"    (Set FORCE_FRESH_DOWNLOAD=True in fetch_gecko_price_history.py to force refresh)")
-            return True
+            return True, False   # success, but did NOT hit the API
 
         if os.path.exists(filename):
             print(f"🔄 {coin_input}: FORCE_FRESH_DOWNLOAD=True → overwriting existing file with fresh data")
@@ -177,14 +178,14 @@ class CoinGeckoPriceFetcher:
 
         if df.empty:
             print(f"❌ No data returned for {coin_input} (coin may not exist on CoinGecko)")
-            return False
+            return False, True   # attempted fetch, so we still count it as "used API"
 
         df.to_csv(filename, index=False)
 
         print(f"\n✅ Success! Saved {len(df):,} hourly records to {filename}")
         print(f"   Date range: {df['timestamp'].min()} → {df['timestamp'].max()}")
         print(f"   Latest price: ${df['price_usd'].iloc[-1]:.4f} USD")
-        return True
+        return True, True        # success AND fetched
 
 
 if __name__ == "__main__":
@@ -197,4 +198,4 @@ if __name__ == "__main__":
     months = int(sys.argv[2])
 
     fetcher = CoinGeckoPriceFetcher()
-    fetcher.run(coin_input, months)
+    fetcher.run(coin_input, months)   # return value ignored for single-coin usage
