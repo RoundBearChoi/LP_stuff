@@ -8,13 +8,20 @@ import termios
 
 # =============== CONFIG SECTION ===============
 DEX_EXCHANGE_IDS = [
-    #"aerodrome-base",
-    #"aerodrome-slipstream",
-    #"aerodrome-slipstream-2",
     "uniswap_v3",
+    "pancakeswap-infinity-clmm",
+    "pancakeswap-infinity-clmm-base",
+    "pancakeswap-v3-base",
+    "pancakeswap-v3-bsc",
+    "pancakeswap-v3-ethereum",
+    "pancakeswap-v3-opbnb",
+    "pancakeswap-v3-solana",
+    "pancakeswap-v3-zksync",
+    "pancakeswap_ethereum",
+    "pancakeswap_new",
 ]
 
-MAX_PAGES_PER_DEX = 2
+MAX_PAGES_PER_DEX = 1
 
 # Use symbol format for pairs on DEX (cleaner than contract addresses)
 DEX_PAIR_FORMAT = "symbol"   # "symbol" or "contract_address"

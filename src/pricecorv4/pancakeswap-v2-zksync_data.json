@@ -1,0 +1,126 @@
+{
+  "name": "PancakeSwap (zkSync)",
+  "year_established": 2023,
+  "country": null,
+  "description": "",
+  "url": "https://pancakeswap.finance/?chain=zkSync",
+  "image": "https://coin-images.coingecko.com/markets/images/1201/small/PSiAEax7_400x400.jpg?1706865212",
+  "facebook_url": "",
+  "reddit_url": "",
+  "telegram_url": "",
+  "slack_url": "",
+  "other_url_1": "",
+  "other_url_2": "",
+  "twitter_handle": "PancakeSwap",
+  "has_trading_incentive": false,
+  "centralized": false,
+  "public_notice": "",
+  "alert_notice": "",
+  "trust_score": null,
+  "trust_score_rank": 1015,
+  "coins": 3,
+  "pairs": 3,
+  "trade_volume_24h_btc": 0.0001341052804942,
+  "tickers": [
+    {
+      "base": "0X3A287A06C66F9E95A56327185CA2BDF5F031CECD",
+      "target": "0X5AEA5775959FBC2557CC8789BC1BF90A239D9A91",
+      "market": {
+        "name": "PancakeSwap (zkSync)",
+        "identifier": "pancakeswap-v2-zksync",
+        "has_trading_incentive": false
+      },
+      "last": 0.0006616906655,
+      "volume": 6.4596991703,
+      "converted_last": {
+        "btc": 2.057e-05,
+        "eth": 0.00066131,
+        "usd": 1.41
+      },
+      "converted_volume": {
+        "btc": 0.00013425,
+        "eth": 0.00431544,
+        "usd": 9.18
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.896569,
+      "timestamp": "2026-04-01T09:17:45+00:00",
+      "last_traded_at": "2026-04-01T09:17:45+00:00",
+      "last_fetch_at": "2026-04-01T13:13:37+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x3a287a06c66f9e95a56327185ca2bdf5f031cecd&outputCurrency=0x5aea5775959fbc2557cc8789bc1bf90a239d9a91",
+      "token_info_url": null,
+      "coin_id": "pancakeswap-token",
+      "target_coin_id": "bridged-weth",
+      "coin_mcap_usd": 480335890.756432
+    },
+    {
+      "base": "0X493257FD37EDB34451F62EDF8D2A0C418852BA4C",
+      "target": "0X971B79EF5E76088AF5E52C6D6AA3276C2190E45C",
+      "market": {
+        "name": "PancakeSwap (zkSync)",
+        "identifier": "pancakeswap-v2-zksync",
+        "has_trading_incentive": false
+      },
+      "last": 3257.4363410334,
+      "volume": 1.509727,
+      "converted_last": {
+        "btc": 9.27e-06,
+        "eth": 0.00040761,
+        "usd": 0.997219
+      },
+      "converted_volume": {
+        "btc": 0.0226507,
+        "eth": 0.99570002,
+        "usd": 2435.98
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.619866,
+      "timestamp": "2026-03-26T14:16:29+00:00",
+      "last_traded_at": "2026-03-26T14:16:29+00:00",
+      "last_fetch_at": "2026-03-26T14:43:05+00:00",
+      "is_anomaly": false,
+      "is_stale": true,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x493257fd37edb34451f62edf8d2a0c418852ba4c&outputCurrency=0x971b79ef5e76088af5e52c6d6aa3276c2190e45c",
+      "token_info_url": null,
+      "coin_id": "bridged-usdt",
+      "target_coin_id": "synapse-network-2",
+      "coin_mcap_usd": 0.0
+    },
+    {
+      "base": "0X79DB8C67D0C33203DA4EFB58F7D325E1E0D4D692",
+      "target": "0X5AEA5775959FBC2557CC8789BC1BF90A239D9A91",
+      "market": {
+        "name": "PancakeSwap (zkSync)",
+        "identifier": "pancakeswap-v2-zksync",
+        "has_trading_incentive": false
+      },
+      "last": 3.793087915e-11,
+      "volume": 343192123.198824,
+      "converted_last": {
+        "btc": 1.147e-12,
+        "eth": 3.7914e-11,
+        "usd": 7.6851e-08
+      },
+      "converted_volume": {
+        "btc": 0.00039366,
+        "eth": 0.01301178,
+        "usd": 26.37
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.618336,
+      "timestamp": "2026-03-28T02:44:20+00:00",
+      "last_traded_at": "2026-03-28T02:44:20+00:00",
+      "last_fetch_at": "2026-03-28T15:45:21+00:00",
+      "is_anomaly": false,
+      "is_stale": true,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x79db8c67d0c33203da4efb58f7d325e1e0d4d692&outputCurrency=0x5aea5775959fbc2557cc8789bc1bf90a239d9a91",
+      "token_info_url": null,
+      "coin_id": "zeek-coin",
+      "target_coin_id": "bridged-weth",
+      "coin_mcap_usd": 59622.39874513002
+    }
+  ],
+  "status_updates": []
+}

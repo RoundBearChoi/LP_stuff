@@ -1,0 +1,3327 @@
+{
+  "name": "PancakeSwap V1 (BSC)",
+  "year_established": 2020,
+  "country": null,
+  "description": "",
+  "url": "https://pancakeswap.finance/swap",
+  "image": "https://coin-images.coingecko.com/markets/images/1492/small/pancakeswap-cake-logo.png?1710143583",
+  "facebook_url": "",
+  "reddit_url": "",
+  "telegram_url": "",
+  "slack_url": "",
+  "other_url_1": "",
+  "other_url_2": "",
+  "twitter_handle": "",
+  "has_trading_incentive": false,
+  "centralized": false,
+  "public_notice": "",
+  "alert_notice": "",
+  "trust_score": 5,
+  "trust_score_rank": 317,
+  "coins": 104,
+  "pairs": 137,
+  "trade_volume_24h_btc": 2.290352101014041,
+  "tickers": [
+    {
+      "base": "0X4B0F1812E5DF2A09796481FF14017E6005508003",
+      "target": "0XBB4CDB9CBD36B01BD1CBAEBF2DE08D9173BC095C",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 0.0005784830375,
+      "volume": 134028.760746569,
+      "converted_last": {
+        "btc": 5.21e-06,
+        "eth": 0.00016739,
+        "usd": 0.355847
+      },
+      "converted_volume": {
+        "btc": 0.69879871,
+        "eth": 22.468454,
+        "usd": 47766
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.604272,
+      "timestamp": "2026-04-01T13:12:11+00:00",
+      "last_traded_at": "2026-04-01T13:12:11+00:00",
+      "last_fetch_at": "2026-04-01T13:13:09+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x4b0f1812e5df2a09796481ff14017e6005508003&outputCurrency=0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c",
+      "token_info_url": null,
+      "coin_id": "trust-wallet-token",
+      "target_coin_id": "wbnb",
+      "coin_mcap_usd": 147142089.2464686
+    },
+    {
+      "base": "0X0E09FABB73BD3ADE0A17ECC321FD13A19E81CE82",
+      "target": "0XBB4CDB9CBD36B01BD1CBAEBF2DE08D9173BC095C",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 0.00228538276,
+      "volume": 8115.6409606227,
+      "converted_last": {
+        "btc": 2.057e-05,
+        "eth": 0.00066128,
+        "usd": 1.41
+      },
+      "converted_volume": {
+        "btc": 0.16582883,
+        "eth": 5.331889,
+        "usd": 11335.1
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.602933,
+      "timestamp": "2026-04-01T13:10:13+00:00",
+      "last_traded_at": "2026-04-01T13:10:13+00:00",
+      "last_fetch_at": "2026-04-01T13:13:09+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82&outputCurrency=0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c",
+      "token_info_url": null,
+      "coin_id": "pancakeswap-token",
+      "target_coin_id": "wbnb",
+      "coin_mcap_usd": 480335890.756432
+    },
+    {
+      "base": "0X2170ED0880AC9A755FD29B2688956BD959F933F8",
+      "target": "0XBB4CDB9CBD36B01BD1CBAEBF2DE08D9173BC095C",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 3.446146476,
+      "volume": 4.2080069461,
+      "converted_last": {
+        "btc": 0.03101283,
+        "eth": 0.99715458,
+        "usd": 2119.86
+      },
+      "converted_volume": {
+        "btc": 0.12942096,
+        "eth": 4.161268,
+        "usd": 8846.47
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.603612,
+      "timestamp": "2026-04-01T13:08:10+00:00",
+      "last_traded_at": "2026-04-01T13:08:10+00:00",
+      "last_fetch_at": "2026-04-01T13:13:09+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x2170ed0880ac9a755fd29b2688956bd959f933f8&outputCurrency=0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c",
+      "token_info_url": null,
+      "coin_id": "binance-peg-weth",
+      "target_coin_id": "wbnb",
+      "coin_mcap_usd": 1279306525.931802
+    },
+    {
+      "base": "0X3EE2200EFB3400FABB9AACF31297CBDD1D435D47",
+      "target": "0XBB4CDB9CBD36B01BD1CBAEBF2DE08D9173BC095C",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 0.0004026797554,
+      "volume": 14483.7103542443,
+      "converted_last": {
+        "btc": 3.62e-06,
+        "eth": 0.00011652,
+        "usd": 0.247704
+      },
+      "converted_volume": {
+        "btc": 0.05189259,
+        "eth": 1.668501,
+        "usd": 3547.08
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.608038,
+      "timestamp": "2026-04-01T13:08:10+00:00",
+      "last_traded_at": "2026-04-01T13:08:10+00:00",
+      "last_fetch_at": "2026-04-01T13:13:09+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x3ee2200efb3400fabb9aacf31297cbdd1d435d47&outputCurrency=0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c",
+      "token_info_url": null,
+      "coin_id": "binance-peg-cardano",
+      "target_coin_id": "wbnb",
+      "coin_mcap_usd": 111948809.16359214
+    },
+    {
+      "base": "0X7083609FCE4D1D8DC0C979AAB8C869EA2C873402",
+      "target": "0XBB4CDB9CBD36B01BD1CBAEBF2DE08D9173BC095C",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 0.002081435532,
+      "volume": 2035.5380039129,
+      "converted_last": {
+        "btc": 1.874e-05,
+        "eth": 0.0006028,
+        "usd": 1.28
+      },
+      "converted_volume": {
+        "btc": 0.03782921,
+        "eth": 1.217096,
+        "usd": 2585.16
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.609136,
+      "timestamp": "2026-04-01T13:08:36+00:00",
+      "last_traded_at": "2026-04-01T13:08:36+00:00",
+      "last_fetch_at": "2026-04-01T13:12:42+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x7083609fce4d1d8dc0c979aab8c869ea2c873402&outputCurrency=0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c",
+      "token_info_url": null,
+      "coin_id": "binance-peg-polkadot",
+      "target_coin_id": "wbnb",
+      "coin_mcap_usd": 20458601.71663532
+    },
+    {
+      "base": "0X7130D2A12B9BCBFAE4F2634D864A1EE1CE3EAD9C",
+      "target": "0XBB4CDB9CBD36B01BD1CBAEBF2DE08D9173BC095C",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 111.0819137171,
+      "volume": 0.02475334354,
+      "converted_last": {
+        "btc": 0.99965702,
+        "eth": 32.141942,
+        "usd": 68331
+      },
+      "converted_volume": {
+        "btc": 0.02462565,
+        "eth": 0.79178789,
+        "usd": 1683.27
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.60493,
+      "timestamp": "2026-04-01T13:09:08+00:00",
+      "last_traded_at": "2026-04-01T13:09:08+00:00",
+      "last_fetch_at": "2026-04-01T13:13:09+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x7130d2a12b9bcbfae4f2634d864a1ee1ce3ead9c&outputCurrency=0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c",
+      "token_info_url": null,
+      "coin_id": "binance-bitcoin",
+      "target_coin_id": "wbnb",
+      "coin_mcap_usd": 0.0
+    },
+    {
+      "base": "0XF8A0BF9CF54BB92F17374D9E9A321E6A111A51BD",
+      "target": "0XBB4CDB9CBD36B01BD1CBAEBF2DE08D9173BC095C",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 0.01460494949,
+      "volume": 170.4284389581,
+      "converted_last": {
+        "btc": 0.00013147,
+        "eth": 0.00422971,
+        "usd": 8.98
+      },
+      "converted_volume": {
+        "btc": 0.02222286,
+        "eth": 0.71498589,
+        "usd": 1518.66
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.609729,
+      "timestamp": "2026-04-01T13:08:36+00:00",
+      "last_traded_at": "2026-04-01T13:08:36+00:00",
+      "last_fetch_at": "2026-04-01T13:12:42+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0xf8a0bf9cf54bb92f17374d9e9a321e6a111a51bd&outputCurrency=0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c",
+      "token_info_url": null,
+      "coin_id": "chainlink",
+      "target_coin_id": "wbnb",
+      "coin_mcap_usd": 6353489867.247055
+    },
+    {
+      "base": "0X1AF3F329E8BE154074D8769D1FFA4EE058B1DBC3",
+      "target": "0XBB4CDB9CBD36B01BD1CBAEBF2DE08D9173BC095C",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 0.001628725103,
+      "volume": 1234.5030955405,
+      "converted_last": {
+        "btc": 1.466e-05,
+        "eth": 0.00047169,
+        "usd": 1.002
+      },
+      "converted_volume": {
+        "btc": 0.01809296,
+        "eth": 0.58211284,
+        "usd": 1236.43
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.609851,
+      "timestamp": "2026-04-01T13:04:45+00:00",
+      "last_traded_at": "2026-04-01T13:04:45+00:00",
+      "last_fetch_at": "2026-04-01T13:12:42+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x1af3f329e8be154074d8769d1ffa4ee058b1dbc3&outputCurrency=0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c",
+      "token_info_url": null,
+      "coin_id": "binance-peg-dai",
+      "target_coin_id": "wbnb",
+      "coin_mcap_usd": 40992299.67843198
+    },
+    {
+      "base": "0X52CE071BD9B1C4B00A0B92D298C512478CAD67E8",
+      "target": "0X2170ED0880AC9A755FD29B2688956BD959F933F8",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 0.007971647524,
+      "volume": 78.5834750127,
+      "converted_last": {
+        "btc": 0.0002461,
+        "eth": 0.0079231,
+        "usd": 16.8
+      },
+      "converted_volume": {
+        "btc": 0.01948267,
+        "eth": 0.62724929,
+        "usd": 1330.15
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.622098,
+      "timestamp": "2026-04-01T13:05:45+00:00",
+      "last_traded_at": "2026-04-01T13:05:45+00:00",
+      "last_fetch_at": "2026-04-01T13:05:45+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x52ce071bd9b1c4b00a0b92d298c512478cad67e8&outputCurrency=0x2170ed0880ac9a755fd29b2688956bd959f933f8",
+      "token_info_url": null,
+      "coin_id": "compound-governance-token",
+      "target_coin_id": "binance-peg-weth",
+      "coin_mcap_usd": 164028759.87855235
+    },
+    {
+      "base": "0XA9776B590BFC2F956711B3419910A5EC1F63153E",
+      "target": "0XE9E7CEA3DEDCA5984780BAFC599BD69ADD087D56",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 7.7154510158,
+      "volume": 97.3831709346,
+      "converted_last": {
+        "btc": 0.00011166,
+        "eth": 0.00358968,
+        "usd": 7.65
+      },
+      "converted_volume": {
+        "btc": 0.02770665,
+        "eth": 0.89073411,
+        "usd": 1899.31
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.856132,
+      "timestamp": "2026-04-01T10:11:31+00:00",
+      "last_traded_at": "2026-04-01T10:11:31+00:00",
+      "last_fetch_at": "2026-04-01T11:06:14+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0xa9776b590bfc2f956711b3419910a5ec1f63153e&outputCurrency=0xe9e7cea3dedca5984780bafc599bd69add087d56",
+      "token_info_url": null,
+      "coin_id": "rune",
+      "target_coin_id": "binance-peg-busd",
+      "coin_mcap_usd": 149148.60418782115
+    },
+    {
+      "base": "0X7C63F96FEAFACD84E75A594C00FAC3693386FBF0",
+      "target": "0XBB4CDB9CBD36B01BD1CBAEBF2DE08D9173BC095C",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 1.320338853e-12,
+      "volume": 678849858322.659,
+      "converted_last": {
+        "btc": 1.1882e-14,
+        "eth": 3.82045e-13,
+        "usd": 8.12191e-10
+      },
+      "converted_volume": {
+        "btc": 0.00807505,
+        "eth": 0.25963684,
+        "usd": 551.96
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.602748,
+      "timestamp": "2026-04-01T12:44:14+00:00",
+      "last_traded_at": "2026-04-01T12:44:14+00:00",
+      "last_fetch_at": "2026-04-01T13:13:09+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x7c63f96feafacd84e75a594c00fac3693386fbf0&outputCurrency=0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c",
+      "token_info_url": null,
+      "coin_id": "australian-safe-shepherd",
+      "target_coin_id": "wbnb",
+      "coin_mcap_usd": 7570416.695290191
+    },
+    {
+      "base": "0X9678E42CEBEB63F23197D726B29B1CB20D0064E5",
+      "target": "0XE9E7CEA3DEDCA5984780BAFC599BD69ADD087D56",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 0.004578594914,
+      "volume": 245667.825001774,
+      "converted_last": {
+        "btc": 6.7204e-08,
+        "eth": 2.16e-06,
+        "usd": 0.00458828
+      },
+      "converted_volume": {
+        "btc": 0.01642331,
+        "eth": 0.52875238,
+        "usd": 1121.28
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.644557,
+      "timestamp": "2026-04-01T13:05:45+00:00",
+      "last_traded_at": "2026-04-01T13:05:45+00:00",
+      "last_fetch_at": "2026-04-01T13:05:45+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x9678e42cebeb63f23197d726b29b1cb20d0064e5&outputCurrency=0xe9e7cea3dedca5984780bafc599bd69add087d56",
+      "token_info_url": null,
+      "coin_id": "binance-peg-iotex",
+      "target_coin_id": "binance-peg-busd",
+      "coin_mcap_usd": 1523185.2933285194
+    },
+    {
+      "base": "0X0E09FABB73BD3ADE0A17ECC321FD13A19E81CE82",
+      "target": "0XE9E7CEA3DEDCA5984780BAFC599BD69ADD087D56",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 1.404292083,
+      "volume": 601.9166776546,
+      "converted_last": {
+        "btc": 2.057e-05,
+        "eth": 0.00066187,
+        "usd": 1.41
+      },
+      "converted_volume": {
+        "btc": 0.01226878,
+        "eth": 0.39472893,
+        "usd": 838.42
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.615359,
+      "timestamp": "2026-04-01T13:09:35+00:00",
+      "last_traded_at": "2026-04-01T13:09:35+00:00",
+      "last_fetch_at": "2026-04-01T13:12:42+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82&outputCurrency=0xe9e7cea3dedca5984780bafc599bd69add087d56",
+      "token_info_url": null,
+      "coin_id": "pancakeswap-token",
+      "target_coin_id": "binance-peg-busd",
+      "coin_mcap_usd": 480335890.756432
+    },
+    {
+      "base": "0XD41FDB03BA84762DD66A0AF1A6C8540FF1BA5DFB",
+      "target": "0XBB4CDB9CBD36B01BD1CBAEBF2DE08D9173BC095C",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 0.0004543934369,
+      "volume": 2304.440246446,
+      "converted_last": {
+        "btc": 4.09e-06,
+        "eth": 0.0001316,
+        "usd": 0.279515
+      },
+      "converted_volume": {
+        "btc": 0.00952763,
+        "eth": 0.3065367,
+        "usd": 651.1
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.611809,
+      "timestamp": "2026-04-01T13:02:47+00:00",
+      "last_traded_at": "2026-04-01T13:02:47+00:00",
+      "last_fetch_at": "2026-04-01T13:12:42+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0xd41fdb03ba84762dd66a0af1a6c8540ff1ba5dfb&outputCurrency=0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c",
+      "token_info_url": null,
+      "coin_id": "safepal",
+      "target_coin_id": "wbnb",
+      "coin_mcap_usd": 139221638.2338366
+    },
+    {
+      "base": "0XCF6BB5389C92BDDA8A3747DDB454CB7A64626C63",
+      "target": "0XBB4CDB9CBD36B01BD1CBAEBF2DE08D9173BC095C",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 0.004457636376,
+      "volume": 272.263062023,
+      "converted_last": {
+        "btc": 4.027e-05,
+        "eth": 0.00129661,
+        "usd": 2.75
+      },
+      "converted_volume": {
+        "btc": 0.01096569,
+        "eth": 0.35304307,
+        "usd": 748.67
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.624774,
+      "timestamp": "2026-04-01T13:05:45+00:00",
+      "last_traded_at": "2026-04-01T13:05:45+00:00",
+      "last_fetch_at": "2026-04-01T13:05:45+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0xcf6bb5389c92bdda8a3747ddb454cb7a64626c63&outputCurrency=0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c",
+      "token_info_url": null,
+      "coin_id": "venus",
+      "target_coin_id": "wbnb",
+      "coin_mcap_usd": 45709868.94262752
+    },
+    {
+      "base": "0X1D2F0DA169CEB9FC7B3144628DB156F3F6C60DBE",
+      "target": "0XBB4CDB9CBD36B01BD1CBAEBF2DE08D9173BC095C",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 0.00220383711,
+      "volume": 416.8158913329,
+      "converted_last": {
+        "btc": 1.984e-05,
+        "eth": 0.00063825,
+        "usd": 1.36
+      },
+      "converted_volume": {
+        "btc": 0.00817771,
+        "eth": 0.26310499,
+        "usd": 558.84
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.612492,
+      "timestamp": "2026-04-01T13:04:45+00:00",
+      "last_traded_at": "2026-04-01T13:04:45+00:00",
+      "last_fetch_at": "2026-04-01T13:12:42+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x1d2f0da169ceb9fc7b3144628db156f3f6c60dbe&outputCurrency=0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c",
+      "token_info_url": null,
+      "coin_id": "binance-peg-xrp",
+      "target_coin_id": "wbnb",
+      "coin_mcap_usd": 440388737.7508065
+    },
+    {
+      "base": "0X8F0528CE5EF7B51152A59745BEFDD91D97091D2F",
+      "target": "0XBB4CDB9CBD36B01BD1CBAEBF2DE08D9173BC095C",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 9.242706292e-07,
+      "volume": 1135071.9758888,
+      "converted_last": {
+        "btc": 8.317e-09,
+        "eth": 2.67771e-07,
+        "usd": 0.00056784
+      },
+      "converted_volume": {
+        "btc": 0.00948738,
+        "eth": 0.30544837,
+        "usd": 647.74
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.625361,
+      "timestamp": "2026-04-01T12:38:30+00:00",
+      "last_traded_at": "2026-04-01T12:38:30+00:00",
+      "last_fetch_at": "2026-04-01T13:05:45+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x8f0528ce5ef7b51152a59745befdd91d97091d2f&outputCurrency=0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c",
+      "token_info_url": null,
+      "coin_id": "alpaca-finance",
+      "target_coin_id": "wbnb",
+      "coin_mcap_usd": 86037.15992387614
+    },
+    {
+      "base": "0X5AC52EE5B2A633895292FF6D8A89BB9190451587",
+      "target": "0XBB4CDB9CBD36B01BD1CBAEBF2DE08D9173BC095C",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 0.004685150756,
+      "volume": 174.6921037796,
+      "converted_last": {
+        "btc": 4.216e-05,
+        "eth": 0.00135566,
+        "usd": 2.88
+      },
+      "converted_volume": {
+        "btc": 0.00735263,
+        "eth": 0.23640895,
+        "usd": 502.58
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.604288,
+      "timestamp": "2026-04-01T12:54:05+00:00",
+      "last_traded_at": "2026-04-01T12:54:05+00:00",
+      "last_fetch_at": "2026-04-01T13:13:09+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x5ac52ee5b2a633895292ff6d8a89bb9190451587&outputCurrency=0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c",
+      "token_info_url": null,
+      "coin_id": "bscex",
+      "target_coin_id": "wbnb",
+      "coin_mcap_usd": 0.0
+    },
+    {
+      "base": "0X5AC52EE5B2A633895292FF6D8A89BB9190451587",
+      "target": "0XE9E7CEA3DEDCA5984780BAFC599BD69ADD087D56",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 2.8852946914,
+      "volume": 181.8253263047,
+      "converted_last": {
+        "btc": 4.216e-05,
+        "eth": 0.00135566,
+        "usd": 2.88
+      },
+      "converted_volume": {
+        "btc": 0.00761969,
+        "eth": 0.2449956,
+        "usd": 520.84
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.607876,
+      "timestamp": "2026-04-01T12:51:13+00:00",
+      "last_traded_at": "2026-04-01T12:51:13+00:00",
+      "last_fetch_at": "2026-04-01T13:13:09+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x5ac52ee5b2a633895292ff6d8a89bb9190451587&outputCurrency=0xe9e7cea3dedca5984780bafc599bd69add087d56",
+      "token_info_url": null,
+      "coin_id": "bscex",
+      "target_coin_id": "binance-peg-busd",
+      "coin_mcap_usd": 0.0
+    },
+    {
+      "base": "0X55D398326F99059FF775485246999027B3197955",
+      "target": "0XE9E7CEA3DEDCA5984780BAFC599BD69ADD087D56",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 0.9964420475,
+      "volume": 290.8305205846,
+      "converted_last": {
+        "btc": 1.457e-05,
+        "eth": 0.00046845,
+        "usd": 0.995873
+      },
+      "converted_volume": {
+        "btc": 0.00424202,
+        "eth": 0.1363934,
+        "usd": 289.96
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.602835,
+      "timestamp": "2026-04-01T12:36:11+00:00",
+      "last_traded_at": "2026-04-01T12:36:11+00:00",
+      "last_fetch_at": "2026-04-01T13:13:09+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x55d398326f99059ff775485246999027b3197955&outputCurrency=0xe9e7cea3dedca5984780bafc599bd69add087d56",
+      "token_info_url": null,
+      "coin_id": "binance-bridged-usdt-bnb-smart-chain",
+      "target_coin_id": "binance-peg-busd",
+      "coin_mcap_usd": 8981071812.489912
+    },
+    {
+      "base": "0X250632378E573C6BE1AC2F97FCDF00515D0AA91B",
+      "target": "0X2170ED0880AC9A755FD29B2688956BD959F933F8",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 1.1220122975,
+      "volume": 0.1898964922,
+      "converted_last": {
+        "btc": 0.03489513,
+        "eth": 1.121982,
+        "usd": 2385.23
+      },
+      "converted_volume": {
+        "btc": 0.00661121,
+        "eth": 0.21256995,
+        "usd": 451.9
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.604519,
+      "timestamp": "2026-04-01T13:08:10+00:00",
+      "last_traded_at": "2026-04-01T13:08:10+00:00",
+      "last_fetch_at": "2026-04-01T13:13:09+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x250632378e573c6be1ac2f97fcdf00515d0aa91b&outputCurrency=0x2170ed0880ac9a755fd29b2688956bd959f933f8",
+      "token_info_url": null,
+      "coin_id": "binance-eth",
+      "target_coin_id": "binance-peg-weth",
+      "coin_mcap_usd": 0.0
+    },
+    {
+      "base": "0X2170ED0880AC9A755FD29B2688956BD959F933F8",
+      "target": "0X7130D2A12B9BCBFAE4F2634D864A1EE1CE3EAD9C",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 0.03101457377,
+      "volume": 0.2436002719,
+      "converted_last": {
+        "btc": 0.03102038,
+        "eth": 0.9980323,
+        "usd": 2119.86
+      },
+      "converted_volume": {
+        "btc": 0.00753841,
+        "eth": 0.24253665,
+        "usd": 515.16
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.610589,
+      "timestamp": "2026-04-01T13:11:44+00:00",
+      "last_traded_at": "2026-04-01T13:11:44+00:00",
+      "last_fetch_at": "2026-04-01T13:12:42+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x2170ed0880ac9a755fd29b2688956bd959f933f8&outputCurrency=0x7130d2a12b9bcbfae4f2634d864a1ee1ce3ead9c",
+      "token_info_url": null,
+      "coin_id": "binance-peg-weth",
+      "target_coin_id": "binance-bitcoin",
+      "coin_mcap_usd": 1279306525.931802
+    },
+    {
+      "base": "0XBA2AE424D960C26247DD6C32EDC70B295C744C43",
+      "target": "0XE9E7CEA3DEDCA5984780BAFC599BD69ADD087D56",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 0.09278394637,
+      "volume": 5776.85530809,
+      "converted_last": {
+        "btc": 1.36e-06,
+        "eth": 4.365e-05,
+        "usd": 0.092565
+      },
+      "converted_volume": {
+        "btc": 0.00777645,
+        "eth": 0.25036477,
+        "usd": 530.93
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.628922,
+      "timestamp": "2026-04-01T12:46:59+00:00",
+      "last_traded_at": "2026-04-01T12:46:59+00:00",
+      "last_fetch_at": "2026-04-01T13:05:46+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0xba2ae424d960c26247dd6c32edc70b295c744c43&outputCurrency=0xe9e7cea3dedca5984780bafc599bd69add087d56",
+      "token_info_url": null,
+      "coin_id": "binance-peg-dogecoin",
+      "target_coin_id": "binance-peg-busd",
+      "coin_mcap_usd": 237201355.85247493
+    },
+    {
+      "base": "0XCE5814EFFF15D53EFD8025B9F2006D4D7D640B9B",
+      "target": "0XBB4CDB9CBD36B01BD1CBAEBF2DE08D9173BC095C",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 2.021341522e-12,
+      "volume": 222962190210.332,
+      "converted_last": {
+        "btc": 1.8191e-14,
+        "eth": 5.84882e-13,
+        "usd": 1.243e-09
+      },
+      "converted_volume": {
+        "btc": 0.00405925,
+        "eth": 0.13051706,
+        "usd": 277.47
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.602966,
+      "timestamp": "2026-04-01T09:44:46+00:00",
+      "last_traded_at": "2026-04-01T09:44:46+00:00",
+      "last_fetch_at": "2026-04-01T13:13:09+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0xce5814efff15d53efd8025b9f2006d4d7d640b9b&outputCurrency=0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c",
+      "token_info_url": null,
+      "coin_id": "moonstar",
+      "target_coin_id": "wbnb",
+      "coin_mcap_usd": 0.0
+    },
+    {
+      "base": "0XF952FC3CA7325CC27D15885D37117676D25BFDA6",
+      "target": "0XBB4CDB9CBD36B01BD1CBAEBF2DE08D9173BC095C",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 4.222979343e-06,
+      "volume": 124648.380483763,
+      "converted_last": {
+        "btc": 3.8013e-08,
+        "eth": 1.22e-06,
+        "usd": 0.00259772
+      },
+      "converted_volume": {
+        "btc": 0.00475191,
+        "eth": 0.15288519,
+        "usd": 324.73
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.61475,
+      "timestamp": "2026-04-01T13:04:45+00:00",
+      "last_traded_at": "2026-04-01T13:04:45+00:00",
+      "last_fetch_at": "2026-04-01T13:12:42+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0xf952fc3ca7325cc27d15885d37117676d25bfda6&outputCurrency=0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c",
+      "token_info_url": null,
+      "coin_id": "goose-finance",
+      "target_coin_id": "wbnb",
+      "coin_mcap_usd": 166074.32368439485
+    },
+    {
+      "base": "0X67EE3CB086F8A16F34BEE3CA72FAD36F7DB929E2",
+      "target": "0XBB4CDB9CBD36B01BD1CBAEBF2DE08D9173BC095C",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 2.484181706e-05,
+      "volume": 22014.108517327,
+      "converted_last": {
+        "btc": 2.2354e-07,
+        "eth": 7.2e-06,
+        "usd": 0.0152619
+      },
+      "converted_volume": {
+        "btc": 0.00484897,
+        "eth": 0.1561137,
+        "usd": 331.06
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.676644,
+      "timestamp": "2026-04-01T12:55:51+00:00",
+      "last_traded_at": "2026-04-01T12:55:51+00:00",
+      "last_fetch_at": "2026-04-01T13:05:46+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x67ee3cb086f8a16f34bee3ca72fad36f7db929e2&outputCurrency=0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c",
+      "token_info_url": null,
+      "coin_id": "dodo",
+      "target_coin_id": "wbnb",
+      "coin_mcap_usd": 15243236.80163842
+    },
+    {
+      "base": "0XBF5140A22578168FD562DCCF235E5D43A02CE9B1",
+      "target": "0XBB4CDB9CBD36B01BD1CBAEBF2DE08D9173BC095C",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 0.005866962331,
+      "volume": 58.7069831008,
+      "converted_last": {
+        "btc": 5.279e-05,
+        "eth": 0.00169972,
+        "usd": 3.6
+      },
+      "converted_volume": {
+        "btc": 0.00306575,
+        "eth": 0.09870255,
+        "usd": 209.31
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.634168,
+      "timestamp": "2026-04-01T12:55:51+00:00",
+      "last_traded_at": "2026-04-01T12:55:51+00:00",
+      "last_fetch_at": "2026-04-01T13:05:46+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0xbf5140a22578168fd562dccf235e5d43a02ce9b1&outputCurrency=0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c",
+      "token_info_url": null,
+      "coin_id": "uniswap",
+      "target_coin_id": "wbnb",
+      "coin_mcap_usd": 2276554862.9406977
+    },
+    {
+      "base": "0X947950BCC74888A40FFA2593C5798F11FC9124C4",
+      "target": "0X2170ED0880AC9A755FD29B2688956BD959F933F8",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 9.33669816e-05,
+      "volume": 1028.5497080876,
+      "converted_last": {
+        "btc": 2.91e-06,
+        "eth": 9.36e-05,
+        "usd": 0.198519
+      },
+      "converted_volume": {
+        "btc": 0.00299997,
+        "eth": 0.09658401,
+        "usd": 204.84
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.629847,
+      "timestamp": "2026-04-01T12:07:22+00:00",
+      "last_traded_at": "2026-04-01T12:07:22+00:00",
+      "last_fetch_at": "2026-04-01T13:04:44+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x947950bcc74888a40ffa2593c5798f11fc9124c4&outputCurrency=0x2170ed0880ac9a755fd29b2688956bd959f933f8",
+      "token_info_url": null,
+      "coin_id": "sushi",
+      "target_coin_id": "binance-peg-weth",
+      "coin_mcap_usd": 54301244.65472971
+    },
+    {
+      "base": "0XF952FC3CA7325CC27D15885D37117676D25BFDA6",
+      "target": "0XE9E7CEA3DEDCA5984780BAFC599BD69ADD087D56",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 0.002594808758,
+      "volume": 64522.5356188876,
+      "converted_last": {
+        "btc": 3.8013e-08,
+        "eth": 1.22e-06,
+        "usd": 0.00259772
+      },
+      "converted_volume": {
+        "btc": 0.00246718,
+        "eth": 0.07937762,
+        "usd": 168.6
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.614857,
+      "timestamp": "2026-04-01T13:04:45+00:00",
+      "last_traded_at": "2026-04-01T13:04:45+00:00",
+      "last_fetch_at": "2026-04-01T13:12:42+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0xf952fc3ca7325cc27d15885d37117676d25bfda6&outputCurrency=0xe9e7cea3dedca5984780bafc599bd69add087d56",
+      "token_info_url": null,
+      "coin_id": "goose-finance",
+      "target_coin_id": "binance-peg-busd",
+      "coin_mcap_usd": 166074.32368439485
+    },
+    {
+      "base": "0XA2B726B1145A4773F68593CF171187D8EBE4D495",
+      "target": "0XBB4CDB9CBD36B01BD1CBAEBF2DE08D9173BC095C",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 0.004782628191,
+      "volume": 70.1321760483,
+      "converted_last": {
+        "btc": 4.304e-05,
+        "eth": 0.00138574,
+        "usd": 2.94
+      },
+      "converted_volume": {
+        "btc": 0.00299275,
+        "eth": 0.09635215,
+        "usd": 204.33
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.649598,
+      "timestamp": "2026-04-01T13:05:46+00:00",
+      "last_traded_at": "2026-04-01T13:05:46+00:00",
+      "last_fetch_at": "2026-04-01T13:05:46+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0xa2b726b1145a4773f68593cf171187d8ebe4d495&outputCurrency=0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c",
+      "token_info_url": null,
+      "coin_id": "injective-protocol",
+      "target_coin_id": "wbnb",
+      "coin_mcap_usd": 293478430.4291764
+    },
+    {
+      "base": "0X33D08D8C7A168333A85285A68C0042B39FC3741D",
+      "target": "0XBB4CDB9CBD36B01BD1CBAEBF2DE08D9173BC095C",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 9.187310681e-05,
+      "volume": 3383.4399773568,
+      "converted_last": {
+        "btc": 8.26725e-07,
+        "eth": 2.662e-05,
+        "usd": 0.056443
+      },
+      "converted_volume": {
+        "btc": 0.0028529,
+        "eth": 0.09184986,
+        "usd": 194.78
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.659771,
+      "timestamp": "2026-04-01T13:05:46+00:00",
+      "last_traded_at": "2026-04-01T13:05:46+00:00",
+      "last_fetch_at": "2026-04-01T13:05:46+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x33d08d8c7a168333a85285a68c0042b39fc3741d&outputCurrency=0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c",
+      "token_info_url": null,
+      "coin_id": "aioz-network",
+      "target_coin_id": "wbnb",
+      "coin_mcap_usd": 70546293.6180118
+    },
+    {
+      "base": "0X2170ED0880AC9A755FD29B2688956BD959F933F8",
+      "target": "0XE9E7CEA3DEDCA5984780BAFC599BD69ADD087D56",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 2121.0350153461,
+      "volume": 0.09330653528,
+      "converted_last": {
+        "btc": 0.0311324,
+        "eth": 1.002315,
+        "usd": 2125.52
+      },
+      "converted_volume": {
+        "btc": 0.00287139,
+        "eth": 0.09244521,
+        "usd": 196.04
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.707034,
+      "timestamp": "2026-04-01T13:05:47+00:00",
+      "last_traded_at": "2026-04-01T13:05:47+00:00",
+      "last_fetch_at": "2026-04-01T13:05:47+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x2170ed0880ac9a755fd29b2688956bd959f933f8&outputCurrency=0xe9e7cea3dedca5984780bafc599bd69add087d56",
+      "token_info_url": null,
+      "coin_id": "binance-peg-weth",
+      "target_coin_id": "binance-peg-busd",
+      "coin_mcap_usd": 1279306525.931802
+    },
+    {
+      "base": "0X0EB3A705FC54725037CC9E008BDEDE697F62F335",
+      "target": "0XBB4CDB9CBD36B01BD1CBAEBF2DE08D9173BC095C",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 0.002777416531,
+      "volume": 71.6975349447,
+      "converted_last": {
+        "btc": 2.499e-05,
+        "eth": 0.00080465,
+        "usd": 1.71
+      },
+      "converted_volume": {
+        "btc": 0.00179412,
+        "eth": 0.05776206,
+        "usd": 122.49
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.644014,
+      "timestamp": "2026-04-01T13:05:46+00:00",
+      "last_traded_at": "2026-04-01T13:05:46+00:00",
+      "last_fetch_at": "2026-04-01T13:05:46+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x0eb3a705fc54725037cc9e008bdede697f62f335&outputCurrency=0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c",
+      "token_info_url": null,
+      "coin_id": "cosmos",
+      "target_coin_id": "wbnb",
+      "coin_mcap_usd": 849209356.7256703
+    },
+    {
+      "base": "0X4338665CBB7B2485A8855A139B75D5E34AB0DB94",
+      "target": "0XBB4CDB9CBD36B01BD1CBAEBF2DE08D9173BC095C",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 0.08819063586,
+      "volume": 2.173130206,
+      "converted_last": {
+        "btc": 0.00078905,
+        "eth": 0.0254035,
+        "usd": 53.87
+      },
+      "converted_volume": {
+        "btc": 0.0017081,
+        "eth": 0.05499285,
+        "usd": 116.62
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.629596,
+      "timestamp": "2026-04-01T13:05:46+00:00",
+      "last_traded_at": "2026-04-01T13:05:46+00:00",
+      "last_fetch_at": "2026-04-01T13:05:46+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x4338665cbb7b2485a8855a139b75d5e34ab0db94&outputCurrency=0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c",
+      "token_info_url": null,
+      "coin_id": "binance-peg-litecoin",
+      "target_coin_id": "wbnb",
+      "coin_mcap_usd": 40324110.23653116
+    },
+    {
+      "base": "0XB2BD0749DBE21F623D9BABA856D3B0F0E1BFEC9C",
+      "target": "0XBB4CDB9CBD36B01BD1CBAEBF2DE08D9173BC095C",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 0.000168678751,
+      "volume": 1335.2395045962,
+      "converted_last": {
+        "btc": 1.52e-06,
+        "eth": 4.887e-05,
+        "usd": 0.10363
+      },
+      "converted_volume": {
+        "btc": 0.0020242,
+        "eth": 0.06516953,
+        "usd": 138.2
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.68446,
+      "timestamp": "2026-04-01T13:05:47+00:00",
+      "last_traded_at": "2026-04-01T13:05:47+00:00",
+      "last_fetch_at": "2026-04-01T13:05:47+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0xb2bd0749dbe21f623d9baba856d3b0f0e1bfec9c&outputCurrency=0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c",
+      "token_info_url": null,
+      "coin_id": "dusk-network",
+      "target_coin_id": "wbnb",
+      "coin_mcap_usd": 51953728.4345479
+    },
+    {
+      "base": "0X12E34CDF6A031A10FE241864C32FB03A4FDAD739",
+      "target": "0XBB4CDB9CBD36B01BD1CBAEBF2DE08D9173BC095C",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 4.596817449e-11,
+      "volume": 5481555260.46767,
+      "converted_last": {
+        "btc": 4.13647e-13,
+        "eth": 1.3317e-11,
+        "usd": 2.8241e-08
+      },
+      "converted_volume": {
+        "btc": 0.00232222,
+        "eth": 0.07476436,
+        "usd": 158.55
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.739075,
+      "timestamp": "2026-04-01T11:59:46+00:00",
+      "last_traded_at": "2026-04-01T11:59:46+00:00",
+      "last_fetch_at": "2026-04-01T13:05:47+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x12e34cdf6a031a10fe241864c32fb03a4fdad739&outputCurrency=0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c",
+      "token_info_url": null,
+      "coin_id": "freedom-coin",
+      "target_coin_id": "wbnb",
+      "coin_mcap_usd": 224489.64414037307
+    },
+    {
+      "base": "0XECA41281C24451168A37211F0BC2B8645AF45092",
+      "target": "0XE9E7CEA3DEDCA5984780BAFC599BD69ADD087D56",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 0.00583514351,
+      "volume": 19813.9876,
+      "converted_last": {
+        "btc": 8.5504e-08,
+        "eth": 2.75e-06,
+        "usd": 0.00583763
+      },
+      "converted_volume": {
+        "btc": 0.00171838,
+        "eth": 0.05532382,
+        "usd": 117.32
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.647879,
+      "timestamp": "2026-04-01T12:38:31+00:00",
+      "last_traded_at": "2026-04-01T12:38:31+00:00",
+      "last_fetch_at": "2026-04-01T13:05:47+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0xeca41281c24451168a37211f0bc2b8645af45092&outputCurrency=0xe9e7cea3dedca5984780bafc599bd69add087d56",
+      "token_info_url": null,
+      "coin_id": "token-pocket",
+      "target_coin_id": "binance-peg-busd",
+      "coin_mcap_usd": 19084067.646132175
+    },
+    {
+      "base": "0XE9D7023F2132D55CBD4EE1F78273CB7A3E74F10A",
+      "target": "0XE9E7CEA3DEDCA5984780BAFC599BD69ADD087D56",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 0.0005431458622,
+      "volume": 210702.799,
+      "converted_last": {
+        "btc": 7.956e-09,
+        "eth": 2.56156e-07,
+        "usd": 0.00054328
+      },
+      "converted_volume": {
+        "btc": 0.00167543,
+        "eth": 0.05394027,
+        "usd": 114.4
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.642827,
+      "timestamp": "2026-04-01T10:27:13+00:00",
+      "last_traded_at": "2026-04-01T10:27:13+00:00",
+      "last_fetch_at": "2026-04-01T13:04:44+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0xe9d7023f2132d55cbd4ee1f78273cb7a3e74f10a&outputCurrency=0xe9e7cea3dedca5984780bafc599bd69add087d56",
+      "token_info_url": null,
+      "coin_id": "dark-energy-crystals",
+      "target_coin_id": "binance-peg-busd",
+      "coin_mcap_usd": 0.0
+    },
+    {
+      "base": "0X1AF3F329E8BE154074D8769D1FFA4EE058B1DBC3",
+      "target": "0X55D398326F99059FF775485246999027B3197955",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 0.9994391313,
+      "volume": 30.7484480717,
+      "converted_last": {
+        "btc": 1.465e-05,
+        "eth": 0.00047109,
+        "usd": 1.001
+      },
+      "converted_volume": {
+        "btc": 0.00045056,
+        "eth": 0.01448699,
+        "usd": 30.8
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.603086,
+      "timestamp": "2026-04-01T13:10:13+00:00",
+      "last_traded_at": "2026-04-01T13:10:13+00:00",
+      "last_fetch_at": "2026-04-01T13:13:09+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x1af3f329e8be154074d8769d1ffa4ee058b1dbc3&outputCurrency=0x55d398326f99059ff775485246999027b3197955",
+      "token_info_url": null,
+      "coin_id": "binance-peg-dai",
+      "target_coin_id": "binance-bridged-usdt-bnb-smart-chain",
+      "coin_mcap_usd": 40992299.67843198
+    },
+    {
+      "base": "0XAC51066D7BEC65DC4589368DA368B212745D63E8",
+      "target": "0XBB4CDB9CBD36B01BD1CBAEBF2DE08D9173BC095C",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 0.0001760286731,
+      "volume": 954.387231,
+      "converted_last": {
+        "btc": 1.58e-06,
+        "eth": 5.1e-05,
+        "usd": 0.108146
+      },
+      "converted_volume": {
+        "btc": 0.001498,
+        "eth": 0.04822856,
+        "usd": 102.27
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.674043,
+      "timestamp": "2026-04-01T12:38:30+00:00",
+      "last_traded_at": "2026-04-01T12:38:30+00:00",
+      "last_fetch_at": "2026-04-01T13:05:46+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0xac51066d7bec65dc4589368da368b212745d63e8&outputCurrency=0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c",
+      "token_info_url": null,
+      "coin_id": "my-neighbor-alice",
+      "target_coin_id": "wbnb",
+      "coin_mcap_usd": 10755514.883075157
+    },
+    {
+      "base": "0X9F589E3EABE42EBC94A44727B3F3531C0C877809",
+      "target": "0XBB4CDB9CBD36B01BD1CBAEBF2DE08D9173BC095C",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 8.320372238e-05,
+      "volume": 1368.0020674631,
+      "converted_last": {
+        "btc": 7.48713e-07,
+        "eth": 2.411e-05,
+        "usd": 0.051117
+      },
+      "converted_volume": {
+        "btc": 0.00102034,
+        "eth": 0.03284997,
+        "usd": 69.66
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.625498,
+      "timestamp": "2026-04-01T13:05:45+00:00",
+      "last_traded_at": "2026-04-01T13:05:45+00:00",
+      "last_fetch_at": "2026-04-01T13:05:45+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x9f589e3eabe42ebc94a44727b3f3531c0c877809&outputCurrency=0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c",
+      "token_info_url": null,
+      "coin_id": "tokocrypto",
+      "target_coin_id": "wbnb",
+      "coin_mcap_usd": 3844281.151991499
+    },
+    {
+      "base": "0XB86ABCB37C3A4B64F74F59301AFF131A1BECC787",
+      "target": "0XBB4CDB9CBD36B01BD1CBAEBF2DE08D9173BC095C",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 6.278302863e-06,
+      "volume": 19162.225705318,
+      "converted_last": {
+        "btc": 5.6496e-08,
+        "eth": 1.82e-06,
+        "usd": 0.00385716
+      },
+      "converted_volume": {
+        "btc": 0.001073,
+        "eth": 0.03454553,
+        "usd": 73.26
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.647006,
+      "timestamp": "2026-04-01T12:46:59+00:00",
+      "last_traded_at": "2026-04-01T12:46:59+00:00",
+      "last_fetch_at": "2026-04-01T13:05:46+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0xb86abcb37c3a4b64f74f59301aff131a1becc787&outputCurrency=0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c",
+      "token_info_url": null,
+      "coin_id": "zilliqa",
+      "target_coin_id": "wbnb",
+      "coin_mcap_usd": 77404666.08420005
+    },
+    {
+      "base": "0XD32D01A43C869EDCD1117C640FBDCFCFD97D9D65",
+      "target": "0X55D398326F99059FF775485246999027B3197955",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 0.002464169739,
+      "volume": 16599.5046000526,
+      "converted_last": {
+        "btc": 3.6081e-08,
+        "eth": 1.16e-06,
+        "usd": 0.00246367
+      },
+      "converted_volume": {
+        "btc": 0.00060019,
+        "eth": 0.01932319,
+        "usd": 40.98
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.625075,
+      "timestamp": "2026-04-01T13:04:44+00:00",
+      "last_traded_at": "2026-04-01T13:04:44+00:00",
+      "last_fetch_at": "2026-04-01T13:04:44+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0xd32d01a43c869edcd1117c640fbdcfcfd97d9d65&outputCurrency=0x55d398326f99059ff775485246999027b3197955",
+      "token_info_url": null,
+      "coin_id": "nominex",
+      "target_coin_id": "binance-bridged-usdt-bnb-smart-chain",
+      "coin_mcap_usd": 553095.306391039
+    },
+    {
+      "base": "0X0E09FABB73BD3ADE0A17ECC321FD13A19E81CE82",
+      "target": "0X4B0F1812E5DF2A09796481FF14017E6005508003",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 3.9909788708,
+      "volume": 65.4118638541,
+      "converted_last": {
+        "btc": 2.059e-05,
+        "eth": 0.00066303,
+        "usd": 1.41
+      },
+      "converted_volume": {
+        "btc": 0.0013328,
+        "eth": 0.04290971,
+        "usd": 90.99
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.948825,
+      "timestamp": "2026-04-01T12:55:52+00:00",
+      "last_traded_at": "2026-04-01T12:55:52+00:00",
+      "last_fetch_at": "2026-04-01T13:05:47+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82&outputCurrency=0x4b0f1812e5df2a09796481ff14017e6005508003",
+      "token_info_url": null,
+      "coin_id": "pancakeswap-token",
+      "target_coin_id": "trust-wallet-token",
+      "coin_mcap_usd": 480335890.756432
+    },
+    {
+      "base": "0X1991501F1398663F69DD7391C055BB0DF6514F76",
+      "target": "0XBB4CDB9CBD36B01BD1CBAEBF2DE08D9173BC095C",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 7.737409222e-15,
+      "volume": 3843711537102.45,
+      "converted_last": {
+        "btc": 7e-17,
+        "eth": 2.239e-15,
+        "usd": 4.76e-12
+      },
+      "converted_volume": {
+        "btc": 0.00026763,
+        "eth": 0.00860496,
+        "usd": 18.29
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.603439,
+      "timestamp": "2026-04-01T09:29:29+00:00",
+      "last_traded_at": "2026-04-01T09:29:29+00:00",
+      "last_fetch_at": "2026-04-01T13:13:09+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x1991501f1398663f69dd7391c055bb0df6514f76&outputCurrency=0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c",
+      "token_info_url": null,
+      "coin_id": "hot-doge",
+      "target_coin_id": "wbnb",
+      "coin_mcap_usd": 475357.9879689718
+    },
+    {
+      "base": "0X3203C9E46CA618C8C1CE5DC67E7E9D75F5DA2377",
+      "target": "0XBB4CDB9CBD36B01BD1CBAEBF2DE08D9173BC095C",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 2.153865066e-05,
+      "volume": 3353.611454742,
+      "converted_last": {
+        "btc": 1.93817e-07,
+        "eth": 6.24e-06,
+        "usd": 0.01323256
+      },
+      "converted_volume": {
+        "btc": 0.0006512,
+        "eth": 0.02096569,
+        "usd": 44.46
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.714819,
+      "timestamp": "2026-04-01T12:28:34+00:00",
+      "last_traded_at": "2026-04-01T12:28:34+00:00",
+      "last_fetch_at": "2026-04-01T13:05:46+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x3203c9e46ca618c8c1ce5dc67e7e9d75f5da2377&outputCurrency=0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c",
+      "token_info_url": null,
+      "coin_id": "mobox",
+      "target_coin_id": "wbnb",
+      "coin_mcap_usd": 6626726.691182164
+    },
+    {
+      "base": "0X8443F091997F06A61670B735ED92734F5628692F",
+      "target": "0XBB4CDB9CBD36B01BD1CBAEBF2DE08D9173BC095C",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 0.0001553255882,
+      "volume": 430.182450537,
+      "converted_last": {
+        "btc": 1.4e-06,
+        "eth": 4.498e-05,
+        "usd": 0.095379
+      },
+      "converted_volume": {
+        "btc": 0.00059786,
+        "eth": 0.0192482,
+        "usd": 40.82
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.682026,
+      "timestamp": "2026-04-01T13:05:46+00:00",
+      "last_traded_at": "2026-04-01T13:05:46+00:00",
+      "last_fetch_at": "2026-04-01T13:05:46+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x8443f091997f06a61670b735ed92734f5628692f&outputCurrency=0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c",
+      "token_info_url": null,
+      "coin_id": "bella-protocol",
+      "target_coin_id": "wbnb",
+      "coin_mcap_usd": 7652360.350100249
+    },
+    {
+      "base": "0X7130D2A12B9BCBFAE4F2634D864A1EE1CE3EAD9C",
+      "target": "0XE9E7CEA3DEDCA5984780BAFC599BD69ADD087D56",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 68362.0330250636,
+      "volume": 0.0007258664943,
+      "converted_last": {
+        "btc": 1.003413,
+        "eth": 32.30513,
+        "usd": 68507
+      },
+      "converted_volume": {
+        "btc": 0.00072295,
+        "eth": 0.02327556,
+        "usd": 49.36
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.827537,
+      "timestamp": "2026-04-01T13:05:47+00:00",
+      "last_traded_at": "2026-04-01T13:05:47+00:00",
+      "last_fetch_at": "2026-04-01T13:05:47+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x7130d2a12b9bcbfae4f2634d864a1ee1ce3ead9c&outputCurrency=0xe9e7cea3dedca5984780bafc599bd69add087d56",
+      "token_info_url": null,
+      "coin_id": "binance-bitcoin",
+      "target_coin_id": "binance-peg-busd",
+      "coin_mcap_usd": 0.0
+    },
+    {
+      "base": "0XF859BF77CBE8699013D6DBC7C2B926AAF307F830",
+      "target": "0XBB4CDB9CBD36B01BD1CBAEBF2DE08D9173BC095C",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 1.731998128e-05,
+      "volume": 2004.408028052,
+      "converted_last": {
+        "btc": 1.55905e-07,
+        "eth": 5.02e-06,
+        "usd": 0.01065419
+      },
+      "converted_volume": {
+        "btc": 0.00031285,
+        "eth": 0.01006549,
+        "usd": 21.38
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.611297,
+      "timestamp": "2026-04-01T13:02:47+00:00",
+      "last_traded_at": "2026-04-01T13:02:47+00:00",
+      "last_fetch_at": "2026-04-01T13:12:42+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0xf859bf77cbe8699013d6dbc7c2b926aaf307f830&outputCurrency=0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c",
+      "token_info_url": null,
+      "coin_id": "berry-data",
+      "target_coin_id": "wbnb",
+      "coin_mcap_usd": 68319.89928080936
+    },
+    {
+      "base": "0X3EE2200EFB3400FABB9AACF31297CBDD1D435D47",
+      "target": "0XF8A0BF9CF54BB92F17374D9E9A321E6A111A51BD",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 0.02758350508,
+      "volume": 178.7365683476,
+      "converted_last": {
+        "btc": 3.63e-06,
+        "eth": 0.00011675,
+        "usd": 0.247587
+      },
+      "converted_volume": {
+        "btc": 0.00065203,
+        "eth": 0.02099232,
+        "usd": 44.52
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.829783,
+      "timestamp": "2026-04-01T12:55:52+00:00",
+      "last_traded_at": "2026-04-01T12:55:52+00:00",
+      "last_fetch_at": "2026-04-01T13:05:47+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x3ee2200efb3400fabb9aacf31297cbdd1d435d47&outputCurrency=0xf8a0bf9cf54bb92f17374d9e9a321e6a111a51bd",
+      "token_info_url": null,
+      "coin_id": "binance-peg-cardano",
+      "target_coin_id": "chainlink",
+      "coin_mcap_usd": 111948809.16359214
+    },
+    {
+      "base": "0XBA2AE424D960C26247DD6C32EDC70B295C744C43",
+      "target": "0XBB4CDB9CBD36B01BD1CBAEBF2DE08D9173BC095C",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 0.0001506689455,
+      "volume": 384.181472,
+      "converted_last": {
+        "btc": 1.36e-06,
+        "eth": 4.365e-05,
+        "usd": 0.092565
+      },
+      "converted_volume": {
+        "btc": 0.00051953,
+        "eth": 0.01672645,
+        "usd": 35.47
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.726,
+      "timestamp": "2026-04-01T12:38:31+00:00",
+      "last_traded_at": "2026-04-01T12:38:31+00:00",
+      "last_fetch_at": "2026-04-01T13:05:47+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0xba2ae424d960c26247dd6c32edc70b295c744c43&outputCurrency=0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c",
+      "token_info_url": null,
+      "coin_id": "binance-peg-dogecoin",
+      "target_coin_id": "wbnb",
+      "coin_mcap_usd": 237201355.85247493
+    },
+    {
+      "base": "0X8850D2C68C632E3B258E612ABAA8FADA7E6958E5",
+      "target": "0XBB4CDB9CBD36B01BD1CBAEBF2DE08D9173BC095C",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 2.316253653e-11,
+      "volume": 501953071.358208,
+      "converted_last": {
+        "btc": 2.08446e-13,
+        "eth": 6.702e-12,
+        "usd": 1.4248e-08
+      },
+      "converted_volume": {
+        "btc": 0.00010468,
+        "eth": 0.00336565,
+        "usd": 7.16
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.602769,
+      "timestamp": "2026-04-01T10:54:36+00:00",
+      "last_traded_at": "2026-04-01T10:54:36+00:00",
+      "last_fetch_at": "2026-04-01T13:13:09+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x8850d2c68c632e3b258e612abaa8fada7e6958e5&outputCurrency=0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c",
+      "token_info_url": null,
+      "coin_id": "pig-finance",
+      "target_coin_id": "wbnb",
+      "coin_mcap_usd": 0.0
+    },
+    {
+      "base": "0X190B589CF9FB8DDEABBFEAE36A813FFB2A702454",
+      "target": "0XE9E7CEA3DEDCA5984780BAFC599BD69ADD087D56",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 0.001075809509,
+      "volume": 24897.9545052572,
+      "converted_last": {
+        "btc": 1.5685e-08,
+        "eth": 5.04995e-07,
+        "usd": 0.0010709
+      },
+      "converted_volume": {
+        "btc": 0.00038801,
+        "eth": 0.01249215,
+        "usd": 26.49
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.644338,
+      "timestamp": "2026-04-01T12:18:47+00:00",
+      "last_traded_at": "2026-04-01T12:18:47+00:00",
+      "last_fetch_at": "2026-04-01T13:05:45+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x190b589cf9fb8ddeabbfeae36a813ffb2a702454&outputCurrency=0xe9e7cea3dedca5984780bafc599bd69add087d56",
+      "token_info_url": null,
+      "coin_id": "bdollar",
+      "target_coin_id": "binance-peg-busd",
+      "coin_mcap_usd": 0.0
+    },
+    {
+      "base": "0X0E09FABB73BD3ADE0A17ECC321FD13A19E81CE82",
+      "target": "0X5AC52EE5B2A633895292FF6D8A89BB9190451587",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 0.4882906804,
+      "volume": 16.8581949927,
+      "converted_last": {
+        "btc": 2.059e-05,
+        "eth": 0.00066278,
+        "usd": 1.41
+      },
+      "converted_volume": {
+        "btc": 0.00034565,
+        "eth": 0.01112813,
+        "usd": 23.6
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.649544,
+      "timestamp": "2026-04-01T11:09:55+00:00",
+      "last_traded_at": "2026-04-01T11:09:55+00:00",
+      "last_fetch_at": "2026-04-01T13:05:47+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82&outputCurrency=0x5ac52ee5b2a633895292ff6d8a89bb9190451587",
+      "token_info_url": null,
+      "coin_id": "pancakeswap-token",
+      "target_coin_id": "bscex",
+      "coin_mcap_usd": 480335890.756432
+    },
+    {
+      "base": "0X4BD17003473389A42DAF6A0A729F6FDB328BBBD7",
+      "target": "0XBB4CDB9CBD36B01BD1CBAEBF2DE08D9173BC095C",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 0.001621244808,
+      "volume": 31.4762924878,
+      "converted_last": {
+        "btc": 1.459e-05,
+        "eth": 0.00046969,
+        "usd": 0.996033
+      },
+      "converted_volume": {
+        "btc": 0.00046102,
+        "eth": 0.01484271,
+        "usd": 31.48
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.831291,
+      "timestamp": "2026-04-01T12:47:00+00:00",
+      "last_traded_at": "2026-04-01T12:47:00+00:00",
+      "last_fetch_at": "2026-04-01T13:05:47+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x4bd17003473389a42daf6a0a729f6fdb328bbbd7&outputCurrency=0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c",
+      "token_info_url": null,
+      "coin_id": "vai",
+      "target_coin_id": "wbnb",
+      "coin_mcap_usd": 2488886.0603073137
+    },
+    {
+      "base": "0X5A3010D4D8D3B5FB49F8B6E57FB9E48063F16700",
+      "target": "0XBB4CDB9CBD36B01BD1CBAEBF2DE08D9173BC095C",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 7.392583915e-06,
+      "volume": 4199.0441663916,
+      "converted_last": {
+        "btc": 6.6549e-08,
+        "eth": 2.14e-06,
+        "usd": 0.00454351
+      },
+      "converted_volume": {
+        "btc": 0.00028009,
+        "eth": 0.00901763,
+        "usd": 19.12
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.647335,
+      "timestamp": "2026-04-01T13:05:45+00:00",
+      "last_traded_at": "2026-04-01T13:05:45+00:00",
+      "last_fetch_at": "2026-04-01T13:05:45+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x5a3010d4d8d3b5fb49f8b6e57fb9e48063f16700&outputCurrency=0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c",
+      "token_info_url": null,
+      "coin_id": "bscpad",
+      "target_coin_id": "wbnb",
+      "coin_mcap_usd": 360891.8509148868
+    },
+    {
+      "base": "0X0E09FABB73BD3ADE0A17ECC321FD13A19E81CE82",
+      "target": "0X2170ED0880AC9A755FD29B2688956BD959F933F8",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 0.0006616770707,
+      "volume": 19.5570429781,
+      "converted_last": {
+        "btc": 2.057e-05,
+        "eth": 0.00066211,
+        "usd": 1.4
+      },
+      "converted_volume": {
+        "btc": 0.00040236,
+        "eth": 0.0129541,
+        "usd": 27.47
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.798667,
+      "timestamp": "2026-04-01T12:47:00+00:00",
+      "last_traded_at": "2026-04-01T12:47:00+00:00",
+      "last_fetch_at": "2026-04-01T13:05:47+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82&outputCurrency=0x2170ed0880ac9a755fd29b2688956bd959f933f8",
+      "token_info_url": null,
+      "coin_id": "pancakeswap-token",
+      "target_coin_id": "binance-peg-weth",
+      "coin_mcap_usd": 480335890.756432
+    },
+    {
+      "base": "0X7083609FCE4D1D8DC0C979AAB8C869EA2C873402",
+      "target": "0X2170ED0880AC9A755FD29B2688956BD959F933F8",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 0.0006018699559,
+      "volume": 22.1859155833,
+      "converted_last": {
+        "btc": 1.871e-05,
+        "eth": 0.00060226,
+        "usd": 1.28
+      },
+      "converted_volume": {
+        "btc": 0.00041665,
+        "eth": 0.01341399,
+        "usd": 28.45
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.851073,
+      "timestamp": "2026-04-01T13:05:47+00:00",
+      "last_traded_at": "2026-04-01T13:05:47+00:00",
+      "last_fetch_at": "2026-04-01T13:05:47+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x7083609fce4d1d8dc0c979aab8c869ea2c873402&outputCurrency=0x2170ed0880ac9a755fd29b2688956bd959f933f8",
+      "token_info_url": null,
+      "coin_id": "binance-peg-polkadot",
+      "target_coin_id": "binance-peg-weth",
+      "coin_mcap_usd": 20458601.71663532
+    },
+    {
+      "base": "0X27AE27110350B98D564B9A3EED31BAEBC82D878D",
+      "target": "0XBB4CDB9CBD36B01BD1CBAEBF2DE08D9173BC095C",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 1.565229025e-06,
+      "volume": 13551.479662433,
+      "converted_last": {
+        "btc": 1.4089e-08,
+        "eth": 4.53303e-07,
+        "usd": 0.00096283
+      },
+      "converted_volume": {
+        "btc": 0.00019076,
+        "eth": 0.00613728,
+        "usd": 13.04
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.617014,
+      "timestamp": "2026-04-01T12:33:39+00:00",
+      "last_traded_at": "2026-04-01T12:33:39+00:00",
+      "last_fetch_at": "2026-04-01T13:12:42+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x27ae27110350b98d564b9a3eed31baebc82d878d&outputCurrency=0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c",
+      "token_info_url": null,
+      "coin_id": "cumrocket",
+      "target_coin_id": "wbnb",
+      "coin_mcap_usd": 15769120.552021725
+    },
+    {
+      "base": "0X6F769E65C14EBD1F68817F5F1DCDB61CFA2D6F7E",
+      "target": "0XBB4CDB9CBD36B01BD1CBAEBF2DE08D9173BC095C",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 1.486986336e-05,
+      "volume": 2159.3105969464,
+      "converted_last": {
+        "btc": 1.33807e-07,
+        "eth": 4.31e-06,
+        "usd": 0.0091355
+      },
+      "converted_volume": {
+        "btc": 0.00028962,
+        "eth": 0.00932444,
+        "usd": 19.77
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.689975,
+      "timestamp": "2026-04-01T12:28:34+00:00",
+      "last_traded_at": "2026-04-01T12:28:34+00:00",
+      "last_fetch_at": "2026-04-01T13:05:46+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x6f769e65c14ebd1f68817f5f1dcdb61cfa2d6f7e&outputCurrency=0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c",
+      "token_info_url": null,
+      "coin_id": "arpa",
+      "target_coin_id": "wbnb",
+      "coin_mcap_usd": 8993738.349298898
+    },
+    {
+      "base": "0X16939EF78684453BFDFB47825F8A5F714F12623A",
+      "target": "0XBB4CDB9CBD36B01BD1CBAEBF2DE08D9173BC095C",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 0.0005747186631,
+      "volume": 65.6412831923,
+      "converted_last": {
+        "btc": 5.17e-06,
+        "eth": 0.0001665,
+        "usd": 0.353086
+      },
+      "converted_volume": {
+        "btc": 0.00034233,
+        "eth": 0.01102154,
+        "usd": 23.37
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.769725,
+      "timestamp": "2026-04-01T10:33:55+00:00",
+      "last_traded_at": "2026-04-01T10:33:55+00:00",
+      "last_fetch_at": "2026-04-01T13:05:47+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x16939ef78684453bfdfb47825f8a5f714f12623a&outputCurrency=0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c",
+      "token_info_url": null,
+      "coin_id": "binance-peg-tezos-token",
+      "target_coin_id": "wbnb",
+      "coin_mcap_usd": 1762980.334834272
+    },
+    {
+      "base": "0X0E09FABB73BD3ADE0A17ECC321FD13A19E81CE82",
+      "target": "0X190B589CF9FB8DDEABBFEAE36A813FFB2A702454",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 1315.1157002132,
+      "volume": 15.1759875695,
+      "converted_last": {
+        "btc": 2.063e-05,
+        "eth": 0.00066413,
+        "usd": 1.41
+      },
+      "converted_volume": {
+        "btc": 0.00030972,
+        "eth": 0.00997165,
+        "usd": 21.15
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.724764,
+      "timestamp": "2026-04-01T12:55:52+00:00",
+      "last_traded_at": "2026-04-01T12:55:52+00:00",
+      "last_fetch_at": "2026-04-01T13:05:47+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82&outputCurrency=0x190b589cf9fb8ddeabbfeae36a813ffb2a702454",
+      "token_info_url": null,
+      "coin_id": "pancakeswap-token",
+      "target_coin_id": "bdollar",
+      "coin_mcap_usd": 480335890.756432
+    },
+    {
+      "base": "0X4BD17003473389A42DAF6A0A729F6FDB328BBBD7",
+      "target": "0XE9E7CEA3DEDCA5984780BAFC599BD69ADD087D56",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 1.0014332438,
+      "volume": 8.2031199887,
+      "converted_last": {
+        "btc": 1.464e-05,
+        "eth": 0.00047024,
+        "usd": 1.005
+      },
+      "converted_volume": {
+        "btc": 0.00011961,
+        "eth": 0.00384277,
+        "usd": 8.21
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.606449,
+      "timestamp": "2026-04-01T08:16:03+00:00",
+      "last_traded_at": "2026-04-01T08:16:03+00:00",
+      "last_fetch_at": "2026-04-01T10:02:01+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x4bd17003473389a42daf6a0a729f6fdb328bbbd7&outputCurrency=0xe9e7cea3dedca5984780bafc599bd69add087d56",
+      "token_info_url": null,
+      "coin_id": "vai",
+      "target_coin_id": "binance-peg-busd",
+      "coin_mcap_usd": 2488886.0603073137
+    },
+    {
+      "base": "0X5E90253FBAE4DAB78AA351F4E6FED08A64AB5590",
+      "target": "0XBB4CDB9CBD36B01BD1CBAEBF2DE08D9173BC095C",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 1.439958753e-11,
+      "volume": 260611533.596294,
+      "converted_last": {
+        "btc": 1.29586e-13,
+        "eth": 4.167e-12,
+        "usd": 8.858e-09
+      },
+      "converted_volume": {
+        "btc": 3.379e-05,
+        "eth": 0.00108633,
+        "usd": 2.31
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.602766,
+      "timestamp": "2026-04-01T12:34:12+00:00",
+      "last_traded_at": "2026-04-01T12:34:12+00:00",
+      "last_fetch_at": "2026-04-01T13:13:09+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x5e90253fbae4dab78aa351f4e6fed08a64ab5590&outputCurrency=0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c",
+      "token_info_url": null,
+      "coin_id": "bonfire",
+      "target_coin_id": "wbnb",
+      "coin_mcap_usd": 0.0
+    },
+    {
+      "base": "0XDBF8265B1D5244A13424F13977723ACF5395EAB2",
+      "target": "0X55D398326F99059FF775485246999027B3197955",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 0.00149297992,
+      "volume": 13959.6286917044,
+      "converted_last": {
+        "btc": 2.1858e-08,
+        "eth": 7.03716e-07,
+        "usd": 0.00149231
+      },
+      "converted_volume": {
+        "btc": 0.00030359,
+        "eth": 0.00977407,
+        "usd": 20.73
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.807802,
+      "timestamp": "2026-04-01T12:47:00+00:00",
+      "last_traded_at": "2026-04-01T12:47:00+00:00",
+      "last_fetch_at": "2026-04-01T13:05:47+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0xdbf8265b1d5244a13424f13977723acf5395eab2&outputCurrency=0x55d398326f99059ff775485246999027b3197955",
+      "token_info_url": null,
+      "coin_id": "wagerr",
+      "target_coin_id": "binance-bridged-usdt-bnb-smart-chain",
+      "coin_mcap_usd": 403770.66556162527
+    },
+    {
+      "base": "0X630D98424EFE0EA27FB1B3AB7741907DFFEAAD78",
+      "target": "0XE9E7CEA3DEDCA5984780BAFC599BD69ADD087D56",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 6.254711602e-05,
+      "volume": 270831.23369857,
+      "converted_last": {
+        "btc": 9.18062e-10,
+        "eth": 2.9557e-08,
+        "usd": 6.268e-05
+      },
+      "converted_volume": {
+        "btc": 0.00024771,
+        "eth": 0.00797518,
+        "usd": 16.91
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.746321,
+      "timestamp": "2026-04-01T11:28:33+00:00",
+      "last_traded_at": "2026-04-01T11:28:33+00:00",
+      "last_fetch_at": "2026-04-01T13:05:46+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x630d98424efe0ea27fb1b3ab7741907dffeaad78&outputCurrency=0xe9e7cea3dedca5984780bafc599bd69add087d56",
+      "token_info_url": null,
+      "coin_id": "marketpeak",
+      "target_coin_id": "binance-peg-busd",
+      "coin_mcap_usd": 103442.48577119439
+    },
+    {
+      "base": "0XAE9269F27437F0FCBC232D39EC814844A51D6B8F",
+      "target": "0XBB4CDB9CBD36B01BD1CBAEBF2DE08D9173BC095C",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 1.034036066e-06,
+      "volume": 25592.0536195971,
+      "converted_last": {
+        "btc": 9.305e-09,
+        "eth": 2.99571e-07,
+        "usd": 0.00063527
+      },
+      "converted_volume": {
+        "btc": 0.00023803,
+        "eth": 0.00766332,
+        "usd": 16.25
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.761796,
+      "timestamp": "2026-04-01T11:59:45+00:00",
+      "last_traded_at": "2026-04-01T11:59:45+00:00",
+      "last_fetch_at": "2026-04-01T13:05:45+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0xae9269f27437f0fcbc232d39ec814844a51d6b8f&outputCurrency=0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c",
+      "token_info_url": null,
+      "coin_id": "burger-swap",
+      "target_coin_id": "wbnb",
+      "coin_mcap_usd": 0.0
+    },
+    {
+      "base": "0X1311B352467D2B5C296881BADEA82850BCD8F886",
+      "target": "0XE9E7CEA3DEDCA5984780BAFC599BD69ADD087D56",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 0.00317324871,
+      "volume": 3145.0402094801,
+      "converted_last": {
+        "btc": 4.6577e-08,
+        "eth": 1.5e-06,
+        "usd": 0.00317996
+      },
+      "converted_volume": {
+        "btc": 0.00014618,
+        "eth": 0.00470617,
+        "usd": 9.98
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.650575,
+      "timestamp": "2026-04-01T11:25:43+00:00",
+      "last_traded_at": "2026-04-01T11:25:43+00:00",
+      "last_fetch_at": "2026-04-01T13:05:46+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x1311b352467d2b5c296881badea82850bcd8f886&outputCurrency=0xe9e7cea3dedca5984780bafc599bd69add087d56",
+      "token_info_url": null,
+      "coin_id": "tools",
+      "target_coin_id": "binance-peg-busd",
+      "coin_mcap_usd": 0.0
+    },
+    {
+      "base": "0X2222227E22102FE3322098E4CBFE18CFEBD57C95",
+      "target": "0XBB4CDB9CBD36B01BD1CBAEBF2DE08D9173BC095C",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 2.61398843e-06,
+      "volume": 10400.9479,
+      "converted_last": {
+        "btc": 2.3522e-08,
+        "eth": 7.573e-07,
+        "usd": 0.00160594
+      },
+      "converted_volume": {
+        "btc": 0.00024327,
+        "eth": 0.00783224,
+        "usd": 16.61
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.80189,
+      "timestamp": "2026-04-01T12:18:48+00:00",
+      "last_traded_at": "2026-04-01T12:18:48+00:00",
+      "last_fetch_at": "2026-04-01T13:05:47+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x2222227e22102fe3322098e4cbfe18cfebd57c95&outputCurrency=0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c",
+      "token_info_url": null,
+      "coin_id": "alien-worlds",
+      "target_coin_id": "wbnb",
+      "coin_mcap_usd": 10537387.914955625
+    },
+    {
+      "base": "0XB0F2939A1C0E43683E5954C9FE142F7DF9F8D967",
+      "target": "0XBB4CDB9CBD36B01BD1CBAEBF2DE08D9173BC095C",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 7.965058129e-05,
+      "volume": 229.366651888,
+      "converted_last": {
+        "btc": 7.1674e-07,
+        "eth": 2.308e-05,
+        "usd": 0.04893439
+      },
+      "converted_volume": {
+        "btc": 0.00016461,
+        "eth": 0.00529972,
+        "usd": 11.24
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.700408,
+      "timestamp": "2026-04-01T10:16:01+00:00",
+      "last_traded_at": "2026-04-01T10:16:01+00:00",
+      "last_fetch_at": "2026-04-01T13:05:47+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0xb0f2939a1c0e43683e5954c9fe142f7df9f8d967&outputCurrency=0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c",
+      "token_info_url": null,
+      "coin_id": "evolution",
+      "target_coin_id": "wbnb",
+      "coin_mcap_usd": 0.0
+    },
+    {
+      "base": "0X961C8C0B1AAD0C0B10A51FEF6A867E3091BCEF17",
+      "target": "0XE9E7CEA3DEDCA5984780BAFC599BD69ADD087D56",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 0.02390650465,
+      "volume": 600.1715712169,
+      "converted_last": {
+        "btc": 3.48373e-07,
+        "eth": 1.122e-05,
+        "usd": 0.02378468
+      },
+      "converted_volume": {
+        "btc": 0.00020704,
+        "eth": 0.00666555,
+        "usd": 14.14
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.758501,
+      "timestamp": "2026-04-01T12:38:31+00:00",
+      "last_traded_at": "2026-04-01T12:38:31+00:00",
+      "last_fetch_at": "2026-04-01T13:05:47+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x961c8c0b1aad0c0b10a51fef6a867e3091bcef17&outputCurrency=0xe9e7cea3dedca5984780bafc599bd69add087d56",
+      "token_info_url": null,
+      "coin_id": "defi-yield-protocol",
+      "target_coin_id": "binance-peg-busd",
+      "coin_mcap_usd": 33136.31823859637
+    },
+    {
+      "base": "0XB0F2939A1C0E43683E5954C9FE142F7DF9F8D967",
+      "target": "0XE9E7CEA3DEDCA5984780BAFC599BD69ADD087D56",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 0.04911078803,
+      "volume": 222.1018329576,
+      "converted_last": {
+        "btc": 7.1674e-07,
+        "eth": 2.308e-05,
+        "usd": 0.04893439
+      },
+      "converted_volume": {
+        "btc": 0.00015846,
+        "eth": 0.00510153,
+        "usd": 10.82
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.699286,
+      "timestamp": "2026-04-01T10:16:01+00:00",
+      "last_traded_at": "2026-04-01T10:16:01+00:00",
+      "last_fetch_at": "2026-04-01T13:05:47+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0xb0f2939a1c0e43683e5954c9fe142f7df9f8d967&outputCurrency=0xe9e7cea3dedca5984780bafc599bd69add087d56",
+      "token_info_url": null,
+      "coin_id": "evolution",
+      "target_coin_id": "binance-peg-busd",
+      "coin_mcap_usd": 0.0
+    },
+    {
+      "base": "0X3AD9594151886CE8538C1FF615EFA2385A8C3A88",
+      "target": "0XBB4CDB9CBD36B01BD1CBAEBF2DE08D9173BC095C",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 1.026678775e-11,
+      "volume": 244340289.196233,
+      "converted_last": {
+        "btc": 9.2394e-14,
+        "eth": 2.971e-12,
+        "usd": 6.315e-09
+      },
+      "converted_volume": {
+        "btc": 2.257e-05,
+        "eth": 0.00072572,
+        "usd": 1.54
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.602888,
+      "timestamp": "2026-04-01T13:03:10+00:00",
+      "last_traded_at": "2026-04-01T13:03:10+00:00",
+      "last_fetch_at": "2026-04-01T13:13:09+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x3ad9594151886ce8538c1ff615efa2385a8c3a88&outputCurrency=0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c",
+      "token_info_url": null,
+      "coin_id": "safemars",
+      "target_coin_id": "wbnb",
+      "coin_mcap_usd": 2329671.5170671954
+    },
+    {
+      "base": "0X1AF3F329E8BE154074D8769D1FFA4EE058B1DBC3",
+      "target": "0XE9E7CEA3DEDCA5984780BAFC599BD69ADD087D56",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 1.0021729173,
+      "volume": 1.6399664173,
+      "converted_last": {
+        "btc": 1.465e-05,
+        "eth": 0.00047114,
+        "usd": 1.002
+      },
+      "converted_volume": {
+        "btc": 2.401e-05,
+        "eth": 0.00077194,
+        "usd": 1.64
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.603063,
+      "timestamp": "2026-04-01T12:39:10+00:00",
+      "last_traded_at": "2026-04-01T12:39:10+00:00",
+      "last_fetch_at": "2026-04-01T13:13:09+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x1af3f329e8be154074d8769d1ffa4ee058b1dbc3&outputCurrency=0xe9e7cea3dedca5984780bafc599bd69add087d56",
+      "token_info_url": null,
+      "coin_id": "binance-peg-dai",
+      "target_coin_id": "binance-peg-busd",
+      "coin_mcap_usd": 40992299.67843198
+    },
+    {
+      "base": "0XB59490AB09A0F526CC7305822AC65F2AB12F9723",
+      "target": "0XBB4CDB9CBD36B01BD1CBAEBF2DE08D9173BC095C",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 0.0003869175999,
+      "volume": 15.7202153771,
+      "converted_last": {
+        "btc": 3.48e-06,
+        "eth": 0.00011196,
+        "usd": 0.238008
+      },
+      "converted_volume": {
+        "btc": 5.453e-05,
+        "eth": 0.00175318,
+        "usd": 3.73
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.605324,
+      "timestamp": "2026-04-01T12:21:05+00:00",
+      "last_traded_at": "2026-04-01T12:21:05+00:00",
+      "last_fetch_at": "2026-04-01T13:13:09+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0xb59490ab09a0f526cc7305822ac65f2ab12f9723&outputCurrency=0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c",
+      "token_info_url": null,
+      "coin_id": "litentry",
+      "target_coin_id": "wbnb",
+      "coin_mcap_usd": 3301703.9180086437
+    },
+    {
+      "base": "0X1311B352467D2B5C296881BADEA82850BCD8F886",
+      "target": "0X5AC52EE5B2A633895292FF6D8A89BB9190451587",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 0.001098287972,
+      "volume": 3053.0319759538,
+      "converted_last": {
+        "btc": 4.6303e-08,
+        "eth": 1.49e-06,
+        "usd": 0.0031613
+      },
+      "converted_volume": {
+        "btc": 0.00014203,
+        "eth": 0.00457265,
+        "usd": 9.7
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.711386,
+      "timestamp": "2026-04-01T10:11:31+00:00",
+      "last_traded_at": "2026-04-01T10:11:31+00:00",
+      "last_fetch_at": "2026-04-01T13:05:46+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x1311b352467d2b5c296881badea82850bcd8f886&outputCurrency=0x5ac52ee5b2a633895292ff6d8a89bb9190451587",
+      "token_info_url": null,
+      "coin_id": "tools",
+      "target_coin_id": "bscex",
+      "coin_mcap_usd": 0.0
+    },
+    {
+      "base": "0X0E09FABB73BD3ADE0A17ECC321FD13A19E81CE82",
+      "target": "0XCF6BB5389C92BDDA8A3747DDB454CB7A64626C63",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 0.5124422987,
+      "volume": 10.5759561186,
+      "converted_last": {
+        "btc": 2.064e-05,
+        "eth": 0.00066444,
+        "usd": 1.41
+      },
+      "converted_volume": {
+        "btc": 0.00021618,
+        "eth": 0.00696002,
+        "usd": 14.76
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.880469,
+      "timestamp": "2026-04-01T12:09:33+00:00",
+      "last_traded_at": "2026-04-01T12:09:33+00:00",
+      "last_fetch_at": "2026-04-01T13:05:47+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82&outputCurrency=0xcf6bb5389c92bdda8a3747ddb454cb7a64626c63",
+      "token_info_url": null,
+      "coin_id": "pancakeswap-token",
+      "target_coin_id": "venus",
+      "coin_mcap_usd": 480335890.756432
+    },
+    {
+      "base": "0X23396CF899CA06C4472205FC903BDB4DE249D6FC",
+      "target": "0XE9E7CEA3DEDCA5984780BAFC599BD69ADD087D56",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 0.008504233785,
+      "volume": 1150.5009233454,
+      "converted_last": {
+        "btc": 1.24577e-07,
+        "eth": 4.01e-06,
+        "usd": 0.00850635
+      },
+      "converted_volume": {
+        "btc": 0.00014347,
+        "eth": 0.00461885,
+        "usd": 9.8
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.728239,
+      "timestamp": "2026-04-01T11:23:25+00:00",
+      "last_traded_at": "2026-04-01T11:23:25+00:00",
+      "last_fetch_at": "2026-04-01T13:04:44+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x23396cf899ca06c4472205fc903bdb4de249d6fc&outputCurrency=0xe9e7cea3dedca5984780bafc599bd69add087d56",
+      "token_info_url": null,
+      "coin_id": "wrapped-ust",
+      "target_coin_id": "binance-peg-busd",
+      "coin_mcap_usd": 676731.2294043021
+    },
+    {
+      "base": "0X961C8C0B1AAD0C0B10A51FEF6A867E3091BCEF17",
+      "target": "0X2170ED0880AC9A755FD29B2688956BD959F933F8",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 1.114863033e-05,
+      "volume": 521.1330541008,
+      "converted_last": {
+        "btc": 3.48373e-07,
+        "eth": 1.122e-05,
+        "usd": 0.02378468
+      },
+      "converted_volume": {
+        "btc": 0.00018436,
+        "eth": 0.00593562,
+        "usd": 12.59
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.877224,
+      "timestamp": "2026-04-01T12:38:31+00:00",
+      "last_traded_at": "2026-04-01T12:38:31+00:00",
+      "last_fetch_at": "2026-04-01T13:05:47+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x961c8c0b1aad0c0b10a51fef6a867e3091bcef17&outputCurrency=0x2170ed0880ac9a755fd29b2688956bd959f933f8",
+      "token_info_url": null,
+      "coin_id": "defi-yield-protocol",
+      "target_coin_id": "binance-peg-weth",
+      "coin_mcap_usd": 33136.31823859637
+    },
+    {
+      "base": "0XC9849E6FDB743D08FAEE3E34DD2D1BC69EA11A51",
+      "target": "0XBB4CDB9CBD36B01BD1CBAEBF2DE08D9173BC095C",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 2.632435589e-05,
+      "volume": 264.1355873981,
+      "converted_last": {
+        "btc": 2.36881e-07,
+        "eth": 7.63e-06,
+        "usd": 0.01617272
+      },
+      "converted_volume": {
+        "btc": 6.235e-05,
+        "eth": 0.00200748,
+        "usd": 4.26
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.626437,
+      "timestamp": "2026-04-01T12:18:02+00:00",
+      "last_traded_at": "2026-04-01T12:18:02+00:00",
+      "last_fetch_at": "2026-04-01T13:05:47+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0xc9849e6fdb743d08faee3e34dd2d1bc69ea11a51&outputCurrency=0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c",
+      "token_info_url": null,
+      "coin_id": "pancake-bunny",
+      "target_coin_id": "wbnb",
+      "coin_mcap_usd": 8275.487107751072
+    },
+    {
+      "base": "0X181DE8C57C4F25EBA9FD27757BBD11CC66A55D31",
+      "target": "0XE9E7CEA3DEDCA5984780BAFC599BD69ADD087D56",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 15.3027179533,
+      "volume": 0.446144382,
+      "converted_last": {
+        "btc": 0.00022363,
+        "eth": 0.00719981,
+        "usd": 15.27
+      },
+      "converted_volume": {
+        "btc": 9.956e-05,
+        "eth": 0.00320535,
+        "usd": 6.8
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.727702,
+      "timestamp": "2026-04-01T11:41:33+00:00",
+      "last_traded_at": "2026-04-01T11:41:33+00:00",
+      "last_fetch_at": "2026-04-01T13:04:44+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x181de8c57c4f25eba9fd27757bbd11cc66a55d31&outputCurrency=0xe9e7cea3dedca5984780bafc599bd69add087d56",
+      "token_info_url": null,
+      "coin_id": "beluga-fi",
+      "target_coin_id": "binance-peg-busd",
+      "coin_mcap_usd": 0.0
+    },
+    {
+      "base": "0XBCB24AFB019BE7E93EA9C43B7E22BB55D5B7F45D",
+      "target": "0XBB4CDB9CBD36B01BD1CBAEBF2DE08D9173BC095C",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 8.715307415e-07,
+      "volume": 14157.4903455927,
+      "converted_last": {
+        "btc": 7.843e-09,
+        "eth": 2.52492e-07,
+        "usd": 0.00053544
+      },
+      "converted_volume": {
+        "btc": 0.00011147,
+        "eth": 0.00358894,
+        "usd": 7.61
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.774657,
+      "timestamp": "2026-04-01T10:11:31+00:00",
+      "last_traded_at": "2026-04-01T10:11:31+00:00",
+      "last_fetch_at": "2026-04-01T13:05:47+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0xbcb24afb019be7e93ea9c43b7e22bb55d5b7f45d&outputCurrency=0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c",
+      "token_info_url": null,
+      "coin_id": "bsc-station",
+      "target_coin_id": "wbnb",
+      "coin_mcap_usd": 132641.75989599325
+    },
+    {
+      "base": "0X181DE8C57C4F25EBA9FD27757BBD11CC66A55D31",
+      "target": "0XBB4CDB9CBD36B01BD1CBAEBF2DE08D9173BC095C",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 0.02485507729,
+      "volume": 0.4818750203,
+      "converted_last": {
+        "btc": 0.00022363,
+        "eth": 0.00719981,
+        "usd": 15.27
+      },
+      "converted_volume": {
+        "btc": 0.00010788,
+        "eth": 0.00347322,
+        "usd": 7.37
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.772559,
+      "timestamp": "2026-04-01T10:07:59+00:00",
+      "last_traded_at": "2026-04-01T10:07:59+00:00",
+      "last_fetch_at": "2026-04-01T13:04:44+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x181de8c57c4f25eba9fd27757bbd11cc66a55d31&outputCurrency=0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c",
+      "token_info_url": null,
+      "coin_id": "beluga-fi",
+      "target_coin_id": "wbnb",
+      "coin_mcap_usd": 0.0
+    },
+    {
+      "base": "0X42F6F551AE042CBE50C739158B4F0CAC0EDB9096",
+      "target": "0XE9E7CEA3DEDCA5984780BAFC599BD69ADD087D56",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 0.0003820193923,
+      "volume": 11305.4676549789,
+      "converted_last": {
+        "btc": 5.596e-09,
+        "eth": 1.80167e-07,
+        "usd": 0.00038211
+      },
+      "converted_volume": {
+        "btc": 6.318e-05,
+        "eth": 0.00203401,
+        "usd": 4.31
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.670799,
+      "timestamp": "2026-04-01T10:46:00+00:00",
+      "last_traded_at": "2026-04-01T10:46:00+00:00",
+      "last_fetch_at": "2026-04-01T13:04:44+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x42f6f551ae042cbe50c739158b4f0cac0edb9096&outputCurrency=0xe9e7cea3dedca5984780bafc599bd69add087d56",
+      "token_info_url": null,
+      "coin_id": "nerve-finance",
+      "target_coin_id": "binance-peg-busd",
+      "coin_mcap_usd": 0.0
+    },
+    {
+      "base": "0XA7F552078DCC247C2684336020C03648500C6D9F",
+      "target": "0XBB4CDB9CBD36B01BD1CBAEBF2DE08D9173BC095C",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 2.331240693e-05,
+      "volume": 77.582735849,
+      "converted_last": {
+        "btc": 2.09795e-07,
+        "eth": 6.75e-06,
+        "usd": 0.01434036
+      },
+      "converted_volume": {
+        "btc": 1.628e-05,
+        "eth": 0.00052334,
+        "usd": 1.11
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.606419,
+      "timestamp": "2026-04-01T12:47:10+00:00",
+      "last_traded_at": "2026-04-01T12:47:10+00:00",
+      "last_fetch_at": "2026-04-01T13:13:09+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0xa7f552078dcc247c2684336020c03648500c6d9f&outputCurrency=0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c",
+      "token_info_url": null,
+      "coin_id": "ellipsis",
+      "target_coin_id": "wbnb",
+      "coin_mcap_usd": 10035954.574203882
+    },
+    {
+      "base": "0XECA41281C24451168A37211F0BC2B8645AF45092",
+      "target": "0XBB4CDB9CBD36B01BD1CBAEBF2DE08D9173BC095C",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 9.501923666e-06,
+      "volume": 1466.4217,
+      "converted_last": {
+        "btc": 8.5504e-08,
+        "eth": 2.75e-06,
+        "usd": 0.00583763
+      },
+      "converted_volume": {
+        "btc": 0.00012648,
+        "eth": 0.00407215,
+        "usd": 8.64
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.953488,
+      "timestamp": "2026-04-01T12:55:52+00:00",
+      "last_traded_at": "2026-04-01T12:55:52+00:00",
+      "last_fetch_at": "2026-04-01T13:05:47+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0xeca41281c24451168a37211f0bc2b8645af45092&outputCurrency=0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c",
+      "token_info_url": null,
+      "coin_id": "token-pocket",
+      "target_coin_id": "wbnb",
+      "coin_mcap_usd": 19084067.646132175
+    },
+    {
+      "base": "0X8AC76A51CC950D9822D68B83FE1AD97B32CD580D",
+      "target": "0XE9E7CEA3DEDCA5984780BAFC599BD69ADD087D56",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 1.0020405989,
+      "volume": 1.0368991508,
+      "converted_last": {
+        "btc": 1.466e-05,
+        "eth": 0.00047056,
+        "usd": 1.002
+      },
+      "converted_volume": {
+        "btc": 1.517e-05,
+        "eth": 0.00048716,
+        "usd": 1.037
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.606639,
+      "timestamp": "2026-04-01T10:03:31+00:00",
+      "last_traded_at": "2026-04-01T10:03:31+00:00",
+      "last_fetch_at": "2026-04-01T13:02:10+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d&outputCurrency=0xe9e7cea3dedca5984780bafc599bd69add087d56",
+      "token_info_url": null,
+      "coin_id": "binance-bridged-usdc-bnb-smart-chain",
+      "target_coin_id": "binance-peg-busd",
+      "coin_mcap_usd": 1288849656.9956732
+    },
+    {
+      "base": "0X190B589CF9FB8DDEABBFEAE36A813FFB2A702454",
+      "target": "0XBB4CDB9CBD36B01BD1CBAEBF2DE08D9173BC095C",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 1.743102526e-06,
+      "volume": 5222.7095190154,
+      "converted_last": {
+        "btc": 1.5685e-08,
+        "eth": 5.04995e-07,
+        "usd": 0.0010709
+      },
+      "converted_volume": {
+        "btc": 8.189e-05,
+        "eth": 0.00263634,
+        "usd": 5.59
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.773387,
+      "timestamp": "2026-04-01T12:55:51+00:00",
+      "last_traded_at": "2026-04-01T12:55:51+00:00",
+      "last_fetch_at": "2026-04-01T13:05:46+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x190b589cf9fb8ddeabbfeae36a813ffb2a702454&outputCurrency=0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c",
+      "token_info_url": null,
+      "coin_id": "bdollar",
+      "target_coin_id": "wbnb",
+      "coin_mcap_usd": 0.0
+    },
+    {
+      "base": "0X111111111117DC0AA78B770FA6A738034120C302",
+      "target": "0XBB4CDB9CBD36B01BD1CBAEBF2DE08D9173BC095C",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 0.0001479914931,
+      "volume": 93.9358132493,
+      "converted_last": {
+        "btc": 1.33e-06,
+        "eth": 4.287e-05,
+        "usd": 0.090921
+      },
+      "converted_volume": {
+        "btc": 0.00012405,
+        "eth": 0.00399394,
+        "usd": 8.47
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 1.00053,
+      "timestamp": "2026-04-01T12:46:26+00:00",
+      "last_traded_at": "2026-04-01T12:46:26+00:00",
+      "last_fetch_at": "2026-04-01T13:05:47+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x111111111117dc0aa78b770fa6a738034120c302&outputCurrency=0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c",
+      "token_info_url": null,
+      "coin_id": "1inch",
+      "target_coin_id": "wbnb",
+      "coin_mcap_usd": 128709789.17293835
+    },
+    {
+      "base": "0X0DA6ED8B13214FF28E9CA979DD37439E8A88F6C4",
+      "target": "0XBB4CDB9CBD36B01BD1CBAEBF2DE08D9173BC095C",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 0.0001209785128,
+      "volume": 65.3505665113,
+      "converted_last": {
+        "btc": 1.09e-06,
+        "eth": 3.505e-05,
+        "usd": 0.074325
+      },
+      "converted_volume": {
+        "btc": 7.092e-05,
+        "eth": 0.00228344,
+        "usd": 4.84
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.76271,
+      "timestamp": "2026-04-01T12:38:31+00:00",
+      "last_traded_at": "2026-04-01T12:38:31+00:00",
+      "last_fetch_at": "2026-04-01T13:05:47+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x0da6ed8b13214ff28e9ca979dd37439e8a88f6c4&outputCurrency=0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c",
+      "token_info_url": null,
+      "coin_id": "stablexswap",
+      "target_coin_id": "wbnb",
+      "coin_mcap_usd": 1594853.769055332
+    },
+    {
+      "base": "0X14C358B573A4CE45364A3DBD84BBB4DAE87AF034",
+      "target": "0XBB4CDB9CBD36B01BD1CBAEBF2DE08D9173BC095C",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 8.011104966e-06,
+      "volume": 1314.0668776936,
+      "converted_last": {
+        "btc": 7.2088e-08,
+        "eth": 2.32e-06,
+        "usd": 0.00492173
+      },
+      "converted_volume": {
+        "btc": 9.548e-05,
+        "eth": 0.00307411,
+        "usd": 6.52
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.930403,
+      "timestamp": "2026-04-01T10:16:02+00:00",
+      "last_traded_at": "2026-04-01T10:16:02+00:00",
+      "last_fetch_at": "2026-04-01T13:05:47+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x14c358b573a4ce45364a3dbd84bbb4dae87af034&outputCurrency=0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c",
+      "token_info_url": null,
+      "coin_id": "dungeonswap",
+      "target_coin_id": "wbnb",
+      "coin_mcap_usd": 25650.369494673356
+    },
+    {
+      "base": "0X8850D2C68C632E3B258E612ABAA8FADA7E6958E5",
+      "target": "0XE9E7CEA3DEDCA5984780BAFC599BD69ADD087D56",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 1.412197654e-08,
+      "volume": 254501521.153784,
+      "converted_last": {
+        "btc": 2.06137e-13,
+        "eth": 6.623e-12,
+        "usd": 1.4144e-08
+      },
+      "converted_volume": {
+        "btc": 5.261e-05,
+        "eth": 0.00169035,
+        "usd": 3.61
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.70609,
+      "timestamp": "2026-04-01T06:19:42+00:00",
+      "last_traded_at": "2026-04-01T06:19:42+00:00",
+      "last_fetch_at": "2026-04-01T09:52:30+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x8850d2c68c632e3b258e612abaa8fada7e6958e5&outputCurrency=0xe9e7cea3dedca5984780bafc599bd69add087d56",
+      "token_info_url": null,
+      "coin_id": "pig-finance",
+      "target_coin_id": "binance-peg-busd",
+      "coin_mcap_usd": 0.0
+    },
+    {
+      "base": "0X0DA6ED8B13214FF28E9CA979DD37439E8A88F6C4",
+      "target": "0X0E09FABB73BD3ADE0A17ECC321FD13A19E81CE82",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 0.05279619128,
+      "volume": 63.9664618121,
+      "converted_last": {
+        "btc": 1.09e-06,
+        "eth": 3.505e-05,
+        "usd": 0.074325
+      },
+      "converted_volume": {
+        "btc": 6.998e-05,
+        "eth": 0.00225307,
+        "usd": 4.78
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.829929,
+      "timestamp": "2026-04-01T12:18:02+00:00",
+      "last_traded_at": "2026-04-01T12:18:02+00:00",
+      "last_fetch_at": "2026-04-01T13:05:47+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x0da6ed8b13214ff28e9ca979dd37439e8a88f6c4&outputCurrency=0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82",
+      "token_info_url": null,
+      "coin_id": "stablexswap",
+      "target_coin_id": "pancakeswap-token",
+      "coin_mcap_usd": 1594853.769055332
+    },
+    {
+      "base": "0X7A9F28EB62C791422AA23CEAE1DA9C847CBEC9B0",
+      "target": "0XBB4CDB9CBD36B01BD1CBAEBF2DE08D9173BC095C",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 1.492158165e-05,
+      "volume": 144.8757305627,
+      "converted_last": {
+        "btc": 1.34273e-07,
+        "eth": 4.32e-06,
+        "usd": 0.00916727
+      },
+      "converted_volume": {
+        "btc": 1.945e-05,
+        "eth": 0.00062635,
+        "usd": 1.33
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.635945,
+      "timestamp": "2026-04-01T09:52:31+00:00",
+      "last_traded_at": "2026-04-01T09:52:31+00:00",
+      "last_fetch_at": "2026-04-01T13:05:47+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x7a9f28eb62c791422aa23ceae1da9c847cbec9b0&outputCurrency=0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c",
+      "token_info_url": null,
+      "coin_id": "yieldwatch",
+      "target_coin_id": "wbnb",
+      "coin_mcap_usd": 89952.92107750638
+    },
+    {
+      "base": "0XD6FDDE76B8C1C45B33790CC8751D5B88984C44EC",
+      "target": "0XBB4CDB9CBD36B01BD1CBAEBF2DE08D9173BC095C",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 3.597973598e-05,
+      "volume": 258.6688852481,
+      "converted_last": {
+        "btc": 3.23766e-07,
+        "eth": 1.042e-05,
+        "usd": 0.02210463
+      },
+      "converted_volume": {
+        "btc": 8.389e-05,
+        "eth": 0.00270095,
+        "usd": 5.73
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.96,
+      "timestamp": "2026-04-01T12:38:31+00:00",
+      "last_traded_at": "2026-04-01T12:38:31+00:00",
+      "last_fetch_at": "2026-04-01T13:05:47+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0xd6fdde76b8c1c45b33790cc8751d5b88984c44ec&outputCurrency=0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c",
+      "token_info_url": null,
+      "coin_id": "strikecoin",
+      "target_coin_id": "wbnb",
+      "coin_mcap_usd": 19509808.850540366
+    },
+    {
+      "base": "0X055DAB90880613A556A5AE2903B2682F8A5B8D27",
+      "target": "0XE9E7CEA3DEDCA5984780BAFC599BD69ADD087D56",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 0.0001276230475,
+      "volume": 37073.0188267776,
+      "converted_last": {
+        "btc": 1.87e-09,
+        "eth": 6.0189e-08,
+        "usd": 0.00012765
+      },
+      "converted_volume": {
+        "btc": 6.914e-05,
+        "eth": 0.00222609,
+        "usd": 4.72
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 1.001229,
+      "timestamp": "2026-04-01T10:08:44+00:00",
+      "last_traded_at": "2026-04-01T10:08:44+00:00",
+      "last_fetch_at": "2026-04-01T13:04:44+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x055dab90880613a556a5ae2903b2682f8a5b8d27&outputCurrency=0xe9e7cea3dedca5984780bafc599bd69add087d56",
+      "token_info_url": null,
+      "coin_id": "mochiswap",
+      "target_coin_id": "binance-peg-busd",
+      "coin_mcap_usd": 0.0
+    },
+    {
+      "base": "0X22168882276E5D5E1DA694343B41DD7726EEB288",
+      "target": "0XBB4CDB9CBD36B01BD1CBAEBF2DE08D9173BC095C",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 2.658647562e-07,
+      "volume": 14860.1879448764,
+      "converted_last": {
+        "btc": 2.392e-09,
+        "eth": 7.7024e-08,
+        "usd": 0.00016334
+      },
+      "converted_volume": {
+        "btc": 3.56e-05,
+        "eth": 0.00114614,
+        "usd": 2.43
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.766469,
+      "timestamp": "2026-04-01T12:38:31+00:00",
+      "last_traded_at": "2026-04-01T12:38:31+00:00",
+      "last_fetch_at": "2026-04-01T13:05:47+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x22168882276e5d5e1da694343b41dd7726eeb288&outputCurrency=0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c",
+      "token_info_url": null,
+      "coin_id": "wall-street-bets-dapp",
+      "target_coin_id": "wbnb",
+      "coin_mcap_usd": 163690.2752600972
+    },
+    {
+      "base": "0X4197C6EF3879A08CD51E5560DA5064B773AA1D29",
+      "target": "0XBB4CDB9CBD36B01BD1CBAEBF2DE08D9173BC095C",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 0.0002293734842,
+      "volume": 10.0793735817,
+      "converted_last": {
+        "btc": 2.07e-06,
+        "eth": 6.653e-05,
+        "usd": 0.140827
+      },
+      "converted_volume": {
+        "btc": 2.083e-05,
+        "eth": 0.00067115,
+        "usd": 1.42
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.694327,
+      "timestamp": "2026-04-01T11:32:40+00:00",
+      "last_traded_at": "2026-04-01T11:32:40+00:00",
+      "last_fetch_at": "2026-04-01T13:08:19+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x4197c6ef3879a08cd51e5560da5064b773aa1d29&outputCurrency=0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c",
+      "token_info_url": null,
+      "coin_id": "acryptos",
+      "target_coin_id": "wbnb",
+      "coin_mcap_usd": 235663.66589088694
+    },
+    {
+      "base": "0XAC472D0EED2B8A2F57A6E304EA7EBD8E88D1D36F",
+      "target": "0XBB4CDB9CBD36B01BD1CBAEBF2DE08D9173BC095C",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 1.085842302e-06,
+      "volume": 3999.4365662328,
+      "converted_last": {
+        "btc": 9.745e-09,
+        "eth": 3.14035e-07,
+        "usd": 0.00066925
+      },
+      "converted_volume": {
+        "btc": 3.897e-05,
+        "eth": 0.00125596,
+        "usd": 2.68
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.842514,
+      "timestamp": "2026-04-01T07:58:20+00:00",
+      "last_traded_at": "2026-04-01T07:58:20+00:00",
+      "last_fetch_at": "2026-04-01T07:58:20+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0xac472d0eed2b8a2f57a6e304ea7ebd8e88d1d36f&outputCurrency=0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c",
+      "token_info_url": null,
+      "coin_id": "anime-token",
+      "target_coin_id": "wbnb",
+      "coin_mcap_usd": 34118.83055870503
+    },
+    {
+      "base": "0X948D2A81086A075B3130BAC19E4C6DEE1D2E3FE8",
+      "target": "0XBB4CDB9CBD36B01BD1CBAEBF2DE08D9173BC095C",
+      "market": {
+        "name": "PancakeSwap V1 (BSC)",
+        "identifier": "pancakeswap-v1-bsc",
+        "has_trading_incentive": false
+      },
+      "last": 3.450404404e-06,
+      "volume": 530.1928946625,
+      "converted_last": {
+        "btc": 3.095e-08,
+        "eth": 9.95963e-07,
+        "usd": 0.00211574
+      },
+      "converted_volume": {
+        "btc": 1.642e-05,
+        "eth": 0.00052839,
+        "usd": 1.12
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.699481,
+      "timestamp": "2026-04-01T11:57:59+00:00",
+      "last_traded_at": "2026-04-01T11:57:59+00:00",
+      "last_fetch_at": "2026-04-01T12:38:31+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x948d2a81086a075b3130bac19e4c6dee1d2e3fe8&outputCurrency=0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c",
+      "token_info_url": null,
+      "coin_id": "helmet-insure",
+      "target_coin_id": "wbnb",
+      "coin_mcap_usd": 89978.805748974
+    }
+  ],
+  "status_updates": []
+}

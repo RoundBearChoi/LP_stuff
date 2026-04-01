@@ -1,0 +1,654 @@
+{
+  "name": "Pancakeswap Infinity CLMM (Base)",
+  "year_established": null,
+  "country": null,
+  "description": "",
+  "url": "https://pancakeswap.finance/swap",
+  "image": "https://coin-images.coingecko.com/markets/images/22041/small/pancakeswap.jpg?1755056286",
+  "facebook_url": "",
+  "reddit_url": "",
+  "telegram_url": "",
+  "slack_url": "",
+  "other_url_1": "",
+  "other_url_2": "",
+  "twitter_handle": "PancakeSwap",
+  "has_trading_incentive": false,
+  "centralized": false,
+  "public_notice": "",
+  "alert_notice": "",
+  "trust_score": 6,
+  "trust_score_rank": 191,
+  "coins": 9,
+  "pairs": 21,
+  "trade_volume_24h_btc": 19.306167586246815,
+  "tickers": [
+    {
+      "base": "0X0000000000000000000000000000000000000000",
+      "target": "0XCBB7C0000AB88B473B1F5AFD9EF808440EED33BF",
+      "market": {
+        "name": "Pancakeswap Infinity CLMM (Base)",
+        "identifier": "pancakeswap-infinity-clmm-base",
+        "has_trading_incentive": false
+      },
+      "last": 0.03109402224,
+      "volume": 236.1054974645,
+      "converted_last": {
+        "btc": 0.03111856,
+        "eth": 1.001107,
+        "usd": 2128.36
+      },
+      "converted_volume": {
+        "btc": 7.304389,
+        "eth": 234.988,
+        "usd": 499585
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.607576,
+      "timestamp": "2026-04-01T13:13:22+00:00",
+      "last_traded_at": "2026-04-01T13:13:22+00:00",
+      "last_fetch_at": "2026-04-01T13:14:53+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x0000000000000000000000000000000000000000&outputCurrency=0xcbb7c0000ab88b473b1f5afd9ef808440eed33bf",
+      "token_info_url": null,
+      "coin_id": "ethereum",
+      "target_coin_id": "coinbase-wrapped-btc",
+      "coin_mcap_usd": 256599701345.03394
+    },
+    {
+      "base": "0XFDE4C96C8593536E31F229EA8F37B2ADA2699BB2",
+      "target": "0X833589FCD6EDB6E08F4C7C32D4F71B54BDA02913",
+      "market": {
+        "name": "Pancakeswap Infinity CLMM (Base)",
+        "identifier": "pancakeswap-infinity-clmm-base",
+        "has_trading_incentive": false
+      },
+      "last": 0.999615988,
+      "volume": 251291.74575,
+      "converted_last": {
+        "btc": 1.461e-05,
+        "eth": 0.00047014,
+        "usd": 0.999521
+      },
+      "converted_volume": {
+        "btc": 3.672114,
+        "eth": 118.135,
+        "usd": 251155
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.608157,
+      "timestamp": "2026-04-01T13:13:48+00:00",
+      "last_traded_at": "2026-04-01T13:13:48+00:00",
+      "last_fetch_at": "2026-04-01T13:14:49+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0xfde4c96c8593536e31f229ea8f37b2ada2699bb2&outputCurrency=0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+      "token_info_url": null,
+      "coin_id": "l2-standard-bridged-usdt-base",
+      "target_coin_id": "usd-coin",
+      "coin_mcap_usd": 22314887.299958557
+    },
+    {
+      "base": "0X0000000000000000000000000000000000000000",
+      "target": "0X833589FCD6EDB6E08F4C7C32D4F71B54BDA02913",
+      "market": {
+        "name": "Pancakeswap Infinity CLMM (Base)",
+        "identifier": "pancakeswap-infinity-clmm-base",
+        "has_trading_incentive": false
+      },
+      "last": 2125.5738341062,
+      "volume": 82.8195326255,
+      "converted_last": {
+        "btc": 0.03107489,
+        "eth": 0.99970216,
+        "usd": 2125.37
+      },
+      "converted_volume": {
+        "btc": 2.54208,
+        "eth": 81.781,
+        "usd": 173866
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.610806,
+      "timestamp": "2026-04-01T13:13:22+00:00",
+      "last_traded_at": "2026-04-01T13:13:22+00:00",
+      "last_fetch_at": "2026-04-01T13:14:53+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x0000000000000000000000000000000000000000&outputCurrency=0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+      "token_info_url": null,
+      "coin_id": "ethereum",
+      "target_coin_id": "usd-coin",
+      "coin_mcap_usd": 256599701345.03394
+    },
+    {
+      "base": "0X043EB4B75D0805C43D7C834902E335621983CF03",
+      "target": "0X833589FCD6EDB6E08F4C7C32D4F71B54BDA02913",
+      "market": {
+        "name": "Pancakeswap Infinity CLMM (Base)",
+        "identifier": "pancakeswap-infinity-clmm-base",
+        "has_trading_incentive": false
+      },
+      "last": 0.7184124823,
+      "volume": 184411.523695105,
+      "converted_last": {
+        "btc": 1.05e-05,
+        "eth": 0.00033783,
+        "usd": 0.718344
+      },
+      "converted_volume": {
+        "btc": 1.935633,
+        "eth": 62.261,
+        "usd": 132387
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.604131,
+      "timestamp": "2026-04-01T13:13:16+00:00",
+      "last_traded_at": "2026-04-01T13:13:16+00:00",
+      "last_fetch_at": "2026-04-01T13:14:14+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x043eb4b75d0805c43d7c834902e335621983cf03&outputCurrency=0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+      "token_info_url": null,
+      "coin_id": "cad-coin",
+      "target_coin_id": "usd-coin",
+      "coin_mcap_usd": 990586.1483727328
+    },
+    {
+      "base": "0X0000000000000000000000000000000000000000",
+      "target": "0XCBB7C0000AB88B473B1F5AFD9EF808440EED33BF",
+      "market": {
+        "name": "Pancakeswap Infinity CLMM (Base)",
+        "identifier": "pancakeswap-infinity-clmm-base",
+        "has_trading_incentive": false
+      },
+      "last": 0.03109152592,
+      "volume": 47.8321241824,
+      "converted_last": {
+        "btc": 0.03111607,
+        "eth": 1.001027,
+        "usd": 2128.19
+      },
+      "converted_volume": {
+        "btc": 1.480619,
+        "eth": 47.632611,
+        "usd": 101267
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.616069,
+      "timestamp": "2026-04-01T13:13:22+00:00",
+      "last_traded_at": "2026-04-01T13:13:22+00:00",
+      "last_fetch_at": "2026-04-01T13:14:53+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x0000000000000000000000000000000000000000&outputCurrency=0xcbb7c0000ab88b473b1f5afd9ef808440eed33bf",
+      "token_info_url": null,
+      "coin_id": "ethereum",
+      "target_coin_id": "coinbase-wrapped-btc",
+      "coin_mcap_usd": 256599701345.03394
+    },
+    {
+      "base": "0X60A3E35CC302BFA44CB288BC5A4F316FDB1ADB42",
+      "target": "0X833589FCD6EDB6E08F4C7C32D4F71B54BDA02913",
+      "market": {
+        "name": "Pancakeswap Infinity CLMM (Base)",
+        "identifier": "pancakeswap-infinity-clmm-base",
+        "has_trading_incentive": false
+      },
+      "last": 1.1602013602,
+      "volume": 73313.041972,
+      "converted_last": {
+        "btc": 1.696e-05,
+        "eth": 0.00054567,
+        "usd": 1.16
+      },
+      "converted_volume": {
+        "btc": 1.239578,
+        "eth": 39.878156,
+        "usd": 84781
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.62632,
+      "timestamp": "2026-04-01T13:13:48+00:00",
+      "last_traded_at": "2026-04-01T13:13:48+00:00",
+      "last_fetch_at": "2026-04-01T13:14:49+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x60a3e35cc302bfa44cb288bc5a4f316fdb1adb42&outputCurrency=0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+      "token_info_url": null,
+      "coin_id": "euro-coin",
+      "target_coin_id": "usd-coin",
+      "coin_mcap_usd": 414884690.906022
+    },
+    {
+      "base": "0X660975730059246A68521A3E2FBD4740173100F5",
+      "target": "0X833589FCD6EDB6E08F4C7C32D4F71B54BDA02913",
+      "market": {
+        "name": "Pancakeswap Infinity CLMM (Base)",
+        "identifier": "pancakeswap-infinity-clmm-base",
+        "has_trading_incentive": false
+      },
+      "last": 1.1569872889,
+      "volume": 29752.845469,
+      "converted_last": {
+        "btc": 1.691e-05,
+        "eth": 0.00054416,
+        "usd": 1.16
+      },
+      "converted_volume": {
+        "btc": 0.50345119,
+        "eth": 16.196398,
+        "usd": 34434
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.615792,
+      "timestamp": "2026-04-01T12:54:44+00:00",
+      "last_traded_at": "2026-04-01T12:54:44+00:00",
+      "last_fetch_at": "2026-04-01T13:14:49+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x660975730059246a68521a3e2fbd4740173100f5&outputCurrency=0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+      "token_info_url": null,
+      "coin_id": "syrupusdc",
+      "target_coin_id": "usd-coin",
+      "coin_mcap_usd": 1810571525.6198492
+    },
+    {
+      "base": "0X0000000000000000000000000000000000000000",
+      "target": "0XCBB7C0000AB88B473B1F5AFD9EF808440EED33BF",
+      "market": {
+        "name": "Pancakeswap Infinity CLMM (Base)",
+        "identifier": "pancakeswap-infinity-clmm-base",
+        "has_trading_incentive": false
+      },
+      "last": 0.03109126985,
+      "volume": 14.1734817925,
+      "converted_last": {
+        "btc": 0.03111581,
+        "eth": 1.001019,
+        "usd": 2128.17
+      },
+      "converted_volume": {
+        "btc": 0.43885481,
+        "eth": 14.118284,
+        "usd": 30016
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.615754,
+      "timestamp": "2026-04-01T13:13:48+00:00",
+      "last_traded_at": "2026-04-01T13:13:48+00:00",
+      "last_fetch_at": "2026-04-01T13:14:49+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x0000000000000000000000000000000000000000&outputCurrency=0xcbb7c0000ab88b473b1f5afd9ef808440eed33bf",
+      "token_info_url": null,
+      "coin_id": "ethereum",
+      "target_coin_id": "coinbase-wrapped-btc",
+      "coin_mcap_usd": 256599701345.03394
+    },
+    {
+      "base": "0X449B3317A6D1EFB1BC3BA0700C9EAA4FFFF4AE65",
+      "target": "0X833589FCD6EDB6E08F4C7C32D4F71B54BDA02913",
+      "market": {
+        "name": "Pancakeswap Infinity CLMM (Base)",
+        "identifier": "pancakeswap-infinity-clmm-base",
+        "has_trading_incentive": false
+      },
+      "last": 0.6912196893,
+      "volume": 306.277199,
+      "converted_last": {
+        "btc": 1.013e-05,
+        "eth": 0.00032632,
+        "usd": 0.691145
+      },
+      "converted_volume": {
+        "btc": 0.00308646,
+        "eth": 0.09940023,
+        "usd": 210.53
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.647306,
+      "timestamp": "2026-04-01T12:41:55+00:00",
+      "last_traded_at": "2026-04-01T12:41:55+00:00",
+      "last_fetch_at": "2026-04-01T13:10:03+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x449b3317a6d1efb1bc3ba0700c9eaa4ffff4ae65&outputCurrency=0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+      "token_info_url": null,
+      "coin_id": "novatti-australian-digital-dollar",
+      "target_coin_id": "usd-coin",
+      "coin_mcap_usd": 5254530.574290057
+    },
+    {
+      "base": "0X833589FCD6EDB6E08F4C7C32D4F71B54BDA02913",
+      "target": "0XCBB7C0000AB88B473B1F5AFD9EF808440EED33BF",
+      "market": {
+        "name": "Pancakeswap Infinity CLMM (Base)",
+        "identifier": "pancakeswap-infinity-clmm-base",
+        "has_trading_incentive": false
+      },
+      "last": 1.460799906e-05,
+      "volume": 70.036923,
+      "converted_last": {
+        "btc": 1.466e-05,
+        "eth": 0.00047209,
+        "usd": 0.999892
+      },
+      "converted_volume": {
+        "btc": 0.00103543,
+        "eth": 0.03334644,
+        "usd": 70.63
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.829217,
+      "timestamp": "2026-04-01T12:50:21+00:00",
+      "last_traded_at": "2026-04-01T12:50:21+00:00",
+      "last_fetch_at": "2026-04-01T13:10:02+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x833589fcd6edb6e08f4c7c32d4f71b54bda02913&outputCurrency=0xcbb7c0000ab88b473b1f5afd9ef808440eed33bf",
+      "token_info_url": null,
+      "coin_id": "usd-coin",
+      "target_coin_id": "coinbase-wrapped-btc",
+      "coin_mcap_usd": 77143703241.74019
+    },
+    {
+      "base": "0X833589FCD6EDB6E08F4C7C32D4F71B54BDA02913",
+      "target": "0XCBB7C0000AB88B473B1F5AFD9EF808440EED33BF",
+      "market": {
+        "name": "Pancakeswap Infinity CLMM (Base)",
+        "identifier": "pancakeswap-infinity-clmm-base",
+        "has_trading_incentive": false
+      },
+      "last": 1.560711685e-05,
+      "volume": 4.125812,
+      "converted_last": {
+        "btc": 1.566e-05,
+        "eth": 0.00050438,
+        "usd": 1.068
+      },
+      "converted_volume": {
+        "btc": 6.13e-05,
+        "eth": 0.00197427,
+        "usd": 4.18
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.886744,
+      "timestamp": "2026-04-01T13:10:03+00:00",
+      "last_traded_at": "2026-04-01T13:10:03+00:00",
+      "last_fetch_at": "2026-04-01T13:10:03+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x833589fcd6edb6e08f4c7c32d4f71b54bda02913&outputCurrency=0xcbb7c0000ab88b473b1f5afd9ef808440eed33bf",
+      "token_info_url": null,
+      "coin_id": "usd-coin",
+      "target_coin_id": "coinbase-wrapped-btc",
+      "coin_mcap_usd": 77143703241.74019
+    },
+    {
+      "base": "0X2AE3F1EC7F1F5012CFEAB0185BFC7AA3CF0DEC22",
+      "target": "0X0000000000000000000000000000000000000000",
+      "market": {
+        "name": "Pancakeswap Infinity CLMM (Base)",
+        "identifier": "pancakeswap-infinity-clmm-base",
+        "has_trading_incentive": false
+      },
+      "last": 1.1264017153,
+      "volume": 3.2569304441,
+      "converted_last": {
+        "btc": 0.0349816,
+        "eth": 1.126592,
+        "usd": 2386.12
+      },
+      "converted_volume": {
+        "btc": 0.11393842,
+        "eth": 3.669419,
+        "usd": 7771.82
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.655509,
+      "timestamp": "2026-04-01T13:10:03+00:00",
+      "last_traded_at": "2026-04-01T13:10:03+00:00",
+      "last_fetch_at": "2026-04-01T13:10:03+00:00",
+      "is_anomaly": true,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x2ae3f1ec7f1f5012cfeab0185bfc7aa3cf0dec22&outputCurrency=0x0000000000000000000000000000000000000000",
+      "token_info_url": null,
+      "coin_id": "coinbase-wrapped-staked-eth",
+      "target_coin_id": "ethereum",
+      "coin_mcap_usd": 288955922.25994277
+    },
+    {
+      "base": "0XFDE4C96C8593536E31F229EA8F37B2ADA2699BB2",
+      "target": "0X833589FCD6EDB6E08F4C7C32D4F71B54BDA02913",
+      "market": {
+        "name": "Pancakeswap Infinity CLMM (Base)",
+        "identifier": "pancakeswap-infinity-clmm-base",
+        "has_trading_incentive": false
+      },
+      "last": 1.0079365079,
+      "volume": 1376.66801,
+      "converted_last": {
+        "btc": 1.478e-05,
+        "eth": 0.00047584,
+        "usd": 1.008
+      },
+      "converted_volume": {
+        "btc": 0.02016645,
+        "eth": 0.64946623,
+        "usd": 1375.57
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.747405,
+      "timestamp": "2026-04-01T13:10:03+00:00",
+      "last_traded_at": "2026-04-01T13:10:03+00:00",
+      "last_fetch_at": "2026-04-01T13:10:03+00:00",
+      "is_anomaly": true,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0xfde4c96c8593536e31f229ea8f37b2ada2699bb2&outputCurrency=0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+      "token_info_url": null,
+      "coin_id": "l2-standard-bridged-usdt-base",
+      "target_coin_id": "usd-coin",
+      "coin_mcap_usd": 22314887.299958557
+    },
+    {
+      "base": "0X08D7EA3C148672C4B03999EB0D0467733DA2DB6A",
+      "target": "0X833589FCD6EDB6E08F4C7C32D4F71B54BDA02913",
+      "market": {
+        "name": "Pancakeswap Infinity CLMM (Base)",
+        "identifier": "pancakeswap-infinity-clmm-base",
+        "has_trading_incentive": false
+      },
+      "last": 0.008943167627,
+      "volume": 9921.3495133029,
+      "converted_last": {
+        "btc": 1.34526e-07,
+        "eth": 4.49e-06,
+        "usd": 0.00894079
+      },
+      "converted_volume": {
+        "btc": 0.3044186,
+        "eth": 10.161405,
+        "usd": 20232
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": -207.191684,
+      "timestamp": "2026-03-27T10:23:41+00:00",
+      "last_traded_at": "2026-03-27T10:23:41+00:00",
+      "last_fetch_at": "2026-03-27T10:59:18+00:00",
+      "is_anomaly": false,
+      "is_stale": true,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x08d7ea3c148672c4b03999eb0d0467733da2db6a&outputCurrency=0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+      "token_info_url": null,
+      "coin_id": "nostra",
+      "target_coin_id": "usd-coin",
+      "coin_mcap_usd": 700646.4637454884
+    },
+    {
+      "base": "0X08D7EA3C148672C4B03999EB0D0467733DA2DB6A",
+      "target": "0X833589FCD6EDB6E08F4C7C32D4F71B54BDA02913",
+      "market": {
+        "name": "Pancakeswap Infinity CLMM (Base)",
+        "identifier": "pancakeswap-infinity-clmm-base",
+        "has_trading_incentive": false
+      },
+      "last": 0.0780242482,
+      "volume": 2204.6299547933,
+      "converted_last": {
+        "btc": 1.34592e-07,
+        "eth": 4.49e-06,
+        "usd": 0.00894144
+      },
+      "converted_volume": {
+        "btc": 3.214e-05,
+        "eth": 0.00107244,
+        "usd": 2.13
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": -203.463652,
+      "timestamp": "2026-03-27T09:00:07+00:00",
+      "last_traded_at": "2026-03-27T09:00:07+00:00",
+      "last_fetch_at": "2026-03-27T11:07:30+00:00",
+      "is_anomaly": false,
+      "is_stale": true,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x08d7ea3c148672c4b03999eb0d0467733da2db6a&outputCurrency=0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+      "token_info_url": null,
+      "coin_id": "nostra",
+      "target_coin_id": "usd-coin",
+      "coin_mcap_usd": 700646.4637454884
+    },
+    {
+      "base": "0X08D7EA3C148672C4B03999EB0D0467733DA2DB6A",
+      "target": "0X833589FCD6EDB6E08F4C7C32D4F71B54BDA02913",
+      "market": {
+        "name": "Pancakeswap Infinity CLMM (Base)",
+        "identifier": "pancakeswap-infinity-clmm-base",
+        "has_trading_incentive": false
+      },
+      "last": 0.07802596125,
+      "volume": 1775.9478657142,
+      "converted_last": {
+        "btc": 1.32023e-07,
+        "eth": 4.38e-06,
+        "usd": 0.00894151
+      },
+      "converted_volume": {
+        "btc": 2.45e-05,
+        "eth": 0.00081254,
+        "usd": 1.66
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": -202.273149,
+      "timestamp": "2026-03-27T09:00:07+00:00",
+      "last_traded_at": "2026-03-27T09:00:07+00:00",
+      "last_fetch_at": "2026-03-27T10:31:05+00:00",
+      "is_anomaly": false,
+      "is_stale": true,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x08d7ea3c148672c4b03999eb0d0467733da2db6a&outputCurrency=0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+      "token_info_url": null,
+      "coin_id": "nostra",
+      "target_coin_id": "usd-coin",
+      "coin_mcap_usd": 700646.4637454884
+    },
+    {
+      "base": "0X08D7EA3C148672C4B03999EB0D0467733DA2DB6A",
+      "target": "0X833589FCD6EDB6E08F4C7C32D4F71B54BDA02913",
+      "market": {
+        "name": "Pancakeswap Infinity CLMM (Base)",
+        "identifier": "pancakeswap-infinity-clmm-base",
+        "has_trading_incentive": false
+      },
+      "last": 0.0789424,
+      "volume": 55.8738136,
+      "converted_last": {
+        "btc": 1.34604e-07,
+        "eth": 4.49e-06,
+        "usd": 0.0089408
+      },
+      "converted_volume": {
+        "btc": 6.91e-06,
+        "eth": 0.0002306,
+        "usd": 0.459115
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": -205.784907,
+      "timestamp": "2026-03-27T06:55:59+00:00",
+      "last_traded_at": "2026-03-27T06:55:59+00:00",
+      "last_fetch_at": "2026-03-27T11:12:44+00:00",
+      "is_anomaly": false,
+      "is_stale": true,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x08d7ea3c148672c4b03999eb0d0467733da2db6a&outputCurrency=0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+      "token_info_url": null,
+      "coin_id": "nostra",
+      "target_coin_id": "usd-coin",
+      "coin_mcap_usd": 700646.4637454884
+    },
+    {
+      "base": "0X08D7EA3C148672C4B03999EB0D0467733DA2DB6A",
+      "target": "0X833589FCD6EDB6E08F4C7C32D4F71B54BDA02913",
+      "market": {
+        "name": "Pancakeswap Infinity CLMM (Base)",
+        "identifier": "pancakeswap-infinity-clmm-base",
+        "has_trading_incentive": false
+      },
+      "last": 0.0787833,
+      "volume": 551.4051999053,
+      "converted_last": {
+        "btc": 1.19e-06,
+        "eth": 3.956e-05,
+        "usd": 0.078762
+      },
+      "converted_volume": {
+        "btc": 0.00010035,
+        "eth": 0.00334972,
+        "usd": 6.67
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 222.192422,
+      "timestamp": "2026-03-27T10:23:41+00:00",
+      "last_traded_at": "2026-03-27T10:23:41+00:00",
+      "last_fetch_at": "2026-03-27T10:59:18+00:00",
+      "is_anomaly": true,
+      "is_stale": true,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x08d7ea3c148672c4b03999eb0d0467733da2db6a&outputCurrency=0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+      "token_info_url": null,
+      "coin_id": "nostra",
+      "target_coin_id": "usd-coin",
+      "coin_mcap_usd": 700646.4637454884
+    },
+    {
+      "base": "0X08D7EA3C148672C4B03999EB0D0467733DA2DB6A",
+      "target": "0X833589FCD6EDB6E08F4C7C32D4F71B54BDA02913",
+      "market": {
+        "name": "Pancakeswap Infinity CLMM (Base)",
+        "identifier": "pancakeswap-infinity-clmm-base",
+        "has_trading_incentive": false
+      },
+      "last": 0.0782336,
+      "volume": 59.7447448116,
+      "converted_last": {
+        "btc": 1.18e-06,
+        "eth": 3.928e-05,
+        "usd": 0.078213
+      },
+      "converted_volume": {
+        "btc": 4.575e-05,
+        "eth": 0.00152621,
+        "usd": 3.04
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": -401.858722,
+      "timestamp": "2026-03-27T08:27:36+00:00",
+      "last_traded_at": "2026-03-27T08:27:36+00:00",
+      "last_fetch_at": "2026-03-27T11:12:44+00:00",
+      "is_anomaly": true,
+      "is_stale": true,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x08d7ea3c148672c4b03999eb0d0467733da2db6a&outputCurrency=0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+      "token_info_url": null,
+      "coin_id": "nostra",
+      "target_coin_id": "usd-coin",
+      "coin_mcap_usd": 700646.4637454884
+    }
+  ],
+  "status_updates": []
+}

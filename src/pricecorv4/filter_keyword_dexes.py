@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 """
-CoinGecko Exchange ID Filter - Two Stage
-=======================================
+CoinGecko Exchange ID Filter - Two Stage (JSON Output)
+======================================================
 First keeps exchanges matching INCLUDE_KEYWORDS, 
 then removes any that match EXCLUDE_KEYWORDS.
+
+Output is now saved as a JSON array instead of plain text.
 """
 
 # =============================================================================
@@ -11,7 +13,7 @@ then removes any that match EXCLUDE_KEYWORDS.
 # =============================================================================
 
 JSON_FILE = "coingecko_exchange_ids.json"          
-OUTPUT_FILE = "filtered_exchanges.txt"             
+OUTPUT_FILE = "filtered_exchanges.json"             # ← Changed to JSON
 
 # === STAGE 1: INCLUDE ===
 # Keep ONLY exchanges that match ANY of these keywords
@@ -57,6 +59,9 @@ EXCLUDE_KEYWORDS = [
     "soneium",
     "eclipse",
     "abstract",
+    "stableswap",
+    "v1",
+    "pancakeswap-v2",
 ]
 
 SHOW_PREVIEW = True                                
@@ -134,9 +139,10 @@ def print_preview(filtered: list[str], count: int):
 
 
 def save_filtered(filtered: list[str], output_path: str):
-    """Save the filtered list to a plain text file."""
+    """Save the filtered list as a JSON array (pretty-printed)."""
     with open(output_path, "w", encoding="utf-8") as f:
-        f.write("\n".join(filtered))
+        json.dump(filtered, f, indent=2)   # ← JSON output with readable formatting
+    
     print(f"💾 Saved {len(filtered):,} exchanges to → {output_path}")
 
 
@@ -154,6 +160,11 @@ def main():
     # Save
     if SAVE_TO_FILE and filtered:
         save_filtered(filtered, OUTPUT_FILE)
+    elif SAVE_TO_FILE and not filtered:
+        # Still create a valid (empty) JSON file for consistency
+        with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
+            json.dump([], f, indent=2)
+        print(f"💾 Saved empty JSON array to → {OUTPUT_FILE}")
     
     # Final stats
     print(f"\n📊 Summary")

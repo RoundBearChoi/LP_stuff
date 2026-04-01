@@ -1,0 +1,159 @@
+{
+  "name": "PancakeSwap V2 (Base)",
+  "year_established": 2023,
+  "country": null,
+  "description": "",
+  "url": "https://pancakeswap.finance/swap",
+  "image": "https://coin-images.coingecko.com/markets/images/1607/small/pancakeswap-cake-logo.png?1716370098",
+  "facebook_url": "",
+  "reddit_url": "",
+  "telegram_url": "",
+  "slack_url": "",
+  "other_url_1": "",
+  "other_url_2": "",
+  "twitter_handle": "pancakeswap",
+  "has_trading_incentive": false,
+  "centralized": false,
+  "public_notice": "",
+  "alert_notice": "",
+  "trust_score": 3,
+  "trust_score_rank": 474,
+  "coins": 2,
+  "pairs": 6,
+  "trade_volume_24h_btc": 0.0535039082789415,
+  "tickers": [
+    {
+      "base": "0XC694A91E6B071BF030A18BD3053A7FE09B6DAE69",
+      "target": "0X4200000000000000000000000000000000000006",
+      "market": {
+        "name": "PancakeSwap V2 (Base)",
+        "identifier": "pancakeswap-v2-base",
+        "has_trading_incentive": false
+      },
+      "last": 9.630888157e-05,
+      "volume": 17610.1027134768,
+      "converted_last": {
+        "btc": 3e-06,
+        "eth": 9.635e-05,
+        "usd": 0.204878
+      },
+      "converted_volume": {
+        "btc": 0.05328103,
+        "eth": 1.713833,
+        "usd": 3644.15
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.607057,
+      "timestamp": "2026-04-01T09:14:11+00:00",
+      "last_traded_at": "2026-04-01T09:14:11+00:00",
+      "last_fetch_at": "2026-04-01T13:14:08+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0xc694a91e6b071bf030a18bd3053a7fe09b6dae69&outputCurrency=<",
+      "token_info_url": null,
+      "coin_id": "cow-protocol",
+      "target_coin_id": "l2-standard-bridged-weth-base",
+      "coin_mcap_usd": 114784873.16289471
+    },
+    {
+      "base": "0X029C58A909FBE3D4BE85A24F414DDA923A3FDE0F",
+      "target": "0X4200000000000000000000000000000000000006",
+      "market": {
+        "name": "PancakeSwap V2 (Base)",
+        "identifier": "pancakeswap-v2-base",
+        "has_trading_incentive": false
+      },
+      "last": 1.040476226e-06,
+      "volume": 10848.1867021274,
+      "converted_last": {
+        "btc": 3.2365e-08,
+        "eth": 1.04e-06,
+        "usd": 0.00221341
+      },
+      "converted_volume": {
+        "btc": 0.00035404,
+        "eth": 0.01138009,
+        "usd": 24.21
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.711407,
+      "timestamp": "2026-04-01T12:07:21+00:00",
+      "last_traded_at": "2026-04-01T12:07:21+00:00",
+      "last_fetch_at": "2026-04-01T13:13:49+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x029c58a909fbe3d4be85a24f414dda923a3fde0f&outputCurrency=<",
+      "token_info_url": null,
+      "coin_id": "defi-ira",
+      "target_coin_id": "l2-standard-bridged-weth-base",
+      "coin_mcap_usd": 464124.5338176835
+    },
+    {
+      "base": "0X029C58A909FBE3D4BE85A24F414DDA923A3FDE0F",
+      "target": "0XCBB7C0000AB88B473B1F5AFD9EF808440EED33BF",
+      "market": {
+        "name": "PancakeSwap V2 (Base)",
+        "identifier": "pancakeswap-v2-base",
+        "has_trading_incentive": false
+      },
+      "last": 3.223406281e-08,
+      "volume": 1623.0453083486,
+      "converted_last": {
+        "btc": 3.2365e-08,
+        "eth": 1.04e-06,
+        "usd": 0.00221341
+      },
+      "converted_volume": {
+        "btc": 5.268e-05,
+        "eth": 0.00169345,
+        "usd": 3.6
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.805869,
+      "timestamp": "2026-04-01T12:45:22+00:00",
+      "last_traded_at": "2026-04-01T12:45:22+00:00",
+      "last_fetch_at": "2026-04-01T13:13:49+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x029c58a909fbe3d4be85a24f414dda923a3fde0f&outputCurrency=<",
+      "token_info_url": null,
+      "coin_id": "defi-ira",
+      "target_coin_id": "coinbase-wrapped-btc",
+      "coin_mcap_usd": 464124.5338176835
+    },
+    {
+      "base": "0X029C58A909FBE3D4BE85A24F414DDA923A3FDE0F",
+      "target": "0X940181A94A35A4569E4529A3CDFB74E38FD98631",
+      "market": {
+        "name": "PancakeSwap V2 (Base)",
+        "identifier": "pancakeswap-v2-base",
+        "has_trading_incentive": false
+      },
+      "last": 0.006823366381,
+      "volume": 1308.6657305943,
+      "converted_last": {
+        "btc": 3.2314e-08,
+        "eth": 1.04e-06,
+        "usd": 0.00220611
+      },
+      "converted_volume": {
+        "btc": 4.229e-05,
+        "eth": 0.00136218,
+        "usd": 2.89
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.890477,
+      "timestamp": "2026-03-31T23:20:36+00:00",
+      "last_traded_at": "2026-03-31T23:20:36+00:00",
+      "last_fetch_at": "2026-04-01T13:06:15+00:00",
+      "is_anomaly": false,
+      "is_stale": true,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x029c58a909fbe3d4be85a24f414dda923a3fde0f&outputCurrency=<",
+      "token_info_url": null,
+      "coin_id": "defi-ira",
+      "target_coin_id": "aerodrome-finance",
+      "coin_mcap_usd": 464124.5338176835
+    }
+  ],
+  "status_updates": []
+}

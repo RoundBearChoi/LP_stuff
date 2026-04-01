@@ -1,0 +1,390 @@
+{
+  "name": "PancakeSwap (Stableswap)",
+  "year_established": 2022,
+  "country": null,
+  "description": "",
+  "url": "https://pancakeswap.finance/swap",
+  "image": "https://coin-images.coingecko.com/markets/images/1035/small/pancakeswap.jpeg?1706865064",
+  "facebook_url": "",
+  "reddit_url": "",
+  "telegram_url": "https://t.me/PancakeSwap",
+  "slack_url": "",
+  "other_url_1": "",
+  "other_url_2": "",
+  "twitter_handle": "pancakeswap",
+  "has_trading_incentive": false,
+  "centralized": false,
+  "public_notice": "",
+  "alert_notice": "",
+  "trust_score": 4,
+  "trust_score_rank": 609,
+  "coins": 9,
+  "pairs": 12,
+  "trade_volume_24h_btc": 3.0093551062360215,
+  "tickers": [
+    {
+      "base": "0X55D398326F99059FF775485246999027B3197955",
+      "target": "0XE9E7CEA3DEDCA5984780BAFC599BD69ADD087D56",
+      "market": {
+        "name": "PancakeSwap (Stableswap)",
+        "identifier": "pancakeswap_stableswap",
+        "has_trading_incentive": false
+      },
+      "last": 0.999774473,
+      "volume": 139443.026333542,
+      "converted_last": {
+        "btc": 1.463e-05,
+        "eth": 0.00047051,
+        "usd": 0.999634
+      },
+      "converted_volume": {
+        "btc": 2.03938,
+        "eth": 65.597,
+        "usd": 139367
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.602888,
+      "timestamp": "2026-04-01T13:10:04+00:00",
+      "last_traded_at": "2026-04-01T13:10:04+00:00",
+      "last_fetch_at": "2026-04-01T13:12:02+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x55d398326f99059ff775485246999027b3197955&outputCurrency=0xe9e7cea3dedca5984780bafc599bd69add087d56",
+      "token_info_url": null,
+      "coin_id": "binance-bridged-usdt-bnb-smart-chain",
+      "target_coin_id": "binance-peg-busd",
+      "coin_mcap_usd": 8981071812.489912
+    },
+    {
+      "base": "0X8AC76A51CC950D9822D68B83FE1AD97B32CD580D",
+      "target": "0XE9E7CEA3DEDCA5984780BAFC599BD69ADD087D56",
+      "market": {
+        "name": "PancakeSwap (Stableswap)",
+        "identifier": "pancakeswap_stableswap",
+        "has_trading_incentive": false
+      },
+      "last": 0.9999645348,
+      "volume": 26296.4467145058,
+      "converted_last": {
+        "btc": 1.463e-05,
+        "eth": 0.0004706,
+        "usd": 0.999824
+      },
+      "converted_volume": {
+        "btc": 0.38470991,
+        "eth": 12.374329,
+        "usd": 26290
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.605107,
+      "timestamp": "2026-04-01T13:10:04+00:00",
+      "last_traded_at": "2026-04-01T13:10:04+00:00",
+      "last_fetch_at": "2026-04-01T13:12:02+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d&outputCurrency=0xe9e7cea3dedca5984780bafc599bd69add087d56",
+      "token_info_url": null,
+      "coin_id": "binance-bridged-usdc-bnb-smart-chain",
+      "target_coin_id": "binance-peg-busd",
+      "coin_mcap_usd": 1288849656.9956732
+    },
+    {
+      "base": "0X55D398326F99059FF775485246999027B3197955",
+      "target": "0X8AC76A51CC950D9822D68B83FE1AD97B32CD580D",
+      "market": {
+        "name": "PancakeSwap (Stableswap)",
+        "identifier": "pancakeswap_stableswap",
+        "has_trading_incentive": false
+      },
+      "last": 0.9998229208,
+      "volume": 21628.6884671631,
+      "converted_last": {
+        "btc": 1.463e-05,
+        "eth": 0.00047052,
+        "usd": 0.999647
+      },
+      "converted_volume": {
+        "btc": 0.31632291,
+        "eth": 10.174637,
+        "usd": 21617
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.603952,
+      "timestamp": "2026-04-01T13:05:04+00:00",
+      "last_traded_at": "2026-04-01T13:05:04+00:00",
+      "last_fetch_at": "2026-04-01T13:12:02+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x55d398326f99059ff775485246999027b3197955&outputCurrency=0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d",
+      "token_info_url": null,
+      "coin_id": "binance-bridged-usdt-bnb-smart-chain",
+      "target_coin_id": "binance-bridged-usdc-bnb-smart-chain",
+      "coin_mcap_usd": 8981071812.489912
+    },
+    {
+      "base": "0X5A110FC00474038F6C02E89C707D638602EA44B5",
+      "target": "0X55D398326F99059FF775485246999027B3197955",
+      "market": {
+        "name": "PancakeSwap (Stableswap)",
+        "identifier": "pancakeswap_stableswap",
+        "has_trading_incentive": false
+      },
+      "last": 0.9989842353,
+      "volume": 13565.962687616,
+      "converted_last": {
+        "btc": 1.461e-05,
+        "eth": 0.00047,
+        "usd": 0.998544
+      },
+      "converted_volume": {
+        "btc": 0.19814948,
+        "eth": 6.373547,
+        "usd": 13541.08
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.603474,
+      "timestamp": "2026-04-01T11:22:55+00:00",
+      "last_traded_at": "2026-04-01T11:22:55+00:00",
+      "last_fetch_at": "2026-04-01T13:12:02+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x5a110fc00474038f6c02e89c707d638602ea44b5&outputCurrency=0x55d398326f99059ff775485246999027b3197955",
+      "token_info_url": null,
+      "coin_id": "astherus-usdf",
+      "target_coin_id": "binance-bridged-usdt-bnb-smart-chain",
+      "coin_mcap_usd": 121336563.62190399
+    },
+    {
+      "base": "0X0782B6D8C4551B9760E74C0545A9BCD90BDC41E5",
+      "target": "0X55D398326F99059FF775485246999027B3197955",
+      "market": {
+        "name": "PancakeSwap (Stableswap)",
+        "identifier": "pancakeswap_stableswap",
+        "has_trading_incentive": false
+      },
+      "last": 0.9989056302,
+      "volume": 3683.9829984443,
+      "converted_last": {
+        "btc": 1.461e-05,
+        "eth": 0.00046996,
+        "usd": 0.998465
+      },
+      "converted_volume": {
+        "btc": 0.05382581,
+        "eth": 1.731326,
+        "usd": 3678.33
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.602732,
+      "timestamp": "2026-04-01T13:09:01+00:00",
+      "last_traded_at": "2026-04-01T13:09:01+00:00",
+      "last_fetch_at": "2026-04-01T13:12:02+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x0782b6d8c4551b9760e74c0545a9bcd90bdc41e5&outputCurrency=0x55d398326f99059ff775485246999027b3197955",
+      "token_info_url": null,
+      "coin_id": "helio-protocol-hay",
+      "target_coin_id": "binance-bridged-usdt-bnb-smart-chain",
+      "coin_mcap_usd": 76205673.61986952
+    },
+    {
+      "base": "0X64748EA3E31D0B7916F0FF91B017B9F404DED8EF",
+      "target": "0X8AC76A51CC950D9822D68B83FE1AD97B32CD580D",
+      "market": {
+        "name": "PancakeSwap (Stableswap)",
+        "identifier": "pancakeswap_stableswap",
+        "has_trading_incentive": false
+      },
+      "last": 1.0417983086,
+      "volume": 141.3212925606,
+      "converted_last": {
+        "btc": 1.524e-05,
+        "eth": 0.00049027,
+        "usd": 1.042
+      },
+      "converted_volume": {
+        "btc": 0.00215455,
+        "eth": 0.0693019,
+        "usd": 147.24
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.617643,
+      "timestamp": "2026-04-01T10:52:30+00:00",
+      "last_traded_at": "2026-04-01T10:52:30+00:00",
+      "last_fetch_at": "2026-04-01T13:12:02+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x64748ea3e31d0b7916f0ff91b017b9f404ded8ef&outputCurrency=0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d",
+      "token_info_url": null,
+      "coin_id": "compounding-open-dollar",
+      "target_coin_id": "binance-bridged-usdc-bnb-smart-chain",
+      "coin_mcap_usd": 30212631.88911503
+    },
+    {
+      "base": "0X8D0D000EE44948FC98C9B98A4FA4921476F08B0D",
+      "target": "0X55D398326F99059FF775485246999027B3197955",
+      "market": {
+        "name": "PancakeSwap (Stableswap)",
+        "identifier": "pancakeswap_stableswap",
+        "has_trading_incentive": false
+      },
+      "last": 1.0000908083,
+      "volume": 615.4204852514,
+      "converted_last": {
+        "btc": 1.464e-05,
+        "eth": 0.00047129,
+        "usd": 0.999721
+      },
+      "converted_volume": {
+        "btc": 0.00900898,
+        "eth": 0.29008083,
+        "usd": 615.34
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.781064,
+      "timestamp": "2026-04-01T13:04:21+00:00",
+      "last_traded_at": "2026-04-01T13:04:21+00:00",
+      "last_fetch_at": "2026-04-01T13:04:21+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x8d0d000ee44948fc98c9b98a4fa4921476f08b0d&outputCurrency=0x55d398326f99059ff775485246999027b3197955",
+      "token_info_url": null,
+      "coin_id": "usd1-wlfi",
+      "target_coin_id": "binance-bridged-usdt-bnb-smart-chain",
+      "coin_mcap_usd": 4395646929.646163
+    },
+    {
+      "base": "0X64748EA3E31D0B7916F0FF91B017B9F404DED8EF",
+      "target": "0X55D398326F99059FF775485246999027B3197955",
+      "market": {
+        "name": "PancakeSwap (Stableswap)",
+        "identifier": "pancakeswap_stableswap",
+        "has_trading_incentive": false
+      },
+      "last": 1.0421189078,
+      "volume": 2.8344668775,
+      "converted_last": {
+        "btc": 1.524e-05,
+        "eth": 0.00049033,
+        "usd": 1.042
+      },
+      "converted_volume": {
+        "btc": 4.321e-05,
+        "eth": 0.00138986,
+        "usd": 2.95
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.632237,
+      "timestamp": "2026-04-01T11:09:34+00:00",
+      "last_traded_at": "2026-04-01T11:09:34+00:00",
+      "last_fetch_at": "2026-04-01T13:12:02+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x64748ea3e31d0b7916f0ff91b017b9f404ded8ef&outputCurrency=0x55d398326f99059ff775485246999027b3197955",
+      "token_info_url": null,
+      "coin_id": "compounding-open-dollar",
+      "target_coin_id": "binance-bridged-usdt-bnb-smart-chain",
+      "coin_mcap_usd": 30212631.88911503
+    },
+    {
+      "base": "0X917AF46B3C3C6E1BB7286B9F59637FB7C65851FB",
+      "target": "0X55D398326F99059FF775485246999027B3197955",
+      "market": {
+        "name": "PancakeSwap (Stableswap)",
+        "identifier": "pancakeswap_stableswap",
+        "has_trading_incentive": false
+      },
+      "last": 1.0591940368,
+      "volume": 116.0320288218,
+      "converted_last": {
+        "btc": 1.544e-05,
+        "eth": 0.00049612,
+        "usd": 1.059
+      },
+      "converted_volume": {
+        "btc": 0.00179105,
+        "eth": 0.05756624,
+        "usd": 122.85
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.604347,
+      "timestamp": "2026-03-31T10:00:39+00:00",
+      "last_traded_at": "2026-03-31T10:00:39+00:00",
+      "last_fetch_at": "2026-04-01T10:03:17+00:00",
+      "is_anomaly": false,
+      "is_stale": true,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x917af46b3c3c6e1bb7286b9f59637fb7c65851fb&outputCurrency=0x55d398326f99059ff775485246999027b3197955",
+      "token_info_url": null,
+      "coin_id": "astherus-staked-usdf",
+      "target_coin_id": "binance-bridged-usdt-bnb-smart-chain",
+      "coin_mcap_usd": 5935682.690953611
+    },
+    {
+      "base": "0X5A110FC00474038F6C02E89C707D638602EA44B5",
+      "target": "0X917AF46B3C3C6E1BB7286B9F59637FB7C65851FB",
+      "market": {
+        "name": "PancakeSwap (Stableswap)",
+        "identifier": "pancakeswap_stableswap",
+        "has_trading_incentive": false
+      },
+      "last": 0.9418626616,
+      "volume": 123.1942124352,
+      "converted_last": {
+        "btc": 1.456e-05,
+        "eth": 0.00046792,
+        "usd": 0.998606
+      },
+      "converted_volume": {
+        "btc": 0.00179351,
+        "eth": 0.05764524,
+        "usd": 123.02
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.60435,
+      "timestamp": "2026-03-31T10:00:40+00:00",
+      "last_traded_at": "2026-03-31T10:00:40+00:00",
+      "last_fetch_at": "2026-04-01T10:03:17+00:00",
+      "is_anomaly": false,
+      "is_stale": true,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x5a110fc00474038f6c02e89c707d638602ea44b5&outputCurrency=0x917af46b3c3c6e1bb7286b9f59637fb7c65851fb",
+      "token_info_url": null,
+      "coin_id": "astherus-usdf",
+      "target_coin_id": "astherus-staked-usdf",
+      "coin_mcap_usd": 121336563.62190399
+    },
+    {
+      "base": "0X1BDD3CF7F79CFB8EDBB955F20AD99211551BA275",
+      "target": "0XBB4CDB9CBD36B01BD1CBAEBF2DE08D9173BC095C",
+      "market": {
+        "name": "PancakeSwap (Stableswap)",
+        "identifier": "pancakeswap_stableswap",
+        "has_trading_incentive": false
+      },
+      "last": 1.1127243585,
+      "volume": 0.004654245195,
+      "converted_last": {
+        "btc": 0.01000867,
+        "eth": 0.32226979,
+        "usd": 683.62
+      },
+      "converted_volume": {
+        "btc": 4.658e-05,
+        "eth": 0.00149992,
+        "usd": 3.18
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 1.169948,
+      "timestamp": "2026-03-31T13:57:51+00:00",
+      "last_traded_at": "2026-03-31T13:57:51+00:00",
+      "last_fetch_at": "2026-04-01T13:04:21+00:00",
+      "is_anomaly": false,
+      "is_stale": true,
+      "trade_url": "https://pancakeswap.finance/swap?inputCurrency=0x1bdd3cf7f79cfb8edbb955f20ad99211551ba275&outputCurrency=0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c",
+      "token_info_url": null,
+      "coin_id": "stader-bnbx",
+      "target_coin_id": "wbnb",
+      "coin_mcap_usd": 2543673.4708291385
+    }
+  ],
+  "status_updates": []
+}
