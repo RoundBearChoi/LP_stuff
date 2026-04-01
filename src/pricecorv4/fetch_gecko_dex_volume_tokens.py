@@ -9,18 +9,10 @@ import termios
 # =============== CONFIG SECTION ===============
 # Top DEX IDs (get more from https://www.coingecko.com/en/exchanges/decentralized — use the URL slug)
 DEX_EXCHANGE_IDS = [
-    "uniswap-v3-ethereum",      # #1 by volume often
-    "pancakeswap-v3-bsc",       # #2
-    "uniswap-v3-bsc",
-    "uniswap-v3-base",
-    "uniswap-v3-arbitrum-one",
-    "raydium",                  # Solana
-    "orca",                     # Solana
-    # Add more here (e.g. "jupiter", "meteora", "pump-fun", etc.)
+    "uniswap_v3",
 ]
 
-# Max pages per DEX (higher = more complete volume capture; 5-10 is usually enough for top tokens)
-MAX_PAGES_PER_DEX = 10
+MAX_PAGES_PER_DEX = 2
 
 # Use symbol format for pairs on DEX (cleaner than contract addresses)
 DEX_PAIR_FORMAT = "symbol"   # "symbol" or "contract_address"
