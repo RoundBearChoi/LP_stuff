@@ -24,6 +24,7 @@ INCLUDE_KEYWORDS = [
     "orca",
     "fluid",
     "raydium",
+    "changenow",
     #"curve",
     #"hyperliquid",
     #"balancer",
