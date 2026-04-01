@@ -1,0 +1,984 @@
+{
+  "name": "Uniswap V3 (Abstract)",
+  "year_established": null,
+  "country": null,
+  "description": "",
+  "url": "https://app.uniswap.org/swap",
+  "image": "https://coin-images.coingecko.com/markets/images/11840/small/uniswap.jpg?1738034098",
+  "facebook_url": "",
+  "reddit_url": "",
+  "telegram_url": "",
+  "slack_url": "",
+  "other_url_1": "",
+  "other_url_2": "",
+  "twitter_handle": "Uniswap",
+  "has_trading_incentive": false,
+  "centralized": false,
+  "public_notice": "",
+  "alert_notice": "",
+  "trust_score": 4,
+  "trust_score_rank": 611,
+  "coins": 15,
+  "pairs": 29,
+  "trade_volume_24h_btc": 2.6909968670750257,
+  "tickers": [
+    {
+      "base": "0X84A71CCD554CC1B02749B35D22F684CC8EC987E1",
+      "target": "0X3439153EB7AF838AD19D56E1571FBD09333C2809",
+      "market": {
+        "name": "Uniswap V3 (Abstract)",
+        "identifier": "uniswap-v3-abstract",
+        "has_trading_incentive": false
+      },
+      "last": 0.0004689760233,
+      "volume": 60910.161356,
+      "converted_last": {
+        "btc": 1.459e-05,
+        "eth": 0.0004688,
+        "usd": 0.999177
+      },
+      "converted_volume": {
+        "btc": 0.90562344,
+        "eth": 29.10487,
+        "usd": 62033
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.604506,
+      "timestamp": "2026-04-01T11:10:53+00:00",
+      "last_traded_at": "2026-04-01T11:10:53+00:00",
+      "last_fetch_at": "2026-04-01T11:10:53+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/#/swap?inputCurrency=0x84a71ccd554cc1b02749b35d22f684cc8ec987e1&outputCurrency=0x3439153eb7af838ad19d56e1571fbd09333c2809",
+      "token_info_url": null,
+      "coin_id": "stargate-bridged-usdc",
+      "target_coin_id": "l2-standard-bridged-weth-abstract",
+      "coin_mcap_usd": 39896542.458625324
+    },
+    {
+      "base": "0X9EBE3A824CA958E4B3DA772D2065518F009CBA62",
+      "target": "0X3439153EB7AF838AD19D56E1571FBD09333C2809",
+      "market": {
+        "name": "Uniswap V3 (Abstract)",
+        "identifier": "uniswap-v3-abstract",
+        "has_trading_incentive": false
+      },
+      "last": 3.081288405e-06,
+      "volume": 6259380.77442247,
+      "converted_last": {
+        "btc": 9.5864e-08,
+        "eth": 3.08e-06,
+        "usd": 0.00656646
+      },
+      "converted_volume": {
+        "btc": 0.60236249,
+        "eth": 19.358689,
+        "usd": 41260
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.603378,
+      "timestamp": "2026-04-01T11:04:39+00:00",
+      "last_traded_at": "2026-04-01T11:04:39+00:00",
+      "last_fetch_at": "2026-04-01T11:10:53+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/#/swap?inputCurrency=0x9ebe3a824ca958e4b3da772d2065518f009cba62&outputCurrency=0x3439153eb7af838ad19d56e1571fbd09333c2809",
+      "token_info_url": null,
+      "coin_id": "pudgy-penguins",
+      "target_coin_id": "l2-standard-bridged-weth-abstract",
+      "coin_mcap_usd": 412882431.67913234
+    },
+    {
+      "base": "0X84A71CCD554CC1B02749B35D22F684CC8EC987E1",
+      "target": "0X9EBE3A824CA958E4B3DA772D2065518F009CBA62",
+      "market": {
+        "name": "Uniswap V3 (Abstract)",
+        "identifier": "uniswap-v3-abstract",
+        "has_trading_incentive": false
+      },
+      "last": 152.371428879,
+      "volume": 36411.875242,
+      "converted_last": {
+        "btc": 1.461e-05,
+        "eth": 0.0004695,
+        "usd": 1.001
+      },
+      "converted_volume": {
+        "btc": 0.53724023,
+        "eth": 17.267377,
+        "usd": 36798
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.622851,
+      "timestamp": "2026-04-01T11:11:02+00:00",
+      "last_traded_at": "2026-04-01T11:11:02+00:00",
+      "last_fetch_at": "2026-04-01T11:11:02+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/#/swap?inputCurrency=0x84a71ccd554cc1b02749b35d22f684cc8ec987e1&outputCurrency=0x9ebe3a824ca958e4b3da772d2065518f009cba62",
+      "token_info_url": null,
+      "coin_id": "stargate-bridged-usdc",
+      "target_coin_id": "pudgy-penguins",
+      "coin_mcap_usd": 39896542.458625324
+    },
+    {
+      "base": "0XA9053DC939D74222F7AA0B3A2BE407ABBFD56C6A",
+      "target": "0X3439153EB7AF838AD19D56E1571FBD09333C2809",
+      "market": {
+        "name": "Uniswap V3 (Abstract)",
+        "identifier": "uniswap-v3-abstract",
+        "has_trading_incentive": false
+      },
+      "last": 1.642670258e-05,
+      "volume": 403660.64643061,
+      "converted_last": {
+        "btc": 5.11064e-07,
+        "eth": 1.642e-05,
+        "usd": 0.03500653
+      },
+      "converted_volume": {
+        "btc": 0.20953723,
+        "eth": 6.734095,
+        "usd": 14352.73
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.603207,
+      "timestamp": "2026-04-01T10:45:36+00:00",
+      "last_traded_at": "2026-04-01T10:45:36+00:00",
+      "last_fetch_at": "2026-04-01T11:10:53+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/#/swap?inputCurrency=0xa9053dc939d74222f7aa0b3a2be407abbfd56c6a&outputCurrency=0x3439153eb7af838ad19d56e1571fbd09333c2809",
+      "token_info_url": null,
+      "coin_id": "yield-guild-games",
+      "target_coin_id": "l2-standard-bridged-weth-abstract",
+      "coin_mcap_usd": 25272464.638065223
+    },
+    {
+      "base": "0X0709F39376DEEE2A2DFC94A58EDEB2EB9DF012BD",
+      "target": "0X9EBE3A824CA958E4B3DA772D2065518F009CBA62",
+      "market": {
+        "name": "Uniswap V3 (Abstract)",
+        "identifier": "uniswap-v3-abstract",
+        "has_trading_incentive": false
+      },
+      "last": 152.1642953335,
+      "volume": 13691.337907,
+      "converted_last": {
+        "btc": 1.459e-05,
+        "eth": 0.00046886,
+        "usd": 0.99918
+      },
+      "converted_volume": {
+        "btc": 0.20202245,
+        "eth": 6.493181,
+        "usd": 13837.6
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.631387,
+      "timestamp": "2026-04-01T11:11:02+00:00",
+      "last_traded_at": "2026-04-01T11:11:02+00:00",
+      "last_fetch_at": "2026-04-01T11:11:02+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/#/swap?inputCurrency=0x0709f39376deee2a2dfc94a58edeb2eb9df012bd&outputCurrency=0x9ebe3a824ca958e4b3da772d2065518f009cba62",
+      "token_info_url": null,
+      "coin_id": "abstract-bridged-usdt-abstract",
+      "target_coin_id": "pudgy-penguins",
+      "coin_mcap_usd": 2950543.971182306
+    },
+    {
+      "base": "0X0709F39376DEEE2A2DFC94A58EDEB2EB9DF012BD",
+      "target": "0X84A71CCD554CC1B02749B35D22F684CC8EC987E1",
+      "market": {
+        "name": "Uniswap V3 (Abstract)",
+        "identifier": "uniswap-v3-abstract",
+        "has_trading_incentive": false
+      },
+      "last": 0.9995216798,
+      "volume": 7335.282317,
+      "converted_last": {
+        "btc": 1.457e-05,
+        "eth": 0.00046843,
+        "usd": 0.998265
+      },
+      "converted_volume": {
+        "btc": 0.10691653,
+        "eth": 3.436392,
+        "usd": 7323.29
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.609478,
+      "timestamp": "2026-04-01T11:06:07+00:00",
+      "last_traded_at": "2026-04-01T11:06:07+00:00",
+      "last_fetch_at": "2026-04-01T11:11:02+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/#/swap?inputCurrency=0x0709f39376deee2a2dfc94a58edeb2eb9df012bd&outputCurrency=0x84a71ccd554cc1b02749b35d22f684cc8ec987e1",
+      "token_info_url": null,
+      "coin_id": "abstract-bridged-usdt-abstract",
+      "target_coin_id": "stargate-bridged-usdc",
+      "coin_mcap_usd": 2950543.971182306
+    },
+    {
+      "base": "0X3439153EB7AF838AD19D56E1571FBD09333C2809",
+      "target": "0X9EBE3A824CA958E4B3DA772D2065518F009CBA62",
+      "market": {
+        "name": "Uniswap V3 (Abstract)",
+        "identifier": "uniswap-v3-abstract",
+        "has_trading_incentive": false
+      },
+      "last": 324198.341814703,
+      "volume": 1.0258934003,
+      "converted_last": {
+        "btc": 0.03107933,
+        "eth": 0.99877291,
+        "usd": 2129.3
+      },
+      "converted_volume": {
+        "btc": 0.03179211,
+        "eth": 1.021679,
+        "usd": 2178.13
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.864408,
+      "timestamp": "2026-04-01T11:10:02+00:00",
+      "last_traded_at": "2026-04-01T11:10:02+00:00",
+      "last_fetch_at": "2026-04-01T11:10:02+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/#/swap?inputCurrency=0x3439153eb7af838ad19d56e1571fbd09333c2809&outputCurrency=0x9ebe3a824ca958e4b3da772d2065518f009cba62",
+      "token_info_url": null,
+      "coin_id": "l2-standard-bridged-weth-abstract",
+      "target_coin_id": "pudgy-penguins",
+      "coin_mcap_usd": 6913550.208995612
+    },
+    {
+      "base": "0X84A71CCD554CC1B02749B35D22F684CC8EC987E1",
+      "target": "0X3439153EB7AF838AD19D56E1571FBD09333C2809",
+      "market": {
+        "name": "Uniswap V3 (Abstract)",
+        "identifier": "uniswap-v3-abstract",
+        "has_trading_incentive": false
+      },
+      "last": 0.0004668783291,
+      "volume": 915.910317,
+      "converted_last": {
+        "btc": 1.459e-05,
+        "eth": 0.00046878,
+        "usd": 0.999396
+      },
+      "converted_volume": {
+        "btc": 0.01370836,
+        "eth": 0.44053529,
+        "usd": 939.18
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.638805,
+      "timestamp": "2026-04-01T11:10:02+00:00",
+      "last_traded_at": "2026-04-01T11:10:02+00:00",
+      "last_fetch_at": "2026-04-01T11:10:02+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/#/swap?inputCurrency=0x84a71ccd554cc1b02749b35d22f684cc8ec987e1&outputCurrency=0x3439153eb7af838ad19d56e1571fbd09333c2809",
+      "token_info_url": null,
+      "coin_id": "stargate-bridged-usdc",
+      "target_coin_id": "l2-standard-bridged-weth-abstract",
+      "coin_mcap_usd": 39896542.458625324
+    },
+    {
+      "base": "0XA8726BD058BEA1973B61A9BC2A5E0E605B797307",
+      "target": "0X3439153EB7AF838AD19D56E1571FBD09333C2809",
+      "market": {
+        "name": "Uniswap V3 (Abstract)",
+        "identifier": "uniswap-v3-abstract",
+        "has_trading_incentive": false
+      },
+      "last": 1.0284761162,
+      "volume": 0.2242225533,
+      "converted_last": {
+        "btc": 0.03199866,
+        "eth": 1.028465,
+        "usd": 2191.76
+      },
+      "converted_volume": {
+        "btc": 0.00718382,
+        "eth": 0.23089433,
+        "usd": 492.06
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.627966,
+      "timestamp": "2026-04-01T10:52:03+00:00",
+      "last_traded_at": "2026-04-01T10:52:03+00:00",
+      "last_fetch_at": "2026-04-01T11:11:02+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/#/swap?inputCurrency=0xa8726bd058bea1973b61a9bc2a5e0e605b797307&outputCurrency=0x3439153eb7af838ad19d56e1571fbd09333c2809",
+      "token_info_url": null,
+      "coin_id": "abstract-liquid-staked-eth",
+      "target_coin_id": "l2-standard-bridged-weth-abstract",
+      "coin_mcap_usd": 250086.4199902347
+    },
+    {
+      "base": "0X84A71CCD554CC1B02749B35D22F684CC8EC987E1",
+      "target": "0X9EBE3A824CA958E4B3DA772D2065518F009CBA62",
+      "market": {
+        "name": "Uniswap V3 (Abstract)",
+        "identifier": "uniswap-v3-abstract",
+        "has_trading_incentive": false
+      },
+      "last": 151.8361371571,
+      "volume": 678.202565,
+      "converted_last": {
+        "btc": 1.456e-05,
+        "eth": 0.00046777,
+        "usd": 0.997244
+      },
+      "converted_volume": {
+        "btc": 0.01003913,
+        "eth": 0.32261995,
+        "usd": 687.8
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.733482,
+      "timestamp": "2026-04-01T10:16:46+00:00",
+      "last_traded_at": "2026-04-01T10:16:46+00:00",
+      "last_fetch_at": "2026-04-01T11:10:02+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/#/swap?inputCurrency=0x84a71ccd554cc1b02749b35d22f684cc8ec987e1&outputCurrency=0x9ebe3a824ca958e4b3da772d2065518f009cba62",
+      "token_info_url": null,
+      "coin_id": "stargate-bridged-usdc",
+      "target_coin_id": "pudgy-penguins",
+      "coin_mcap_usd": 39896542.458625324
+    },
+    {
+      "base": "0X0709F39376DEEE2A2DFC94A58EDEB2EB9DF012BD",
+      "target": "0X3439153EB7AF838AD19D56E1571FBD09333C2809",
+      "market": {
+        "name": "Uniswap V3 (Abstract)",
+        "identifier": "uniswap-v3-abstract",
+        "has_trading_incentive": false
+      },
+      "last": 0.0004684324374,
+      "volume": 259.020303,
+      "converted_last": {
+        "btc": 1.457e-05,
+        "eth": 0.00046835,
+        "usd": 0.998483
+      },
+      "converted_volume": {
+        "btc": 0.00385603,
+        "eth": 0.1239182,
+        "usd": 264.18
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.660261,
+      "timestamp": "2026-04-01T11:10:03+00:00",
+      "last_traded_at": "2026-04-01T11:10:03+00:00",
+      "last_fetch_at": "2026-04-01T11:10:03+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/#/swap?inputCurrency=0x0709f39376deee2a2dfc94a58edeb2eb9df012bd&outputCurrency=0x3439153eb7af838ad19d56e1571fbd09333c2809",
+      "token_info_url": null,
+      "coin_id": "abstract-bridged-usdt-abstract",
+      "target_coin_id": "l2-standard-bridged-weth-abstract",
+      "coin_mcap_usd": 2950543.971182306
+    },
+    {
+      "base": "0X3439153EB7AF838AD19D56E1571FBD09333C2809",
+      "target": "0X9EBE3A824CA958E4B3DA772D2065518F009CBA62",
+      "market": {
+        "name": "Uniswap V3 (Abstract)",
+        "identifier": "uniswap-v3-abstract",
+        "has_trading_incentive": false
+      },
+      "last": 324177.750731851,
+      "volume": 0.1251098076,
+      "converted_last": {
+        "btc": 0.03107735,
+        "eth": 0.99870947,
+        "usd": 2129.17
+      },
+      "converted_volume": {
+        "btc": 0.00387483,
+        "eth": 0.12452259,
+        "usd": 265.47
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 1.049232,
+      "timestamp": "2026-04-01T10:34:44+00:00",
+      "last_traded_at": "2026-04-01T10:34:44+00:00",
+      "last_fetch_at": "2026-04-01T11:10:03+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/#/swap?inputCurrency=0x3439153eb7af838ad19d56e1571fbd09333c2809&outputCurrency=0x9ebe3a824ca958e4b3da772d2065518f009cba62",
+      "token_info_url": null,
+      "coin_id": "l2-standard-bridged-weth-abstract",
+      "target_coin_id": "pudgy-penguins",
+      "coin_mcap_usd": 6913550.208995612
+    },
+    {
+      "base": "0XA8726BD058BEA1973B61A9BC2A5E0E605B797307",
+      "target": "0X3439153EB7AF838AD19D56E1571FBD09333C2809",
+      "market": {
+        "name": "Uniswap V3 (Abstract)",
+        "identifier": "uniswap-v3-abstract",
+        "has_trading_incentive": false
+      },
+      "last": 1.0296083082,
+      "volume": 0.1069347483,
+      "converted_last": {
+        "btc": 0.03199799,
+        "eth": 1.028295,
+        "usd": 2192.24
+      },
+      "converted_volume": {
+        "btc": 0.0034232,
+        "eth": 0.11000867,
+        "usd": 234.53
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 1.008142,
+      "timestamp": "2026-04-01T10:52:49+00:00",
+      "last_traded_at": "2026-04-01T10:52:49+00:00",
+      "last_fetch_at": "2026-04-01T11:10:02+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/#/swap?inputCurrency=0xa8726bd058bea1973b61a9bc2a5e0e605b797307&outputCurrency=0x3439153eb7af838ad19d56e1571fbd09333c2809",
+      "token_info_url": null,
+      "coin_id": "abstract-liquid-staked-eth",
+      "target_coin_id": "l2-standard-bridged-weth-abstract",
+      "coin_mcap_usd": 250086.4199902347
+    },
+    {
+      "base": "0X0709F39376DEEE2A2DFC94A58EDEB2EB9DF012BD",
+      "target": "0X9EBE3A824CA958E4B3DA772D2065518F009CBA62",
+      "market": {
+        "name": "Uniswap V3 (Abstract)",
+        "identifier": "uniswap-v3-abstract",
+        "has_trading_incentive": false
+      },
+      "last": 151.7929048164,
+      "volume": 230.093182,
+      "converted_last": {
+        "btc": 1.455e-05,
+        "eth": 0.00046764,
+        "usd": 0.99696
+      },
+      "converted_volume": {
+        "btc": 0.00341124,
+        "eth": 0.10962437,
+        "usd": 233.71
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 1.203077,
+      "timestamp": "2026-04-01T11:10:03+00:00",
+      "last_traded_at": "2026-04-01T11:10:03+00:00",
+      "last_fetch_at": "2026-04-01T11:10:03+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/#/swap?inputCurrency=0x0709f39376deee2a2dfc94a58edeb2eb9df012bd&outputCurrency=0x9ebe3a824ca958e4b3da772d2065518f009cba62",
+      "token_info_url": null,
+      "coin_id": "abstract-bridged-usdt-abstract",
+      "target_coin_id": "pudgy-penguins",
+      "coin_mcap_usd": 2950543.971182306
+    },
+    {
+      "base": "0XD63B0E99303D51713F947195BF37188A943255A1",
+      "target": "0X3439153EB7AF838AD19D56E1571FBD09333C2809",
+      "market": {
+        "name": "Uniswap V3 (Abstract)",
+        "identifier": "uniswap-v3-abstract",
+        "has_trading_incentive": false
+      },
+      "last": 6.625111457e-11,
+      "volume": 644719091.562819,
+      "converted_last": {
+        "btc": 2.061e-12,
+        "eth": 6.6239e-11,
+        "usd": 1.41217e-07
+      },
+      "converted_volume": {
+        "btc": 0.00137396,
+        "eth": 0.04415403,
+        "usd": 94.13
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.675352,
+      "timestamp": "2026-04-01T06:53:42+00:00",
+      "last_traded_at": "2026-04-01T06:53:42+00:00",
+      "last_fetch_at": "2026-04-01T11:10:03+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/#/swap?inputCurrency=0xd63b0e99303d51713f947195bf37188a943255a1&outputCurrency=0x3439153eb7af838ad19d56e1571fbd09333c2809",
+      "token_info_url": null,
+      "coin_id": "rekt-4",
+      "target_coin_id": "l2-standard-bridged-weth-abstract",
+      "coin_mcap_usd": 59179074.322839834
+    },
+    {
+      "base": "0XCFD7CFEACC783A0D48CE076922B9D87AAB2C4C1B",
+      "target": "0X3439153EB7AF838AD19D56E1571FBD09333C2809",
+      "market": {
+        "name": "Uniswap V3 (Abstract)",
+        "identifier": "uniswap-v3-abstract",
+        "has_trading_incentive": false
+      },
+      "last": 1.244058999e-06,
+      "volume": 32812.4822990635,
+      "converted_last": {
+        "btc": 3.8667e-08,
+        "eth": 1.24e-06,
+        "usd": 0.00264915
+      },
+      "converted_volume": {
+        "btc": 0.00126025,
+        "eth": 0.04049981,
+        "usd": 86.34
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.68302,
+      "timestamp": "2026-04-01T11:10:03+00:00",
+      "last_traded_at": "2026-04-01T11:10:03+00:00",
+      "last_fetch_at": "2026-04-01T11:10:03+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/#/swap?inputCurrency=0xcfd7cfeacc783a0d48ce076922b9d87aab2c4c1b&outputCurrency=0x3439153eb7af838ad19d56e1571fbd09333c2809",
+      "token_info_url": null,
+      "coin_id": "borne",
+      "target_coin_id": "l2-standard-bridged-weth-abstract",
+      "coin_mcap_usd": 68408.05948921357
+    },
+    {
+      "base": "0X0709F39376DEEE2A2DFC94A58EDEB2EB9DF012BD",
+      "target": "0X84A71CCD554CC1B02749B35D22F684CC8EC987E1",
+      "market": {
+        "name": "Uniswap V3 (Abstract)",
+        "identifier": "uniswap-v3-abstract",
+        "has_trading_incentive": false
+      },
+      "last": 1.0000634688,
+      "volume": 22.172728,
+      "converted_last": {
+        "btc": 1.457e-05,
+        "eth": 0.00046835,
+        "usd": 0.998483
+      },
+      "converted_volume": {
+        "btc": 0.00032307,
+        "eth": 0.01038219,
+        "usd": 22.13
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.630409,
+      "timestamp": "2026-04-01T10:16:46+00:00",
+      "last_traded_at": "2026-04-01T10:16:46+00:00",
+      "last_fetch_at": "2026-04-01T11:10:02+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/#/swap?inputCurrency=0x0709f39376deee2a2dfc94a58edeb2eb9df012bd&outputCurrency=0x84a71ccd554cc1b02749b35d22f684cc8ec987e1",
+      "token_info_url": null,
+      "coin_id": "abstract-bridged-usdt-abstract",
+      "target_coin_id": "stargate-bridged-usdc",
+      "coin_mcap_usd": 2950543.971182306
+    },
+    {
+      "base": "0XC325B7E2736A5202BD860F5974D0AA375E57EDE5",
+      "target": "0X3439153EB7AF838AD19D56E1571FBD09333C2809",
+      "market": {
+        "name": "Uniswap V3 (Abstract)",
+        "identifier": "uniswap-v3-abstract",
+        "has_trading_incentive": false
+      },
+      "last": 1.192789474e-06,
+      "volume": 24654.026798103,
+      "converted_last": {
+        "btc": 3.6861e-08,
+        "eth": 1.18e-06,
+        "usd": 0.0025254
+      },
+      "converted_volume": {
+        "btc": 0.00089943,
+        "eth": 0.02890445,
+        "usd": 61.62
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.837682,
+      "timestamp": "2026-04-01T10:34:44+00:00",
+      "last_traded_at": "2026-04-01T10:34:44+00:00",
+      "last_fetch_at": "2026-04-01T11:10:02+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/#/swap?inputCurrency=0xc325b7e2736a5202bd860f5974d0aa375e57ede5&outputCurrency=0x3439153eb7af838ad19d56e1571fbd09333c2809",
+      "token_info_url": null,
+      "coin_id": "abster",
+      "target_coin_id": "l2-standard-bridged-weth-abstract",
+      "coin_mcap_usd": 2482578.7113415278
+    },
+    {
+      "base": "0XAE1454AC3D03124B4B3FA8E6F9305F78AA004BE6",
+      "target": "0X3439153EB7AF838AD19D56E1571FBD09333C2809",
+      "market": {
+        "name": "Uniswap V3 (Abstract)",
+        "identifier": "uniswap-v3-abstract",
+        "has_trading_incentive": false
+      },
+      "last": 3.652231575e-08,
+      "volume": 415198.426366409,
+      "converted_last": {
+        "btc": 1.136e-09,
+        "eth": 3.6516e-08,
+        "usd": 7.785e-05
+      },
+      "converted_volume": {
+        "btc": 0.00048396,
+        "eth": 0.01555262,
+        "usd": 33.16
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.721591,
+      "timestamp": "2026-04-01T04:05:25+00:00",
+      "last_traded_at": "2026-04-01T04:05:25+00:00",
+      "last_fetch_at": "2026-04-01T11:10:03+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/#/swap?inputCurrency=0xae1454ac3d03124b4b3fa8e6f9305f78aa004be6&outputCurrency=0x3439153eb7af838ad19d56e1571fbd09333c2809",
+      "token_info_url": null,
+      "coin_id": "uwu-69",
+      "target_coin_id": "l2-standard-bridged-weth-abstract",
+      "coin_mcap_usd": 76830.7318700547
+    },
+    {
+      "base": "0X0709F39376DEEE2A2DFC94A58EDEB2EB9DF012BD",
+      "target": "0X9EBE3A824CA958E4B3DA772D2065518F009CBA62",
+      "market": {
+        "name": "Uniswap V3 (Abstract)",
+        "identifier": "uniswap-v3-abstract",
+        "has_trading_incentive": false
+      },
+      "last": 150.6044230383,
+      "volume": 21.520648,
+      "converted_last": {
+        "btc": 1.444e-05,
+        "eth": 0.00046397,
+        "usd": 0.989154
+      },
+      "converted_volume": {
+        "btc": 0.00031485,
+        "eth": 0.0101181,
+        "usd": 21.57
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.813287,
+      "timestamp": "2026-04-01T10:16:47+00:00",
+      "last_traded_at": "2026-04-01T10:16:47+00:00",
+      "last_fetch_at": "2026-04-01T11:10:03+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/#/swap?inputCurrency=0x0709f39376deee2a2dfc94a58edeb2eb9df012bd&outputCurrency=0x9ebe3a824ca958e4b3da772d2065518f009cba62",
+      "token_info_url": null,
+      "coin_id": "abstract-bridged-usdt-abstract",
+      "target_coin_id": "pudgy-penguins",
+      "coin_mcap_usd": 2950543.971182306
+    },
+    {
+      "base": "0XC325B7E2736A5202BD860F5974D0AA375E57EDE5",
+      "target": "0X3439153EB7AF838AD19D56E1571FBD09333C2809",
+      "market": {
+        "name": "Uniswap V3 (Abstract)",
+        "identifier": "uniswap-v3-abstract",
+        "has_trading_incentive": false
+      },
+      "last": 1.184775442e-06,
+      "volume": 8574.5629944277,
+      "converted_last": {
+        "btc": 3.6861e-08,
+        "eth": 1.18e-06,
+        "usd": 0.0025254
+      },
+      "converted_volume": {
+        "btc": 0.00031277,
+        "eth": 0.01005114,
+        "usd": 21.43
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.909891,
+      "timestamp": "2026-04-01T10:52:48+00:00",
+      "last_traded_at": "2026-04-01T10:52:48+00:00",
+      "last_fetch_at": "2026-04-01T11:10:02+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/#/swap?inputCurrency=0xc325b7e2736a5202bd860f5974d0aa375e57ede5&outputCurrency=0x3439153eb7af838ad19d56e1571fbd09333c2809",
+      "token_info_url": null,
+      "coin_id": "abster",
+      "target_coin_id": "l2-standard-bridged-weth-abstract",
+      "coin_mcap_usd": 2482578.7113415278
+    },
+    {
+      "base": "0X3439153EB7AF838AD19D56E1571FBD09333C2809",
+      "target": "0X9EBE3A824CA958E4B3DA772D2065518F009CBA62",
+      "market": {
+        "name": "Uniswap V3 (Abstract)",
+        "identifier": "uniswap-v3-abstract",
+        "has_trading_incentive": false
+      },
+      "last": 325643.14767133,
+      "volume": 0.007593889618,
+      "converted_last": {
+        "btc": 0.03121784,
+        "eth": 1.003224,
+        "usd": 2138.79
+      },
+      "converted_volume": {
+        "btc": 0.00023503,
+        "eth": 0.00755291,
+        "usd": 16.1
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.95897,
+      "timestamp": "2026-04-01T11:10:02+00:00",
+      "last_traded_at": "2026-04-01T11:10:02+00:00",
+      "last_fetch_at": "2026-04-01T11:10:02+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/#/swap?inputCurrency=0x3439153eb7af838ad19d56e1571fbd09333c2809&outputCurrency=0x9ebe3a824ca958e4b3da772d2065518f009cba62",
+      "token_info_url": null,
+      "coin_id": "l2-standard-bridged-weth-abstract",
+      "target_coin_id": "pudgy-penguins",
+      "coin_mcap_usd": 6913550.208995612
+    },
+    {
+      "base": "0X84A71CCD554CC1B02749B35D22F684CC8EC987E1",
+      "target": "0X9EBE3A824CA958E4B3DA772D2065518F009CBA62",
+      "market": {
+        "name": "Uniswap V3 (Abstract)",
+        "identifier": "uniswap-v3-abstract",
+        "has_trading_incentive": false
+      },
+      "last": 151.5919208432,
+      "volume": 1679.079983,
+      "converted_last": {
+        "btc": 1.453e-05,
+        "eth": 0.00046702,
+        "usd": 0.99564
+      },
+      "converted_volume": {
+        "btc": 0.02480699,
+        "eth": 0.79720336,
+        "usd": 1699.57
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.7343,
+      "timestamp": "2026-04-01T11:10:03+00:00",
+      "last_traded_at": "2026-04-01T11:10:03+00:00",
+      "last_fetch_at": "2026-04-01T11:10:03+00:00",
+      "is_anomaly": true,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/#/swap?inputCurrency=0x84a71ccd554cc1b02749b35d22f684cc8ec987e1&outputCurrency=0x9ebe3a824ca958e4b3da772d2065518f009cba62",
+      "token_info_url": null,
+      "coin_id": "stargate-bridged-usdc",
+      "target_coin_id": "pudgy-penguins",
+      "coin_mcap_usd": 39896542.458625324
+    },
+    {
+      "base": "0XB4CF92868A1CD4115524014D6F1FC480BFE9ABF5",
+      "target": "0X3439153EB7AF838AD19D56E1571FBD09333C2809",
+      "market": {
+        "name": "Uniswap V3 (Abstract)",
+        "identifier": "uniswap-v3-abstract",
+        "has_trading_incentive": false
+      },
+      "last": 2.576349532e-10,
+      "volume": 1030354940.64792,
+      "converted_last": {
+        "btc": 7.975e-12,
+        "eth": 2.57075e-10,
+        "usd": 5.46556e-07
+      },
+      "converted_volume": {
+        "btc": 0.00824655,
+        "eth": 0.26582212,
+        "usd": 565.15
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.611313,
+      "timestamp": "2026-04-01T07:18:50+00:00",
+      "last_traded_at": "2026-04-01T07:18:50+00:00",
+      "last_fetch_at": "2026-04-01T08:13:47+00:00",
+      "is_anomaly": true,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/#/swap?inputCurrency=0xb4cf92868a1cd4115524014d6f1fc480bfe9abf5&outputCurrency=0x3439153eb7af838ad19d56e1571fbd09333c2809",
+      "token_info_url": null,
+      "coin_id": "grow-2",
+      "target_coin_id": "l2-standard-bridged-weth-abstract",
+      "coin_mcap_usd": 54655.60345011424
+    },
+    {
+      "base": "0X84A71CCD554CC1B02749B35D22F684CC8EC987E1",
+      "target": "0X9EBE3A824CA958E4B3DA772D2065518F009CBA62",
+      "market": {
+        "name": "Uniswap V3 (Abstract)",
+        "identifier": "uniswap-v3-abstract",
+        "has_trading_incentive": false
+      },
+      "last": 150.9754627803,
+      "volume": 20.757424,
+      "converted_last": {
+        "btc": 1.447e-05,
+        "eth": 0.00046512,
+        "usd": 0.991591
+      },
+      "converted_volume": {
+        "btc": 0.00030391,
+        "eth": 0.00976637,
+        "usd": 20.82
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.77723,
+      "timestamp": "2026-04-01T09:57:52+00:00",
+      "last_traded_at": "2026-04-01T09:57:52+00:00",
+      "last_fetch_at": "2026-04-01T11:10:02+00:00",
+      "is_anomaly": true,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/#/swap?inputCurrency=0x84a71ccd554cc1b02749b35d22f684cc8ec987e1&outputCurrency=0x9ebe3a824ca958e4b3da772d2065518f009cba62",
+      "token_info_url": null,
+      "coin_id": "stargate-bridged-usdc",
+      "target_coin_id": "pudgy-penguins",
+      "coin_mcap_usd": 39896542.458625324
+    },
+    {
+      "base": "0XCEA652ACCFD9DAB53FA1242294F4910708CC0CC2",
+      "target": "0X84A71CCD554CC1B02749B35D22F684CC8EC987E1",
+      "market": {
+        "name": "Uniswap V3 (Abstract)",
+        "identifier": "uniswap-v3-abstract",
+        "has_trading_incentive": false
+      },
+      "last": 0.00519732034,
+      "volume": 132500.0,
+      "converted_last": {
+        "btc": 7.5691e-08,
+        "eth": 2.52e-06,
+        "usd": 0.00520751
+      },
+      "converted_volume": {
+        "btc": 0.010029,
+        "eth": 0.33368765,
+        "usd": 689.99
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.605762,
+      "timestamp": "2026-03-26T01:28:17+00:00",
+      "last_traded_at": "2026-03-26T01:28:17+00:00",
+      "last_fetch_at": "2026-03-27T01:13:05+00:00",
+      "is_anomaly": false,
+      "is_stale": true,
+      "trade_url": "https://app.uniswap.org/#/swap?inputCurrency=0xcea652accfd9dab53fa1242294f4910708cc0cc2&outputCurrency=0x84a71ccd554cc1b02749b35d22f684cc8ec987e1",
+      "token_info_url": null,
+      "coin_id": "blockchainspace",
+      "target_coin_id": "stargate-bridged-usdc",
+      "coin_mcap_usd": 2365473.8713221136
+    },
+    {
+      "base": "0XAB02E1B9315779347C5E2CB8206B57C715911B4C",
+      "target": "0XA9053DC939D74222F7AA0B3A2BE407ABBFD56C6A",
+      "market": {
+        "name": "Uniswap V3 (Abstract)",
+        "identifier": "uniswap-v3-abstract",
+        "has_trading_incentive": false
+      },
+      "last": 0.001939842035,
+      "volume": 13468103.3269034,
+      "converted_last": {
+        "btc": 9.83655e-10,
+        "eth": 3.2763e-08,
+        "usd": 6.526e-05
+      },
+      "converted_volume": {
+        "btc": 0.01324796,
+        "eth": 0.44125669,
+        "usd": 878.98
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.60796,
+      "timestamp": "2026-03-29T17:44:48+00:00",
+      "last_traded_at": "2026-03-29T17:44:48+00:00",
+      "last_fetch_at": "2026-03-29T18:14:39+00:00",
+      "is_anomaly": true,
+      "is_stale": true,
+      "trade_url": "https://app.uniswap.org/#/swap?inputCurrency=0xab02e1b9315779347c5e2cb8206b57c715911b4c&outputCurrency=0xa9053dc939d74222f7aa0b3a2be407abbfd56c6a",
+      "token_info_url": null,
+      "coin_id": "chad-token",
+      "target_coin_id": "yield-guild-games",
+      "coin_mcap_usd": 326319.3834663983
+    },
+    {
+      "base": "0X1C26DA604221466976BEEB509698152BA8A3A13F",
+      "target": "0X3439153EB7AF838AD19D56E1571FBD09333C2809",
+      "market": {
+        "name": "Uniswap V3 (Abstract)",
+        "identifier": "uniswap-v3-abstract",
+        "has_trading_incentive": false
+      },
+      "last": 1.172353259e-09,
+      "volume": 92095048.4972803,
+      "converted_last": {
+        "btc": 3.6507e-11,
+        "eth": 1.173e-09,
+        "usd": 2.5e-06
+      },
+      "converted_volume": {
+        "btc": 0.00340395,
+        "eth": 0.10937798,
+        "usd": 232.87
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.611892,
+      "timestamp": "2026-04-01T01:43:21+00:00",
+      "last_traded_at": "2026-04-01T01:43:21+00:00",
+      "last_fetch_at": "2026-04-01T11:11:02+00:00",
+      "is_anomaly": true,
+      "is_stale": true,
+      "trade_url": "https://app.uniswap.org/#/swap?inputCurrency=0x1c26da604221466976beeb509698152ba8a3a13f&outputCurrency=0x3439153eb7af838ad19d56e1571fbd09333c2809",
+      "token_info_url": null,
+      "coin_id": "grind",
+      "target_coin_id": "l2-standard-bridged-weth-abstract",
+      "coin_mcap_usd": 194697.6189031935
+    },
+    {
+      "base": "0XC6B3C271946E5013380FB7322D5BC67F81E02481",
+      "target": "0XA9053DC939D74222F7AA0B3A2BE407ABBFD56C6A",
+      "market": {
+        "name": "Uniswap V3 (Abstract)",
+        "identifier": "uniswap-v3-abstract",
+        "has_trading_incentive": false
+      },
+      "last": 0.01033613591,
+      "volume": 55920.8230366881,
+      "converted_last": {
+        "btc": 5.302e-09,
+        "eth": 1.74578e-07,
+        "usd": 0.00035968
+      },
+      "converted_volume": {
+        "btc": 0.00029649,
+        "eth": 0.00976256,
+        "usd": 20.11
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.60566,
+      "timestamp": "2026-03-30T06:11:21+00:00",
+      "last_traded_at": "2026-03-30T06:11:21+00:00",
+      "last_fetch_at": "2026-03-30T08:15:50+00:00",
+      "is_anomaly": true,
+      "is_stale": true,
+      "trade_url": "https://app.uniswap.org/#/swap?inputCurrency=0xc6b3c271946e5013380fb7322d5bc67f81e02481&outputCurrency=0xa9053dc939d74222f7aa0b3a2be407abbfd56c6a",
+      "token_info_url": null,
+      "coin_id": "lol-land",
+      "target_coin_id": "yield-guild-games",
+      "coin_mcap_usd": 434974.94898166694
+    }
+  ],
+  "status_updates": []
+}

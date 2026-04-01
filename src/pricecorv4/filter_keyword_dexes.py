@@ -33,6 +33,12 @@ INCLUDE_KEYWORDS = [
 # === STAGE 2: EXCLUDE ===
 # From the results above, remove exchanges that match ANY of these keywords
 EXCLUDE_KEYWORDS = [
+    "arbitrum",
+    "monad",
+    "polygon",
+    "avalanche",
+    "optimism",
+    "unichain",
     "celo",
     "fraxtal",
     "gnosis",
@@ -52,6 +58,7 @@ EXCLUDE_KEYWORDS = [
     "zora",
     "soneium",
     "eclipse",
+    "abstract",
 ]
 
 SHOW_PREVIEW = True                                
