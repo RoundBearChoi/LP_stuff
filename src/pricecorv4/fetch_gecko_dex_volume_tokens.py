@@ -8,13 +8,13 @@ import termios
 
 # =============== CONFIG SECTION ===============
 DEX_EXCHANGE_IDS = [
-    "aerodrome-base",
-    "aerodrome-slipstream",
-    "aerodrome-slipstream-2",
+    #"aerodrome-base",
+    #"aerodrome-slipstream",
+    #"aerodrome-slipstream-2",
     "uniswap_v3",
 ]
 
-MAX_PAGES_PER_DEX = 1
+MAX_PAGES_PER_DEX = 2
 
 # Use symbol format for pairs on DEX (cleaner than contract addresses)
 DEX_PAIR_FORMAT = "symbol"   # "symbol" or "contract_address"

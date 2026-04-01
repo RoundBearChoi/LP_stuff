@@ -1,0 +1,3327 @@
+{
+  "name": "Uniswap V2 (Ethereum)",
+  "year_established": 2018,
+  "country": null,
+  "description": "",
+  "url": "https://app.uniswap.org/#/swap?use=V2",
+  "image": "https://coin-images.coingecko.com/markets/images/535/small/256x256_Black-1.png?1706864503",
+  "facebook_url": "",
+  "reddit_url": "https://www.reddit.com/r/UniSwap/",
+  "telegram_url": "",
+  "slack_url": "",
+  "other_url_1": "",
+  "other_url_2": "",
+  "twitter_handle": "UniswapExchange",
+  "has_trading_incentive": false,
+  "centralized": false,
+  "public_notice": "",
+  "alert_notice": "",
+  "trust_score": 6,
+  "trust_score_rank": 145,
+  "coins": 2079,
+  "pairs": 2860,
+  "trade_volume_24h_btc": 166.85762981956933,
+  "tickers": [
+    {
+      "base": "0X45804880DE22913DAFE09F4980848ECE6ECBAF78",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 2.2114283237,
+      "volume": 135.6563449646,
+      "converted_last": {
+        "btc": 0.06891912,
+        "eth": 2.214263,
+        "usd": 4713.4
+      },
+      "converted_volume": {
+        "btc": 9.3836,
+        "eth": 301.48,
+        "usd": 641747
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.602736,
+      "timestamp": "2026-04-01T12:53:36+00:00",
+      "last_traded_at": "2026-04-01T12:53:36+00:00",
+      "last_fetch_at": "2026-04-01T12:55:33+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0x45804880de22913dafe09f4980848ece6ecbaf78",
+      "token_info_url": "https://v2.info.uniswap.org/token/0x45804880de22913dafe09f4980848ece6ecbaf78",
+      "coin_id": "pax-gold",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 2427652890.988324
+    },
+    {
+      "base": "0X6982508145454CE325DDBE47A25D4EC3D2311933",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 1.61187502e-09,
+      "volume": 156866313383.14,
+      "converted_last": {
+        "btc": 5.0234e-11,
+        "eth": 1.614e-09,
+        "usd": 3.44e-06
+      },
+      "converted_volume": {
+        "btc": 7.935067,
+        "eth": 254.941,
+        "usd": 542681
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.602727,
+      "timestamp": "2026-04-01T12:48:29+00:00",
+      "last_traded_at": "2026-04-01T12:48:29+00:00",
+      "last_fetch_at": "2026-04-01T12:55:34+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0x6982508145454ce325ddbe47a25d4ec3d2311933",
+      "token_info_url": "https://v2.info.uniswap.org/token/0x6982508145454ce325ddbe47a25d4ec3d2311933",
+      "coin_id": "pepe",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 1444115988.4488769
+    },
+    {
+      "base": "0XE0F63A424A4439CBE457D80E4F4B51AD25B2C56C",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 0.00012999844,
+      "volume": 1477296.86151649,
+      "converted_last": {
+        "btc": 4.05e-06,
+        "eth": 0.00013017,
+        "usd": 0.277076
+      },
+      "converted_volume": {
+        "btc": 5.933941,
+        "eth": 190.648,
+        "usd": 405824
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.602758,
+      "timestamp": "2026-04-01T12:51:38+00:00",
+      "last_traded_at": "2026-04-01T12:51:38+00:00",
+      "last_fetch_at": "2026-04-01T12:55:34+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0xe0f63a424a4439cbe457d80e4f4b51ad25b2c56c",
+      "token_info_url": "https://v2.info.uniswap.org/token/0xe0f63a424a4439cbe457d80e4f4b51ad25b2c56c",
+      "coin_id": "spx6900",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 256928038.32252848
+    },
+    {
+      "base": "0X6B175474E89094C44DA98B954EEDEAC495271D0F",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 0.0004696650729,
+      "volume": 385835.561916678,
+      "converted_last": {
+        "btc": 1.464e-05,
+        "eth": 0.00047027,
+        "usd": 1.001
+      },
+      "converted_volume": {
+        "btc": 5.738735,
+        "eth": 184.377,
+        "usd": 392474
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.602758,
+      "timestamp": "2026-04-01T12:50:35+00:00",
+      "last_traded_at": "2026-04-01T12:50:35+00:00",
+      "last_fetch_at": "2026-04-01T12:55:34+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0x6b175474e89094c44da98b954eedeac495271d0f",
+      "token_info_url": "https://v2.info.uniswap.org/token/0x6b175474e89094c44da98b954eedeac495271d0f",
+      "coin_id": "dai",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 4422300449.068612
+    },
+    {
+      "base": "0XDC035D45D973E3EC169D2276DDAB16F1E407384F",
+      "target": "0X56072C95FAA701256059AA122697B133ADED9279",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 13.3270823572,
+      "volume": 368203.85431849,
+      "converted_last": {
+        "btc": 1.463e-05,
+        "eth": 0.00046992,
+        "usd": 1.003
+      },
+      "converted_volume": {
+        "btc": 5.565824,
+        "eth": 178.818,
+        "usd": 381484
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.602754,
+      "timestamp": "2026-04-01T12:51:38+00:00",
+      "last_traded_at": "2026-04-01T12:51:38+00:00",
+      "last_fetch_at": "2026-04-01T12:55:35+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0xdc035d45d973e3ec169d2276ddab16f1e407384f",
+      "token_info_url": "https://v2.info.uniswap.org/token/0xdc035d45d973e3ec169d2276ddab16f1e407384f",
+      "coin_id": "usds",
+      "target_coin_id": "sky",
+      "coin_mcap_usd": 11888230054.535782
+    },
+    {
+      "base": "0X0FB1F1EF7EAFC3D05B5FE4A0F1CD6A6852A8B6ED",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 1.437024593e-05,
+      "volume": 16313374.5520722,
+      "converted_last": {
+        "btc": 4.47848e-07,
+        "eth": 1.439e-05,
+        "usd": 0.03062848
+      },
+      "converted_volume": {
+        "btc": 5.471379,
+        "eth": 175.787,
+        "usd": 374189
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.604829,
+      "timestamp": "2026-04-01T12:50:36+00:00",
+      "last_traded_at": "2026-04-01T12:50:36+00:00",
+      "last_fetch_at": "2026-04-01T12:55:35+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0x0fb1f1ef7eafc3d05b5fe4a0f1cd6a6852a8b6ed",
+      "token_info_url": "https://v2.info.uniswap.org/token/0x0fb1f1ef7eafc3d05b5fe4a0f1cd6a6852a8b6ed",
+      "coin_id": "pepeto",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 19062012.48173353
+    },
+    {
+      "base": "0X62D0A8458ED7719FDAF978FE5929C6D342B0BFCE",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 8.04280063e-07,
+      "volume": 138472007.51808,
+      "converted_last": {
+        "btc": 2.5065e-08,
+        "eth": 8.05311e-07,
+        "usd": 0.00171423
+      },
+      "converted_volume": {
+        "btc": 3.444531,
+        "eth": 110.667,
+        "usd": 235572
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.602827,
+      "timestamp": "2026-04-01T12:46:30+00:00",
+      "last_traded_at": "2026-04-01T12:46:30+00:00",
+      "last_fetch_at": "2026-04-01T12:55:34+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0x62d0a8458ed7719fdaf978fe5929c6d342b0bfce",
+      "token_info_url": "https://v2.info.uniswap.org/token/0x62d0a8458ed7719fdaf978fe5929c6d342b0bfce",
+      "coin_id": "beam-2",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 87846956.45301372
+    },
+    {
+      "base": "0X8ED97A637A790BE1FEFF5E888D43629DC05408F6",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 3.634082587e-06,
+      "volume": 29116782.2956706,
+      "converted_last": {
+        "btc": 1.13256e-07,
+        "eth": 3.64e-06,
+        "usd": 0.00774562
+      },
+      "converted_volume": {
+        "btc": 3.29499,
+        "eth": 105.863,
+        "usd": 225345
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.602861,
+      "timestamp": "2026-04-01T12:51:38+00:00",
+      "last_traded_at": "2026-04-01T12:51:38+00:00",
+      "last_fetch_at": "2026-04-01T12:55:34+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0x8ed97a637a790be1feff5e888d43629dc05408f6",
+      "token_info_url": "https://v2.info.uniswap.org/token/0x8ed97a637a790be1feff5e888d43629dc05408f6",
+      "coin_id": "non-playable-coin",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 62388168.13886961
+    },
+    {
+      "base": "0XFCCD6FBCA272B4CC11069402F4123B070B7838F9",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 3.406483228e-11,
+      "volume": 6818154333777.65,
+      "converted_last": {
+        "btc": 1.062e-12,
+        "eth": 3.4109e-11,
+        "usd": 7.2605e-08
+      },
+      "converted_volume": {
+        "btc": 5.074877,
+        "eth": 163.048,
+        "usd": 347072
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.607691,
+      "timestamp": "2026-04-01T12:51:39+00:00",
+      "last_traded_at": "2026-04-01T12:51:39+00:00",
+      "last_fetch_at": "2026-04-01T12:55:35+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0xfccd6fbca272b4cc11069402f4123b070b7838f9",
+      "token_info_url": "https://v2.info.uniswap.org/token/0xfccd6fbca272b4cc11069402f4123b070b7838f9",
+      "coin_id": "kimchi-coin",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 724611.858461725
+    },
+    {
+      "base": "0X95AF4AF910C28E8ECE4512BFE46F1F33687424CE",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 3.038030174e-12,
+      "volume": 33151762070151.1,
+      "converted_last": {
+        "btc": 9.468e-14,
+        "eth": 3.042e-12,
+        "usd": 6.475e-09
+      },
+      "converted_volume": {
+        "btc": 3.276794,
+        "eth": 105.278,
+        "usd": 224101
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.603374,
+      "timestamp": "2026-04-01T12:51:39+00:00",
+      "last_traded_at": "2026-04-01T12:51:39+00:00",
+      "last_fetch_at": "2026-04-01T12:55:35+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0x95af4af910c28e8ece4512bfe46f1f33687424ce",
+      "token_info_url": "https://v2.info.uniswap.org/token/0x95af4af910c28e8ece4512bfe46f1f33687424ce",
+      "coin_id": "manyu-2",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 6514100.243018052
+    },
+    {
+      "base": "0X14FEE680690900BA0CCCFC76AD70FD1B95D10E16",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 6.565912738e-06,
+      "volume": 15519498.9372765,
+      "converted_last": {
+        "btc": 2.04627e-07,
+        "eth": 6.57e-06,
+        "usd": 0.01399447
+      },
+      "converted_volume": {
+        "btc": 3.261307,
+        "eth": 104.781,
+        "usd": 223042
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.603031,
+      "timestamp": "2026-04-01T12:53:37+00:00",
+      "last_traded_at": "2026-04-01T12:53:37+00:00",
+      "last_fetch_at": "2026-04-01T12:55:34+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0x14fee680690900ba0cccfc76ad70fd1b95d10e16",
+      "token_info_url": "https://v2.info.uniswap.org/token/0x14fee680690900ba0cccfc76ad70fd1b95d10e16",
+      "coin_id": "paal-ai",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 12507221.199619994
+    },
+    {
+      "base": "0X761D38E5DDF6CCF6CF7C55759D5210750B5D60F3",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 1.835171934e-11,
+      "volume": 4177048248509.76,
+      "converted_last": {
+        "btc": 5.71931e-13,
+        "eth": 1.8375e-11,
+        "usd": 3.9115e-08
+      },
+      "converted_volume": {
+        "btc": 2.405859,
+        "eth": 77.296,
+        "usd": 164537
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.602783,
+      "timestamp": "2026-04-01T12:50:34+00:00",
+      "last_traded_at": "2026-04-01T12:50:34+00:00",
+      "last_fetch_at": "2026-04-01T12:55:33+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0x761d38e5ddf6ccf6cf7c55759d5210750b5d60f3",
+      "token_info_url": "https://v2.info.uniswap.org/token/0x761d38e5ddf6ccf6cf7c55759d5210750b5d60f3",
+      "coin_id": "dogelon-mars",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 38888809.86107107
+    },
+    {
+      "base": "0XAAEE1A9723AADB7AFA2810263653A34BA2C21C7A",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 6.74584825e-11,
+      "volume": 859171165933.753,
+      "converted_last": {
+        "btc": 2.102e-12,
+        "eth": 6.7545e-11,
+        "usd": 1.4378e-07
+      },
+      "converted_volume": {
+        "btc": 1.82644,
+        "eth": 58.681,
+        "usd": 124911
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.602782,
+      "timestamp": "2026-04-01T12:51:38+00:00",
+      "last_traded_at": "2026-04-01T12:51:38+00:00",
+      "last_fetch_at": "2026-04-01T12:55:34+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0xaaee1a9723aadb7afa2810263653a34ba2c21c7a",
+      "token_info_url": "https://v2.info.uniswap.org/token/0xaaee1a9723aadb7afa2810263653a34ba2c21c7a",
+      "coin_id": "mog-coin",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 56268408.805591665
+    },
+    {
+      "base": "0X25B4F5D4C314BCD5D7962734936C957B947CB7CF",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 6.673813486e-05,
+      "volume": 902413.651368395,
+      "converted_last": {
+        "btc": 2.08e-06,
+        "eth": 6.682e-05,
+        "usd": 0.142244
+      },
+      "converted_volume": {
+        "btc": 1.943571,
+        "eth": 62.444,
+        "usd": 132921
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.603096,
+      "timestamp": "2026-04-01T12:54:36+00:00",
+      "last_traded_at": "2026-04-01T12:54:36+00:00",
+      "last_fetch_at": "2026-04-01T12:55:34+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0x25b4f5d4c314bcd5d7962734936c957b947cb7cf",
+      "token_info_url": "https://v2.info.uniswap.org/token/0x25b4f5d4c314bcd5d7962734936c957b947cb7cf",
+      "coin_id": "tg-casino",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 11218999.07452771
+    },
+    {
+      "base": "0X2B566950BA2298ACEF3C730CC0129B2F4FBD30A3",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 5.005910521e-10,
+      "volume": 150675213717.757,
+      "converted_last": {
+        "btc": 1.5601e-11,
+        "eth": 5.01233e-10,
+        "usd": 1.07e-06
+      },
+      "converted_volume": {
+        "btc": 2.342268,
+        "eth": 75.253,
+        "usd": 160188
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.607081,
+      "timestamp": "2026-04-01T12:54:37+00:00",
+      "last_traded_at": "2026-04-01T12:54:37+00:00",
+      "last_fetch_at": "2026-04-01T12:55:35+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0x2b566950ba2298acef3c730cc0129b2f4fbd30a3",
+      "token_info_url": "https://v2.info.uniswap.org/token/0x2b566950ba2298acef3c730cc0129b2f4fbd30a3",
+      "coin_id": "kimchi-3",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 1060656.915841649
+    },
+    {
+      "base": "0XF94E7D0710709388BCE3161C32B4EEA56D3F91CC",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 7.335471572e-06,
+      "volume": 7357092.70620426,
+      "converted_last": {
+        "btc": 2.2861e-07,
+        "eth": 7.34e-06,
+        "usd": 0.01563469
+      },
+      "converted_volume": {
+        "btc": 1.726022,
+        "eth": 55.454,
+        "usd": 118043
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.602998,
+      "timestamp": "2026-04-01T12:53:37+00:00",
+      "last_traded_at": "2026-04-01T12:53:37+00:00",
+      "last_fetch_at": "2026-04-01T12:55:35+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0xf94e7d0710709388bce3161c32b4eea56d3f91cc",
+      "token_info_url": "https://v2.info.uniswap.org/token/0xf94e7d0710709388bce3161c32b4eea56d3f91cc",
+      "coin_id": "destra-network",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 15524575.399538226
+    },
+    {
+      "base": "0XE53EC727DBDEB9E2D5456C3BE40CFF031AB40A55",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 4.934223197e-05,
+      "volume": 1036063.97554934,
+      "converted_last": {
+        "btc": 1.54e-06,
+        "eth": 4.941e-05,
+        "usd": 0.105167
+      },
+      "converted_volume": {
+        "btc": 1.631674,
+        "eth": 52.423,
+        "usd": 111591
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.602883,
+      "timestamp": "2026-04-01T12:54:36+00:00",
+      "last_traded_at": "2026-04-01T12:54:36+00:00",
+      "last_fetch_at": "2026-04-01T12:55:34+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0xe53ec727dbdeb9e2d5456c3be40cff031ab40a55",
+      "token_info_url": "https://v2.info.uniswap.org/token/0xe53ec727dbdeb9e2d5456c3be40cff031ab40a55",
+      "coin_id": "superfarm",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 67044383.15630432
+    },
+    {
+      "base": "0XFF836A5821E69066C87E268BC51B849FAB94240C",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 3.071509419e-09,
+      "volume": 14739694387.3084,
+      "converted_last": {
+        "btc": 9.5724e-11,
+        "eth": 3.075e-09,
+        "usd": 6.55e-06
+      },
+      "converted_volume": {
+        "btc": 1.62384,
+        "eth": 52.171,
+        "usd": 111055
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.603939,
+      "timestamp": "2026-04-01T12:48:29+00:00",
+      "last_traded_at": "2026-04-01T12:48:29+00:00",
+      "last_fetch_at": "2026-04-01T12:55:34+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0xff836a5821e69066c87e268bc51b849fab94240c",
+      "token_info_url": "https://v2.info.uniswap.org/token/0xff836a5821e69066c87e268bc51b849fab94240c",
+      "coin_id": "real-smurf-cat",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 658716.142109614
+    },
+    {
+      "base": "0X8DE39B057CC6522230AB19C0205080A8663331EF",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 8.044532365e-12,
+      "volume": 5896110693867.2,
+      "converted_last": {
+        "btc": 2.50708e-13,
+        "eth": 8.055e-12,
+        "usd": 1.7146e-08
+      },
+      "converted_volume": {
+        "btc": 1.456766,
+        "eth": 46.803595,
+        "usd": 99629
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.60372,
+      "timestamp": "2026-04-01T12:53:38+00:00",
+      "last_traded_at": "2026-04-01T12:53:38+00:00",
+      "last_fetch_at": "2026-04-01T12:55:36+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0x8de39b057cc6522230ab19c0205080a8663331ef",
+      "token_info_url": "https://v2.info.uniswap.org/token/0x8de39b057cc6522230ab19c0205080a8663331ef",
+      "coin_id": "wojak-5",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 5316755.880736681
+    },
+    {
+      "base": "0X5A3E6A77BA2F983EC0D371EA3B475F8BC0811AD5",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 2.926598365e-06,
+      "volume": 16135141.522825,
+      "converted_last": {
+        "btc": 9.1207e-08,
+        "eth": 2.93e-06,
+        "usd": 0.0062377
+      },
+      "converted_volume": {
+        "btc": 1.340486,
+        "eth": 43.067709,
+        "usd": 91676
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.602964,
+      "timestamp": "2026-04-01T12:50:35+00:00",
+      "last_traded_at": "2026-04-01T12:50:35+00:00",
+      "last_fetch_at": "2026-04-01T12:55:33+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0x5a3e6a77ba2f983ec0d371ea3b475f8bc0811ad5",
+      "token_info_url": "https://v2.info.uniswap.org/token/0x5a3e6a77ba2f983ec0d371ea3b475f8bc0811ad5",
+      "coin_id": "0x0-ai-ai-smart-contract",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 5558745.934573577
+    },
+    {
+      "base": "0X9AC9468E7E3E1D194080827226B45D0B892C77FD",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 1.845409465e-06,
+      "volume": 24720130.678965,
+      "converted_last": {
+        "btc": 5.7512e-08,
+        "eth": 1.85e-06,
+        "usd": 0.00393327
+      },
+      "converted_volume": {
+        "btc": 1.347051,
+        "eth": 43.278628,
+        "usd": 92125
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.6037,
+      "timestamp": "2026-04-01T12:46:31+00:00",
+      "last_traded_at": "2026-04-01T12:46:31+00:00",
+      "last_fetch_at": "2026-04-01T12:55:35+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0x9ac9468e7e3e1d194080827226b45d0b892c77fd",
+      "token_info_url": "https://v2.info.uniswap.org/token/0x9ac9468e7e3e1d194080827226b45d0b892c77fd",
+      "coin_id": "yee-token",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 3930357.035101199
+    },
+    {
+      "base": "0XA2CD3D43C775978A96BDBF12D733D5A1ED94FB18",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 2.281456175e-06,
+      "volume": 17231406.4643721,
+      "converted_last": {
+        "btc": 7.1102e-08,
+        "eth": 2.28e-06,
+        "usd": 0.00486265
+      },
+      "converted_volume": {
+        "btc": 1.257809,
+        "eth": 40.411439,
+        "usd": 86022
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.60305,
+      "timestamp": "2026-04-01T12:46:29+00:00",
+      "last_traded_at": "2026-04-01T12:46:29+00:00",
+      "last_fetch_at": "2026-04-01T12:55:33+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0xa2cd3d43c775978a96bdbf12d733d5a1ed94fb18",
+      "token_info_url": "https://v2.info.uniswap.org/token/0xa2cd3d43c775978a96bdbf12d733d5a1ed94fb18",
+      "coin_id": "chain-2",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 184616754.92335433
+    },
+    {
+      "base": "0X26C8AFBBFE1EBACA03C2BB082E69D0476BFFE099",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 5.082429675e-05,
+      "volume": 1049461.70701732,
+      "converted_last": {
+        "btc": 1.58e-06,
+        "eth": 5.089e-05,
+        "usd": 0.108326
+      },
+      "converted_volume": {
+        "btc": 1.211895,
+        "eth": 38.936292,
+        "usd": 82882
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.60591,
+      "timestamp": "2026-04-01T12:53:35+00:00",
+      "last_traded_at": "2026-04-01T12:53:35+00:00",
+      "last_fetch_at": "2026-04-01T12:55:33+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0x26c8afbbfe1ebaca03c2bb082e69d0476bffe099",
+      "token_info_url": "https://v2.info.uniswap.org/token/0x26c8afbbfe1ebaca03c2bb082e69d0476bffe099",
+      "coin_id": "cellframe",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 3278771.93241377
+    },
+    {
+      "base": "0X817162975186D4D53DBF5A7377DD45376E2D2FC5",
+      "target": "0XDAC17F958D2EE523A2206206994597C13D831EC7",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 0.01861843635,
+      "volume": 4500888.48282041,
+      "converted_last": {
+        "btc": 2.72136e-07,
+        "eth": 8.74e-06,
+        "usd": 0.01861143
+      },
+      "converted_volume": {
+        "btc": 1.098058,
+        "eth": 35.278881,
+        "usd": 75096
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.605553,
+      "timestamp": "2026-04-01T12:54:37+00:00",
+      "last_traded_at": "2026-04-01T12:54:37+00:00",
+      "last_fetch_at": "2026-04-01T12:55:35+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0x817162975186d4d53dbf5a7377dd45376e2d2fc5",
+      "token_info_url": null,
+      "coin_id": "reactive-network",
+      "target_coin_id": "tether",
+      "coin_mcap_usd": 8903711.975526236
+    },
+    {
+      "base": "0X2260FAC5E5542A773AA44FBCFEDF7C193BC2C599",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 32.0413805788,
+      "volume": 0.8721891,
+      "converted_last": {
+        "btc": 0.99856905,
+        "eth": 32.082458,
+        "usd": 68292
+      },
+      "converted_volume": {
+        "btc": 0.87776586,
+        "eth": 28.20124,
+        "usd": 60031
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.602761,
+      "timestamp": "2026-04-01T12:46:29+00:00",
+      "last_traded_at": "2026-04-01T12:46:29+00:00",
+      "last_fetch_at": "2026-04-01T12:55:34+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0x2260fac5e5542a773aa44fbcfedf7c193bc2c599",
+      "token_info_url": "https://v2.info.uniswap.org/token/0x2260fac5e5542a773aa44fbcfedf7c193bc2c599",
+      "coin_id": "wrapped-bitcoin",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 8147500298.289023
+    },
+    {
+      "base": "0XF411903CBC70A74D22900A5DE66A2DDA66507255",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 1.149734265e-08,
+      "volume": 2905868093.39544,
+      "converted_last": {
+        "btc": 3.5847e-10,
+        "eth": 1.1514e-08,
+        "usd": 2.451e-05
+      },
+      "converted_volume": {
+        "btc": 1.107858,
+        "eth": 35.583425,
+        "usd": 75734
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.609553,
+      "timestamp": "2026-04-01T12:54:16+00:00",
+      "last_traded_at": "2026-04-01T12:54:16+00:00",
+      "last_fetch_at": "2026-04-01T12:56:08+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0xf411903cbc70a74d22900a5de66a2dda66507255",
+      "token_info_url": "https://v2.info.uniswap.org/token/0xf411903cbc70a74d22900a5de66a2dda66507255",
+      "coin_id": "verasity",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 2093300.6209103386
+    },
+    {
+      "base": "0X594DAAD7D77592A2B97B725A7AD59D7E188B5BFA",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 1.277502132e-08,
+      "volume": 2295752987.82188,
+      "converted_last": {
+        "btc": 3.98133e-10,
+        "eth": 1.2791e-08,
+        "usd": 2.723e-05
+      },
+      "converted_volume": {
+        "btc": 0.91617358,
+        "eth": 29.43522,
+        "usd": 62657
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.603108,
+      "timestamp": "2026-04-01T12:54:36+00:00",
+      "last_traded_at": "2026-04-01T12:54:36+00:00",
+      "last_fetch_at": "2026-04-01T12:55:35+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0x594daad7d77592a2b97b725a7ad59d7e188b5bfa",
+      "token_info_url": "https://v2.info.uniswap.org/token/0x594daad7d77592a2b97b725a7ad59d7e188b5bfa",
+      "coin_id": "apu-s-club",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 9175060.19148805
+    },
+    {
+      "base": "0XEBB66A88CEDD12BFE3A289DF6DFEE377F2963F12",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 4.221955497e-07,
+      "volume": 79353773.0714894,
+      "converted_last": {
+        "btc": 1.3158e-08,
+        "eth": 4.22737e-07,
+        "usd": 0.00089986
+      },
+      "converted_volume": {
+        "btc": 1.022606,
+        "eth": 32.854734,
+        "usd": 69936
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.605265,
+      "timestamp": "2026-04-01T11:31:33+00:00",
+      "last_traded_at": "2026-04-01T11:31:33+00:00",
+      "last_fetch_at": "2026-04-01T12:55:35+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0xebb66a88cedd12bfe3a289df6dfee377f2963f12",
+      "token_info_url": "https://v2.info.uniswap.org/token/0xebb66a88cedd12bfe3a289df6dfee377f2963f12",
+      "coin_id": "oscar",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 800919.1671910055
+    },
+    {
+      "base": "0X2A3BFF78B79A009976EEA096A51A948A3DC00E34",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 8.930184853e-06,
+      "volume": 3571524.13258666,
+      "converted_last": {
+        "btc": 2.78309e-07,
+        "eth": 8.94e-06,
+        "usd": 0.01903364
+      },
+      "converted_volume": {
+        "btc": 1.007451,
+        "eth": 32.367806,
+        "usd": 68900
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.604193,
+      "timestamp": "2026-04-01T12:37:37+00:00",
+      "last_traded_at": "2026-04-01T12:37:37+00:00",
+      "last_fetch_at": "2026-04-01T12:55:33+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0x2a3bff78b79a009976eea096a51a948a3dc00e34",
+      "token_info_url": "https://v2.info.uniswap.org/token/0x2a3bff78b79a009976eea096a51a948a3dc00e34",
+      "coin_id": "wilder-world",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 9128321.321339346
+    },
+    {
+      "base": "0X26E550AC11B26F78A04489D5F20F24E3559F7DD9",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 4.706960474e-06,
+      "volume": 6197901.25634833,
+      "converted_last": {
+        "btc": 1.46692e-07,
+        "eth": 4.71e-06,
+        "usd": 0.01003233
+      },
+      "converted_volume": {
+        "btc": 0.91281125,
+        "eth": 29.327194,
+        "usd": 62427
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.60311,
+      "timestamp": "2026-04-01T12:48:30+00:00",
+      "last_traded_at": "2026-04-01T12:48:30+00:00",
+      "last_fetch_at": "2026-04-01T12:55:35+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0x26e550ac11b26f78a04489d5f20f24e3559f7dd9",
+      "token_info_url": "https://v2.info.uniswap.org/token/0x26e550ac11b26f78a04489d5f20f24e3559f7dd9",
+      "coin_id": "kekius-maximus",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 10015246.54541949
+    },
+    {
+      "base": "0X8E6CD950AD6BA651F6DD608DC70E5886B1AA6B24",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 7.327560047e-11,
+      "volume": 370757740130.237,
+      "converted_last": {
+        "btc": 2.284e-12,
+        "eth": 7.337e-11,
+        "usd": 1.56178e-07
+      },
+      "converted_volume": {
+        "btc": 0.88418414,
+        "eth": 28.40745,
+        "usd": 60470
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.60306,
+      "timestamp": "2026-04-01T12:19:27+00:00",
+      "last_traded_at": "2026-04-01T12:19:27+00:00",
+      "last_fetch_at": "2026-04-01T12:55:33+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0x8e6cd950ad6ba651f6dd608dc70e5886b1aa6b24",
+      "token_info_url": "https://v2.info.uniswap.org/token/0x8e6cd950ad6ba651f6dd608dc70e5886b1aa6b24",
+      "coin_id": "starlink",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 1529252.5933965303
+    },
+    {
+      "base": "0XF3B9569F82B18AEF890DE263B84189BD33EBE452",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 1.510301565e-11,
+      "volume": 1787339133012.91,
+      "converted_last": {
+        "btc": 4.70685e-13,
+        "eth": 1.5122e-11,
+        "usd": 3.219e-08
+      },
+      "converted_volume": {
+        "btc": 0.81780174,
+        "eth": 26.274688,
+        "usd": 55930
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.602922,
+      "timestamp": "2026-04-01T12:42:33+00:00",
+      "last_traded_at": "2026-04-01T12:42:33+00:00",
+      "last_fetch_at": "2026-04-01T12:55:34+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0xf3b9569f82b18aef890de263b84189bd33ebe452",
+      "token_info_url": "https://v2.info.uniswap.org/token/0xf3b9569f82b18aef890de263b84189bd33ebe452",
+      "coin_id": "a-hunters-dream",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 20455273.9361214
+    },
+    {
+      "base": "0X38E68A37E401F7271568CECAAC63C6B1E19130B4",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 0.001564751594,
+      "volume": 15131.6918726309,
+      "converted_last": {
+        "btc": 4.877e-05,
+        "eth": 0.00156676,
+        "usd": 3.34
+      },
+      "converted_volume": {
+        "btc": 0.74680918,
+        "eth": 23.993808,
+        "usd": 51074
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.602864,
+      "timestamp": "2026-04-01T12:46:30+00:00",
+      "last_traded_at": "2026-04-01T12:46:30+00:00",
+      "last_fetch_at": "2026-04-01T12:55:34+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0x38e68a37e401f7271568cecaac63c6b1e19130b4",
+      "token_info_url": "https://v2.info.uniswap.org/token/0x38e68a37e401f7271568cecaac63c6b1e19130b4",
+      "coin_id": "banana-gun",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 13341998.011170471
+    },
+    {
+      "base": "0X0F51BB10119727A7E5EA3538074FB341F56B09AD",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 2.505582271e-05,
+      "volume": 977134.345394618,
+      "converted_last": {
+        "btc": 7.80864e-07,
+        "eth": 2.509e-05,
+        "usd": 0.053404
+      },
+      "converted_volume": {
+        "btc": 0.82757622,
+        "eth": 26.588726,
+        "usd": 56598
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.607195,
+      "timestamp": "2026-04-01T12:16:29+00:00",
+      "last_traded_at": "2026-04-01T12:16:29+00:00",
+      "last_fetch_at": "2026-04-01T12:55:33+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0x0f51bb10119727a7e5ea3538074fb341f56b09ad",
+      "token_info_url": "https://v2.info.uniswap.org/token/0x0f51bb10119727a7e5ea3538074fb341f56b09ad",
+      "coin_id": "dao-maker",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 13241824.944668034
+    },
+    {
+      "base": "0X67466BE17DF832165F8C80A5A120CCC652BD7E69",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 4.339501264e-09,
+      "volume": 5429990049.69254,
+      "converted_last": {
+        "btc": 1.3524e-10,
+        "eth": 4.345e-09,
+        "usd": 9.25e-06
+      },
+      "converted_volume": {
+        "btc": 0.71128306,
+        "eth": 22.852409,
+        "usd": 48645
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.603242,
+      "timestamp": "2026-04-01T12:50:36+00:00",
+      "last_traded_at": "2026-04-01T12:50:36+00:00",
+      "last_fetch_at": "2026-04-01T12:55:35+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0x67466be17df832165f8c80a5a120ccc652bd7e69",
+      "token_info_url": "https://v2.info.uniswap.org/token/0x67466be17df832165f8c80a5a120ccc652bd7e69",
+      "coin_id": "landwolf-0x67",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 8397939.163358336
+    },
+    {
+      "base": "0X89D24A6B4CCB1B6FAA2625FE562BDD9A23260359",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 0.005272850903,
+      "volume": 5992.4419775122,
+      "converted_last": {
+        "btc": 0.0001644,
+        "eth": 0.00528037,
+        "usd": 11.24
+      },
+      "converted_volume": {
+        "btc": 0.84440995,
+        "eth": 27.121713,
+        "usd": 57724
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.615553,
+      "timestamp": "2026-04-01T08:22:50+00:00",
+      "last_traded_at": "2026-04-01T08:22:50+00:00",
+      "last_fetch_at": "2026-04-01T12:56:07+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359",
+      "token_info_url": "https://v2.info.uniswap.org/token/0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359",
+      "coin_id": "sai",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 29947977.6165654
+    },
+    {
+      "base": "0X1F9840A85D5AF5BF1D1762F925BDADDC4201F984",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 0.001690433886,
+      "volume": 11369.5824026442,
+      "converted_last": {
+        "btc": 5.268e-05,
+        "eth": 0.0016926,
+        "usd": 3.6
+      },
+      "converted_volume": {
+        "btc": 0.60100796,
+        "eth": 19.309443,
+        "usd": 41103
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.602867,
+      "timestamp": "2026-04-01T12:51:37+00:00",
+      "last_traded_at": "2026-04-01T12:51:37+00:00",
+      "last_fetch_at": "2026-04-01T12:55:34+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0x1f9840a85d5af5bf1d1762f925bdaddc4201f984",
+      "token_info_url": "https://v2.info.uniswap.org/token/0x1f9840a85d5af5bf1d1762f925bdaddc4201f984",
+      "coin_id": "uniswap",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 2286383277.1787724
+    },
+    {
+      "base": "0X2B591E99AFE9F32EAA6214F7B7629768C40EEB39",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 3.206161099e-07,
+      "volume": 70094647.265605,
+      "converted_last": {
+        "btc": 9.992e-09,
+        "eth": 3.21027e-07,
+        "usd": 0.00068336
+      },
+      "converted_volume": {
+        "btc": 0.70048016,
+        "eth": 22.505329,
+        "usd": 47906
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.603947,
+      "timestamp": "2026-04-01T12:54:35+00:00",
+      "last_traded_at": "2026-04-01T12:54:35+00:00",
+      "last_fetch_at": "2026-04-01T12:55:33+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0x2b591e99afe9f32eaa6214f7b7629768c40eeb39",
+      "token_info_url": "https://v2.info.uniswap.org/token/0x2b591e99afe9f32eaa6214f7b7629768c40eeb39",
+      "coin_id": "hex",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 0.0
+    },
+    {
+      "base": "0XDAC17F958D2EE523A2206206994597C13D831EC7",
+      "target": "0XF944E35F95E819E752F3CCB5FAF40957D311E8C5",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 74.0650541107,
+      "volume": 40294.007197,
+      "converted_last": {
+        "btc": 1.462e-05,
+        "eth": 0.0004696,
+        "usd": 0.999624
+      },
+      "converted_volume": {
+        "btc": 0.60830359,
+        "eth": 19.54384,
+        "usd": 41602
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.603178,
+      "timestamp": "2026-04-01T12:53:38+00:00",
+      "last_traded_at": "2026-04-01T12:53:38+00:00",
+      "last_fetch_at": "2026-04-01T12:55:35+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0xdac17f958d2ee523a2206206994597c13d831ec7",
+      "token_info_url": "https://v2.info.uniswap.org/token/0xdac17f958d2ee523a2206206994597c13d831ec7",
+      "coin_id": "tether",
+      "target_coin_id": "mocaverse",
+      "coin_mcap_usd": 184158379208.28787
+    },
+    {
+      "base": "0X76E222B07C53D28B89B0BAC18602810FC22B49A8",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 4.216552157e-06,
+      "volume": 4356381.60370653,
+      "converted_last": {
+        "btc": 1.31409e-07,
+        "eth": 4.22e-06,
+        "usd": 0.00898708
+      },
+      "converted_volume": {
+        "btc": 0.56996092,
+        "eth": 18.311951,
+        "usd": 38980
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.602984,
+      "timestamp": "2026-04-01T12:37:38+00:00",
+      "last_traded_at": "2026-04-01T12:37:38+00:00",
+      "last_fetch_at": "2026-04-01T12:55:34+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0x76e222b07c53d28b89b0bac18602810fc22b49a8",
+      "token_info_url": "https://v2.info.uniswap.org/token/0x76e222b07c53d28b89b0bac18602810fc22b49a8",
+      "coin_id": "joe-coin",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 8987229.75510588
+    },
+    {
+      "base": "0X8E42FE26FC1697F57076C9F2A8D1FF69CF7F6FDA",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 3.910852088e-10,
+      "volume": 49604303066.9725,
+      "converted_last": {
+        "btc": 1.2188e-11,
+        "eth": 3.91587e-10,
+        "usd": 8.33552e-07
+      },
+      "converted_volume": {
+        "btc": 0.66045001,
+        "eth": 21.219223,
+        "usd": 45168
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.606434,
+      "timestamp": "2026-04-01T12:53:38+00:00",
+      "last_traded_at": "2026-04-01T12:53:38+00:00",
+      "last_fetch_at": "2026-04-01T12:55:35+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0x8e42fe26fc1697f57076c9f2a8d1ff69cf7f6fda",
+      "token_info_url": "https://v2.info.uniswap.org/token/0x8e42fe26fc1697f57076c9f2a8d1ff69cf7f6fda",
+      "coin_id": "aguri-chan",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 351613.4702297311
+    },
+    {
+      "base": "0X9F8F72AA9304C8B593D555F12EF6589CC3A579A2",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 0.8204608063,
+      "volume": 20.7614320379,
+      "converted_last": {
+        "btc": 0.02556965,
+        "eth": 0.82151264,
+        "usd": 1748.72
+      },
+      "converted_volume": {
+        "btc": 0.53755338,
+        "eth": 17.270747,
+        "usd": 36763
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.603008,
+      "timestamp": "2026-04-01T12:51:37+00:00",
+      "last_traded_at": "2026-04-01T12:51:37+00:00",
+      "last_fetch_at": "2026-04-01T12:55:33+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2",
+      "token_info_url": "https://v2.info.uniswap.org/token/0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2",
+      "coin_id": "maker",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 0.0
+    },
+    {
+      "base": "0X812BA41E071C7B7FA4EBCFB62DF5F45F6FA853EE",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 2.758738587e-08,
+      "volume": 615203149.814399,
+      "converted_last": {
+        "btc": 8.5976e-10,
+        "eth": 2.7623e-08,
+        "usd": 5.88e-05
+      },
+      "converted_volume": {
+        "btc": 0.52261869,
+        "eth": 16.790919,
+        "usd": 35742
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.602867,
+      "timestamp": "2026-04-01T12:46:31+00:00",
+      "last_traded_at": "2026-04-01T12:46:31+00:00",
+      "last_fetch_at": "2026-04-01T12:55:35+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0x812ba41e071c7b7fa4ebcfb62df5f45f6fa853ee",
+      "token_info_url": "https://v2.info.uniswap.org/token/0x812ba41e071c7b7fa4ebcfb62df5f45f6fa853ee",
+      "coin_id": "neiro-3",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 24751976.906315185
+    },
+    {
+      "base": "0X6DE037EF9AD2725EB40118BB1702EBB27E4AEB24",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 0.0008458029806,
+      "volume": 21435.1696293326,
+      "converted_last": {
+        "btc": 2.636e-05,
+        "eth": 0.00084689,
+        "usd": 1.8
+      },
+      "converted_volume": {
+        "btc": 0.5513759,
+        "eth": 17.714843,
+        "usd": 37709
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.603851,
+      "timestamp": "2026-04-01T12:53:36+00:00",
+      "last_traded_at": "2026-04-01T12:53:36+00:00",
+      "last_fetch_at": "2026-04-01T12:55:33+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0x6de037ef9ad2725eb40118bb1702ebb27e4aeb24",
+      "token_info_url": "https://v2.info.uniswap.org/token/0x6de037ef9ad2725eb40118bb1702ebb27e4aeb24",
+      "coin_id": "render-token",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 934571820.0981876
+    },
+    {
+      "base": "0X675BBC7514013E2073DB7A919F6E4CBEF576DE37",
+      "target": "0XA0B86991C6218B36C1D19D4A2E9EB0CE3606EB48",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 0.009322129648,
+      "volume": 3661109.49694748,
+      "converted_last": {
+        "btc": 1.3704e-07,
+        "eth": 4.4e-06,
+        "usd": 0.00937218
+      },
+      "converted_volume": {
+        "btc": 0.53457158,
+        "eth": 17.174946,
+        "usd": 36560
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.604335,
+      "timestamp": "2026-04-01T10:59:17+00:00",
+      "last_traded_at": "2026-04-01T10:59:17+00:00",
+      "last_fetch_at": "2026-04-01T12:55:33+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0x675bbc7514013e2073db7a919f6e4cbef576de37",
+      "token_info_url": "https://v2.info.uniswap.org/token/0x675bbc7514013e2073db7a919f6e4cbef576de37",
+      "coin_id": "coldstack",
+      "target_coin_id": "usd-coin",
+      "coin_mcap_usd": 169925.24191599883
+    },
+    {
+      "base": "0X54D2252757E1672EEAD234D27B1270728FF90581",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 0.0009265842377,
+      "volume": 17803.2437495163,
+      "converted_last": {
+        "btc": 2.888e-05,
+        "eth": 0.00092777,
+        "usd": 1.97
+      },
+      "converted_volume": {
+        "btc": 0.50810318,
+        "eth": 16.324558,
+        "usd": 34749
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.603654,
+      "timestamp": "2026-04-01T12:54:37+00:00",
+      "last_traded_at": "2026-04-01T12:54:37+00:00",
+      "last_fetch_at": "2026-04-01T12:55:35+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0x54d2252757e1672eead234d27b1270728ff90581",
+      "token_info_url": "https://v2.info.uniswap.org/token/0x54d2252757e1672eead234d27b1270728ff90581",
+      "coin_id": "bitget-token",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 1381350163.8386824
+    },
+    {
+      "base": "0XE76C6C83AF64E4C60245D8C7DE953DF673A7A33D",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 0.0004509686663,
+      "volume": 34079.0090169092,
+      "converted_last": {
+        "btc": 1.405e-05,
+        "eth": 0.00045155,
+        "usd": 0.961186
+      },
+      "converted_volume": {
+        "btc": 0.48803373,
+        "eth": 15.679758,
+        "usd": 33377
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.603157,
+      "timestamp": "2026-04-01T12:37:38+00:00",
+      "last_traded_at": "2026-04-01T12:37:38+00:00",
+      "last_fetch_at": "2026-04-01T12:55:34+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0xe76c6c83af64e4c60245d8c7de953df673a7a33d",
+      "token_info_url": "https://v2.info.uniswap.org/token/0xe76c6c83af64e4c60245d8c7de953df673a7a33d",
+      "coin_id": "railgun",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 55030144.404093824
+    },
+    {
+      "base": "0X4507CEF57C46789EF8D1A19EA45F4216BAE2B528",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 1.189574874e-06,
+      "volume": 13134432.3965327,
+      "converted_last": {
+        "btc": 3.7073e-08,
+        "eth": 1.19e-06,
+        "usd": 0.00253544
+      },
+      "converted_volume": {
+        "btc": 0.48800161,
+        "eth": 15.678727,
+        "usd": 33375
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.60309,
+      "timestamp": "2026-04-01T12:44:30+00:00",
+      "last_traded_at": "2026-04-01T12:44:30+00:00",
+      "last_fetch_at": "2026-04-01T12:55:34+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0x4507cef57c46789ef8d1a19ea45f4216bae2b528",
+      "token_info_url": "https://v2.info.uniswap.org/token/0x4507cef57c46789ef8d1a19ea45f4216bae2b528",
+      "coin_id": "tokenfi",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 9007327.565748537
+    },
+    {
+      "base": "0X0F51BB10119727A7E5EA3538074FB341F56B09AD",
+      "target": "0XA0B86991C6218B36C1D19D4A2E9EB0CE3606EB48",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 0.05323572351,
+      "volume": 634961.795717543,
+      "converted_last": {
+        "btc": 7.8259e-07,
+        "eth": 2.514e-05,
+        "usd": 0.053522
+      },
+      "converted_volume": {
+        "btc": 0.53385052,
+        "eth": 17.15178,
+        "usd": 36510
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.608626,
+      "timestamp": "2026-04-01T12:33:27+00:00",
+      "last_traded_at": "2026-04-01T12:33:27+00:00",
+      "last_fetch_at": "2026-04-01T12:55:33+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0x0f51bb10119727a7e5ea3538074fb341f56b09ad",
+      "token_info_url": "https://v2.info.uniswap.org/token/0x0f51bb10119727a7e5ea3538074fb341f56b09ad",
+      "coin_id": "dao-maker",
+      "target_coin_id": "usd-coin",
+      "coin_mcap_usd": 13241824.944668034
+    },
+    {
+      "base": "0X7D8146CF21E8D7CBE46054E01588207B51198729",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 4.761967014e-10,
+      "volume": 30238586724.6933,
+      "converted_last": {
+        "btc": 1.4841e-11,
+        "eth": 4.76807e-10,
+        "usd": 1.01e-06
+      },
+      "converted_volume": {
+        "btc": 0.47779813,
+        "eth": 15.350905,
+        "usd": 32677
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.603702,
+      "timestamp": "2026-04-01T12:46:29+00:00",
+      "last_traded_at": "2026-04-01T12:46:29+00:00",
+      "last_fetch_at": "2026-04-01T12:55:34+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0x7d8146cf21e8d7cbe46054e01588207b51198729",
+      "token_info_url": "https://v2.info.uniswap.org/token/0x7d8146cf21e8d7cbe46054e01588207b51198729",
+      "coin_id": "bob-token",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 706041.5655331359
+    },
+    {
+      "base": "0XC770EEFAD204B5180DF6A14EE197D99D808EE52D",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 3.05843286e-06,
+      "volume": 4149065.43717681,
+      "converted_last": {
+        "btc": 9.5316e-08,
+        "eth": 3.06e-06,
+        "usd": 0.00651869
+      },
+      "converted_volume": {
+        "btc": 0.39952888,
+        "eth": 12.836236,
+        "usd": 27324
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.602993,
+      "timestamp": "2026-04-01T12:40:24+00:00",
+      "last_traded_at": "2026-04-01T12:40:24+00:00",
+      "last_fetch_at": "2026-04-01T12:55:34+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0xc770eefad204b5180df6a14ee197d99d808ee52d",
+      "token_info_url": "https://v2.info.uniswap.org/token/0xc770eefad204b5180df6a14ee197d99d808ee52d",
+      "coin_id": "shapeshift-fox-token",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 4039239.380425962
+    },
+    {
+      "base": "0XB753428AF26E81097E7FD17F40C88AAA3E04902C",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 0.07343839147,
+      "volume": 232.4263673951,
+      "converted_last": {
+        "btc": 0.00228871,
+        "eth": 0.07353254,
+        "usd": 156.53
+      },
+      "converted_volume": {
+        "btc": 0.49613307,
+        "eth": 15.939978,
+        "usd": 33931
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.607389,
+      "timestamp": "2026-04-01T12:40:24+00:00",
+      "last_traded_at": "2026-04-01T12:40:24+00:00",
+      "last_fetch_at": "2026-04-01T12:55:33+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0xb753428af26e81097e7fd17f40c88aaa3e04902c",
+      "token_info_url": "https://v2.info.uniswap.org/token/0xb753428af26e81097e7fd17f40c88aaa3e04902c",
+      "coin_id": "saffron-finance",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 12488717.496839656
+    },
+    {
+      "base": "0X1AE7E1D0CE06364CED9AD58225A1705B3E5DB92B",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 5.789701813e-07,
+      "volume": 24810537.8575336,
+      "converted_last": {
+        "btc": 1.8044e-08,
+        "eth": 5.79712e-07,
+        "usd": 0.00123401
+      },
+      "converted_volume": {
+        "btc": 0.43284198,
+        "eth": 13.906534,
+        "usd": 29602
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.603803,
+      "timestamp": "2026-04-01T12:23:36+00:00",
+      "last_traded_at": "2026-04-01T12:23:36+00:00",
+      "last_fetch_at": "2026-04-01T12:55:34+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0x1ae7e1d0ce06364ced9ad58225a1705b3e5db92b",
+      "token_info_url": "https://v2.info.uniswap.org/token/0x1ae7e1d0ce06364ced9ad58225a1705b3e5db92b",
+      "coin_id": "lmeow-2",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 1234282.483207446
+    },
+    {
+      "base": "0XCF0C122C6B73FF809C693DB761E7BAEBE62B6A2E",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 1.331297166e-08,
+      "volume": 850342531.311609,
+      "converted_last": {
+        "btc": 4.14899e-10,
+        "eth": 1.333e-08,
+        "usd": 2.838e-05
+      },
+      "converted_volume": {
+        "btc": 0.35203621,
+        "eth": 11.310371,
+        "usd": 24076
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.602766,
+      "timestamp": "2026-04-01T12:54:36+00:00",
+      "last_traded_at": "2026-04-01T12:54:36+00:00",
+      "last_fetch_at": "2026-04-01T12:55:34+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0xcf0c122c6b73ff809c693db761e7baebe62b6a2e",
+      "token_info_url": "https://v2.info.uniswap.org/token/0xcf0c122c6b73ff809c693db761e7baebe62b6a2e",
+      "coin_id": "floki",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 274133530.1595927
+    },
+    {
+      "base": "0XCF91B70017EABDE82C9671E30E5502D312EA6EB2",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 8.579873734e-11,
+      "volume": 139577632640.153,
+      "converted_last": {
+        "btc": 2.674e-12,
+        "eth": 8.5909e-11,
+        "usd": 1.8287e-07
+      },
+      "converted_volume": {
+        "btc": 0.37833743,
+        "eth": 12.155388,
+        "usd": 25875
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.603217,
+      "timestamp": "2026-04-01T12:54:36+00:00",
+      "last_traded_at": "2026-04-01T12:54:36+00:00",
+      "last_fetch_at": "2026-04-01T12:55:35+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0xcf91b70017eabde82c9671e30e5502d312ea6eb2",
+      "token_info_url": "https://v2.info.uniswap.org/token/0xcf91b70017eabde82c9671e30e5502d312ea6eb2",
+      "coin_id": "i-love-puppies",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 7678903.504352413
+    },
+    {
+      "base": "0X0001A500A6B18995B03F44BB040A5FFC28E45CB0",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 2.189555954e-05,
+      "volume": 534906.376356884,
+      "converted_last": {
+        "btc": 6.82375e-07,
+        "eth": 2.192e-05,
+        "usd": 0.0466678
+      },
+      "converted_volume": {
+        "btc": 0.36914557,
+        "eth": 11.860068,
+        "usd": 25246
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.602949,
+      "timestamp": "2026-04-01T12:35:33+00:00",
+      "last_traded_at": "2026-04-01T12:35:33+00:00",
+      "last_fetch_at": "2026-04-01T12:55:34+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0x0001a500a6b18995b03f44bb040a5ffc28e45cb0",
+      "token_info_url": "https://v2.info.uniswap.org/token/0x0001a500a6b18995b03f44bb040a5ffc28e45cb0",
+      "coin_id": "autonolas",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 11050371.413303105
+    },
+    {
+      "base": "0XF3DCBC6D72A4E1892F7917B7C43B74131DF8480E",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 4.763448879e-06,
+      "volume": 2348932.13956852,
+      "converted_last": {
+        "btc": 1.48453e-07,
+        "eth": 4.77e-06,
+        "usd": 0.01015273
+      },
+      "converted_volume": {
+        "btc": 0.42019923,
+        "eth": 13.500342,
+        "usd": 28738
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.605808,
+      "timestamp": "2026-04-01T12:27:33+00:00",
+      "last_traded_at": "2026-04-01T12:27:33+00:00",
+      "last_fetch_at": "2026-04-01T12:55:34+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0xf3dcbc6d72a4e1892f7917b7c43b74131df8480e",
+      "token_info_url": "https://v2.info.uniswap.org/token/0xf3dcbc6d72a4e1892f7917b7c43b74131df8480e",
+      "coin_id": "big-data-protocol",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 233614.31422105967
+    },
+    {
+      "base": "0X69AF81E73A73B40ADF4F3D4223CD9B1ECE623074",
+      "target": "0XA0B86991C6218B36C1D19D4A2E9EB0CE3606EB48",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 0.4190523362,
+      "volume": 59246.5122320863,
+      "converted_last": {
+        "btc": 6.16e-06,
+        "eth": 0.00019792,
+        "usd": 0.421302
+      },
+      "converted_volume": {
+        "btc": 0.36502627,
+        "eth": 11.727722,
+        "usd": 24964
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.603467,
+      "timestamp": "2026-04-01T12:46:28+00:00",
+      "last_traded_at": "2026-04-01T12:46:28+00:00",
+      "last_fetch_at": "2026-04-01T12:55:33+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0x69af81e73a73b40adf4f3d4223cd9b1ece623074",
+      "token_info_url": "https://v2.info.uniswap.org/token/0x69af81e73a73b40adf4f3d4223cd9b1ece623074",
+      "coin_id": "mask-network",
+      "target_coin_id": "usd-coin",
+      "coin_mcap_usd": 41810447.46968127
+    },
+    {
+      "base": "0X628A3B2E302C7E896ACC432D2D0DD22B6CB9BC88",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 1.017540777e-05,
+      "volume": 1162503.20437798,
+      "converted_last": {
+        "btc": 3.17116e-07,
+        "eth": 1.019e-05,
+        "usd": 0.02168768
+      },
+      "converted_volume": {
+        "btc": 0.37217473,
+        "eth": 11.957391,
+        "usd": 25453
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.605537,
+      "timestamp": "2026-04-01T12:38:26+00:00",
+      "last_traded_at": "2026-04-01T12:38:26+00:00",
+      "last_fetch_at": "2026-04-01T12:55:34+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0x628a3b2e302c7e896acc432d2d0dd22b6cb9bc88",
+      "token_info_url": "https://v2.info.uniswap.org/token/0x628a3b2e302c7e896acc432d2d0dd22b6cb9bc88",
+      "coin_id": "limewire-token",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 7969918.508883807
+    },
+    {
+      "base": "0X18AAA7115705E8BE94BFFEBDE57AF9BFC265B998",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 8.133324991e-06,
+      "volume": 1346667.93601252,
+      "converted_last": {
+        "btc": 2.53475e-07,
+        "eth": 8.14e-06,
+        "usd": 0.01733522
+      },
+      "converted_volume": {
+        "btc": 0.34388158,
+        "eth": 11.048376,
+        "usd": 23518
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.603201,
+      "timestamp": "2026-04-01T12:53:35+00:00",
+      "last_traded_at": "2026-04-01T12:53:35+00:00",
+      "last_fetch_at": "2026-04-01T12:55:33+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0x18aaa7115705e8be94bffebde57af9bfc265b998",
+      "token_info_url": "https://v2.info.uniswap.org/token/0x18aaa7115705e8be94bffebde57af9bfc265b998",
+      "coin_id": "audius",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 24288930.79266558
+    },
+    {
+      "base": "0X31C8EACBFFDD875C74B94B077895BD78CF1E64A3",
+      "target": "0XA0B86991C6218B36C1D19D4A2E9EB0CE3606EB48",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 0.2175780244,
+      "volume": 99587.9691086981,
+      "converted_last": {
+        "btc": 3.2e-06,
+        "eth": 0.00010276,
+        "usd": 0.218746
+      },
+      "converted_volume": {
+        "btc": 0.32301268,
+        "eth": 10.377891,
+        "usd": 22091
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.60293,
+      "timestamp": "2026-04-01T12:31:37+00:00",
+      "last_traded_at": "2026-04-01T12:31:37+00:00",
+      "last_fetch_at": "2026-04-01T12:55:33+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0x31c8eacbffdd875c74b94b077895bd78cf1e64a3",
+      "token_info_url": "https://v2.info.uniswap.org/token/0x31c8eacbffdd875c74b94b077895bd78cf1e64a3",
+      "coin_id": "radicle",
+      "target_coin_id": "usd-coin",
+      "coin_mcap_usd": 10860738.578387428
+    },
+    {
+      "base": "0XB90B2A35C65DBC466B04240097CA756AD2005295",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 3.425091237e-11,
+      "volume": 313410817546.948,
+      "converted_last": {
+        "btc": 1.067e-12,
+        "eth": 3.4295e-11,
+        "usd": 7.3002e-08
+      },
+      "converted_volume": {
+        "btc": 0.32874824,
+        "eth": 10.562165,
+        "usd": 22483
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.603156,
+      "timestamp": "2026-04-01T12:53:36+00:00",
+      "last_traded_at": "2026-04-01T12:53:36+00:00",
+      "last_fetch_at": "2026-04-01T12:55:34+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0xb90b2a35c65dbc466b04240097ca756ad2005295",
+      "token_info_url": "https://v2.info.uniswap.org/token/0xb90b2a35c65dbc466b04240097ca756ad2005295",
+      "coin_id": "bobo-coin",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 4772589.753690137
+    },
+    {
+      "base": "0XDE342A3E269056FC3305F9E315F4C40D917BA521",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 7.71564624e-10,
+      "volume": 12940484560.1876,
+      "converted_last": {
+        "btc": 2.4046e-11,
+        "eth": 7.72554e-10,
+        "usd": 1.64e-06
+      },
+      "converted_volume": {
+        "btc": 0.33118525,
+        "eth": 10.640463,
+        "usd": 22650
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.603788,
+      "timestamp": "2026-04-01T11:58:30+00:00",
+      "last_traded_at": "2026-04-01T11:58:30+00:00",
+      "last_fetch_at": "2026-04-01T12:55:34+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0xde342a3e269056fc3305f9e315f4c40d917ba521",
+      "token_info_url": "https://v2.info.uniswap.org/token/0xde342a3e269056fc3305f9e315f4c40d917ba521",
+      "coin_id": "byte",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 1600884.5411695596
+    },
+    {
+      "base": "0XC56C7A0EAA804F854B536A5F3D5F49D2EC4B12B8",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 6.938324985e-09,
+      "volume": 1416465800.30053,
+      "converted_last": {
+        "btc": 2.16233e-10,
+        "eth": 6.947e-09,
+        "usd": 1.479e-05
+      },
+      "converted_volume": {
+        "btc": 0.31396203,
+        "eth": 10.087108,
+        "usd": 21472
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.603152,
+      "timestamp": "2026-04-01T12:31:38+00:00",
+      "last_traded_at": "2026-04-01T12:31:38+00:00",
+      "last_fetch_at": "2026-04-01T12:55:35+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0xc56c7a0eaa804f854b536a5f3d5f49d2ec4b12b8",
+      "token_info_url": "https://v2.info.uniswap.org/token/0xc56c7a0eaa804f854b536a5f3d5f49d2ec4b12b8",
+      "coin_id": "game-stop",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 5928667.985229109
+    },
+    {
+      "base": "0X7F39C581F595B53C5CB19BD0B3F8DA6C935E2CA0",
+      "target": "0XBAAC2B4491727D78D2B78815144570B9F2FE8899",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 5414400.94203031,
+      "volume": 7.6141369639,
+      "converted_last": {
+        "btc": 0.038302,
+        "eth": 1.230583,
+        "usd": 2619.48
+      },
+      "converted_volume": {
+        "btc": 0.29191838,
+        "eth": 9.37888,
+        "usd": 19964.38
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.602945,
+      "timestamp": "2026-04-01T11:46:21+00:00",
+      "last_traded_at": "2026-04-01T11:46:21+00:00",
+      "last_fetch_at": "2026-04-01T12:55:34+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0x7f39c581f595b53c5cb19bd0b3f8da6c935e2ca0",
+      "token_info_url": "https://v2.info.uniswap.org/token/0x7f39c581f595b53c5cb19bd0b3f8da6c935e2ca0",
+      "coin_id": "wrapped-steth",
+      "target_coin_id": "the-doge-nft",
+      "coin_mcap_usd": 9297998262.29382
+    },
+    {
+      "base": "0XFF20817765CB7F73D4BDE2E66E067E58D11095C2",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 4.813724549e-07,
+      "volume": 21346549.6715719,
+      "converted_last": {
+        "btc": 1.5008e-08,
+        "eth": 4.82059e-07,
+        "usd": 0.00102599
+      },
+      "converted_volume": {
+        "btc": 0.3353073,
+        "eth": 10.769779,
+        "usd": 22922
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.609289,
+      "timestamp": "2026-04-01T12:56:07+00:00",
+      "last_traded_at": "2026-04-01T12:56:07+00:00",
+      "last_fetch_at": "2026-04-01T12:56:07+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0xff20817765cb7f73d4bde2e66e067e58d11095c2",
+      "token_info_url": "https://v2.info.uniswap.org/token/0xff20817765cb7f73d4bde2e66e067e58d11095c2",
+      "coin_id": "amp-token",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 85598598.29560976
+    },
+    {
+      "base": "0X967DA4048CD07AB37855C090AAF366E4CE1B9F48",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 6.093660646e-05,
+      "volume": 150235.179488977,
+      "converted_last": {
+        "btc": 1.9e-06,
+        "eth": 6.101e-05,
+        "usd": 0.129879
+      },
+      "converted_volume": {
+        "btc": 0.28991891,
+        "eth": 9.31464,
+        "usd": 19827.64
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.603082,
+      "timestamp": "2026-04-01T12:31:37+00:00",
+      "last_traded_at": "2026-04-01T12:31:37+00:00",
+      "last_fetch_at": "2026-04-01T12:55:33+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0x967da4048cd07ab37855c090aaf366e4ce1b9f48",
+      "token_info_url": "https://v2.info.uniswap.org/token/0x967da4048cd07ab37855c090aaf366e4ce1b9f48",
+      "coin_id": "ocean-protocol",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 25909029.754290767
+    },
+    {
+      "base": "0X0F7DC5D02CC1E1F5EE47854D534D332A1081CCC8",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 1.172005805e-12,
+      "volume": 8552166832508.58,
+      "converted_last": {
+        "btc": 3.6526e-14,
+        "eth": 1.174e-12,
+        "usd": 2.498e-09
+      },
+      "converted_volume": {
+        "btc": 0.30385069,
+        "eth": 9.762246,
+        "usd": 20780
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.604711,
+      "timestamp": "2026-04-01T12:48:30+00:00",
+      "last_traded_at": "2026-04-01T12:48:30+00:00",
+      "last_fetch_at": "2026-04-01T12:55:35+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0x0f7dc5d02cc1e1f5ee47854d534d332a1081ccc8",
+      "token_info_url": "https://v2.info.uniswap.org/token/0x0f7dc5d02cc1e1f5ee47854d534d332a1081ccc8",
+      "coin_id": "pepes-dog",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 1051790.0886918039
+    },
+    {
+      "base": "0XCA530408C3E552B020A2300DEBC7BD18820FB42F",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 8.952995737e-13,
+      "volume": 10681039095054.3,
+      "converted_last": {
+        "btc": 2.7902e-14,
+        "eth": 8.96447e-13,
+        "usd": 1.908e-09
+      },
+      "converted_volume": {
+        "btc": 0.30383384,
+        "eth": 9.761705,
+        "usd": 20779
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.60423,
+      "timestamp": "2026-04-01T12:54:36+00:00",
+      "last_traded_at": "2026-04-01T12:54:36+00:00",
+      "last_fetch_at": "2026-04-01T12:55:34+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0xca530408c3e552b020a2300debc7bd18820fb42f",
+      "token_info_url": "https://v2.info.uniswap.org/token/0xca530408c3e552b020a2300debc7bd18820fb42f",
+      "coin_id": "ryujin",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 1924575.600407189
+    },
+    {
+      "base": "0XDBB7A34BF10169D6D2D0D02A6CBB436CF4381BFA",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 1.515960755e-06,
+      "volume": 6215642.34116028,
+      "converted_last": {
+        "btc": 4.7245e-08,
+        "eth": 1.52e-06,
+        "usd": 0.00323109
+      },
+      "converted_volume": {
+        "btc": 0.29932116,
+        "eth": 9.61672,
+        "usd": 20471
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.604425,
+      "timestamp": "2026-04-01T12:31:38+00:00",
+      "last_traded_at": "2026-04-01T12:31:38+00:00",
+      "last_fetch_at": "2026-04-01T12:55:35+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0xdbb7a34bf10169d6d2d0d02a6cbb436cf4381bfa",
+      "token_info_url": "https://v2.info.uniswap.org/token/0xdbb7a34bf10169d6d2d0d02a6cbb436cf4381bfa",
+      "coin_id": "zentry",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 25000651.82604664
+    },
+    {
+      "base": "0XEEF9F339514298C6A857EFCFC1A762AF84438DEE",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 0.001506611207,
+      "volume": 5847.971370069,
+      "converted_last": {
+        "btc": 4.695e-05,
+        "eth": 0.00150854,
+        "usd": 3.21
+      },
+      "converted_volume": {
+        "btc": 0.27841834,
+        "eth": 8.945145,
+        "usd": 19041.11
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.603053,
+      "timestamp": "2026-04-01T12:40:24+00:00",
+      "last_traded_at": "2026-04-01T12:40:24+00:00",
+      "last_fetch_at": "2026-04-01T12:55:34+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0xeef9f339514298c6a857efcfc1a762af84438dee",
+      "token_info_url": "https://v2.info.uniswap.org/token/0xeef9f339514298c6a857efcfc1a762af84438dee",
+      "coin_id": "hermez-network-token",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 35541849.60543683
+    },
+    {
+      "base": "0XCC4304A31D09258B0029EA7FE63D032F52E44EFE",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 2.066782202e-05,
+      "volume": 511908.924612638,
+      "converted_last": {
+        "btc": 6.44391e-07,
+        "eth": 2.07e-05,
+        "usd": 0.04405102
+      },
+      "converted_volume": {
+        "btc": 0.32006606,
+        "eth": 10.280243,
+        "usd": 21880
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.61048,
+      "timestamp": "2026-04-01T12:54:15+00:00",
+      "last_traded_at": "2026-04-01T12:54:15+00:00",
+      "last_fetch_at": "2026-04-01T12:56:07+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0xcc4304a31d09258b0029ea7fe63d032f52e44efe",
+      "token_info_url": "https://v2.info.uniswap.org/token/0xcc4304a31d09258b0029ea7fe63d032f52e44efe",
+      "coin_id": "trustswap",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 4614792.827662933
+    },
+    {
+      "base": "0X68BBED6A47194EFF1CF514B50EA91895597FC91E",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 3.947623506e-09,
+      "volume": 2161977357.42508,
+      "converted_last": {
+        "btc": 1.23028e-10,
+        "eth": 3.953e-09,
+        "usd": 8.41e-06
+      },
+      "converted_volume": {
+        "btc": 0.26423026,
+        "eth": 8.489304,
+        "usd": 18070.78
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.603058,
+      "timestamp": "2026-04-01T12:46:30+00:00",
+      "last_traded_at": "2026-04-01T12:46:30+00:00",
+      "last_fetch_at": "2026-04-01T12:55:35+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0x68bbed6a47194eff1cf514b50ea91895597fc91e",
+      "token_info_url": "https://v2.info.uniswap.org/token/0x68bbed6a47194eff1cf514b50ea91895597fc91e",
+      "coin_id": "andy-the-wisguy",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 8417570.507495888
+    },
+    {
+      "base": "0XD29DA236DD4AAC627346E1BBA06A619E8C22D7C5",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 6.196305913e-10,
+      "volume": 14791341127.6239,
+      "converted_last": {
+        "btc": 1.9311e-11,
+        "eth": 6.20425e-10,
+        "usd": 1.32e-06
+      },
+      "converted_volume": {
+        "btc": 0.28244256,
+        "eth": 9.074436,
+        "usd": 19316.33
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.604041,
+      "timestamp": "2026-04-01T12:35:34+00:00",
+      "last_traded_at": "2026-04-01T12:35:34+00:00",
+      "last_fetch_at": "2026-04-01T12:55:35+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0xd29da236dd4aac627346e1bba06a619e8c22d7c5",
+      "token_info_url": "https://v2.info.uniswap.org/token/0xd29da236dd4aac627346e1bba06a619e8c22d7c5",
+      "coin_id": "maga-hat",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 508880.2274499449
+    },
+    {
+      "base": "0XA93D86AF16FE83F064E3C0E2F3D129F7B7B002B0",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 5.836318371e-10,
+      "volume": 14877202513.8613,
+      "converted_last": {
+        "btc": 1.8189e-11,
+        "eth": 5.8438e-10,
+        "usd": 1.24e-06
+      },
+      "converted_volume": {
+        "btc": 0.29047196,
+        "eth": 9.332408,
+        "usd": 19865.46
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.605208,
+      "timestamp": "2026-04-01T12:46:31+00:00",
+      "last_traded_at": "2026-04-01T12:46:31+00:00",
+      "last_fetch_at": "2026-04-01T12:55:35+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0xa93d86af16fe83f064e3c0e2f3d129f7b7b002b0",
+      "token_info_url": "https://v2.info.uniswap.org/token/0xa93d86af16fe83f064e3c0e2f3d129f7b7b002b0",
+      "coin_id": "cocoro-2",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 510116.1493733117
+    },
+    {
+      "base": "0XA21AF1050F7B26E0CFF45EE51548254C41ED6B5C",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 2.1229743e-11,
+      "volume": 407316009652.251,
+      "converted_last": {
+        "btc": 6.61625e-13,
+        "eth": 2.1257e-11,
+        "usd": 4.5249e-08
+      },
+      "converted_volume": {
+        "btc": 0.26244762,
+        "eth": 8.432031,
+        "usd": 17948.87
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.603213,
+      "timestamp": "2026-04-01T12:31:37+00:00",
+      "last_traded_at": "2026-04-01T12:31:37+00:00",
+      "last_fetch_at": "2026-04-01T12:55:34+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0xa21af1050f7b26e0cff45ee51548254c41ed6b5c",
+      "token_info_url": "https://v2.info.uniswap.org/token/0xa21af1050f7b26e0cff45ee51548254c41ed6b5c",
+      "coin_id": "osaka-protocol",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 34185629.89236751
+    },
+    {
+      "base": "0X1121ACC14C63F3C872BFCA497D10926A6098AAC5",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 1.158947989e-06,
+      "volume": 6645066.24859647,
+      "converted_last": {
+        "btc": 3.6119e-08,
+        "eth": 1.16e-06,
+        "usd": 0.00247016
+      },
+      "converted_volume": {
+        "btc": 0.23846344,
+        "eth": 7.661456,
+        "usd": 16308.58
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.603236,
+      "timestamp": "2026-04-01T12:51:38+00:00",
+      "last_traded_at": "2026-04-01T12:51:38+00:00",
+      "last_fetch_at": "2026-04-01T12:55:35+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0x1121acc14c63f3c872bfca497d10926a6098aac5",
+      "token_info_url": "https://v2.info.uniswap.org/token/0x1121acc14c63f3c872bfca497d10926a6098aac5",
+      "coin_id": "department-of-government-efficiency",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 2426908.1682934095
+    },
+    {
+      "base": "0X12970E6868F88F6557B76120662C1B3E50A646BF",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 4.622592782e-12,
+      "volume": 1642035404873.02,
+      "converted_last": {
+        "btc": 1.44063e-13,
+        "eth": 4.629e-12,
+        "usd": 9.853e-09
+      },
+      "converted_volume": {
+        "btc": 0.23516229,
+        "eth": 7.555396,
+        "usd": 16082.82
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.603149,
+      "timestamp": "2026-04-01T12:54:36+00:00",
+      "last_traded_at": "2026-04-01T12:54:36+00:00",
+      "last_fetch_at": "2026-04-01T12:55:34+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0x12970e6868f88f6557b76120662c1b3e50a646bf",
+      "token_info_url": "https://v2.info.uniswap.org/token/0x12970e6868f88f6557b76120662c1b3e50a646bf",
+      "coin_id": "milady-meme-coin",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 8790408.717378788
+    },
+    {
+      "base": "0X4E9623B7E5B6438542458F5EE828D65C24D3AF8C",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 6.074325862e-09,
+      "volume": 1310819420.46468,
+      "converted_last": {
+        "btc": 1.89306e-10,
+        "eth": 6.082e-09,
+        "usd": 1.295e-05
+      },
+      "converted_volume": {
+        "btc": 0.24587357,
+        "eth": 7.899532,
+        "usd": 16815.36
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.605944,
+      "timestamp": "2026-04-01T12:25:36+00:00",
+      "last_traded_at": "2026-04-01T12:25:36+00:00",
+      "last_fetch_at": "2026-04-01T12:55:35+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0x4e9623b7e5b6438542458f5ee828d65c24d3af8c",
+      "token_info_url": "https://v2.info.uniswap.org/token/0x4e9623b7e5b6438542458f5ee828d65c24d3af8c",
+      "coin_id": "jerry-the-turtle-by-matt-furie",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 895843.7794418903
+    },
+    {
+      "base": "0XFF56CC6B1E6DED347AA0B7676C85AB0B3D08B0FA",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 3.799176167e-06,
+      "volume": 1954698.32693747,
+      "converted_last": {
+        "btc": 1.18401e-07,
+        "eth": 3.8e-06,
+        "usd": 0.0080975
+      },
+      "converted_volume": {
+        "btc": 0.2359313,
+        "eth": 7.580103,
+        "usd": 16135.41
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.604136,
+      "timestamp": "2026-04-01T12:37:38+00:00",
+      "last_traded_at": "2026-04-01T12:37:38+00:00",
+      "last_fetch_at": "2026-04-01T12:55:34+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0xff56cc6b1e6ded347aa0b7676c85ab0b3d08b0fa",
+      "token_info_url": "https://v2.info.uniswap.org/token/0xff56cc6b1e6ded347aa0b7676c85ab0b3d08b0fa",
+      "coin_id": "orbs",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 39984305.078156
+    },
+    {
+      "base": "0X45510DB2481353178DB5ABB87C96805FADAD0724",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 8.593637286e-06,
+      "volume": 843161.724896833,
+      "converted_last": {
+        "btc": 2.67821e-07,
+        "eth": 8.6e-06,
+        "usd": 0.01831632
+      },
+      "converted_volume": {
+        "btc": 0.22926389,
+        "eth": 7.365889,
+        "usd": 15679.42
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.60321,
+      "timestamp": "2026-04-01T12:35:34+00:00",
+      "last_traded_at": "2026-04-01T12:35:34+00:00",
+      "last_fetch_at": "2026-04-01T12:55:35+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0x45510db2481353178db5abb87c96805fadad0724",
+      "token_info_url": "https://v2.info.uniswap.org/token/0x45510db2481353178db5abb87c96805fadad0724",
+      "coin_id": "ftmtoken",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 6478767.616067591
+    },
+    {
+      "base": "0XEEF9F339514298C6A857EFCFC1A762AF84438DEE",
+      "target": "0XDAC17F958D2EE523A2206206994597C13D831EC7",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 3.1995762545,
+      "volume": 4489.4183377426,
+      "converted_last": {
+        "btc": 4.695e-05,
+        "eth": 0.00150854,
+        "usd": 3.21
+      },
+      "converted_volume": {
+        "btc": 0.21057824,
+        "eth": 6.765549,
+        "usd": 14401.51
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.602852,
+      "timestamp": "2026-04-01T12:40:25+00:00",
+      "last_traded_at": "2026-04-01T12:40:25+00:00",
+      "last_fetch_at": "2026-04-01T12:55:34+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0xeef9f339514298c6a857efcfc1a762af84438dee",
+      "token_info_url": "https://v2.info.uniswap.org/token/0xeef9f339514298c6a857efcfc1a762af84438dee",
+      "coin_id": "hermez-network-token",
+      "target_coin_id": "tether",
+      "coin_mcap_usd": 35541849.60543683
+    },
+    {
+      "base": "0X66A0F676479CEE1D7373F3DC2E2952778BFF5BD6",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 5.505125078e-05,
+      "volume": 101068.731201074,
+      "converted_last": {
+        "btc": 1.72e-06,
+        "eth": 5.512e-05,
+        "usd": 0.117335
+      },
+      "converted_volume": {
+        "btc": 0.17439706,
+        "eth": 5.603104,
+        "usd": 11927.06
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.602714,
+      "timestamp": "2026-04-01T11:12:08+00:00",
+      "last_traded_at": "2026-04-01T11:12:08+00:00",
+      "last_fetch_at": "2026-04-01T12:55:33+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0x66a0f676479cee1d7373f3dc2e2952778bff5bd6",
+      "token_info_url": "https://v2.info.uniswap.org/token/0x66a0f676479cee1d7373f3dc2e2952778bff5bd6",
+      "coin_id": "wise-token11",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 2759273.137506857
+    },
+    {
+      "base": "0X6019DCB2D0B3E0D1D8B0CE8D16191B3A4F93703D",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 0.0001693364315,
+      "volume": 40487.5629173889,
+      "converted_last": {
+        "btc": 5.28e-06,
+        "eth": 0.00016955,
+        "usd": 0.360921
+      },
+      "converted_volume": {
+        "btc": 0.21424659,
+        "eth": 6.883407,
+        "usd": 14652.38
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.60376,
+      "timestamp": "2026-04-01T11:56:36+00:00",
+      "last_traded_at": "2026-04-01T11:56:36+00:00",
+      "last_fetch_at": "2026-04-01T12:55:35+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0x6019dcb2d0b3e0d1d8b0ce8d16191b3a4f93703d",
+      "token_info_url": "https://v2.info.uniswap.org/token/0x6019dcb2d0b3e0d1d8b0ce8d16191b3a4f93703d",
+      "coin_id": "quantum-fusion",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 0.0
+    },
+    {
+      "base": "0X140007C65535AA9C3801EA3BBD3F83C378C7F457",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 7.312031641e-07,
+      "volume": 10661903.8032267,
+      "converted_last": {
+        "btc": 2.2788e-08,
+        "eth": 7.32141e-07,
+        "usd": 0.00155847
+      },
+      "converted_volume": {
+        "btc": 0.2337908,
+        "eth": 7.511332,
+        "usd": 15989.02
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.606467,
+      "timestamp": "2026-04-01T10:39:17+00:00",
+      "last_traded_at": "2026-04-01T10:39:17+00:00",
+      "last_fetch_at": "2026-04-01T12:55:35+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0x140007c65535aa9c3801ea3bbd3f83c378c7f457",
+      "token_info_url": "https://v2.info.uniswap.org/token/0x140007c65535aa9c3801ea3bbd3f83c378c7f457",
+      "coin_id": "free-speech-2",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 1465842.138905404
+    },
+    {
+      "base": "0X49FB8AD7578148E17C3EF0C344CE23A66ED372C4",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 4.536110938e-05,
+      "volume": 154851.152976204,
+      "converted_last": {
+        "btc": 1.41e-06,
+        "eth": 4.542e-05,
+        "usd": 0.096682
+      },
+      "converted_volume": {
+        "btc": 0.21258114,
+        "eth": 6.829899,
+        "usd": 14538.48
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.603494,
+      "timestamp": "2026-04-01T12:48:29+00:00",
+      "last_traded_at": "2026-04-01T12:48:29+00:00",
+      "last_fetch_at": "2026-04-01T12:55:35+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0x49fb8ad7578148e17c3ef0c344ce23a66ed372c4",
+      "token_info_url": "https://v2.info.uniswap.org/token/0x49fb8ad7578148e17c3ef0c344ce23a66ed372c4",
+      "coin_id": "tao-bot",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 7737931.934916445
+    },
+    {
+      "base": "0XE9732D4B1E7D3789004FF029F032BA3034DB059C",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 9.302844844e-08,
+      "volume": 74032925.9244845,
+      "converted_last": {
+        "btc": 2.899e-09,
+        "eth": 9.3148e-08,
+        "usd": 0.00019828
+      },
+      "converted_volume": {
+        "btc": 0.2141076,
+        "eth": 6.878941,
+        "usd": 14642.88
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.603849,
+      "timestamp": "2026-04-01T12:48:30+00:00",
+      "last_traded_at": "2026-04-01T12:48:30+00:00",
+      "last_fetch_at": "2026-04-01T12:55:35+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0xe9732d4b1e7d3789004ff029f032ba3034db059c",
+      "token_info_url": "https://v2.info.uniswap.org/token/0xe9732d4b1e7d3789004ff029f032ba3034db059c",
+      "coin_id": "patriot",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 2060679.813709798
+    },
+    {
+      "base": "0X95AD61B0A150D79219DCF64E1E6CC01F0B64C4CE",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 2.835197759e-09,
+      "volume": 2379375319.30789,
+      "converted_last": {
+        "btc": 8.8359e-11,
+        "eth": 2.839e-09,
+        "usd": 6.04e-06
+      },
+      "converted_volume": {
+        "btc": 0.21068728,
+        "eth": 6.769052,
+        "usd": 14408.96
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.603416,
+      "timestamp": "2026-04-01T12:51:37+00:00",
+      "last_traded_at": "2026-04-01T12:51:37+00:00",
+      "last_fetch_at": "2026-04-01T12:55:33+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0x95ad61b0a150d79219dcf64e1e6cc01f0b64c4ce",
+      "token_info_url": "https://v2.info.uniswap.org/token/0x95ad61b0a150d79219dcf64e1e6cc01f0b64c4ce",
+      "coin_id": "shiba-inu",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 3559999509.458734
+    },
+    {
+      "base": "0XEC67005C4E498EC7F55E092BD1D35CBC47C91892",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 0.001481938632,
+      "volume": 4743.763984666,
+      "converted_last": {
+        "btc": 4.618e-05,
+        "eth": 0.00148384,
+        "usd": 3.16
+      },
+      "converted_volume": {
+        "btc": 0.22987832,
+        "eth": 7.38563,
+        "usd": 15721.44
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.606066,
+      "timestamp": "2026-04-01T10:01:44+00:00",
+      "last_traded_at": "2026-04-01T10:01:44+00:00",
+      "last_fetch_at": "2026-04-01T12:55:34+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0xec67005c4e498ec7f55e092bd1d35cbc47c91892",
+      "token_info_url": "https://v2.info.uniswap.org/token/0xec67005c4e498ec7f55e092bd1d35cbc47c91892",
+      "coin_id": "melon",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 10348867.563153768
+    },
+    {
+      "base": "0XB2617246D0C6C0087F18703D576831899CA94F01",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 1.424150257e-05,
+      "volume": 517002.079308407,
+      "converted_last": {
+        "btc": 4.43836e-07,
+        "eth": 1.426e-05,
+        "usd": 0.03035408
+      },
+      "converted_volume": {
+        "btc": 0.23345039,
+        "eth": 7.500395,
+        "usd": 15965.74
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.607704,
+      "timestamp": "2026-04-01T12:37:38+00:00",
+      "last_traded_at": "2026-04-01T12:37:38+00:00",
+      "last_fetch_at": "2026-04-01T12:55:33+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0xb2617246d0c6c0087f18703d576831899ca94f01",
+      "token_info_url": "https://v2.info.uniswap.org/token/0xb2617246d0c6c0087f18703d576831899ca94f01",
+      "coin_id": "zignaly",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 42891898.05578382
+    },
+    {
+      "base": "0X289FF00235D2B98B0145FF5D4435D3E92F9540A6",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 1.341341422e-05,
+      "volume": 477266.334518468,
+      "converted_last": {
+        "btc": 4.18029e-07,
+        "eth": 1.343e-05,
+        "usd": 0.02858911
+      },
+      "converted_volume": {
+        "btc": 0.2023503,
+        "eth": 6.501198,
+        "usd": 13838.79
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.603733,
+      "timestamp": "2026-04-01T12:17:31+00:00",
+      "last_traded_at": "2026-04-01T12:17:31+00:00",
+      "last_fetch_at": "2026-04-01T12:55:35+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0x289ff00235d2b98b0145ff5d4435d3e92f9540a6",
+      "token_info_url": "https://v2.info.uniswap.org/token/0x289ff00235d2b98b0145ff5d4435d3e92f9540a6",
+      "coin_id": "book-of-ethereum",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 2966761.080248593
+    },
+    {
+      "base": "0X131157C6760F78F7DDF877C0019EBA175BA4B6F6",
+      "target": "0XA0B86991C6218B36C1D19D4A2E9EB0CE3606EB48",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 0.510448559,
+      "volume": 26324.9600949278,
+      "converted_last": {
+        "btc": 7.41e-06,
+        "eth": 0.00023806,
+        "usd": 0.506756
+      },
+      "converted_volume": {
+        "btc": 0.20495747,
+        "eth": 6.584962,
+        "usd": 14017.1
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.604687,
+      "timestamp": "2026-04-01T12:02:33+00:00",
+      "last_traded_at": "2026-04-01T12:02:33+00:00",
+      "last_fetch_at": "2026-04-01T12:55:33+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0x131157c6760f78f7ddf877c0019eba175ba4b6f6",
+      "token_info_url": "https://v2.info.uniswap.org/token/0x131157c6760f78f7ddf877c0019eba175ba4b6f6",
+      "coin_id": "bigshortbets",
+      "target_coin_id": "usd-coin",
+      "coin_mcap_usd": 3043106.9133529137
+    },
+    {
+      "base": "0X28561B8A2360F463011C16B6CC0B0CBEF8DBBCAD",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 1.970449016e-09,
+      "volume": 3234237408.16807,
+      "converted_last": {
+        "btc": 6.1409e-11,
+        "eth": 1.973e-09,
+        "usd": 4.2e-06
+      },
+      "converted_volume": {
+        "btc": 0.19613282,
+        "eth": 6.30144,
+        "usd": 13413.58
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.603533,
+      "timestamp": "2026-04-01T12:54:37+00:00",
+      "last_traded_at": "2026-04-01T12:54:37+00:00",
+      "last_fetch_at": "2026-04-01T12:55:35+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0x28561b8a2360f463011c16b6cc0b0cbef8dbbcad",
+      "token_info_url": "https://v2.info.uniswap.org/token/0x28561b8a2360f463011c16b6cc0b0cbef8dbbcad",
+      "coin_id": "moo-deng-2",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 1728698.1040965607
+    },
+    {
+      "base": "0X7F792DB54B0E580CDC755178443F0430CF799ACA",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 2.287292682e-11,
+      "volume": 254673657688.485,
+      "converted_last": {
+        "btc": 7.12834e-13,
+        "eth": 2.2902e-11,
+        "usd": 4.8751e-08
+      },
+      "converted_volume": {
+        "btc": 0.1850532,
+        "eth": 5.945469,
+        "usd": 12655.84
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.603158,
+      "timestamp": "2026-04-01T12:51:37+00:00",
+      "last_traded_at": "2026-04-01T12:51:37+00:00",
+      "last_fetch_at": "2026-04-01T12:55:34+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0x7f792db54b0e580cdc755178443f0430cf799aca",
+      "token_info_url": "https://v2.info.uniswap.org/token/0x7f792db54b0e580cdc755178443f0430cf799aca",
+      "coin_id": "volt-inu-2",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 2941014.194093809
+    },
+    {
+      "base": "0X2FB652314C3D850E9049057BBE9813F1EEE882D3",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 1.311075295e-05,
+      "volume": 505424.029817109,
+      "converted_last": {
+        "btc": 4.08596e-07,
+        "eth": 1.313e-05,
+        "usd": 0.02794402
+      },
+      "converted_volume": {
+        "btc": 0.19968141,
+        "eth": 6.415451,
+        "usd": 13656.27
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.604092,
+      "timestamp": "2026-04-01T12:31:38+00:00",
+      "last_traded_at": "2026-04-01T12:31:38+00:00",
+      "last_fetch_at": "2026-04-01T12:55:35+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0x2fb652314c3d850e9049057bbe9813f1eee882d3",
+      "token_info_url": "https://v2.info.uniswap.org/token/0x2fb652314c3d850e9049057bbe9813f1eee882d3",
+      "coin_id": "rocketx",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 2557983.173315741
+    },
+    {
+      "base": "0X3845BADADE8E6DFF049820680D1F14BD3903A5D0",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 3.690322621e-05,
+      "volume": 166188.050940811,
+      "converted_last": {
+        "btc": 1.15e-06,
+        "eth": 3.695e-05,
+        "usd": 0.078655
+      },
+      "converted_volume": {
+        "btc": 0.18797529,
+        "eth": 6.039351,
+        "usd": 12855.68
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.603623,
+      "timestamp": "2026-04-01T12:54:35+00:00",
+      "last_traded_at": "2026-04-01T12:54:35+00:00",
+      "last_fetch_at": "2026-04-01T12:55:33+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0x3845badade8e6dff049820680d1f14bd3903a5d0",
+      "token_info_url": "https://v2.info.uniswap.org/token/0x3845badade8e6dff049820680d1f14bd3903a5d0",
+      "coin_id": "the-sandbox",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 209850599.41704774
+    },
+    {
+      "base": "0X65278F702019078E9AB196C0DA0A6EE55E7248B7",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 4.774638014e-08,
+      "volume": 126787089.019568,
+      "converted_last": {
+        "btc": 1.488e-09,
+        "eth": 4.7808e-08,
+        "usd": 0.00010177
+      },
+      "converted_volume": {
+        "btc": 0.20429433,
+        "eth": 6.563656,
+        "usd": 13971.75
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.606923,
+      "timestamp": "2026-04-01T12:46:31+00:00",
+      "last_traded_at": "2026-04-01T12:46:31+00:00",
+      "last_fetch_at": "2026-04-01T12:55:35+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0x65278f702019078e9ab196c0da0a6ee55e7248b7",
+      "token_info_url": "https://v2.info.uniswap.org/token/0x65278f702019078e9ab196c0da0a6ee55e7248b7",
+      "coin_id": "wrapped-dione",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 129720.52674271404
+    },
+    {
+      "base": "0X4691937A7508860F876C9C0A2A617E7D9E945D4B",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 8.309003482e-06,
+      "volume": 705007.498977259,
+      "converted_last": {
+        "btc": 2.5895e-07,
+        "eth": 8.32e-06,
+        "usd": 0.01770966
+      },
+      "converted_volume": {
+        "btc": 0.17926347,
+        "eth": 5.759454,
+        "usd": 12259.88
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.603283,
+      "timestamp": "2026-04-01T12:46:28+00:00",
+      "last_traded_at": "2026-04-01T12:46:28+00:00",
+      "last_fetch_at": "2026-04-01T12:55:33+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0x4691937a7508860f876c9c0a2a617e7d9e945d4b",
+      "token_info_url": "https://v2.info.uniswap.org/token/0x4691937a7508860f876c9c0a2a617e7d9e945d4b",
+      "coin_id": "woo-network",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 33413664.69490609
+    },
+    {
+      "base": "0X32B053F2CBA79F80ADA5078CB6B305DA92BDE6E1",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 0.0002283307593,
+      "volume": 25807.639645329,
+      "converted_last": {
+        "btc": 7.12e-06,
+        "eth": 0.00022862,
+        "usd": 0.48666
+      },
+      "converted_volume": {
+        "btc": 0.18257132,
+        "eth": 5.86573,
+        "usd": 12486.1
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.603639,
+      "timestamp": "2026-04-01T12:35:34+00:00",
+      "last_traded_at": "2026-04-01T12:35:34+00:00",
+      "last_fetch_at": "2026-04-01T12:55:35+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0x32b053f2cba79f80ada5078cb6b305da92bde6e1",
+      "token_info_url": "https://v2.info.uniswap.org/token/0x32b053f2cba79f80ada5078cb6b305da92bde6e1",
+      "coin_id": "neuralai",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 4800010.614056912
+    },
+    {
+      "base": "0XF0F9D895ACA5C8678F706FB8216FA22957685A13",
+      "target": "0XC02AAA39B223FE8D0A0E5C4F27EAD9083C756CC2",
+      "market": {
+        "name": "Uniswap V2 (Ethereum)",
+        "identifier": "uniswap_v2",
+        "has_trading_incentive": false
+      },
+      "last": 4.452842715e-10,
+      "volume": 12318711461.2085,
+      "converted_last": {
+        "btc": 1.3877e-11,
+        "eth": 4.45855e-10,
+        "usd": 9.49071e-07
+      },
+      "converted_volume": {
+        "btc": 0.17138905,
+        "eth": 5.506461,
+        "usd": 11721.35
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.602946,
+      "timestamp": "2026-04-01T12:44:30+00:00",
+      "last_traded_at": "2026-04-01T12:44:30+00:00",
+      "last_fetch_at": "2026-04-01T12:55:34+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/ethereum/0xf0f9d895aca5c8678f706fb8216fa22957685a13",
+      "token_info_url": "https://v2.info.uniswap.org/token/0xf0f9d895aca5c8678f706fb8216fa22957685a13",
+      "coin_id": "cult-dao",
+      "target_coin_id": "weth",
+      "coin_mcap_usd": 3718554.994484011
+    }
+  ],
+  "status_updates": []
+}

@@ -1,0 +1,489 @@
+{
+  "name": "Uniswap V3 (zkSync)",
+  "year_established": 2022,
+  "country": null,
+  "description": "",
+  "url": "https://app.uniswap.org/swap",
+  "image": "https://coin-images.coingecko.com/markets/images/1663/small/uniswap-v3.jpg?1720395951",
+  "facebook_url": "",
+  "reddit_url": "",
+  "telegram_url": "",
+  "slack_url": "",
+  "other_url_1": "",
+  "other_url_2": "",
+  "twitter_handle": "Uniswap",
+  "has_trading_incentive": false,
+  "centralized": false,
+  "public_notice": "",
+  "alert_notice": "",
+  "trust_score": 4,
+  "trust_score_rank": 632,
+  "coins": 7,
+  "pairs": 14,
+  "trade_volume_24h_btc": 0.5461838609455026,
+  "tickers": [
+    {
+      "base": "0X5A7D6B2F92C77FAD6CCABD7EE0624E64907EAF3E",
+      "target": "0X5AEA5775959FBC2557CC8789BC1BF90A239D9A91",
+      "market": {
+        "name": "Uniswap V3 (zkSync)",
+        "identifier": "uniswap-v3-zksync",
+        "has_trading_incentive": false
+      },
+      "last": 8.415981436e-06,
+      "volume": 648351.605880865,
+      "converted_last": {
+        "btc": 2.62302e-07,
+        "eth": 8.42e-06,
+        "usd": 0.01793114
+      },
+      "converted_volume": {
+        "btc": 0.16900428,
+        "eth": 5.428271,
+        "usd": 11553.25
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.603728,
+      "timestamp": "2026-04-01T12:49:12+00:00",
+      "last_traded_at": "2026-04-01T12:49:12+00:00",
+      "last_fetch_at": "2026-04-01T12:56:09+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/zksync/0x5a7d6b2f92c77fad6ccabd7ee0624e64907eaf3e",
+      "token_info_url": null,
+      "coin_id": "zksync",
+      "target_coin_id": "bridged-weth",
+      "coin_mcap_usd": 172224463.83512565
+    },
+    {
+      "base": "0X1D17CBCF0D6D143135AE902365D2E5E2A16538D4",
+      "target": "0X5AEA5775959FBC2557CC8789BC1BF90A239D9A91",
+      "market": {
+        "name": "Uniswap V3 (zkSync)",
+        "identifier": "uniswap-v3-zksync",
+        "has_trading_incentive": false
+      },
+      "last": 0.0004704488891,
+      "volume": 9886.076985,
+      "converted_last": {
+        "btc": 1.468e-05,
+        "eth": 0.00047142,
+        "usd": 1.003
+      },
+      "converted_volume": {
+        "btc": 0.14747345,
+        "eth": 4.736719,
+        "usd": 10081.39
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.609062,
+      "timestamp": "2026-04-01T12:39:10+00:00",
+      "last_traded_at": "2026-04-01T12:39:10+00:00",
+      "last_fetch_at": "2026-04-01T12:56:09+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/zksync/0x1d17cbcf0d6d143135ae902365d2e5e2a16538d4",
+      "token_info_url": null,
+      "coin_id": "usd-coin",
+      "target_coin_id": "bridged-weth",
+      "coin_mcap_usd": 77148244633.57173
+    },
+    {
+      "base": "0XBBEB516FB02A01611CBBE0453FE3C580D7281011",
+      "target": "0X5AEA5775959FBC2557CC8789BC1BF90A239D9A91",
+      "market": {
+        "name": "Uniswap V3 (zkSync)",
+        "identifier": "uniswap-v3-zksync",
+        "has_trading_incentive": false
+      },
+      "last": 32.0845039535,
+      "volume": 0.10144609,
+      "converted_last": {
+        "btc": 0.99760349,
+        "eth": 31.98631,
+        "usd": 68304
+      },
+      "converted_volume": {
+        "btc": 0.10192762,
+        "eth": 3.26812,
+        "usd": 6978.77
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.625578,
+      "timestamp": "2026-04-01T12:47:04+00:00",
+      "last_traded_at": "2026-04-01T12:47:04+00:00",
+      "last_fetch_at": "2026-04-01T12:47:04+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/zksync/0xbbeb516fb02a01611cbbe0453fe3c580d7281011",
+      "token_info_url": null,
+      "coin_id": "zksync-bridged-wbtc-zksync",
+      "target_coin_id": "bridged-weth",
+      "coin_mcap_usd": 1643367.2356593064
+    },
+    {
+      "base": "0X5A7D6B2F92C77FAD6CCABD7EE0624E64907EAF3E",
+      "target": "0X3355DF6D4C9C3035724FD0E3914DE96A5A83AAF4",
+      "market": {
+        "name": "Uniswap V3 (zkSync)",
+        "identifier": "uniswap-v3-zksync",
+        "has_trading_incentive": false
+      },
+      "last": 0.01793433471,
+      "volume": 37224.3079587675,
+      "converted_last": {
+        "btc": 2.62078e-07,
+        "eth": 8.41e-06,
+        "usd": 0.01793114
+      },
+      "converted_volume": {
+        "btc": 0.00963068,
+        "eth": 0.30919867,
+        "usd": 658.92
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.615118,
+      "timestamp": "2026-04-01T12:54:34+00:00",
+      "last_traded_at": "2026-04-01T12:54:34+00:00",
+      "last_fetch_at": "2026-04-01T12:54:34+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/zksync/0x5a7d6b2f92c77fad6ccabd7ee0624e64907eaf3e",
+      "token_info_url": null,
+      "coin_id": "zksync",
+      "target_coin_id": "zksync-bridged-usdc-zksync",
+      "coin_mcap_usd": 172224463.83512565
+    },
+    {
+      "base": "0XE027D939F7DE6F521675907CF086F59E4D75B876",
+      "target": "0X5AEA5775959FBC2557CC8789BC1BF90A239D9A91",
+      "market": {
+        "name": "Uniswap V3 (zkSync)",
+        "identifier": "uniswap-v3-zksync",
+        "has_trading_incentive": false
+      },
+      "last": 2.641645468e-05,
+      "volume": 10600.520844202,
+      "converted_last": {
+        "btc": 8.24746e-07,
+        "eth": 2.648e-05,
+        "usd": 0.056428
+      },
+      "converted_volume": {
+        "btc": 0.00884295,
+        "eth": 0.28390807,
+        "usd": 605.03
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.703493,
+      "timestamp": "2026-04-01T12:54:34+00:00",
+      "last_traded_at": "2026-04-01T12:54:34+00:00",
+      "last_fetch_at": "2026-04-01T12:54:34+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/zksync/0xe027d939f7de6f521675907cf086f59e4d75b876",
+      "token_info_url": null,
+      "coin_id": "solarcoin",
+      "target_coin_id": "bridged-weth",
+      "coin_mcap_usd": 3658571.3693735427
+    },
+    {
+      "base": "0X3355DF6D4C9C3035724FD0E3914DE96A5A83AAF4",
+      "target": "0X5AEA5775959FBC2557CC8789BC1BF90A239D9A91",
+      "market": {
+        "name": "Uniswap V3 (zkSync)",
+        "identifier": "uniswap-v3-zksync",
+        "has_trading_incentive": false
+      },
+      "last": 0.0004687979729,
+      "volume": 553.745358,
+      "converted_last": {
+        "btc": 1.461e-05,
+        "eth": 0.00046917,
+        "usd": 0.999822
+      },
+      "converted_volume": {
+        "btc": 0.00828075,
+        "eth": 0.26585835,
+        "usd": 566.56
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.674958,
+      "timestamp": "2026-04-01T12:54:34+00:00",
+      "last_traded_at": "2026-04-01T12:54:34+00:00",
+      "last_fetch_at": "2026-04-01T12:54:34+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/zksync/0x3355df6d4c9c3035724fd0e3914de96a5a83aaf4",
+      "token_info_url": null,
+      "coin_id": "zksync-bridged-usdc-zksync",
+      "target_coin_id": "bridged-weth",
+      "coin_mcap_usd": 23800207.682693593
+    },
+    {
+      "base": "0XE027D939F7DE6F521675907CF086F59E4D75B876",
+      "target": "0X3355DF6D4C9C3035724FD0E3914DE96A5A83AAF4",
+      "market": {
+        "name": "Uniswap V3 (zkSync)",
+        "identifier": "uniswap-v3-zksync",
+        "has_trading_incentive": false
+      },
+      "last": 0.05643849151,
+      "volume": 10618.4640146484,
+      "converted_last": {
+        "btc": 8.24746e-07,
+        "eth": 2.648e-05,
+        "usd": 0.056428
+      },
+      "converted_volume": {
+        "btc": 0.00865904,
+        "eth": 0.27800355,
+        "usd": 592.44
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.711594,
+      "timestamp": "2026-04-01T12:54:34+00:00",
+      "last_traded_at": "2026-04-01T12:54:34+00:00",
+      "last_fetch_at": "2026-04-01T12:54:34+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/zksync/0xe027d939f7de6f521675907cf086f59e4d75b876",
+      "token_info_url": null,
+      "coin_id": "solarcoin",
+      "target_coin_id": "zksync-bridged-usdc-zksync",
+      "coin_mcap_usd": 3658571.3693735427
+    },
+    {
+      "base": "0X1D17CBCF0D6D143135AE902365D2E5E2A16538D4",
+      "target": "0X3355DF6D4C9C3035724FD0E3914DE96A5A83AAF4",
+      "market": {
+        "name": "Uniswap V3 (zkSync)",
+        "identifier": "uniswap-v3-zksync",
+        "has_trading_incentive": false
+      },
+      "last": 0.9999495652,
+      "volume": 84.082345,
+      "converted_last": {
+        "btc": 1.461e-05,
+        "eth": 0.00046914,
+        "usd": 0.999771
+      },
+      "converted_volume": {
+        "btc": 0.0012287,
+        "eth": 0.03944805,
+        "usd": 84.07
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.849827,
+      "timestamp": "2026-04-01T11:56:28+00:00",
+      "last_traded_at": "2026-04-01T11:56:28+00:00",
+      "last_fetch_at": "2026-04-01T12:54:34+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/zksync/0x1d17cbcf0d6d143135ae902365d2e5e2a16538d4",
+      "token_info_url": null,
+      "coin_id": "usd-coin",
+      "target_coin_id": "zksync-bridged-usdc-zksync",
+      "coin_mcap_usd": 77148244633.57173
+    },
+    {
+      "base": "0XBBEB516FB02A01611CBBE0453FE3C580D7281011",
+      "target": "0X5AEA5775959FBC2557CC8789BC1BF90A239D9A91",
+      "market": {
+        "name": "Uniswap V3 (zkSync)",
+        "identifier": "uniswap-v3-zksync",
+        "has_trading_incentive": false
+      },
+      "last": 32.2168447341,
+      "volume": 0.0004871,
+      "converted_last": {
+        "btc": 0.9997146,
+        "eth": 32.096435,
+        "usd": 68400
+      },
+      "converted_volume": {
+        "btc": 0.00048879,
+        "eth": 0.01569296,
+        "usd": 33.44
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 1.036695,
+      "timestamp": "2026-04-01T09:14:16+00:00",
+      "last_traded_at": "2026-04-01T09:14:16+00:00",
+      "last_fetch_at": "2026-04-01T12:54:34+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/zksync/0xbbeb516fb02a01611cbbe0453fe3c580d7281011",
+      "token_info_url": null,
+      "coin_id": "zksync-bridged-wbtc-zksync",
+      "target_coin_id": "bridged-weth",
+      "coin_mcap_usd": 1643367.2356593064
+    },
+    {
+      "base": "0X1D17CBCF0D6D143135AE902365D2E5E2A16538D4",
+      "target": "0X5A7D6B2F92C77FAD6CCABD7EE0624E64907EAF3E",
+      "market": {
+        "name": "Uniswap V3 (zkSync)",
+        "identifier": "uniswap-v3-zksync",
+        "has_trading_incentive": false
+      },
+      "last": 56.0919157954,
+      "volume": 10.379129,
+      "converted_last": {
+        "btc": 1.47e-05,
+        "eth": 0.00047197,
+        "usd": 1.006
+      },
+      "converted_volume": {
+        "btc": 0.00015573,
+        "eth": 0.00499983,
+        "usd": 10.65
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.758278,
+      "timestamp": "2026-04-01T10:29:00+00:00",
+      "last_traded_at": "2026-04-01T10:29:00+00:00",
+      "last_fetch_at": "2026-04-01T12:54:34+00:00",
+      "is_anomaly": false,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/zksync/0x1d17cbcf0d6d143135ae902365d2e5e2a16538d4",
+      "token_info_url": null,
+      "coin_id": "usd-coin",
+      "target_coin_id": "zksync",
+      "coin_mcap_usd": 77148244633.57173
+    },
+    {
+      "base": "0X5A7D6B2F92C77FAD6CCABD7EE0624E64907EAF3E",
+      "target": "0X5AEA5775959FBC2557CC8789BC1BF90A239D9A91",
+      "market": {
+        "name": "Uniswap V3 (zkSync)",
+        "identifier": "uniswap-v3-zksync",
+        "has_trading_incentive": false
+      },
+      "last": 8.488204421e-06,
+      "volume": 349829.220869445,
+      "converted_last": {
+        "btc": 2.62302e-07,
+        "eth": 8.42e-06,
+        "usd": 0.01793114
+      },
+      "converted_volume": {
+        "btc": 0.09032679,
+        "eth": 2.901218,
+        "usd": 6174.8
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.603667,
+      "timestamp": "2026-04-01T12:16:05+00:00",
+      "last_traded_at": "2026-04-01T12:16:05+00:00",
+      "last_fetch_at": "2026-04-01T12:56:09+00:00",
+      "is_anomaly": true,
+      "is_stale": false,
+      "trade_url": "https://app.uniswap.org/explore/tokens/zksync/0x5a7d6b2f92c77fad6ccabd7ee0624e64907eaf3e",
+      "token_info_url": null,
+      "coin_id": "zksync",
+      "target_coin_id": "bridged-weth",
+      "coin_mcap_usd": 172224463.83512565
+    },
+    {
+      "base": "0XD78ABD81A3D57712A3AF080DC4185B698FE9AC5A",
+      "target": "0X5AEA5775959FBC2557CC8789BC1BF90A239D9A91",
+      "market": {
+        "name": "Uniswap V3 (zkSync)",
+        "identifier": "uniswap-v3-zksync",
+        "has_trading_incentive": false
+      },
+      "last": 0.001321677279,
+      "volume": 28.9063664584,
+      "converted_last": {
+        "btc": 4.054e-05,
+        "eth": 0.00132619,
+        "usd": 2.68
+      },
+      "converted_volume": {
+        "btc": 0.00116375,
+        "eth": 0.03806656,
+        "usd": 77.05
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.636044,
+      "timestamp": "2026-03-30T18:22:08+00:00",
+      "last_traded_at": "2026-03-30T18:22:08+00:00",
+      "last_fetch_at": "2026-03-31T11:12:20+00:00",
+      "is_anomaly": false,
+      "is_stale": true,
+      "trade_url": "https://app.uniswap.org/explore/tokens/zksync/0xd78abd81a3d57712a3af080dc4185b698fe9ac5a",
+      "token_info_url": null,
+      "coin_id": "venus",
+      "target_coin_id": "bridged-weth",
+      "coin_mcap_usd": 45908849.804020606
+    },
+    {
+      "base": "0X05B65997FF7CB7976B43000AD376F91108B30D40",
+      "target": "0X5AEA5775959FBC2557CC8789BC1BF90A239D9A91",
+      "market": {
+        "name": "Uniswap V3 (zkSync)",
+        "identifier": "uniswap-v3-zksync",
+        "has_trading_incentive": false
+      },
+      "last": 4.003068263e-09,
+      "volume": 1482318.811618,
+      "converted_last": {
+        "btc": 1.23661e-10,
+        "eth": 4.004e-09,
+        "usd": 8.38e-06
+      },
+      "converted_volume": {
+        "btc": 0.0001833,
+        "eth": 0.0059349,
+        "usd": 12.42
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.699812,
+      "timestamp": "2026-03-31T14:05:07+00:00",
+      "last_traded_at": "2026-03-31T14:05:07+00:00",
+      "last_fetch_at": "2026-03-31T19:58:49+00:00",
+      "is_anomaly": false,
+      "is_stale": true,
+      "trade_url": "https://app.uniswap.org/explore/tokens/zksync/0x05b65997ff7cb7976b43000ad376f91108b30d40",
+      "token_info_url": null,
+      "coin_id": "wild-goat-coin-2",
+      "target_coin_id": "bridged-weth",
+      "coin_mcap_usd": 37459.20656125273
+    },
+    {
+      "base": "0X5A7D6B2F92C77FAD6CCABD7EE0624E64907EAF3E",
+      "target": "0X5AEA5775959FBC2557CC8789BC1BF90A239D9A91",
+      "market": {
+        "name": "Uniswap V3 (zkSync)",
+        "identifier": "uniswap-v3-zksync",
+        "has_trading_incentive": false
+      },
+      "last": 8.808767999e-06,
+      "volume": 88.1246896014,
+      "converted_last": {
+        "btc": 2.60585e-07,
+        "eth": 8.65e-06,
+        "usd": 0.0171382
+      },
+      "converted_volume": {
+        "btc": 2.282e-05,
+        "eth": 0.00075764,
+        "usd": 1.5
+      },
+      "trust_score": null,
+      "bid_ask_spread_percentage": 0.815235,
+      "timestamp": "2026-03-27T13:43:30+00:00",
+      "last_traded_at": "2026-03-27T13:43:30+00:00",
+      "last_fetch_at": "2026-03-27T18:37:32+00:00",
+      "is_anomaly": false,
+      "is_stale": true,
+      "trade_url": "https://app.uniswap.org/explore/tokens/zksync/0x5a7d6b2f92c77fad6ccabd7ee0624e64907eaf3e",
+      "token_info_url": null,
+      "coin_id": "zksync",
+      "target_coin_id": "bridged-weth",
+      "coin_mcap_usd": 172224463.83512565
+    }
+  ],
+  "status_updates": []
+}
