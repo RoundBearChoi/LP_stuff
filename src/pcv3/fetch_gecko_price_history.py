@@ -95,7 +95,6 @@ class CoinGeckoPriceFetcher:
             print(f"  → Found in volume tokens: {symbol} → {cg_id}")
             return cg_id
 
-        # === NEW STRICT BEHAVIOR ===
         print(f"❌ Token '{symbol}' not found in volume token mapping.")
         print("   Download aborted — please add the token to volume_tokens_whole_list_mar_31st.txt")
         sys.exit(1)
@@ -152,15 +151,16 @@ class CoinGeckoPriceFetcher:
         print(f"  → Fetched {len(df):,} hourly records.")
         return df
 
-    def run(self, coin_input: str, months: int):
-        """Main execution logic."""
+    def run(self, coin_input: str, months: int, api_key: str | None = None) -> bool:
+        """Main execution logic. Returns True if CSV was created/updated, False if coin not found."""
         volume_mapping = self.load_volume_token_mapping()
 
-        print("\nEnter your CoinGecko Basic Tier API key (will be shown as *):")
-        api_key = self.get_masked_input("API Key: ")
-        if not api_key:
-            print("Error: API key is required.")
-            sys.exit(1)
+        if api_key is None:
+            print("\nEnter your CoinGecko Basic Tier API key (will be shown as *):")
+            api_key = self.get_masked_input("API Key: ")
+            if not api_key:
+                print("Error: API key is required.")
+                sys.exit(1)
 
         coin_id = self.get_coin_id(coin_input, volume_mapping)
         print(f"Using CoinGecko ID: {coin_id} (file will be named with your input '{coin_input}')")
@@ -169,7 +169,9 @@ class CoinGeckoPriceFetcher:
         filename = f"price_data/gecko_{coin_input}_hourly_price_history.csv"
 
         if os.path.exists(filename):
-            existing_df = pd.read_csv(filename, parse_dates=["timestamp"])
+            # <<< ROBUST DATETIME PARSING — this fixes the mixed-format error >>>
+            existing_df = pd.read_csv(filename)
+            existing_df["timestamp"] = pd.to_datetime(existing_df["timestamp"], format='mixed')
             print(f"Loaded existing CSV with {len(existing_df):,} records.")
         else:
             existing_df = pd.DataFrame(columns=["timestamp", "price_usd"])
@@ -182,7 +184,7 @@ class CoinGeckoPriceFetcher:
         required_start = now - timedelta(days=days_back)
         required_start_unix = int(required_start.timestamp())
 
-        # === FIND ALL MISSING RANGES (old + middle gaps + new) ===
+        # === FIND ALL MISSING RANGES ===
         missing_ranges = []
         if existing_df.empty:
             missing_ranges.append((required_start_unix, end_unix))
@@ -191,18 +193,15 @@ class CoinGeckoPriceFetcher:
             current_earliest_unix = int(df_sorted["timestamp"].iloc[0].timestamp())
             current_latest_unix = int(df_sorted["timestamp"].iloc[-1].timestamp())
 
-            # Missing before the first record
             if current_earliest_unix > required_start_unix:
                 missing_ranges.append((required_start_unix, current_earliest_unix))
 
-            # Missing internal gaps
             for i in range(1, len(df_sorted)):
                 prev_ts = int(df_sorted["timestamp"].iloc[i-1].timestamp())
                 curr_ts = int(df_sorted["timestamp"].iloc[i].timestamp())
                 if curr_ts - prev_ts > 3600 * 2:
                     missing_ranges.append((prev_ts + 3600, curr_ts))
 
-            # Missing after the last record
             if current_latest_unix < end_unix - 3600:
                 missing_ranges.append((current_latest_unix + 3600, end_unix))
 
@@ -230,12 +229,21 @@ class CoinGeckoPriceFetcher:
         combined_df = combined_df.drop_duplicates(subset=["timestamp"])
         combined_df = combined_df.sort_values("timestamp").reset_index(drop=True)
 
+        # === NEW BEHAVIOR YOU REQUESTED ===
+        if len(combined_df) == 0:
+            print(f"\n❌ Coin not found on CoinGecko (404).")
+            print(f"   No CSV created for {coin_input}.")
+            print("   This usually means the coingecko_id in your mapping file is outdated.")
+            return False
+
+        # Only save CSV if we actually have data
         combined_df.to_csv(filename, index=False)
 
         print(f"\n✅ Success! Full {months} months of data (with all gaps filled):")
         print(f"   Saved {len(combined_df):,} hourly records to {filename}")
         print(f"   Date range: {combined_df['timestamp'].min()} → {combined_df['timestamp'].max()}")
         print(f"   Latest price: ${combined_df['price_usd'].iloc[-1]:.2f} USD")
+        return True
 
 
 if __name__ == "__main__":
