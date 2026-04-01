@@ -1,13 +1,3 @@
-#!/usr/bin/env python3
-"""
-fetch_gecko_price_history.py
-
-Updated version:
-- Uses volume_tokens_whole_list_mar_31st.txt as PRIMARY mapping source
-- Configurable filename at the top
-- Cross-platform masked API key input (shows * on Windows + Linux/WSL)
-"""
-
 import sys
 import os
 import time
