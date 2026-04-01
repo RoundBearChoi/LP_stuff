@@ -54,7 +54,7 @@ EXCLUDE_KEYWORDS = [
 ]
 
 SHOW_PREVIEW = True                                
-PREVIEW_COUNT = 20                                 
+PREVIEW_COUNT = 10                                 
 
 SAVE_TO_FILE = True                                
 # =============================================================================
