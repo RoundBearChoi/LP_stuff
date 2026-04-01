@@ -7,7 +7,7 @@ from fetch_gecko_price_history import CoinGeckoPriceFetcher
 # =============================================
 # CONFIGURATION - EDIT THESE DEFAULTS
 # =============================================
-DEFAULT_NUM_TOKENS   = 5
+DEFAULT_NUM_TOKENS   = 10
 DEFAULT_MONTHS       = 1
 DEFAULT_WAIT_SECONDS = 2
 VOLUME_TOKENS_FILE   = "volume_tokens_whole_list_mar_31st.txt"

@@ -13,7 +13,6 @@ tao
 uni
 dot
 aave
-pepe
 ondo
 etc
 kcs
@@ -23,3 +22,15 @@ jup
 bonk
 cake
 virtual
+xtz
+ethfi
+crv
+aero
+ldo
+bsv
+floki
+op
+siren
+ray
+zk
+1inch
