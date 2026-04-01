@@ -25,9 +25,7 @@ INCLUDE_KEYWORDS = [
     "fluid",
     "raydium",
     "changenow",
-    #"curve",
-    #"hyperliquid",
-    #"balancer",
+    "hyperliquid",
 ]
 
 # === STAGE 2: EXCLUDE ===

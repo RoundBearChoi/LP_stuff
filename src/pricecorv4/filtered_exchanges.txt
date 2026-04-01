@@ -5,6 +5,8 @@ changenow
 fluid
 fluid-base
 humidifi
+hyperliquid
+hyperliquid-spot
 orca
 pancakeswap-infinity-clmm
 pancakeswap-infinity-clmm-base
