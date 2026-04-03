@@ -4,6 +4,8 @@ import numpy as np
 import argparse
 import sys
 import warnings
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 warnings.filterwarnings("ignore")
 
@@ -17,8 +19,9 @@ CONFIG = {
     'low_percentile': 2.5,              # Lower range percentile
     'high_percentile': 97.5,            # Upper range percentile
     'data_dir': 'fetched_data',         # Folder with the CSVs
+    'draw_charts': True,                # ← Set False to skip all visualizations entirely
+    'chart_dpi': 180,                   # ← NEW: Export DPI (180 is crisp + fast; 300 for print)
 }
-
 # ============================================================
 
 def load_price(token: str) -> pd.Series:
@@ -121,10 +124,95 @@ def main():
     print(f"Coverage         : ~{100 - CONFIG['low_percentile']*2:.0f}% of simulated 24h paths")
     print(f"Based on         : {len(historical):,} hourly observations")
     print(f"SB parameters    : {CONFIG['n_boots']} bootstraps, mean block = {CONFIG['mean_block_length']}")
-    print("="*80)
+
+    # --- Actual joint coverage (bonus insight) ---
+    actual_coverage = np.mean(
+        (np.array(sim_mins) >= lower_mult) & (np.array(sim_maxs) <= upper_mult)
+    ) * 100
+    print(f"Actual paths fully covered: {actual_coverage:.1f}% (joint coverage)")
 
     current_price = historical.iloc[-1]
     print(f"Current {CONFIG['token0'].upper()} per {CONFIG['token1'].upper()} price: {current_price:,.4f}")
+    print("="*80)
+
+    # ==================== VISUALIZATIONS (conditional) ====================
+    if CONFIG['draw_charts']:
+        print("\nGenerating and exporting charts (no interactive window)...")
+
+        # Style
+        sns.set_style("darkgrid")
+        plt.rcParams['figure.figsize'] = (14, 10)
+
+        fig = plt.figure()
+
+        # 1. Simulated paths (most intuitive)
+        ax1 = plt.subplot(2, 2, 1)
+        np.random.seed(42)  # reproducible sample
+        sample_idx = np.random.choice(len(sim_mins), 200, replace=False)
+        for i in sample_idx:
+            boot_r = stationary_bootstrap(log_returns, n=24, mean_block=CONFIG['mean_block_length'])
+            path = np.exp(np.cumsum(boot_r))
+            path = np.insert(path, 0, 1.0)
+            ax1.plot(range(25), path, color='blue', alpha=0.05, lw=1)
+        ax1.axhline(lower_mult, color='red', linestyle='--', lw=2, label=f'Lower ({lower_mult:.4f})')
+        ax1.axhline(upper_mult, color='green', linestyle='--', lw=2, label=f'Upper ({upper_mult:.4f})')
+        ax1.set_title('200 Example 24h Simulated Paths\n(normalized to start = 1.0)')
+        ax1.set_xlabel('Hours (KST)')
+        ax1.set_ylabel('Price Multiplier')
+        ax1.legend()
+
+        # 2. Histograms of extremes
+        ax2 = plt.subplot(2, 2, 2)
+        sns.histplot(sim_mins, kde=True, color='red', alpha=0.6, label='Simulated Mins', ax=ax2)
+        sns.histplot(sim_maxs, kde=True, color='green', alpha=0.6, label='Simulated Maxs', ax=ax2)
+        ax2.axvline(lower_mult, color='red', linestyle='--', lw=2, label=f'{CONFIG["low_percentile"]}th %')
+        ax2.axvline(upper_mult, color='green', linestyle='--', lw=2, label=f'{CONFIG["high_percentile"]}th %')
+        ax2.set_title('Distribution of 24h Extremes')
+        ax2.set_xlabel('Multiplier')
+        ax2.legend()
+
+        # 3. Ordered rank / quantile plot
+        ax3 = plt.subplot(2, 2, 3)
+        sorted_mins = np.sort(sim_mins)
+        sorted_maxs = np.sort(sim_maxs)
+        ranks = np.linspace(0, 100, CONFIG['n_boots'])
+        ax3.plot(ranks, sorted_mins, color='red', label='Ordered sim_mins')
+        ax3.plot(ranks, sorted_maxs, color='green', label='Ordered sim_maxs')
+        ax3.axhline(lower_mult, color='red', linestyle=':', lw=1.5)
+        ax3.axhline(upper_mult, color='green', linestyle=':', lw=1.5)
+        ax3.axvline(CONFIG['low_percentile'], color='gray', linestyle='--', alpha=0.7)
+        ax3.axvline(CONFIG['high_percentile'], color='gray', linestyle='--', alpha=0.7)
+        ax3.set_title('Ordered Rank / Empirical Quantile Plot')
+        ax3.set_xlabel('Percentile Rank (%)')
+        ax3.set_ylabel('Multiplier')
+        ax3.legend()
+
+        # 4. Joint distribution
+        ax4 = plt.subplot(2, 2, 4)
+        sns.scatterplot(x=sim_mins, y=sim_maxs, alpha=0.15, s=10, color='purple', ax=ax4)
+        ax4.axvline(lower_mult, color='red', linestyle='--')
+        ax4.axhline(upper_mult, color='green', linestyle='--')
+        ax4.set_title('Joint (Min, Max) Pairs per Simulation')
+        ax4.set_xlabel('Simulated Minimum Multiplier')
+        ax4.set_ylabel('Simulated Maximum Multiplier')
+
+        plt.tight_layout()
+        plt.suptitle(
+            f"{CONFIG['token0'].upper()}-{CONFIG['token1'].upper()} SB Range\n"
+            f"{CONFIG['n_months']} months • {CONFIG['n_boots']} bootstraps • "
+            f"Actual coverage {actual_coverage:.1f}%",
+            fontsize=14, y=0.98
+        )
+
+        # EXPORT ONLY — no pause, no interactive window
+        filename = f"sb_range_{CONFIG['token0']}_{CONFIG['token1']}_{CONFIG['n_months']}m.png"
+        fig.savefig(filename, dpi=CONFIG['chart_dpi'], bbox_inches='tight')
+        plt.close(fig)  # Explicitly close to free memory instantly
+
+        print(f"✅ Charts exported as: {filename}  (DPI = {CONFIG['chart_dpi']})")
+
+    else:
+        print("\nCharts skipped (draw_charts=False in CONFIG).")
 
 if __name__ == "__main__":
     main()
