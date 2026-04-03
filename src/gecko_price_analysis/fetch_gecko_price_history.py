@@ -2,15 +2,17 @@
 """
 fetch_gecko_price_history.py
 Fetches hourly price history from CoinGecko Pro API for any token.
-Usage: python fetch_gecko_price_history.py <symbol> [months]
+Usage: python fetch_gecko_price_history.py [token] [months]
+       (token can be symbol like "btc" OR coin_id like "bitcoin")
 Example: python fetch_gecko_price_history.py btc 24
+Defaults (no args): bitcoin + 1 month from CONFIG section
 """
 
 import sys
 import os
 import time
 import pandas as pd
-from datetime import datetime, timedelta, timezone   # ← timezone added
+from datetime import datetime, timedelta, timezone
 import requests
 import termios
 import tty
@@ -18,11 +20,13 @@ import tty
 # ==================== CONFIG SECTION ====================
 CONFIG = {
     "output_dir": "fetched_data",
-    "force_fresh_download": True,      # ← Change to True to always re-download
+    "force_fresh_download": True,      # ← Change to False to reuse existing files
     "vs_currency": "usd",
-    "chunk_days": 90,                   # Safe max for hourly data on paid plans
+    "chunk_days": 90,                   # Safe max for hourly data
     "top_tokens_file": "top_tokens_by_market_cap.csv",
-    "sleep_between_calls": 1.2,         # Polite rate-limit cushion
+    "sleep_between_calls": 1.2,
+    "default_token": "bitcoin",         # can be symbol OR coin_id
+    "default_months": 1,
 }
 # =======================================================
 
@@ -51,13 +55,17 @@ def get_masked_input(prompt="Enter your CoinGecko Pro API key: "):
     return password
 
 def main():
-    if len(sys.argv) < 2:
-        print("Usage: python fetch_gecko_price_history.py <symbol> [months]")
-        print("Example: python fetch_gecko_price_history.py btc 24")
-        sys.exit(1)
-
-    symbol = sys.argv[1].lower().strip()
-    months = int(sys.argv[2]) if len(sys.argv) > 2 else 1
+    # === Argument handling with CONFIG defaults ===
+    if len(sys.argv) == 1:  # No arguments → use CONFIG defaults
+        token_input = CONFIG["default_token"].lower().strip()
+        months = CONFIG["default_months"]
+        print(f"ℹ️  No arguments provided → Using CONFIG defaults: {token_input.upper()} for {months} month(s)")
+    elif len(sys.argv) == 2:
+        token_input = sys.argv[1].lower().strip()
+        months = CONFIG["default_months"]
+    else:
+        token_input = sys.argv[1].lower().strip()
+        months = int(sys.argv[2])
 
     # === Prompt for API key (masked) ===
     print("\n=== CoinGecko Hourly Price History Fetcher ===")
@@ -66,9 +74,9 @@ def main():
         print("Error: API key cannot be empty.")
         sys.exit(1)
 
-    # === Setup output file ===
+    # === Setup output file (uses the token you passed) ===
     os.makedirs(CONFIG["output_dir"], exist_ok=True)
-    output_file = os.path.join(CONFIG["output_dir"], f"{symbol}_price_history.csv")
+    output_file = os.path.join(CONFIG["output_dir"], f"{token_input}_price_history.csv")
 
     # === Skip if file already exists (unless force_fresh_download=True) ===
     if os.path.exists(output_file) and not CONFIG["force_fresh_download"]:
@@ -76,33 +84,39 @@ def main():
         print("   (Set force_fresh_download=True in the config section to override)")
         sys.exit(0)
 
-    # === Load symbol → ID mapping ===
+    # === Load token mapping (now supports BOTH symbol AND coin_id) ===
     if not os.path.exists(CONFIG["top_tokens_file"]):
         print(f"Error: {CONFIG['top_tokens_file']} not found!")
         print("   Make sure the file is in the same folder as this script.")
         sys.exit(1)
 
     tokens_df = pd.read_csv(CONFIG["top_tokens_file"])
-    # Case-insensitive match on 'symbol' column
-    token_row = tokens_df[tokens_df['symbol'].str.lower() == symbol]
+
+    # Flexible lookup: first try 'symbol' column, then 'id' column
+    token_row = tokens_df[tokens_df['symbol'].str.lower() == token_input]
     if token_row.empty:
-        print(f"Error: Symbol '{symbol}' not found in {CONFIG['top_tokens_file']}")
-        print("   First 20 symbols in file:", tokens_df['symbol'].str.lower().head(20).tolist())
+        token_row = tokens_df[tokens_df['id'].str.lower() == token_input]
+
+    if token_row.empty:
+        print(f"Error: Token '{token_input}' not found in {CONFIG['top_tokens_file']}")
+        print("   (Checked both 'symbol' and 'id' columns)")
+        print("   First 20 symbols:", tokens_df['symbol'].str.lower().head(20).tolist())
+        print("   First 20 IDs:   ", tokens_df['id'].str.lower().head(20).tolist())
         sys.exit(1)
 
     coin_id = token_row.iloc[0]['id']
-    print(f"✅ Mapped {symbol.upper()} → CoinGecko ID: {coin_id}")
+    print(f"✅ Mapped input '{token_input}' → CoinGecko ID: {coin_id}")
 
-    # === Calculate date range (approx months) — now timezone-aware ===
-    end_date = datetime.now(timezone.utc)          # ← UTC-aware
+    # === Calculate date range (timezone-aware) ===
+    end_date = datetime.now(timezone.utc)
     start_date = end_date - timedelta(days=int(months * 30.44))
 
-    print(f"Fetching ≈{months} months of **hourly** USD prices for {symbol.upper()}")
+    print(f"Fetching ≈{months} months of **hourly** USD prices for {token_input.upper()}")
     print(f"   Range (UTC): {start_date.date()} → {end_date.date()}")
 
     all_data = []
 
-    # === Chunked fetching (required for hourly data > ~100 days) ===
+    # === Chunked fetching (required for hourly data > ~90 days) ===
     current_start = start_date
     while current_start < end_date:
         current_end = min(current_start + timedelta(days=CONFIG["chunk_days"]), end_date)
@@ -127,7 +141,6 @@ def main():
                 data = response.json()
                 prices = data.get("prices", [])
                 for ts_ms, price in prices:
-                    # ← This is the key change: now UTC-aware
                     dt = datetime.fromtimestamp(ts_ms / 1000, tz=timezone.utc)
                     all_data.append({"datetime": dt, "price_usd": price})
             else:
@@ -149,8 +162,6 @@ def main():
     df = pd.DataFrame(all_data)
     df = df.drop_duplicates(subset=["datetime"]).sort_values("datetime").reset_index(drop=True)
     df["price_usd"] = df["price_usd"].round(8)
-
-    # Ensure pandas recognizes it as proper tz-aware datetime (extra safety)
     df["datetime"] = pd.to_datetime(df["datetime"])
 
     df.to_csv(output_file, index=False)
@@ -158,7 +169,7 @@ def main():
     print(f"\n🎉 SUCCESS! Saved {len(df):,} hourly price points")
     print(f"   File: {output_file}")
     print(f"   Date range (UTC): {df['datetime'].min().date()} → {df['datetime'].max().date()}")
-    print(f"   Timezone: {df['datetime'].iloc[0].tzinfo}  ← now UTC-aware!")
+    print(f"   Timezone: {df['datetime'].iloc[0].tzinfo}  ← UTC-aware!")
     print(f"   File size: {os.path.getsize(output_file) / 1024:.1f} KB")
     print(f"   Columns: datetime (UTC-aware), price_usd")
 
