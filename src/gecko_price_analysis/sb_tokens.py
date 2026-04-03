@@ -212,15 +212,15 @@ def main():
         ax4.set_xlabel('Simulated Minimum Multiplier')
         ax4.set_ylabel('Simulated Maximum Multiplier')
 
-        # FINAL LAYOUT TWEAK — main title now sits higher with no overlap
+        # FINAL LAYOUT — main title now sits higher with extra breathing room
         plt.tight_layout()
-        plt.subplots_adjust(top=0.90)   # ← NEW: extra top margin so suptitle doesn't overlap subplot titles
+        plt.subplots_adjust(top=0.87)   # ← UPDATED: more top margin for extra space above suptitle
 
         plt.suptitle(
             f"{CONFIG['token0'].upper()}-{CONFIG['token1'].upper()} SB Range\n"
             f"{CONFIG['n_months']} months • {CONFIG['n_boots']} bootstraps • "
             f"Actual coverage {actual_coverage:.1f}%",
-            fontsize=14, y=0.98
+            fontsize=14, y=0.99
         )
 
         # EXPORT ONLY
