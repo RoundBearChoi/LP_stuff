@@ -20,7 +20,7 @@ CONFIG = {
     'high_percentile': 97.5,            # Upper range percentile
     'data_dir': 'fetched_data',         # Folder with the CSVs
     'draw_charts': True,                # ← Set False to skip all visualizations entirely
-    'chart_dpi': 180,                   # ← NEW: Export DPI (180 is crisp + fast; 300 for print)
+    'chart_dpi': 180,                   # ← Export DPI (180 is crisp + fast; 300 for print)
 }
 # ============================================================
 
@@ -115,11 +115,15 @@ def main():
     lower_mult = np.percentile(sim_mins, CONFIG['low_percentile'])
     upper_mult = np.percentile(sim_maxs, CONFIG['high_percentile'])
 
+    # --- Percentage versions for chart labels ---
+    lower_pct = (lower_mult - 1) * 100
+    upper_pct = (upper_mult - 1) * 100
+
     print("\n" + "="*80)
     print(f"OPTIMAL LIQUIDITY POOL RANGE for {CONFIG['token0'].upper()} per {CONFIG['token1'].upper()}")
     print("="*80)
-    print(f"Lower multiplier : {lower_mult:.4f}  →  lower = current × {lower_mult:.4f}")
-    print(f"Upper multiplier : {upper_mult:.4f}  →  upper = current × {upper_mult:.4f}")
+    print(f"Lower multiplier : {lower_mult:.4f}  →  lower = current × {lower_mult:.4f}  ({lower_pct:+.2f}%)")
+    print(f"Upper multiplier : {upper_mult:.4f}  →  upper = current × {upper_mult:.4f}  ({upper_pct:+.2f}%)")
     print(f"Range width      : {(upper_mult / lower_mult - 1)*100:.1f}%")
     print(f"Coverage         : ~{100 - CONFIG['low_percentile']*2:.0f}% of simulated 24h paths")
     print(f"Based on         : {len(historical):,} hourly observations")
@@ -145,7 +149,7 @@ def main():
 
         fig = plt.figure()
 
-        # 1. Simulated paths (most intuitive)
+        # 1. Simulated paths — labels now slightly ABOVE the lines
         ax1 = plt.subplot(2, 2, 1)
         np.random.seed(42)  # reproducible sample
         sample_idx = np.random.choice(len(sim_mins), 200, replace=False)
@@ -154,14 +158,26 @@ def main():
             path = np.exp(np.cumsum(boot_r))
             path = np.insert(path, 0, 1.0)
             ax1.plot(range(25), path, color='blue', alpha=0.05, lw=1)
-        ax1.axhline(lower_mult, color='red', linestyle='--', lw=2, label=f'Lower ({lower_mult:.4f})')
-        ax1.axhline(upper_mult, color='green', linestyle='--', lw=2, label=f'Upper ({upper_mult:.4f})')
+
+        # Legend (multiplier + percentage)
+        ax1.axhline(lower_mult, color='red', linestyle='--', lw=2,
+                    label=f'Lower ({lower_mult:.4f} / {lower_pct:+.2f}%)')
+        ax1.axhline(upper_mult, color='green', linestyle='--', lw=2,
+                    label=f'Upper ({upper_mult:.4f} / {upper_pct:+.2f}%)')
+
+        # NEW: labels placed slightly ABOVE the lines (no more overlap)
+        offset = 0.0035   # ← tweak this if you want more/less vertical spacing
+        ax1.text(24.2, lower_mult + offset, f'  {lower_pct:+.2f}%',
+                 color='red', va='bottom', ha='left', fontsize=11, fontweight='bold')
+        ax1.text(24.2, upper_mult + offset, f'  {upper_pct:+.2f}%',
+                 color='green', va='bottom', ha='left', fontsize=11, fontweight='bold')
+
         ax1.set_title('200 Example 24h Simulated Paths\n(normalized to start = 1.0)')
         ax1.set_xlabel('Hours (KST)')
         ax1.set_ylabel('Price Multiplier')
         ax1.legend()
 
-        # 2. Histograms of extremes
+        # 2. Histograms of extremes (unchanged)
         ax2 = plt.subplot(2, 2, 2)
         sns.histplot(sim_mins, kde=True, color='red', alpha=0.6, label='Simulated Mins', ax=ax2)
         sns.histplot(sim_maxs, kde=True, color='green', alpha=0.6, label='Simulated Maxs', ax=ax2)
@@ -171,7 +187,7 @@ def main():
         ax2.set_xlabel('Multiplier')
         ax2.legend()
 
-        # 3. Ordered rank / quantile plot
+        # 3. Ordered rank / quantile plot (unchanged)
         ax3 = plt.subplot(2, 2, 3)
         sorted_mins = np.sort(sim_mins)
         sorted_maxs = np.sort(sim_maxs)
@@ -187,7 +203,7 @@ def main():
         ax3.set_ylabel('Multiplier')
         ax3.legend()
 
-        # 4. Joint distribution
+        # 4. Joint distribution (unchanged)
         ax4 = plt.subplot(2, 2, 4)
         sns.scatterplot(x=sim_mins, y=sim_maxs, alpha=0.15, s=10, color='purple', ax=ax4)
         ax4.axvline(lower_mult, color='red', linestyle='--')
@@ -204,10 +220,10 @@ def main():
             fontsize=14, y=0.98
         )
 
-        # EXPORT ONLY — no pause, no interactive window
+        # EXPORT ONLY
         filename = f"sb_range_{CONFIG['token0']}_{CONFIG['token1']}_{CONFIG['n_months']}m.png"
         fig.savefig(filename, dpi=CONFIG['chart_dpi'], bbox_inches='tight')
-        plt.close(fig)  # Explicitly close to free memory instantly
+        plt.close(fig)
 
         print(f"✅ Charts exported as: {filename}  (DPI = {CONFIG['chart_dpi']})")
 
