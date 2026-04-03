@@ -149,7 +149,7 @@ def main():
 
         fig = plt.figure()
 
-        # 1. Simulated paths — labels now slightly ABOVE the lines
+        # 1. Simulated paths — labels slightly above the lines
         ax1 = plt.subplot(2, 2, 1)
         np.random.seed(42)  # reproducible sample
         sample_idx = np.random.choice(len(sim_mins), 200, replace=False)
@@ -165,8 +165,8 @@ def main():
         ax1.axhline(upper_mult, color='green', linestyle='--', lw=2,
                     label=f'Upper ({upper_mult:.4f} / {upper_pct:+.2f}%)')
 
-        # NEW: labels placed slightly ABOVE the lines (no more overlap)
-        offset = 0.0035   # ← tweak this if you want more/less vertical spacing
+        # Labels placed slightly ABOVE the lines
+        offset = 0.0035
         ax1.text(24.2, lower_mult + offset, f'  {lower_pct:+.2f}%',
                  color='red', va='bottom', ha='left', fontsize=11, fontweight='bold')
         ax1.text(24.2, upper_mult + offset, f'  {upper_pct:+.2f}%',
@@ -212,7 +212,10 @@ def main():
         ax4.set_xlabel('Simulated Minimum Multiplier')
         ax4.set_ylabel('Simulated Maximum Multiplier')
 
+        # FINAL LAYOUT TWEAK — main title now sits higher with no overlap
         plt.tight_layout()
+        plt.subplots_adjust(top=0.90)   # ← NEW: extra top margin so suptitle doesn't overlap subplot titles
+
         plt.suptitle(
             f"{CONFIG['token0'].upper()}-{CONFIG['token1'].upper()} SB Range\n"
             f"{CONFIG['n_months']} months • {CONFIG['n_boots']} bootstraps • "
