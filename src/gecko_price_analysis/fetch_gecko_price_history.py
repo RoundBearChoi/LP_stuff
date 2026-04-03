@@ -10,7 +10,7 @@ import sys
 import os
 import time
 import pandas as pd
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone   # ← timezone added
 import requests
 import termios
 import tty
@@ -18,7 +18,7 @@ import tty
 # ==================== CONFIG SECTION ====================
 CONFIG = {
     "output_dir": "fetched_data",
-    "force_fresh_download": False,      # ← Change to True to always re-download
+    "force_fresh_download": True,      # ← Change to True to always re-download
     "vs_currency": "usd",
     "chunk_days": 90,                   # Safe max for hourly data on paid plans
     "top_tokens_file": "top_tokens_by_market_cap.csv",
@@ -93,12 +93,12 @@ def main():
     coin_id = token_row.iloc[0]['id']
     print(f"✅ Mapped {symbol.upper()} → CoinGecko ID: {coin_id}")
 
-    # === Calculate date range (approx months) ===
-    end_date = datetime.now()
-    start_date = end_date - timedelta(days=int(months * 30.44))   # Accurate enough for crypto history
+    # === Calculate date range (approx months) — now timezone-aware ===
+    end_date = datetime.now(timezone.utc)          # ← UTC-aware
+    start_date = end_date - timedelta(days=int(months * 30.44))
 
     print(f"Fetching ≈{months} months of **hourly** USD prices for {symbol.upper()}")
-    print(f"   Range: {start_date.date()} → {end_date.date()}")
+    print(f"   Range (UTC): {start_date.date()} → {end_date.date()}")
 
     all_data = []
 
@@ -115,11 +115,11 @@ def main():
             "vs_currency": CONFIG["vs_currency"],
             "from": from_ts,
             "to": to_ts,
-            "interval": "hourly",      # Explicitly request hourly (paid tier required)
+            "interval": "hourly",
         }
         headers = {"x-cg-pro-api-key": api_key}
 
-        print(f"  → Fetching chunk: {current_start.date()} to {current_end.date()}")
+        print(f"  → Fetching chunk: {current_start.date()} to {current_end.date()} (UTC)")
 
         try:
             response = requests.get(url, params=params, headers=headers, timeout=30)
@@ -127,7 +127,8 @@ def main():
                 data = response.json()
                 prices = data.get("prices", [])
                 for ts_ms, price in prices:
-                    dt = datetime.fromtimestamp(ts_ms / 1000)
+                    # ← This is the key change: now UTC-aware
+                    dt = datetime.fromtimestamp(ts_ms / 1000, tz=timezone.utc)
                     all_data.append({"datetime": dt, "price_usd": price})
             else:
                 print(f"  ⚠️  Error {response.status_code}: {response.text[:300]}")
@@ -138,7 +139,7 @@ def main():
             print(f"  ❌ Request failed: {e}")
 
         current_start = current_end
-        time.sleep(CONFIG["sleep_between_calls"])   # Respect rate limits (basic paid tier is fine)
+        time.sleep(CONFIG["sleep_between_calls"])
 
     # === Save to CSV ===
     if not all_data:
@@ -147,15 +148,19 @@ def main():
 
     df = pd.DataFrame(all_data)
     df = df.drop_duplicates(subset=["datetime"]).sort_values("datetime").reset_index(drop=True)
-    df["price_usd"] = df["price_usd"].round(8)   # Clean float precision
+    df["price_usd"] = df["price_usd"].round(8)
+
+    # Ensure pandas recognizes it as proper tz-aware datetime (extra safety)
+    df["datetime"] = pd.to_datetime(df["datetime"])
 
     df.to_csv(output_file, index=False)
 
     print(f"\n🎉 SUCCESS! Saved {len(df):,} hourly price points")
     print(f"   File: {output_file}")
-    print(f"   Date range: {df['datetime'].min().date()} → {df['datetime'].max().date()}")
+    print(f"   Date range (UTC): {df['datetime'].min().date()} → {df['datetime'].max().date()}")
+    print(f"   Timezone: {df['datetime'].iloc[0].tzinfo}  ← now UTC-aware!")
     print(f"   File size: {os.path.getsize(output_file) / 1024:.1f} KB")
-    print(f"   Columns: datetime, price_usd")
+    print(f"   Columns: datetime (UTC-aware), price_usd")
 
 if __name__ == "__main__":
     main()
