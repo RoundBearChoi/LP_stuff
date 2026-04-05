@@ -23,7 +23,7 @@ CONFIG = {
     'draw_charts': True,                # ← Set False to skip all visualizations entirely
     'chart_dpi': 180,                   # ← Export DPI (180 is crisp + fast; 300 for print)
 
-    # ← NEW: Lag-1 autocorrelation classification thresholds
+    # Lag-1 autocorrelation classification thresholds
     'acf_strong_reversion_threshold': -0.05,   # Values < this → "strong reversion tendency"
     'acf_momentum_threshold':         0.05,    # Values > this → "momentum / trending tendency"
 }
@@ -85,6 +85,7 @@ def main():
         horizon_label = "168h (7 days)"
     elif horizon == 720:
         horizon_label = "720h (30 days)"
+    # 336h (2 weeks) will simply show as "336h" — perfectly fine
 
     print(f"Running SB for pair {CONFIG['token0'].upper()}-{CONFIG['token1'].upper()} "
           f"({CONFIG['n_months']} months, {horizon_label}, {CONFIG['n_boots']} bootstraps)")
@@ -149,7 +150,7 @@ def main():
     print(f"OPTIMAL LIQUIDITY POOL RANGE for {CONFIG['token0'].upper()} per {CONFIG['token1'].upper()}")
     print("="*80)
 
-    # Autocorrelation diagnostic (now fully configurable via CONFIG)
+    # Autocorrelation diagnostic
     print(f"Lag-1 autocorrelation of log returns : {lag1_acf:.4f} ", end="")
     if lag1_acf < CONFIG['acf_strong_reversion_threshold']:
         print("(🔄 strong reversion tendency)")
@@ -193,7 +194,7 @@ def main():
 
         fig = plt.figure()
 
-        # 1. Simulated paths
+        # 1. Simulated paths (unchanged)
         ax1 = plt.subplot(2, 2, 1)
         np.random.seed(42)
         sample_idx = np.random.choice(len(sim_mins), 200, replace=False)
@@ -228,7 +229,7 @@ def main():
         ax1.set_ylabel('Price Multiplier')
         ax1.legend(loc='upper left')
 
-        # 2. Histograms (unchanged except title)
+        # 2. Histograms (unchanged)
         ax2 = plt.subplot(2, 2, 2)
         sns.histplot(sim_mins, kde=True, color='red', alpha=0.6, label='Simulated Mins', ax=ax2)
         sns.histplot(sim_maxs, kde=True, color='green', alpha=0.6, label='Simulated Maxs', ax=ax2)
@@ -240,23 +241,44 @@ def main():
         ax2.set_xlabel('Multiplier')
         ax2.legend()
 
-        # 3. Ordered rank / quantile plot (unchanged)
+        # ← NEW: Lag-1 Reversion Visualization (replaces old ordered-rank plot)
         ax3 = plt.subplot(2, 2, 3)
-        sorted_mins = np.sort(sim_mins)
-        sorted_maxs = np.sort(sim_maxs)
-        ranks = np.linspace(0, 100, CONFIG['n_boots'])
-        ax3.plot(ranks, sorted_mins, color='red', label='Ordered sim_mins')
-        ax3.plot(ranks, sorted_maxs, color='green', label='Ordered sim_maxs')
-        ax3.axhline(lower_mult, color='red', linestyle=':', lw=1.5)
-        ax3.axhline(upper_mult, color='green', linestyle=':', lw=1.5)
-        ax3.axvline(CONFIG['low_percentile'], color='gray', linestyle='--', alpha=0.7)
-        ax3.axvline(CONFIG['high_percentile'], color='gray', linestyle='--', alpha=0.7)
-        ax3.set_title('Ordered Rank / Empirical Quantile Plot')
-        ax3.set_xlabel('Percentile Rank (%)')
-        ax3.set_ylabel('Multiplier')
-        ax3.legend()
+        n_obs = len(log_returns)
+        if n_obs > 1:
+            x = log_returns[:-1]
+            y = log_returns[1:]
+            ax3.scatter(x, y, alpha=0.08, s=4, color='purple')
+            if len(x) > 10:
+                slope, intercept = np.polyfit(x, y, deg=1)
+                x_range = np.linspace(x.min(), x.max(), 100)
+                y_fit = slope * x_range + intercept
+                ax3.plot(x_range, y_fit, color='red', lw=2.5,
+                         label=f'Regression line (slope = {lag1_acf:.4f})')
+            ax3.axhline(0, color='gray', linestyle='--', alpha=0.7)
+            ax3.axvline(0, color='gray', linestyle='--', alpha=0.7)
+            ax3.set_xlabel('log return at t-1')
+            ax3.set_ylabel('log return at t')
+            ax3.set_title('Lag-1 Reversion Visualization\n(scatter of consecutive hourly log returns)')
+            ax3.legend(loc='upper left')
 
-        # 4. Joint distribution
+            # Classification annotation box
+            if lag1_acf < CONFIG['acf_strong_reversion_threshold']:
+                class_txt = "🔄 STRONG REVERSION"
+            elif lag1_acf < 0:
+                class_txt = "🔄 mild reversion"
+            elif lag1_acf > CONFIG['acf_momentum_threshold']:
+                class_txt = "📈 MOMENTUM"
+            else:
+                class_txt = "➡️ near random-walk"
+            ax3.text(0.02, 0.98, f'Lag-1 ACF = {lag1_acf:.4f}\n{class_txt}',
+                     transform=ax3.transAxes, fontsize=11,
+                     verticalalignment='top',
+                     bbox=dict(boxstyle="round", facecolor="wheat", alpha=0.9))
+        else:
+            ax3.text(0.5, 0.5, 'Insufficient data for Lag-1 chart', ha='center', va='center')
+            ax3.set_title('Lag-1 Reversion')
+
+        # 4. Joint distribution (unchanged)
         ax4 = plt.subplot(2, 2, 4)
         sns.scatterplot(x=sim_mins, y=sim_maxs, alpha=0.15, s=10, color='purple', ax=ax4)
         ax4.axvline(lower_mult, color='red', linestyle='--')
@@ -272,7 +294,7 @@ def main():
 
         plt.suptitle(
             f"{CONFIG['token0'].upper()}-{CONFIG['token1'].upper()} SB Ranges\n"
-            f"High-confidence (~95%) + Typical (median) • {horizon_label} • "
+            f"High-confidence (~95%) + Typical (median) + Lag-1 Reversion • {horizon_label} • "
             f"{CONFIG['n_months']} months • {CONFIG['n_boots']} bootstraps",
             fontsize=14, y=0.99
         )
