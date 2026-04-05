@@ -194,25 +194,37 @@ def get_api_key() -> str:
 
 
 def main():
-    """CLI entry point — same UX as original."""
+    """CLI entry point — now supports single token OR list of tokens + optional months."""
     if len(sys.argv) == 1:
-        token_input = CONFIG["default_token"].lower().strip()
+        # No arguments → use defaults
+        token_list = [CONFIG["default_token"].lower().strip()]
         months = CONFIG["default_months"]
-        print(f"ℹ️  No arguments provided → Using CONFIG defaults: {token_input.upper()} for {months} month(s)")
-    elif len(sys.argv) == 2:
-        token_input = sys.argv[1].lower().strip()
-        months = CONFIG["default_months"]
+        print(f"ℹ️  No arguments provided → Using CONFIG defaults: {token_list[0].upper()} for {months} month(s)")
+
     else:
-        token_input = sys.argv[1].lower().strip()
-        months = int(sys.argv[2])
+        # Check if the LAST argument looks like a number → treat it as months
+        if sys.argv[-1].isdigit():
+            months = int(sys.argv[-1])
+            token_list = [arg.strip().lower() for arg in sys.argv[1:-1]]
+        else:
+            months = CONFIG["default_months"]
+            token_list = [arg.strip().lower() for arg in sys.argv[1:]]
+
+        # Edge case: user only passed a number (e.g. "python script.py 6")
+        if not token_list:
+            token_list = [CONFIG["default_token"].lower().strip()]
+            print(f"⚠️  Only months provided → using default token '{token_list[0].upper()}' for {months} month(s)")
+
+    print(f"\n🚀 Fetching ≈{months} months of hourly USD prices for {len(token_list)} token(s):")
+    print("   " + ", ".join(t.upper() for t in token_list))
 
     api_key = get_api_key()
 
-    fetch_price_history_for_token(token_input, months, api_key)
-
-    # Example batch usage (uncomment when you want it):
-    # batch_tokens = ["btc", "eth", "sol"]
-    # fetch_price_history_for_tokens(batch_tokens, months, api_key)
+    # Use the appropriate function
+    if len(token_list) == 1:
+        fetch_price_history_for_token(token_list[0], months, api_key)
+    else:
+        fetch_price_history_for_tokens(token_list, months, api_key)
 
 
 if __name__ == "__main__":
