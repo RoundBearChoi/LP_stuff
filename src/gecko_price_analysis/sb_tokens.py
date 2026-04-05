@@ -111,30 +111,52 @@ def main():
         sim_mins.append(path.min())
         sim_maxs.append(path.max())
 
-    # --- Optimal range ---
+    # === BOTH RANGES CALCULATED HERE (zero extra runtime cost) ===
+    # 1. High-confidence coverage (original 2.5%/97.5% logic)
     lower_mult = np.percentile(sim_mins, CONFIG['low_percentile'])
     upper_mult = np.percentile(sim_maxs, CONFIG['high_percentile'])
 
-    # --- Percentage versions for chart labels ---
-    lower_pct = (lower_mult - 1) * 100
-    upper_pct = (upper_mult - 1) * 100
+    # 2. Typical / maximum-likelihood range (asymmetric median — respects natural skew)
+    median_lower = np.median(sim_mins)
+    median_upper = np.median(sim_maxs)
+    # Symmetric ±R for quick reference (median of the maximum deviation per path)
+    median_dev = np.median([max(1 - m, M - 1) for m, M in zip(sim_mins, sim_maxs)])
 
+    # Bonus joint coverage stats
+    actual_coverage = np.mean(
+        (np.array(sim_mins) >= lower_mult) & (np.array(sim_maxs) <= upper_mult)
+    ) * 100
+    typical_coverage = np.mean(
+        (np.array(sim_mins) >= median_lower) & (np.array(sim_maxs) <= median_upper)
+    ) * 100
+
+    # --- Console output with BOTH ranges clearly separated ---
     print("\n" + "="*80)
     print(f"OPTIMAL LIQUIDITY POOL RANGE for {CONFIG['token0'].upper()} per {CONFIG['token1'].upper()}")
     print("="*80)
+
+    # High-confidence block (unchanged meaning, just clearer label)
+    lower_pct = (lower_mult - 1) * 100
+    upper_pct = (upper_mult - 1) * 100
+    print("HIGH-CONFIDENCE COVERAGE (~95% of simulated 24h paths)")
     print(f"Lower multiplier : {lower_mult:.4f}  →  lower = current × {lower_mult:.4f}  ({lower_pct:+.2f}%)")
     print(f"Upper multiplier : {upper_mult:.4f}  →  upper = current × {upper_mult:.4f}  ({upper_pct:+.2f}%)")
     print(f"Range width      : {(upper_mult / lower_mult - 1)*100:.1f}%")
     print(f"Coverage         : ~{100 - CONFIG['low_percentile']*2:.0f}% of simulated 24h paths")
-    print(f"Based on         : {len(historical):,} hourly observations")
+    print(f"Actual paths fully covered: {actual_coverage:.1f}% (joint)")
+
+    # New typical / maximum-likelihood block (asymmetric by design)
+    med_lower_pct = (median_lower - 1) * 100
+    med_upper_pct = (median_upper - 1) * 100
+    print("\nTYPICAL / MAXIMUM-LIKELIHOOD DAILY RANGE (median, asymmetric)")
+    print(f"Lower multiplier : {median_lower:.4f}  →  ({med_lower_pct:+.2f}%)")
+    print(f"Upper multiplier : {median_upper:.4f}  →  ({med_upper_pct:+.2f}%)")
+    print(f"Range width      : {(median_upper / median_lower - 1)*100:.1f}%")
+    print(f"Symmetric ±R     : ±{median_dev*100:.2f}%   (median max-deviation)")
+    print(f"Actual paths fully covered: {typical_coverage:.1f}% (joint)")
+
+    print(f"\nBased on         : {len(historical):,} hourly observations")
     print(f"SB parameters    : {CONFIG['n_boots']} bootstraps, mean block = {CONFIG['mean_block_length']}")
-
-    # --- Actual joint coverage (bonus insight) ---
-    actual_coverage = np.mean(
-        (np.array(sim_mins) >= lower_mult) & (np.array(sim_maxs) <= upper_mult)
-    ) * 100
-    print(f"Actual paths fully covered: {actual_coverage:.1f}% (joint coverage)")
-
     current_price = historical.iloc[-1]
     print(f"Current {CONFIG['token0'].upper()} per {CONFIG['token1'].upper()} price: {current_price:,.4f}")
     print("="*80)
@@ -159,13 +181,19 @@ def main():
             path = np.insert(path, 0, 1.0)
             ax1.plot(range(25), path, color='blue', alpha=0.05, lw=1)
 
-        # Legend (multiplier + percentage)
+        # High-confidence range (solid/dashed as before)
         ax1.axhline(lower_mult, color='red', linestyle='--', lw=2,
-                    label=f'Lower ({lower_mult:.4f} / {lower_pct:+.2f}%)')
+                    label=f'High-conf lower ({lower_mult:.4f} / {lower_pct:+.2f}%)')
         ax1.axhline(upper_mult, color='green', linestyle='--', lw=2,
-                    label=f'Upper ({upper_mult:.4f} / {upper_pct:+.2f}%)')
+                    label=f'High-conf upper ({upper_mult:.4f} / {upper_pct:+.2f}%)')
 
-        # Labels placed slightly ABOVE the lines
+        # NEW: Typical/median range (thinner dotted lines — clearly distinguishable)
+        ax1.axhline(median_lower, color='red', linestyle=':', lw=1.5,
+                    label=f'Typical lower ({median_lower:.4f} / {med_lower_pct:+.2f}%)')
+        ax1.axhline(median_upper, color='green', linestyle=':', lw=1.5,
+                    label=f'Typical upper ({median_upper:.4f} / {med_upper_pct:+.2f}%)')
+
+        # Labels placed slightly ABOVE the high-confidence lines (unchanged)
         offset = 0.0035
         ax1.text(24.2, lower_mult + offset, f'  {lower_pct:+.2f}%',
                  color='red', va='bottom', ha='left', fontsize=11, fontweight='bold')
@@ -175,19 +203,22 @@ def main():
         ax1.set_title('200 Example 24h Simulated Paths\n(normalized to start = 1.0)')
         ax1.set_xlabel('Hours (KST)')
         ax1.set_ylabel('Price Multiplier')
-        ax1.legend()
+        ax1.legend(loc='upper left')   # ← legend now shows all 4 lines clearly
 
-        # 2. Histograms of extremes (unchanged)
+        # 2. Histograms of extremes
         ax2 = plt.subplot(2, 2, 2)
         sns.histplot(sim_mins, kde=True, color='red', alpha=0.6, label='Simulated Mins', ax=ax2)
         sns.histplot(sim_maxs, kde=True, color='green', alpha=0.6, label='Simulated Maxs', ax=ax2)
         ax2.axvline(lower_mult, color='red', linestyle='--', lw=2, label=f'{CONFIG["low_percentile"]}th %')
         ax2.axvline(upper_mult, color='green', linestyle='--', lw=2, label=f'{CONFIG["high_percentile"]}th %')
+        # NEW: Typical median lines on histogram
+        ax2.axvline(median_lower, color='red', linestyle=':', lw=1.5)
+        ax2.axvline(median_upper, color='green', linestyle=':', lw=1.5)
         ax2.set_title('Distribution of 24h Extremes')
         ax2.set_xlabel('Multiplier')
         ax2.legend()
 
-        # 3. Ordered rank / quantile plot (unchanged)
+        # 3. Ordered rank / quantile plot
         ax3 = plt.subplot(2, 2, 3)
         sorted_mins = np.sort(sim_mins)
         sorted_maxs = np.sort(sim_maxs)
@@ -203,23 +234,26 @@ def main():
         ax3.set_ylabel('Multiplier')
         ax3.legend()
 
-        # 4. Joint distribution (unchanged)
+        # 4. Joint distribution
         ax4 = plt.subplot(2, 2, 4)
         sns.scatterplot(x=sim_mins, y=sim_maxs, alpha=0.15, s=10, color='purple', ax=ax4)
         ax4.axvline(lower_mult, color='red', linestyle='--')
         ax4.axhline(upper_mult, color='green', linestyle='--')
+        # NEW: Typical median lines on joint scatter
+        ax4.axvline(median_lower, color='red', linestyle=':', lw=1.5)
+        ax4.axhline(median_upper, color='green', linestyle=':', lw=1.5)
         ax4.set_title('Joint (Min, Max) Pairs per Simulation')
         ax4.set_xlabel('Simulated Minimum Multiplier')
         ax4.set_ylabel('Simulated Maximum Multiplier')
 
-        # FINAL LAYOUT — main title now sits higher with extra breathing room
+        # FINAL LAYOUT
         plt.tight_layout()
-        plt.subplots_adjust(top=0.87)   # ← UPDATED: more top margin for extra space above suptitle
+        plt.subplots_adjust(top=0.87)
 
         plt.suptitle(
-            f"{CONFIG['token0'].upper()}-{CONFIG['token1'].upper()} SB Range\n"
-            f"{CONFIG['n_months']} months • {CONFIG['n_boots']} bootstraps • "
-            f"Actual coverage {actual_coverage:.1f}%",
+            f"{CONFIG['token0'].upper()}-{CONFIG['token1'].upper()} SB Ranges\n"
+            f"High-confidence (~95%) + Typical (median) • "
+            f"{CONFIG['n_months']} months • {CONFIG['n_boots']} bootstraps",
             fontsize=14, y=0.99
         )
 
