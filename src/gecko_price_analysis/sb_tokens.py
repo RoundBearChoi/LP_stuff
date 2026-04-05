@@ -15,13 +15,17 @@ CONFIG = {
     'token0': 'eth',                    # Token 0 (now treated as the "unit" token)
     'token1': 'btc',                    # Token 1 (now the "base" token) → price = token1_USD / token0_USD
     'n_months': 24,                     # How many recent months of history to use
-    'horizon_hours': 24*7*1,            # ← SIMULATION HORIZON (24h * 7d * weeks)
+    'horizon_hours': 24*7*2,            # ← SIMULATION HORIZON (24h * 7d * weeks)
     'mean_block_length': 20,            # Mean geometric block length for SB
     'low_percentile': 2.5,              # Lower range percentile
     'high_percentile': 97.5,            # Upper range percentile
     'data_dir': 'fetched_data',         # Folder with the CSVs
     'draw_charts': True,                # ← Set False to skip all visualizations entirely
     'chart_dpi': 180,                   # ← Export DPI (180 is crisp + fast; 300 for print)
+
+    # ← NEW: Lag-1 autocorrelation classification thresholds
+    'acf_strong_reversion_threshold': -0.05,   # Values < this → "strong reversion tendency"
+    'acf_momentum_threshold':         0.05,    # Values > this → "momentum / trending tendency"
 }
 # ============================================================
 
@@ -81,7 +85,6 @@ def main():
         horizon_label = "168h (7 days)"
     elif horizon == 720:
         horizon_label = "720h (30 days)"
-    # You can add more friendly labels here if you like
 
     print(f"Running SB for pair {CONFIG['token0'].upper()}-{CONFIG['token1'].upper()} "
           f"({CONFIG['n_months']} months, {horizon_label}, {CONFIG['n_boots']} bootstraps)")
@@ -107,6 +110,12 @@ def main():
 
     # Log returns
     log_returns = np.log(historical).diff().dropna().values
+
+    # Lag-1 autocorrelation (key diagnostic for reversion vs momentum)
+    if len(log_returns) > 1:
+        lag1_acf = np.corrcoef(log_returns[:-1], log_returns[1:])[0, 1]
+    else:
+        lag1_acf = 0.0
 
     # --- Stationary Bootstrap ---
     np.random.seed(42)
@@ -139,6 +148,17 @@ def main():
     print("\n" + "="*80)
     print(f"OPTIMAL LIQUIDITY POOL RANGE for {CONFIG['token0'].upper()} per {CONFIG['token1'].upper()}")
     print("="*80)
+
+    # Autocorrelation diagnostic (now fully configurable via CONFIG)
+    print(f"Lag-1 autocorrelation of log returns : {lag1_acf:.4f} ", end="")
+    if lag1_acf < CONFIG['acf_strong_reversion_threshold']:
+        print("(🔄 strong reversion tendency)")
+    elif lag1_acf < 0:
+        print("(🔄 mild reversion tendency)")
+    elif lag1_acf > CONFIG['acf_momentum_threshold']:
+        print("(📈 momentum / trending tendency)")
+    else:
+        print("(➡️  near random-walk behaviour)")
 
     lower_pct = (lower_mult - 1) * 100
     upper_pct = (upper_mult - 1) * 100
