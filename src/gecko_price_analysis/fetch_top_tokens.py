@@ -3,14 +3,17 @@ import pandas as pd
 import time
 import json
 from typing import List, Dict
+import sys
+import termios
+import tty
 
 # ==================== CONFIG SECTION ====================
 CONFIG = {
-    'base_url': 'https://api.coingecko.com/api/v3',
+    'base_url': 'https://api.coingecko.com/api/v3',  # free tier default
     'vs_currency': 'usd',
     'order': 'market_cap_desc',
     'per_page': 250,                         # max allowed by API
-    'pages': 1,                              # e.g. 1 = homepage view, 10 = top 2,500 tokens
+    'pages': 3,                              # e.g. 1 = homepage view, 10 = top 2,500 tokens
     'locale': 'en',
     # Optional filters (set to None to disable)
     'category': None,                        # e.g. 'defi', 'meme-token', 'layer-1'
@@ -23,10 +26,51 @@ CONFIG = {
 }
 # =======================================================
 
-def fetch_coingecko_market_data(config: Dict = CONFIG) -> List[Dict]:
-    """Fetch exactly like CoinGecko homepage — market-cap sorted."""
+def get_masked_input(prompt: str = "") -> str:
+    """Linux-only masked input (now using setcbreak like your history script)."""
+    fd = sys.stdin.fileno()
+    old_settings = termios.tcgetattr(fd)
+    try:
+        tty.setcbreak(fd)                    # ← more stable than setraw
+        print(prompt, end='', flush=True)
+        password = ""
+        while True:
+            ch = sys.stdin.read(1)
+            if ch in ('\n', '\r'):
+                print()                      # ← forces clean new line (no indent)
+                break
+            elif ch == '\x7f':               # Backspace
+                if password:
+                    password = password[:-1]
+                    print('\b \b', end='', flush=True)
+            elif ch == '\x03':               # Ctrl+C
+                raise KeyboardInterrupt
+            else:
+                password += ch
+                print('*', end='', flush=True)
+        return password.strip()
+    finally:
+        termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+
+
+def fetch_coingecko_market_data(config: Dict = CONFIG, api_key: str = None) -> List[Dict]:
+    """Fetch exactly like CoinGecko homepage — market-cap sorted.
+    Uses Pro API (different base URL + header) if key is provided, otherwise free tier."""
     all_coins: List[Dict] = []
-    endpoint = f"{config['base_url']}/coins/markets"
+    
+    if api_key:
+        base_url = 'https://pro-api.coingecko.com/api/v3'
+        headers = {'x-cg-pro-api-key': api_key}
+        tier = "Pro"
+        sleep_time = 0.3   # Pro allows faster requests
+    else:
+        base_url = config['base_url']
+        headers = None
+        tier = "Free"
+        sleep_time = 1.2   # polite delay for free tier
+    
+    endpoint = f"{base_url}/coins/markets"
+    print(f"🔑 Using {tier} tier")
     
     for page in range(1, config['pages'] + 1):
         params = {
@@ -44,7 +88,7 @@ def fetch_coingecko_market_data(config: Dict = CONFIG) -> List[Dict]:
             
         print(f"Fetching page {page}/{config['pages']}...")
         
-        response = requests.get(endpoint, params=params)
+        response = requests.get(endpoint, params=params, headers=headers)
         
         if response.status_code == 429:
             print("⚠️ Rate limit hit. Waiting 60 seconds...")
@@ -56,9 +100,9 @@ def fetch_coingecko_market_data(config: Dict = CONFIG) -> List[Dict]:
         all_coins.extend(data)
         
         if page < config['pages']:
-            time.sleep(1.2)  # polite delay for free tier
+            time.sleep(sleep_time)
     
-    print(f"✅ Fetched {len(all_coins):,} tokens with official ranking.")
+    print(f"✅ Fetched {len(all_coins):,} tokens with official ranking ({tier} tier).")
     return all_coins
 
 
@@ -95,12 +139,7 @@ def to_dataframe(coins: List[Dict]) -> pd.DataFrame:
 
 
 def load_blacklist(config: Dict = CONFIG) -> set:
-    """Load blacklisted_tokens.json and return a set of IDs for fast lookup.
-    
-    Why IDs instead of symbols?
-    - CoinGecko IDs are unique and stable.
-    - Symbols can be duplicated or change over time.
-    - Your JSON already provides clean 'id' fields (with a few nulls we safely ignore)."""
+    """Load blacklisted_tokens.json and return a set of IDs for fast lookup."""
     try:
         with open(config['blacklist_file'], 'r', encoding='utf-8') as f:
             blacklist = json.load(f)
@@ -120,8 +159,24 @@ def load_blacklist(config: Dict = CONFIG) -> set:
 
 
 if __name__ == "__main__":
+    # 0. Prompt for API key FIRST (as requested) with * masking
+    print("\n=== CoinGecko Top Tokens Fetcher ===")
+    print("Supports Pro API for higher rate limits.\n")
+    
+    api_key_input = get_masked_input(
+        "Enter your CoinGecko API key (or press Enter for free tier): "
+    )
+    
+    if api_key_input:
+        # Minimal, secure confirmation — only show "CG-" prefix, nothing more
+        print("✅ Using API key: CG-*******************")
+        api_key = api_key_input
+    else:
+        print("✅ No API key provided — using free tier")
+        api_key = None
+
     # 1. Fetch fresh data from CoinGecko
-    coins_data = fetch_coingecko_market_data()
+    coins_data = fetch_coingecko_market_data(api_key=api_key)
     df = to_dataframe(coins_data)
     
     # 2. Load blacklist and create filtered version
