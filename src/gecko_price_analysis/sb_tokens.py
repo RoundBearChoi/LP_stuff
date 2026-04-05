@@ -85,7 +85,6 @@ def main():
         horizon_label = "168h (7 days)"
     elif horizon == 720:
         horizon_label = "720h (30 days)"
-    # 336h (2 weeks) will simply show as "336h" — perfectly fine
 
     print(f"Running SB for pair {CONFIG['token0'].upper()}-{CONFIG['token1'].upper()} "
           f"({CONFIG['n_months']} months, {horizon_label}, {CONFIG['n_boots']} bootstraps)")
@@ -150,7 +149,7 @@ def main():
     print(f"OPTIMAL LIQUIDITY POOL RANGE for {CONFIG['token0'].upper()} per {CONFIG['token1'].upper()}")
     print("="*80)
 
-    # Autocorrelation diagnostic
+    # Autocorrelation diagnostic (emojis stay here only)
     print(f"Lag-1 autocorrelation of log returns : {lag1_acf:.4f} ", end="")
     if lag1_acf < CONFIG['acf_strong_reversion_threshold']:
         print("(🔄 strong reversion tendency)")
@@ -241,7 +240,8 @@ def main():
         ax2.set_xlabel('Multiplier')
         ax2.legend()
 
-        # ← NEW: Lag-1 Reversion Visualization (replaces old ordered-rank plot)
+        # ← UPDATED: Lag-1 Reversion Visualization
+        # Orange ACF box on LEFT, regression line legend on RIGHT
         ax3 = plt.subplot(2, 2, 3)
         n_obs = len(log_returns)
         if n_obs > 1:
@@ -253,26 +253,26 @@ def main():
                 x_range = np.linspace(x.min(), x.max(), 100)
                 y_fit = slope * x_range + intercept
                 ax3.plot(x_range, y_fit, color='red', lw=2.5,
-                         label=f'Regression line (slope = {lag1_acf:.4f})')
+                         label='Regression line')
             ax3.axhline(0, color='gray', linestyle='--', alpha=0.7)
             ax3.axvline(0, color='gray', linestyle='--', alpha=0.7)
             ax3.set_xlabel('log return at t-1')
             ax3.set_ylabel('log return at t')
             ax3.set_title('Lag-1 Reversion Visualization\n(scatter of consecutive hourly log returns)')
-            ax3.legend(loc='upper left')
+            ax3.legend(loc='upper right')   # Regression line label stays on the right
 
-            # Classification annotation box
+            # Orange ACF box on LEFT (top-left)
             if lag1_acf < CONFIG['acf_strong_reversion_threshold']:
-                class_txt = "🔄 STRONG REVERSION"
+                class_txt = "STRONG REVERSION"
             elif lag1_acf < 0:
-                class_txt = "🔄 mild reversion"
+                class_txt = "mild reversion"
             elif lag1_acf > CONFIG['acf_momentum_threshold']:
-                class_txt = "📈 MOMENTUM"
+                class_txt = "MOMENTUM"
             else:
-                class_txt = "➡️ near random-walk"
+                class_txt = "near random-walk"
             ax3.text(0.02, 0.98, f'Lag-1 ACF = {lag1_acf:.4f}\n{class_txt}',
                      transform=ax3.transAxes, fontsize=11,
-                     verticalalignment='top',
+                     verticalalignment='top', horizontalalignment='left',
                      bbox=dict(boxstyle="round", facecolor="wheat", alpha=0.9))
         else:
             ax3.text(0.5, 0.5, 'Insufficient data for Lag-1 chart', ha='center', va='center')
