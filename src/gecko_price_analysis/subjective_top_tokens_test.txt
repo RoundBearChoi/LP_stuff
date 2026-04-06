@@ -1,0 +1,4 @@
+btc
+eth
+bnb
+sol
