@@ -14,16 +14,16 @@ except ImportError:
 
 # ==================== CONFIGURATION ====================
 CONFIG = {
-    'tokens_file': 'subjective_top_tokens_test.txt',  # ← change to 'subjective_top_tokens.txt' when ready
+    'tokens_file': 'subjective_top_tokens_test.txt',
     'output_csv': 'sb_pair_analysis.csv',
     'allow_duplicates': False,                      # False = one direction only (red-api3, not api3-red)
     'start_from_bottom': True,                      # True = process bottom-listed tokens first
-    'n_months': None,                               # None = use sb_tokens default (24)
-    'horizon_hours': None,                          # None = use sb_tokens default (168 = 7 days)
+    'n_months': None,                               # None = use sb_tokens default
+    'horizon_hours': None,                          # None = use sb_tokens default
     'n_boots': 5000,
     'data_dir': 'fetched_data',
-    'seed': 42,
-    'skip_missing_data': True,                      # skip pairs where CSV is missing
+    'seed': 42,                                     # classic choice. keep consistency across pairs
+    'skip_missing_data': True,
 }
 # ======================================================
 
