@@ -2,3 +2,11 @@ btc
 eth
 bnb
 sol
+doge
+bch
+hype
+link
+xmr
+ltc
+zec
+tao
