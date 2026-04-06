@@ -15,7 +15,7 @@ CONFIG = {
     'token0': 'eth',                    # Token 0 (now treated as the "unit" token)
     'token1': 'btc',                    # Token 1 (now the "base" token) → price = token1_USD / token0_USD
     'n_months': 24,                     # How many recent months of history to use
-    'horizon_hours': 24*7*2,            # ← SIMULATION HORIZON (24h * 7d * weeks)
+    'horizon_hours': 24*7,
     'mean_block_length': 20,            # Mean geometric block length for SB
     'low_percentile': 2.5,              # Lower range percentile
     'high_percentile': 97.5,            # Upper range percentile
