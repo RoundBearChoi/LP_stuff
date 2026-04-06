@@ -102,6 +102,7 @@ def main():
                 'lag1_acf': round(res['lag1_acf'], 6),
                 'lag1_slope': round(res['lag1_slope'], 6),
                 'num_observations': res['num_observations'],
+                'total_overlapping_hours': res.get('total_overlapping_hours', 0),   # NEW COLUMN
                 'horizon_hours': res['horizon_hours'],
                 'n_boots': res['n_boots'],
                 'actual_coverage_pct': round(res['actual_coverage'], 1),

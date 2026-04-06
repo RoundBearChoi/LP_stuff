@@ -101,8 +101,14 @@ def get_sb_analysis(
     price1 = load_price(token1, config['data_dir'])
 
     combined = pd.DataFrame({'price0': price0, 'price1': price1}).sort_index()
-    combined = combined.resample('h').last().ffill()
+    combined = combined.resample('h').last()
 
+    # === TOTAL OVERLAPPING HOURS (strict common data points) ===
+    # This is the number of hourly timestamps where BOTH tokens had real price data
+    # (computed on full history intersection, before ffill or n_months slicing)
+    total_overlapping_hours = len(combined.dropna(how='any'))
+
+    combined = combined.ffill()
     pair_price = combined['price1'] / combined['price0']
 
     end_date = pair_price.index.max()
@@ -163,6 +169,7 @@ def get_sb_analysis(
         'lag1_acf': float(lag1_acf),
         'lag1_slope': float(lag1_slope),
         'num_observations': int(len(historical)),
+        'total_overlapping_hours': int(total_overlapping_hours),   # NEW COLUMN
         'horizon_hours': int(horizon),
         'n_boots': int(config['n_boots']),
         'actual_coverage': float(actual_coverage),
